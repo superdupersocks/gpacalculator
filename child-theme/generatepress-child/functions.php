@@ -3283,3 +3283,20 @@ add_action( 'init', function () {
 		add_shortcode( 'CollegeDB_full', '__return_empty_string' );
 	}
 }, 20 );
+
+/**
+ * While [CollegeDB] is the empty placeholder, hide the "List of Colleges accepting average GPA of X or less"
+ * heading that sits directly above it on the /gpa-scale/ pages, so no heading introduces an empty spot.
+ * Runs before shortcodes and wpautop; the post content in the database is not changed.
+ */
+add_filter( 'the_content', function ( $content ) {
+	global $shortcode_tags;
+	if ( false === strpos( $content, '[CollegeDB' ) || ! isset( $shortcode_tags['CollegeDB'] ) || '__return_empty_string' !== $shortcode_tags['CollegeDB'] ) {
+		return $content;
+	}
+	return preg_replace(
+		'#(?:<!--\s*wp:heading\b[^>]*-->\s*)?<h([1-6])\b[^>]*>(?:(?!</h\1>).)*?List of Colleges(?:(?!</h\1>).)*</h\1>\s*(?:<!--\s*/wp:heading\s*-->\s*)?(?=(?:<!--\s*wp:(?:paragraph|shortcode)\b[^>]*-->\s*)?(?:<p>\s*)?\[CollegeDB\b)#is',
+		'',
+		$content
+	);
+}, 9 );

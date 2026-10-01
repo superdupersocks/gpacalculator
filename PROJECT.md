@@ -193,6 +193,12 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Changelog
 
+### 2026-10-01: hide the "List of Colleges" headings while [CollegeDB] is empty
+- Child theme `the_content` filter (priority 9) drops a heading containing "List of Colleges" directly above
+  `[CollegeDB]`, only while the placeholder is in use. Affects /gpa-scale/3-5 … 3-9-gpa/; post content untouched.
+  Applied live (previous functions.php in `~/backups/functions-2026-10-01-pre-listheading.php`), caches purged,
+  all 31 /gpa-scale/ pages, the homepage and two `[gpcm_calculator]` pages checked.
+
 ### 2026-10-01: CollegeDB and University Template retired on the live site
 - Database backed up first (20 MB gzip, outside the web root and copied off the server); live `functions.php` saved alongside.
 - Live child theme `functions.php` got the `[CollegeDB]` placeholder block (linted; live = import + that block only).

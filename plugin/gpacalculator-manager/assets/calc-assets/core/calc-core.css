@@ -1,34 +1,34 @@
-/* gpacalculator.net shared calculator layout, core v1.2.0
+/* gpacalculator.net shared calculator layout, core v1.3.0
  * Lives in the gpacalculator-manager plugin. Every rule is scoped under .calc inside #root (page
  * template calculators) or .gpacalc-mount (shortcode calculators); :is() keeps the #root specificity.
  * A calculator adds its own prefix class (e.g. <div class="calc gcx">) for anything specific to it.
  * Load from a calculator stylesheet with: @import url('core/calc-core.css');
  *
- * Brand tokens come from the theme (brand-tokens.css, --gpa-*). Each one is read below with a
- * built-in fallback, so calculators look right even when the theme file isn't loaded. */
+ * Tokens come from the theme's gpa-design-tokens.css (--gpa-calc-* plus the site neutrals). Each
+ * one is read below with a built-in fallback, so calculators look right even without the theme. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :is(#root, .gpacalc-mount) .calc {
-  /* Brand, from the theme with fallbacks */
-  --calc-brand-1: var(--gpa-brand-1, #7c3aed);
-  --calc-brand-2: var(--gpa-brand-2, #4f46e5);
+  /* From the theme's gpa-design-tokens.css, with fallbacks */
+  --calc-brand-1: var(--gpa-calc-brand-1, #7c3aed);
+  --calc-brand-2: var(--gpa-calc-brand-2, #4f46e5);
   --calc-brand-grad: linear-gradient(135deg, var(--calc-brand-1), var(--calc-brand-2));
-  --calc-tint: var(--gpa-tint, #f5f3ff);
-  --calc-focus: var(--gpa-focus, rgba(124, 58, 237, 0.28));
-  --calc-ink: var(--gpa-ink, #1e1b4b);
-  --calc-text: var(--gpa-text, #374151);
-  --calc-muted: var(--gpa-muted, #6b7280);
-  --calc-faint: var(--gpa-faint, #9ca3af);
-  --calc-line: var(--gpa-line, #e5e7eb);
-  --calc-line-strong: var(--gpa-line-strong, #d1d5db);
-  --calc-surface: var(--gpa-surface, #ffffff);
-  --calc-surface-2: var(--gpa-surface-2, #f9fafb);
-  --calc-font: var(--gpa-font, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
-  --calc-radius-card: var(--gpa-radius-card, 24px);
-  --calc-radius: var(--gpa-radius, 12px);
+  --calc-tint: var(--gpa-calc-tint, #f5f3ff);
+  --calc-focus: var(--gpa-calc-focus, rgba(124, 58, 237, 0.28));
+  --calc-ink: var(--gpa-calc-ink, #1e1b4b);
+  --calc-text: var(--gpa-text-body, #374151);
+  --calc-muted: var(--gpa-text-muted, #6b7280);
+  --calc-faint: var(--gpa-text-light, #9ca3af);
+  --calc-line: var(--gpa-border, #e5e7eb);
+  --calc-line-strong: var(--gpa-border-dark, #d1d5db);
+  --calc-surface: var(--gpa-bg-white, #ffffff);
+  --calc-surface-2: var(--gpa-bg-gray-50, #f9fafb);
+  --calc-font: var(--gpa-calc-font, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
+  --calc-radius-card: var(--gpa-calc-radius-card, 24px);
+  --calc-radius: var(--gpa-radius-md, 12px);
   --calc-radius-pill: var(--gpa-radius-pill, 999px);
-  --calc-shadow: var(--gpa-shadow, 0 10px 40px -12px rgba(79, 70, 229, 0.25), 0 2px 6px rgba(30, 27, 75, 0.06));
-  --calc-shadow-pop: var(--gpa-shadow-pop, 0 12px 32px -8px rgba(30, 27, 75, 0.3));
+  --calc-shadow: var(--gpa-calc-shadow, 0 10px 40px -12px rgba(79, 70, 229, 0.25), 0 2px 6px rgba(30, 27, 75, 0.06));
+  --calc-shadow-pop: var(--gpa-calc-shadow-pop, 0 12px 32px -8px rgba(30, 27, 75, 0.3));
 
   /* Calculator-only tokens: letter grade colors (A green, B blue, C amber, D orange, F red) */
   --calc-a: #16a34a;

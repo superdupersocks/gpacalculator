@@ -314,7 +314,7 @@ def token_tests(s, R):
         page = s.page(ctx, PAGE.replace(".html", f".html{qs}"))
         page.wait_for_selector("#root .calc")
         R.check(label, page.evaluate(probe), want)
-        theme_var = page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--gpa-brand-1').trim()")
+        theme_var = page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--gpa-calc-brand-1').trim()")
         R.check(f"{label}: --gpa-brand-1 present", bool(theme_var), not qs)
         ctx.close()
     ctx = s.context()

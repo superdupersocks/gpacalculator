@@ -56,7 +56,7 @@ body:has(.gpa-hero) > #page .entry-header {
     margin-right: auto !important;
 }
 
-.content-page .entry-content p:not(#root *) {
+.content-page .entry-content p:not(#root *, .gpacalc-mount *) {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-body-size) !important;
     color: var(--gpa-text-body) !important;
@@ -74,7 +74,7 @@ body:has(.gpa-hero) > #page .entry-header {
     margin-bottom: 24px !important;
 }
 
-.content-page .entry-content h2:not(#root *) {
+.content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-h2-size) !important;
     font-weight: var(--gpa-h2-weight) !important;
@@ -84,7 +84,7 @@ body:has(.gpa-hero) > #page .entry-header {
     margin-top: 48px !important;
 }
 
-.content-page .entry-content h3:not(#root *) {
+.content-page .entry-content h3:not(#root *, .gpacalc-mount *) {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-h3-size) !important;
     font-weight: var(--gpa-h3-weight) !important;
@@ -107,12 +107,12 @@ body:has(.gpa-hero) > #page .entry-header {
     color: var(--gpa-text-heading) !important;
 }
 
-.content-page .entry-content a:not(#root *) {
+.content-page .entry-content a:not(#root *, .gpacalc-mount *) {
     color: var(--gpa-primary) !important;
     font-weight: 500 !important;
     text-decoration: underline !important;
 }
-.content-page .entry-content a:not(#root *):hover {
+.content-page .entry-content a:not(#root *, .gpacalc-mount *):hover {
     color: var(--gpa-primary-dark) !important;
 }
 
@@ -488,9 +488,9 @@ body:has(.gpa-hero) > #page .entry-header {
    ============================================ */
 @media (max-width: 768px) {
     .content-page .entry-content h1 { font-size: var(--gpa-h1-size-m) !important; }
-    .content-page .entry-content h2:not(#root *) { font-size: var(--gpa-h2-size-m) !important; }
-    .content-page .entry-content h3:not(#root *) { font-size: var(--gpa-h3-size-m) !important; }
-    .content-page .entry-content p:not(#root *) { font-size: var(--gpa-body-size) !important; }
+    .content-page .entry-content h2:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-h2-size-m) !important; }
+    .content-page .entry-content h3:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-h3-size-m) !important; }
+    .content-page .entry-content p:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-body-size) !important; }
     .content-page .entry-content ul li,
     .content-page .entry-content ol li {
   font-size: var(--gpa-body-size) !important;
@@ -563,7 +563,7 @@ body:has(.gpa-hero) > #page .entry-header {
     border-color: var(--gpa-primary);
     color: var(--gpa-bg-white);
 }
-.content-page .entry-content h2:not(#root *) {
+.content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
     scroll-margin-top: 80px;
 }
 @media (max-width: 768px) {
@@ -793,7 +793,7 @@ body.gpa-hero-band .entry-content {
            divided and highlighted on hover, rounded outer shell
    FAQ     card per question, restyled but still always visible
    ============================================================ */
-.content-page .entry-content h2:not(#root *) {
+.content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
     font-size: 36px !important;
     line-height: 1.111 !important;
     font-weight: 800 !important;
@@ -899,7 +899,7 @@ body.gpa-hero-band .entry-content {
 }
 
 @media (max-width: 768px) {
-    .content-page .entry-content h2:not(#root *) {
+    .content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
         font-size: 30px !important;
     }
     .content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {

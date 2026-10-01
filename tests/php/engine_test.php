@@ -4,44 +4,10 @@
  * loader, shortcodes, legacy-plugin coverage) against minimal WordPress stubs.
  * Run: php tests/php/engine_test.php
  */
-define( 'ABSPATH', __DIR__ );
 $tmp = sys_get_temp_dir() . '/gpacalc-engine-' . getmypid();
 define( 'WP_PLUGIN_DIR', $tmp . '/plugins' );
-$GLOBALS['hooks'] = array();
-$GLOBALS['filters'] = array();
-$GLOBALS['shortcode_tags'] = array();
-$GLOBALS['page'] = array( 'id' => 0, 'content' => '' );
-$GLOBALS['screen'] = 'plugins';
-
-class Dep { public $src; public $ver; public $deps; public $extra = array(); public function __construct( $s, $d = array() ) { $this->src = $s; $this->deps = $d; } }
-class Deps { public $registered = array(); public $queue = array(); }
-$GLOBALS['wps'] = new Deps(); $GLOBALS['wpst'] = new Deps();
-function wp_scripts() { return $GLOBALS['wps']; }
-function wp_styles() { return $GLOBALS['wpst']; }
-function add_action( $h, $cb ) { $GLOBALS['hooks'][ $h ][] = $cb; }
-function add_filter( $h, $cb ) { $GLOBALS['hooks'][ $h ][] = $cb; }
-function apply_filters( $h, $v ) { return isset( $GLOBALS['filters'][ $h ] ) ? $GLOBALS['filters'][ $h ]( $v ) : $v; }
-function plugins_url( $p, $f ) { return 'https://site/wp-content/plugins/' . basename( dirname( $f ) ) . '/' . $p; }
-function wp_script_is( $h ) { return in_array( $h, wp_scripts()->queue, true ); }
-function wp_style_is( $h ) { return in_array( $h, wp_styles()->queue, true ); }
-function wp_register_script( $h, $s, $d, $v ) { wp_scripts()->registered[ $h ] = new Dep( $s, $d ); wp_scripts()->registered[ $h ]->ver = $v; }
-function wp_register_style( $h, $s, $d, $v ) { wp_styles()->registered[ $h ] = new Dep( $s, $d ); wp_styles()->registered[ $h ]->ver = $v; }
-function wp_enqueue_script( $h ) { if ( ! wp_script_is( $h ) ) wp_scripts()->queue[] = $h; }
-function wp_enqueue_style( $h ) { if ( ! wp_style_is( $h ) ) wp_styles()->queue[] = $h; }
-function is_page( $ids ) { return in_array( $GLOBALS['page']['id'], (array) $ids, true ); }
-function is_singular() { return $GLOBALS['page']['id'] > 0; }
-function get_post() { return (object) array( 'post_content' => $GLOBALS['page']['content'] ); }
-function has_shortcode( $c, $t ) { return false !== strpos( $c, '[' . $t ); }
-function shortcode_exists( $t ) { return isset( $GLOBALS['shortcode_tags'][ $t ] ); }
-function add_shortcode( $t, $cb ) { $GLOBALS['shortcode_tags'][ $t ] = $cb; }
-function remove_shortcode( $t ) { unset( $GLOBALS['shortcode_tags'][ $t ] ); }
-function sanitize_key( $k ) { return strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', $k ) ); }
-function esc_attr( $s ) { return htmlspecialchars( $s, ENT_QUOTES ); }
-function esc_html( $s ) { return htmlspecialchars( $s, ENT_QUOTES ); }
-function wp_json_encode( $v ) { return json_encode( $v ); }
-function wp_normalize_path( $p ) { return str_replace( '\\', '/', $p ); }
-function current_user_can() { return true; }
-function get_current_screen() { return (object) array( 'id' => $GLOBALS['screen'] ); }
+require __DIR__ . '/wp_stubs.php';
+$GLOBALS['options']['calcs_plugin_shortcodes'] = array(); // no Calculators-plugin shortcodes in this test
 
 // Fake plugins dir: the engine, plus an old plugin that still owns two shortcodes.
 $root = WP_PLUGIN_DIR . '/gpacalculator-manager';
@@ -119,7 +85,7 @@ check( 'unknown tag', GPACalc_Shortcodes::render( array(), '', 'nope' ), '' );
 
 // ---- Theme calculator: same handle repointed, extras kept
 reset_page( 10, 'no shortcode' );
-wp_register_style( 'gpa-brand-tokens', 'theme/brand-tokens.css', array(), '1' ); wp_enqueue_style( 'gpa-brand-tokens' );
+wp_register_style( 'gpa-design-tokens', 'theme/gpa-design-tokens.css', array(), '1' ); wp_enqueue_style( 'gpa-design-tokens' );
 wp_register_script( 'grade-calc', 'theme/calc-assets/grade-calculator.js', array( 'jquery' ), '2.9' );
 wp_scripts()->registered['grade-calc']->extra = array( 'group' => 1, 'data' => 'var x=1;' );
 wp_enqueue_script( 'grade-calc' );
@@ -132,7 +98,7 @@ check( 'theme page: deps kept', $s->deps, array( 'jquery' ) );
 check( 'theme page: footer + localize kept', $s->extra, array( 'group' => 1, 'data' => 'var x=1;' ) );
 check( 'theme page: version is filemtime', $s->ver, (string) filemtime( $root . '/assets/calc-assets/grade-calculator.js' ) );
 check( 'theme page: style moved', wp_styles()->registered['grade-calc-css']->src, plugin_url( 'grade-calculator.css' ) );
-check( 'theme page: style depends on brand tokens', wp_styles()->registered['grade-calc-css']->deps, array( 'gpa-brand-tokens' ) );
+check( 'theme page: style depends on design tokens', wp_styles()->registered['grade-calc-css']->deps, array( 'gpa-design-tokens' ) );
 check( 'not-moved calculator keeps theme file', wp_scripts()->registered['hs-gpa']->src, 'theme/calc-assets/hs-gpa.js' );
 reset_page( 11, 'About us' );
 GPACalc_Calculator_Assets::enqueue();

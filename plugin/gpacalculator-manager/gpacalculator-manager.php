@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Grade + GPA
  * Description: Shared university GPA calculators plus the universal international grade conversion engine and reviewed per-country configurations.
- * Version: 0.5.1
+ * Version: 0.6.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: GPAcalculator.net
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'GPCM_VERSION', '0.5.1' );
+define( 'GPCM_VERSION', '0.6.0' );
 define( 'GPCM_CAP', 'gpcm_manage_calculators' );
 define( 'GPCM_PROFILE_OPTION', 'gpcm_university_profiles' );
 define( 'GPCM_SHARED_OPTION', 'gpcm_shared_assets' );
@@ -21,6 +21,9 @@ define( 'GPCM_INTL_PROFILE_OPTION', 'gpcm_international_profiles' );
 define( 'GPCM_INTL_META_OPTION', 'gpcm_international_meta' );
 define( 'GPCM_INTL_SHARED_OPTION', 'gpcm_international_shared_assets' );
 define( 'GPCM_INTL_ENGINE_VERSION', '1.1.0' );
+
+// Calculator engine: theme calculators and the Calculators plugin's shortcodes, served from this plugin.
+require_once __DIR__ . '/includes/bootstrap.php';
 
 function gpcm_activate() {
     $admin = get_role( 'administrator' );

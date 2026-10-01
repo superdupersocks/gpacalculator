@@ -1,7 +1,7 @@
 /************************************************
 Theme Name: GeneratePress Child
 Template: generatepress
-Version: 1.1
+Version: 1.2
 Description: Child theme for GPA Calculator site.
 Typography, colors, and spacing defined in
 gpa-design-tokens.css (source of truth: gpa-homepage.css).
@@ -708,30 +708,30 @@ html body div.gpa-rail {
 }
  
 /* Calculator, tables, media, charts: full 900px */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *, .gpacalc-mount *) {
 	max-width: 100%;
 }
  
 /* Article text: 800px, centred (ad slots are not text, so they keep 900px) */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):not(#root *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):not(#root *, .gpacalc-mount *) {
 	max-width: 800px !important;
 	margin-left: auto !important;
 	margin-right: auto !important;
 }
  
 /* Homepage body typography */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
 	font-size: 20px !important;
 	line-height: 34px !important;
 }
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content p:not(#root *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content p:not(#root *, .gpacalc-mount *) {
 	margin-top: 0 !important;
 	margin-bottom: 24px !important;
 }
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content li:not(#root *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content li:not(#root *, .gpacalc-mount *) {
 	margin-bottom: 10px !important;
 }
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *, .gpacalc-mount *) {
 	margin-top: 64px !important;
 	margin-bottom: 16px !important;
 }
@@ -743,11 +743,11 @@ html body div.gpa-rail {
  
 /* Mobile */
 @media (max-width: 767px) {
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *) {
+	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
 		font-size: 18px !important;
 		line-height: 30px !important;
 	}
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *) {
+	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *, .gpacalc-mount *) {
 		margin-top: 48px !important;
 	}
 	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {

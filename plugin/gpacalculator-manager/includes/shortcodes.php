@@ -1,7 +1,7 @@
 <?php
 /**
- * Shortcodes for every registered calculator, including the old tags from Grades & GPA Plugin
- * and the theme, so Grades & GPA Plugin can be deactivated with no page edits.
+ * Shortcodes for every registered calculator, including every tag the Calculators plugin
+ * (calcs-plugin) served, so it can be deactivated with no page edits.
  *
  * A tag is only taken when no other plugin has registered it, so while an old plugin is
  * still active it keeps serving its own shortcodes. Once it's deactivated, the engine
@@ -62,7 +62,7 @@ if ( ! class_exists( 'GPACalc_Shortcodes' ) ) {
 		/**
 		 * Which plugins still serve shortcodes the engine can take over.
 		 * Returns plugin folder => array( 'covered' => tags, 'missing' => tags ).
-		 * 'covered': the engine has the calculator and its files; 'missing': not ported yet.
+		 * 'covered': the engine can serve the tag (plugin files, original URL or renderer); 'missing': not yet.
 		 */
 		public static function coverage() {
 			global $shortcode_tags;
@@ -76,7 +76,7 @@ if ( ! class_exists( 'GPACalc_Shortcodes' ) ) {
 					continue;
 				}
 				$calc = GPACalc_Registry::for_shortcode( $tag );
-				$key  = ( $calc && GPACalc_Calculator_Assets::is_moved( $calc ) ) ? 'covered' : 'missing';
+				$key  = ( $calc && GPACalc_Calculator_Assets::is_served( $calc ) ) ? 'covered' : 'missing';
 				if ( ! isset( $out[ $plugin ] ) ) {
 					$out[ $plugin ] = array( 'covered' => array(), 'missing' => array() );
 				}
@@ -126,14 +126,14 @@ if ( ! class_exists( 'GPACalc_Shortcodes' ) ) {
 				}
 				if ( $c['missing'] ) {
 					printf(
-						'<div class="notice notice-warning"><p><strong>%s</strong>: GPA Calculator Manager covers %d of its shortcodes. Keep it active until these are ported: %s</p></div>',
+						'<div class="notice notice-warning"><p><strong>%s</strong>: Grade + GPA covers %d of its shortcodes. Keep it active until these are ported: %s</p></div>',
 						esc_html( $plugin ),
 						count( $c['covered'] ),
 						esc_html( '[' . implode( '], [', $c['missing'] ) . ']' )
 					);
 				} else {
 					printf(
-						'<div class="notice notice-success"><p><strong>%s</strong>: all %d of its shortcodes are covered by GPA Calculator Manager. You can deactivate it; no page edits needed.</p></div>',
+						'<div class="notice notice-success"><p><strong>%s</strong>: all %d of its shortcodes are covered by Grade + GPA. You can deactivate it; no page edits needed.</p></div>',
 						esc_html( $plugin ),
 						count( $c['covered'] )
 					);

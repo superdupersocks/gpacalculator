@@ -21,6 +21,9 @@ LOCK = REPO / "shortcodes.lock"
 MANIFEST = REPO / "plugin" / "gpacalculator-manager" / "includes" / "calculators.php"
 ADD = re.compile(r"add_shortcode\s*\(\s*['\"]([^'\"]+)['\"]")
 LEGACY = {"calcs-plugin"}
+# Plugins whose shortcodes the engine serves wholesale through an adapter (it reads the plugin's
+# own saved shortcode list), so every tag they registered counts as served.
+ADAPTERS = {"calcs-plugin": REPO / "plugin" / "gpacalculator-manager" / "includes" / "legacy-calcs-plugin.php"}
 
 
 def php_files(base):
@@ -85,7 +88,8 @@ def main():
         return 0
 
     lock, have = locked(), served()
-    missing = {t: s for t, s in lock.items() if t not in have}
+    adapted = {name for name, f in ADAPTERS.items() if f.exists()}
+    missing = {t: s for t, s in lock.items() if t not in have and s not in adapted}
     hard = {t: s for t, s in missing.items() if s not in LEGACY}
     print(f"shortcodes: {len(lock)} locked, {len(lock) - len(missing)} served by the plugin/theme")
     for t, s in sorted(hard.items()):
@@ -98,7 +102,8 @@ def main():
         if left:
             print(f"  {name}: {len(tags) - len(left)}/{len(tags)} ported; keep it active for " + ", ".join(f"[{t}]" for t in left))
         else:
-            print(f"  {name}: all {len(tags)} shortcodes ported; safe to deactivate")
+            how = " (via its saved shortcode list)" if name in adapted else ""
+            print(f"  {name}: all {len(tags)} shortcodes served by the engine{how}; safe to deactivate once the plugin is live")
     if not lock:
         print("  (lock is empty until the live plugins and theme are imported)")
     return 1 if hard else 0

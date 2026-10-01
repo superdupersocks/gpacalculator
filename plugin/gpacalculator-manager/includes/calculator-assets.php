@@ -11,7 +11,8 @@
  *    at the plugin file. Dependencies, footer placement, localized data and inline scripts stay
  *    attached to the handle, so the page behaves exactly as before.
  *  - If the page uses one of its shortcodes or is one of its page_ids, it is enqueued in <head>.
- *  - If the plugin file doesn't exist yet, nothing is touched and the old file keeps loading.
+ *  - If the plugin file doesn't exist yet, the old file keeps loading: from whoever already
+ *    enqueues it, or from the calculator's original URL (js_src/css_src) when the engine serves it.
  *
  * @package gpacalculator-manager
  */
@@ -23,7 +24,7 @@ if ( ! class_exists( 'GPACalc_Calculator_Assets' ) ) {
 	final class GPACalc_Calculator_Assets {
 
 		const DIR           = 'assets/calc-assets/';
-		const TOKENS_HANDLE = 'gpa-brand-tokens';
+		const TOKENS_HANDLE = 'gpa-design-tokens'; // theme: gpa-design-tokens.css
 
 		/** @var string Any path in the plugin root; plugins_url() only uses its directory. */
 		private static $root_file = '';
@@ -55,6 +56,11 @@ if ( ! class_exists( 'GPACalc_Calculator_Assets' ) ) {
 			return (bool) ( $calc['js'] || $calc['css'] );
 		}
 
+		/** True when the engine can load the calculator: moved, or an original URL to fall back to. */
+		public static function is_served( array $calc ) {
+			return self::is_moved( $calc ) || '' !== $calc['js_src'] || '' !== $calc['css_src'] || is_callable( $calc['render'] );
+		}
+
 		public static function enqueue() {
 			foreach ( GPACalc_Registry::all() as $calc ) {
 				self::load( $calc, self::wanted_here( $calc ) );
@@ -67,35 +73,40 @@ if ( ! class_exists( 'GPACalc_Calculator_Assets' ) ) {
 		}
 
 		private static function load( array $calc, $wanted ) {
-			if ( $calc['js'] ) {
-				self::serve( 'script', $calc['js'], $calc['script_handle'], $wanted );
+			if ( $calc['js'] || $calc['js_src'] ) {
+				self::serve( 'script', $calc['js'], $calc['js_src'], $calc['script_handle'], $wanted );
 			}
-			if ( $calc['css'] ) {
-				self::serve( 'style', $calc['css'], $calc['style_handle'], $wanted );
+			if ( $calc['css'] || $calc['css_src'] ) {
+				self::serve( 'style', $calc['css'], $calc['css_src'], $calc['style_handle'], $wanted );
 			}
 		}
 
 		/**
-		 * Point $handle at the plugin copy of $file. Only touches pages where the handle is
-		 * already enqueued, or where the calculator is wanted.
+		 * Load $handle from the plugin copy of $file when it exists, else from $fallback (the
+		 * calculator's original URL). Only touches pages where the handle is already enqueued, or
+		 * where the calculator is wanted. A handle someone else enqueued is only ever repointed at
+		 * the plugin copy, never at the fallback.
 		 */
-		private static function serve( $kind, $file, $handle, $wanted ) {
-			$path = self::path( $file );
-			if ( ! is_readable( $path ) ) {
-				return; // Not moved yet: the old copy stays in use.
-			}
+		private static function serve( $kind, $file, $fallback, $handle, $wanted ) {
+			$path   = $file ? self::path( $file ) : '';
+			$moved  = $path && is_readable( $path );
 			$deps   = 'script' === $kind ? wp_scripts() : wp_styles();
 			$queued = 'script' === $kind ? wp_script_is( $handle, 'enqueued' ) : wp_style_is( $handle, 'enqueued' );
 			if ( ! $queued && ! $wanted ) {
 				return;
 			}
-			$src = self::url( $file );
-			$ver = (string) filemtime( $path );
+			if ( ! $moved && ( $queued || '' === (string) $fallback ) ) {
+				return; // Not moved yet: whatever already loads it keeps doing so.
+			}
+			$src = $moved ? self::url( $file ) : $fallback;
+			$ver = $moved ? (string) filemtime( $path ) : '1.0.0';
 
 			if ( isset( $deps->registered[ $handle ] ) ) {
-				// Same handle, new source: deps, footer group, localize data and inline code are kept.
-				$deps->registered[ $handle ]->src = $src;
-				$deps->registered[ $handle ]->ver = $ver;
+				if ( $moved ) {
+					// Same handle, new source: deps, footer group, localize data and inline code are kept.
+					$deps->registered[ $handle ]->src = $src;
+					$deps->registered[ $handle ]->ver = $ver;
+				}
 			} elseif ( 'script' === $kind ) {
 				wp_register_script( $handle, $src, array(), $ver, true );
 			} else {

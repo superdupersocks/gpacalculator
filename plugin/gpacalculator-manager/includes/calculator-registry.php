@@ -28,6 +28,8 @@ if ( ! class_exists( 'GPACalc_Registry' ) ) {
 			'source'        => 'new',
 			'js'            => '',
 			'css'           => '',
+			'js_src'        => '',
+			'css_src'       => '',
 			'script_handle' => '',
 			'style_handle'  => '',
 			'shortcodes'    => array(),

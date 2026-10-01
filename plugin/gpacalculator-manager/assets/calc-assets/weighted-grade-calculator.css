@@ -1,0 +1,193 @@
+/* Weighted Grade Calculator v2 — drop-in for calc-assets/weighted-grade-calculator.css
+   All rules are scoped to #root .wgc so theme/ad CSS can't leak in or out. */
+
+/* Kill the 720px reservation for this page (theme sets it with !important).
+   Results only render after input, and user-initiated shifts don't count toward CLS. */
+body.page-id-26311 #root,
+body.page-template-template-calculator #root.wgc-root { min-height: 0 !important; }
+
+#root .wgc {
+  --w-ink: #111827; --w-body: #374151; --w-muted: #6b7280; --w-faint: #9ca3af;
+  --w-line: #e5e7eb; --w-line-2: #eef0f4; --w-bg: #ffffff; --w-soft: #f8f7fc;
+  --w-brand: #7c3aed; --w-brand-2: #4338ca; --w-brand-soft: #f3efff;
+  --w-ok: #16a34a; --w-warn: #d97706; --w-bad: #dc2626;
+  --w-r: 14px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--w-body);
+  max-width: 760px; margin: 0 auto;
+  background: var(--w-bg);
+  border: 1px solid rgba(17,24,39,.06);
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(17,24,39,.04), 0 12px 40px -12px rgba(67,56,202,.25);
+  overflow: hidden;
+  position: relative; z-index: 2;
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+}
+#root .wgc *, #root .wgc *::before, #root .wgc *::after { box-sizing: border-box; }
+#root .wgc button { font-family: inherit; cursor: pointer; line-height: 1.2; text-transform: none; letter-spacing: normal; }
+
+/* ---------- toolbar ---------- */
+#root .wgc-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 20px; border-bottom: 1px solid var(--w-line-2);
+}
+#root .wgc-seg {
+  display: inline-flex; background: #f1f2f6; border-radius: 10px; padding: 3px;
+}
+#root .wgc-seg button {
+  border: 0; background: transparent; color: var(--w-muted);
+  font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 8px; line-height: 1;
+}
+#root .wgc-seg button[aria-pressed="true"] {
+  background: #fff; color: var(--w-ink); box-shadow: 0 1px 3px rgba(17,24,39,.12);
+}
+#root .wgc-link {
+  border: 0; background: none; color: var(--w-muted); font-size: 13px; font-weight: 500;
+  padding: 6px 8px; border-radius: 8px;
+}
+#root .wgc-link:hover { color: var(--w-ink); background: #f5f5f8; }
+
+/* ---------- rows ---------- */
+#root .wgc-body { padding: 8px 20px 4px; }
+#root .wgc-head, #root .wgc-row {
+  display: grid; gap: 10px; align-items: center;
+  grid-template-columns: minmax(0,1fr) 112px 92px 32px;
+}
+#root .wgc.is-points .wgc-head, #root .wgc.is-points .wgc-row {
+  grid-template-columns: minmax(0,1fr) 150px 92px 32px;
+}
+#root .wgc-head {
+  font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase;
+  color: var(--w-faint); padding: 8px 0 6px;
+}
+#root .wgc-row { padding: 5px 0; }
+#root .wgc-field { position: relative; }
+#root .wgc-lbl { display: none; }
+#root .wgc input.wgc-in {
+  width: 100%; height: 44px; margin: 0;
+  border: 1px solid var(--w-line); border-radius: 10px; background: #fff;
+  padding: 0 12px; font: 500 15px/1 Inter, system-ui, sans-serif; color: var(--w-ink);
+  box-shadow: none; outline: none; transition: border-color .15s, box-shadow .15s;
+  -moz-appearance: textfield;
+}
+#root .wgc input.wgc-in::placeholder { color: #b8bcc6; font-weight: 400; opacity: 1; }
+#root .wgc input.wgc-in:hover { border-color: #d1d5db; }
+#root .wgc input.wgc-in:focus { border-color: var(--w-brand); box-shadow: 0 0 0 3px rgba(124,58,237,.15); }
+#root .wgc input.wgc-in.is-num { text-align: right; padding-right: 28px; font-variant-numeric: tabular-nums; }
+#root .wgc input.wgc-in[aria-invalid="true"] { border-color: var(--w-bad); box-shadow: 0 0 0 3px rgba(220,38,38,.12); }
+#root .wgc-suffix {
+  position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; color: var(--w-faint); pointer-events: none;
+}
+#root .wgc-pts { display: flex; align-items: center; gap: 6px; }
+#root .wgc-pts span { color: var(--w-faint); font-size: 14px; }
+#root .wgc-pts input.wgc-in.is-num { padding-right: 10px; text-align: center; }
+#root .wgc-del {
+  width: 32px; height: 32px; border: 0; background: transparent; border-radius: 8px;
+  color: #c3c7cf; display: grid; place-items: center;
+}
+#root .wgc-del:hover { background: #fef2f2; color: var(--w-bad); }
+#root .wgc-del:disabled { visibility: hidden; }
+#root .wgc-add {
+  margin: 6px 0 12px; border: 0; background: none; color: var(--w-brand);
+  font-size: 14px; font-weight: 600; padding: 8px 0; display: inline-flex; align-items: center; gap: 6px;
+}
+#root .wgc-add:hover { color: var(--w-brand-2); }
+
+/* ---------- weight meter ---------- */
+#root .wgc-meter { padding: 0 20px 16px; }
+#root .wgc-meter-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--w-muted); margin-bottom: 6px; }
+#root .wgc-meter-row b { color: var(--w-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+#root .wgc-bar { height: 6px; border-radius: 99px; background: #f0f1f5; overflow: hidden; }
+#root .wgc-bar i { display: block; height: 100%; width: 0; border-radius: 99px;
+  background: linear-gradient(90deg, var(--w-brand), var(--w-brand-2)); transition: width .25s ease; }
+#root .wgc-meter.is-over .wgc-bar i { background: var(--w-bad); }
+#root .wgc-meter.is-over .wgc-meter-row b { color: var(--w-bad); }
+#root .wgc-note { font-size: 13px; color: var(--w-bad); margin-top: 6px; }
+
+/* ---------- results (rendered only when there is data) ---------- */
+#root .wgc-res { border-top: 1px solid var(--w-line-2); background: var(--w-soft); padding: 18px 20px 20px; animation: wgcIn .2s ease; }
+@keyframes wgcIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+#root .wgc-main { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+#root .wgc-score { font: 700 44px/1 Lexend, Inter, sans-serif; color: var(--w-ink); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+#root .wgc-score small { font-size: 22px; font-weight: 600; color: var(--w-muted); margin-left: 2px; }
+#root .wgc-grade {
+  display: inline-flex; align-items: baseline; gap: 8px; padding: 8px 14px; border-radius: 12px;
+  font: 700 22px/1 Lexend, Inter, sans-serif;
+}
+#root .wgc-grade em { font: 500 13px/1 Inter, sans-serif; font-style: normal; opacity: .8; }
+#root .wgc-g-a { background: #dcfce7; color: #166534; }
+#root .wgc-g-b { background: #dbeafe; color: #1e40af; }
+#root .wgc-g-c { background: #fef3c7; color: #92400e; }
+#root .wgc-g-d { background: #ffedd5; color: #9a3412; }
+#root .wgc-g-f { background: #fee2e2; color: #991b1b; }
+#root .wgc-sub { font-size: 14px; color: var(--w-muted); margin: 10px 0 0; line-height: 1.5; }
+#root .wgc-sub b { color: var(--w-ink); font-weight: 600; }
+
+#root .wgc-goal {
+  margin-top: 16px; background: #fff; border: 1px solid var(--w-line); border-radius: var(--w-r); padding: 14px 16px;
+}
+#root .wgc-goal-q { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 14px; font-weight: 600; color: var(--w-ink); }
+#root .wgc-goal-q .wgc-field { width: 92px; }
+#root .wgc-goal-q input.wgc-in { height: 38px; }
+#root .wgc-chips { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+#root .wgc-chip {
+  border: 1px solid var(--w-line); background: #fff; color: var(--w-body);
+  font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 99px; line-height: 1;
+}
+#root .wgc-chip:hover { border-color: var(--w-brand); color: var(--w-brand); }
+#root .wgc-chip[aria-pressed="true"] { background: var(--w-brand-soft); border-color: var(--w-brand); color: var(--w-brand); }
+#root .wgc-goal-a { margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: var(--w-body); }
+#root .wgc-goal-a strong { font: 700 20px/1 Lexend, Inter, sans-serif; color: var(--w-ink); }
+#root .wgc-goal-a.is-bad strong { color: var(--w-bad); }
+#root .wgc-goal-a.is-ok strong { color: var(--w-ok); }
+
+#root .wgc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+#root .wgc-scale summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--w-muted); list-style: none; }
+#root .wgc-scale summary::-webkit-details-marker { display: none; }
+#root .wgc-scale summary::after { content: " ▾"; }
+#root .wgc-scale[open] summary::after { content: " ▴"; }
+#root .wgc-scale-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 16px; margin-top: 10px; font-size: 13px; }
+#root .wgc-scale-grid div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--w-line); font-variant-numeric: tabular-nums; }
+#root .wgc-scale-grid div.is-cur { color: var(--w-brand); font-weight: 700; }
+#root .wgc-copy {
+  border: 1px solid var(--w-line); background: #fff; color: var(--w-ink);
+  font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: 10px;
+}
+#root .wgc-copy:hover { border-color: var(--w-brand); color: var(--w-brand); }
+
+#root .wgc-hint { padding: 0 20px 18px; font-size: 13px; color: var(--w-faint); }
+
+/* ---------- mobile ---------- */
+@media (max-width: 640px) {
+  #root .wgc { border-radius: 16px; }
+  #root .wgc-top, #root .wgc-body, #root .wgc-meter, #root .wgc-res, #root .wgc-hint { padding-left: 14px; padding-right: 14px; }
+  #root .wgc-head { display: none; }
+  #root .wgc-row, #root .wgc.is-points .wgc-row {
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr) 32px;
+    grid-template-areas: "name name del" "grade weight weight";
+    gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--w-line-2);
+  }
+  #root .wgc.is-points .wgc-row { grid-template-areas: "name name del" "grade grade weight"; grid-template-columns: minmax(0,1fr) minmax(0,.55fr) 32px; }
+  #root .wgc-row > .f-name { grid-area: name; }
+  #root .wgc-row > .f-grade { grid-area: grade; }
+  #root .wgc-row > .f-weight { grid-area: weight; }
+  #root .wgc-row > .wgc-del { grid-area: del; }
+  #root .wgc-row { padding: 10px 0; }
+  #root .wgc-lbl {
+    display: block; position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 12px; font-weight: 600; color: var(--w-faint); pointer-events: none; margin: 0;
+  }
+  #root .f-name .wgc-lbl { display: none; }
+  #root .wgc.is-points .f-grade .wgc-lbl { position: static; transform: none; margin: 0 0 4px 2px; }
+  #root .wgc-chip span { display: none; }
+  #root .wgc input.wgc-in { font-size: 16px; } /* prevents iOS zoom */
+  #root .wgc-score { font-size: 38px; }
+  #root .wgc-scale-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Phones: let the card use the full width instead of sitting inside the article's 30px padding */
+@media (max-width: 640px) {
+  body.page-id-26311 #root { margin-left: -16px !important; margin-right: -16px !important; }
+}

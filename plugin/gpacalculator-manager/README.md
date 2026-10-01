@@ -68,3 +68,15 @@ Country academic rules are not hard-coded into the engine. They come from import
 10. Publish by importing the verified JSON with status `published`.
 
 Do not import the Bolt demo country JSON files as production academic data. Production country configs should come from the verified country Pass 4 workflow.
+## Calculator engine (0.6.0)
+
+Grade + GPA also hosts every calculator that used to load from the theme or the Calculators
+plugin (`includes/`, loaded from the main file through `includes/bootstrap.php`):
+
+- It reads the Calculators plugin's saved shortcode list and answers each shortcode with the same
+  markup and script/style handles, loading the file from `assets/calc-assets/` when it is there.
+- While the Calculators plugin is active it keeps its shortcodes and nothing changes. The Plugins
+  screen shows when it is fully covered; deactivate it then. Reactivating it is the rollback.
+- New calculators are entries in `includes/calculators.php`.
+
+See PROJECT.md in the repo for the architecture and rollout.

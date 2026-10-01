@@ -1,4 +1,4 @@
-/* gpacalculator.net calculator core v1.2.0 (lives in the gpacalculator-manager plugin)
+/* gpacalculator.net calculator core v1.3.0 (lives in the gpacalculator-manager plugin)
  * Shared helpers for every calculator: DOM builder, input parsing, grade scale,
  * storage (drafts + named saves), share (URL hash, summary, CSV), GA4 events,
  * count-up, live pill and the standard layout template.
@@ -8,7 +8,7 @@
  * The theme enqueues calculator scripts as type="module", so nothing here touches window.
  */
 
-export const CORE_VERSION = '1.2.0';
+export const CORE_VERSION = '1.3.0';
 
 /* ---------- DOM ---------- */
 

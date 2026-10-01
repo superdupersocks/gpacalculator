@@ -1,22 +1,15 @@
 #!/usr/bin/env bash
-# Build installable zips into dist/.
-# gpacalculator-manager is the one plugin for every calculator (the theme's and Grades & GPA
-# Plugin's calculators merge into it); the theme keeps site design + brand tokens. legacy/ is never shipped.
-#   gpacalculator-manager-core-vX.zip      always: additive files for wp-content/plugins/
-#                                          (calc-assets/core + the engine in includes/)
-#   generatepress-child-tokens-vX.zip      always: additive files for wp-content/themes/
-#                                          (brand-tokens.css + inc/brand-tokens.php)
-#   generatepress-child.zip                once the live theme (style.css + functions.php) is in the repo
-#   gpacalculator-manager.zip              once the live plugin main file is in the repo
-# The full theme/plugin zips replace what's on the site, so they are only built from the
-# imported live source, and only when every shortcode in shortcodes.lock is still registered.
+# Build installable zips into dist/ (upload in WP admin, "Replace current with uploaded"):
+#   gpacalculator-manager-<ver>.zip   the one calculator plugin ("Grade + GPA"), engine included
+#   generatepress-child-<ver>.zip     the child theme (site design + gpa-design-tokens.css)
+# Both are built from the imported live source, and only when every shortcode in
+# shortcodes.lock is still served. legacy/ (the Calculators plugin) is never shipped.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 REPO=$(pwd)
 THEME=child-theme/generatepress-child
 PLUGIN=plugin/gpacalculator-manager
 DIST=$REPO/dist
-VER=$(sed -n "s/^export const CORE_VERSION = '\(.*\)';/\1/p" $PLUGIN/assets/calc-assets/core/calc-core.js)
 
 rm -rf "$DIST" && mkdir -p "$DIST"
 python3 tests/check_shortcodes.py
@@ -26,28 +19,20 @@ if command -v php >/dev/null; then
     < <(find plugin child-theme -name '*.php' -print0)
 fi
 
-(cd plugin && zip -qrX "$DIST/gpacalculator-manager-core-v$VER.zip" \
-   gpacalculator-manager/assets/calc-assets/core \
-   gpacalculator-manager/includes/{bootstrap,calculator-registry,calculator-assets,shortcodes,calculators}.php \
-   -x '*.DS_Store')
-echo "built dist/gpacalculator-manager-core-v$VER.zip"
-(cd child-theme && zip -qrX "$DIST/generatepress-child-tokens-v$VER.zip" \
-   generatepress-child/brand-tokens.css generatepress-child/inc/brand-tokens.php)
-echo "built dist/generatepress-child-tokens-v$VER.zip"
-
 if [[ -f $THEME/style.css && -f $THEME/functions.php ]]; then
-  grep -q "inc/brand-tokens.php" $THEME/functions.php || echo "warning: functions.php doesn't load inc/brand-tokens.php yet"
-  (cd child-theme && zip -qrX "$DIST/generatepress-child.zip" generatepress-child -x '*/README.md' -x '*.DS_Store')
-  echo "built dist/generatepress-child.zip"
+  TVER=$(sed -n 's/^Version: *//p' $THEME/style.css | head -1)
+  (cd child-theme && zip -qrX "$DIST/generatepress-child-$TVER.zip" generatepress-child -x '*/README.md' -x '*.DS_Store' -x '*.zip')
+  echo "built dist/generatepress-child-$TVER.zip"
 else
   echo "skipped generatepress-child.zip: live theme not imported yet (needs style.css + functions.php)"
 fi
 
 if grep -lq "Plugin Name:" $PLUGIN/*.php 2>/dev/null; then
   grep -lq "includes/bootstrap.php" $PLUGIN/*.php || echo "warning: main plugin file doesn't load includes/bootstrap.php yet"
-  (cd plugin && zip -qrX "$DIST/gpacalculator-manager.zip" gpacalculator-manager \
-     -x 'gpacalculator-manager/assets/calc-assets/_starter/*' -x '*/README.md' -x '*.DS_Store')
-  echo "built dist/gpacalculator-manager.zip"
+  PVER=$(sed -n 's/^ \* Version: *//p' $PLUGIN/gpacalculator-manager.php | head -1)
+  (cd plugin && zip -qrX "$DIST/gpacalculator-manager-$PVER.zip" gpacalculator-manager \
+     -x 'gpacalculator-manager/assets/calc-assets/_starter/*' -x '*.DS_Store')
+  echo "built dist/gpacalculator-manager-$PVER.zip"
 else
   echo "skipped gpacalculator-manager.zip: live plugin not imported yet"
 fi

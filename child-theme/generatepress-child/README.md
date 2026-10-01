@@ -1,12 +1,11 @@
 # generatepress-child
 
 The live GeneratePress child theme for gpacalculator.net. The theme owns site design and the
-brand tokens only; calculator JS/CSS lives in the gpacalculator-manager plugin.
+design tokens only; calculator JS/CSS lives in the Grade + GPA plugin (gpacalculator-manager).
 
-- `brand-tokens.css` site-wide `--gpa-*` tokens (brand colors, neutrals, Inter, radius, shadow).
+- `gpa-design-tokens.css` site tokens (`--gpa-*`) and calculator tokens (`--gpa-calc-*`).
   Calculators read them with built-in fallbacks.
-- `inc/brand-tokens.php` enqueues them as `gpa-brand-tokens`; functions.php requires it.
-- `calc-assets/` (imported from the live site) is the legacy calculator location. Each file
-  stays here as a fallback until its plugin copy is verified live, then it's removed.
+- `calc-assets/` is the legacy calculator location. The plugin now carries identical copies and
+  serves them once the Calculators plugin is deactivated; these copies are removed in cleanup.
 
-The rest of the theme is imported from the live site with `scripts/import_live.py`. See PROJECT.md.
+Imported from the live site with `scripts/import_live.py`. See PROJECT.md.

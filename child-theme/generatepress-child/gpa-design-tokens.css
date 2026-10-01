@@ -135,6 +135,22 @@
     --gpa-btn-padding: 12px 24px;
     --gpa-btn-font-size: 16px;
     --gpa-btn-font-weight: 600;
+
+    /* ---- Calculators (gpacalculator-manager plugin) ----
+       Calculator look (Grade Calculator v3 reference build). The plugin's calculator
+       core reads these with built-in fallbacks, and also reads the neutrals above
+       (--gpa-text-body, --gpa-text-muted, --gpa-text-light, --gpa-border,
+       --gpa-border-dark, --gpa-bg-white, --gpa-bg-gray-50, --gpa-radius-md,
+       --gpa-radius-pill). Change a value here to restyle every calculator. */
+    --gpa-calc-brand-1: #7c3aed;
+    --gpa-calc-brand-2: #4f46e5;
+    --gpa-calc-tint: #f5f3ff;
+    --gpa-calc-focus: rgba(124, 58, 237, 0.28);
+    --gpa-calc-ink: #1e1b4b;
+    --gpa-calc-font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --gpa-calc-radius-card: 24px;
+    --gpa-calc-shadow: 0 10px 40px -12px rgba(79, 70, 229, 0.25), 0 2px 6px rgba(30, 27, 75, 0.06);
+    --gpa-calc-shadow-pop: 0 12px 32px -8px rgba(30, 27, 75, 0.3);
 }
 
 /* ============================================
@@ -143,13 +159,14 @@
    inline CSS (font-weight:300; font-size:17px),
    which injects AFTER external stylesheets.
    ============================================ */
-/* GPA_CALC_ISOLATION: #root is the React calculator — let it keep its own
-   font sizing/weight; only the brand font family is inherited. */
+/* GPA_CALC_ISOLATION: #root (page calculators) and .gpacalc-mount (shortcode
+   calculators from the gpacalculator-manager plugin) keep their own font
+   sizing/weight; only the brand font family is inherited. */
 body,
-button:not(#root *),
-input:not(#root *),
-select:not(#root *),
-textarea:not(#root *) {
+button:not(#root *, .gpacalc-mount *),
+input:not(#root *, .gpacalc-mount *),
+select:not(#root *, .gpacalc-mount *),
+textarea:not(#root *, .gpacalc-mount *) {
     font-family: var(--gpa-font) !important;
     font-weight: var(--gpa-body-weight) !important;
     font-size: var(--gpa-body-size) !important;

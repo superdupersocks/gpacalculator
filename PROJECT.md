@@ -1,213 +1,189 @@
 # gpacalculator.net
 
 Feature-rich, easy-to-use calculators for students, delivered through WordPress
-(GeneratePress child theme + the gpacalculator-manager plugin) with plain JS and CSS.
+(GeneratePress child theme + one calculator plugin) with plain JS and CSS.
 
 ## Architecture
 
 **One plugin owns every calculator; the theme owns site design and brand tokens.**
-gpacalculator-manager (also called "Calc Plugin") is the base and already holds the
-homepage, college and high school GPA calculators. It absorbs the theme's calculators and
-Grades & GPA Plugin (country-level grade conversion, university-level GPA calculators, etc.) as
-calculator types on its engine, answering to their old shortcodes, so Grades & GPA Plugin can be
-deactivated with no page edits.
-Calculators read the theme's brand tokens with built-in fallbacks, so they still look right
-if the theme's token file isn't loaded, and a brand change in the theme restyles all of them.
+
+| Piece | Folder | Role |
+| --- | --- | --- |
+| **Grade + GPA** (`gpacalculator-manager`, v0.6.0) | `plugin/gpacalculator-manager/` | The one plugin. Its own calculators (`[gpcm_calculator]` university GPA, `[country_grade]` / `[country_grade_scale]` country conversion) plus the calculator engine, which serves every calculator that used to load from the theme or the Calculators plugin. |
+| **Calculators** (`calcs-plugin`) | `legacy/calcs-plugin/` | Legacy. Its shortcode list (WP admin > Calculators, option `calcs_plugin_shortcodes`) is read by the engine, which answers every one of those shortcodes with identical markup and handles. Deactivate it after rollout; never shipped from this repo. |
+| **GeneratePress Child** (v1.2) | `child-theme/generatepress-child/` | Site design, page templates, `gpa-design-tokens.css`. `calc-assets/` stays as a fallback copy until cleanup. |
+
+Note: the plugin headers say gpacalculator-manager is "Grade + GPA" and calcs-plugin is "Calculators".
+The homepage, college and high school GPA calculators are Calculators-plugin shortcodes whose
+JS/CSS lived in the theme's `calc-assets/`.
 
 ### Repo layout
 
 ```
-child-theme/generatepress-child/       the live child theme (imported from the site)
-  brand-tokens.css                     site-wide --gpa-* tokens (brand, neutrals, Inter, radius, shadow)
-  inc/brand-tokens.php                 enqueues them as 'gpa-brand-tokens' (required from functions.php)
-  calc-assets/                         LEGACY calculator location; files stay as fallbacks until moved
-plugin/gpacalculator-manager/          the one plugin (live plugin imported from the site + the engine)
-  includes/bootstrap.php               loads the engine (one require_once in the main plugin file)
-  includes/calculators.php             manifest: every calculator, its type, files, handles, shortcodes
-  includes/calculator-registry.php     GPACalc_Registry: types, normalized entries, gpacalc_calculators filter
-  includes/calculator-assets.php       serves calculator JS/CSS from the plugin (theme handles kept)
-  includes/shortcodes.php              old + new shortcodes, mount markup, "safe to deactivate" notice
-  assets/calc-assets/                  every calculator's JS + CSS, same filenames as before
-    core/                              shared core, owned by this repo
-      calc-core.css                    layout + components under #root .calc; reads --gpa-* with fallbacks
-      calc-core.js                     ES module: parsing, grade scale, storage, share, GA4, layout
-      course-catalog.js                course levels, weighting bonuses, course list
-    _starter/                          layout template for new calculators (not shipped)
-legacy/grades-gpa-plugin/              Grades & GPA Plugin source, to port from (never shipped)
+child-theme/generatepress-child/       live child theme (imported)
+  gpa-design-tokens.css                site tokens (--gpa-*) + calculator tokens (--gpa-calc-*)
+  calc-assets/                         LEGACY copies; removed in cleanup
+plugin/gpacalculator-manager/          Grade + GPA (live plugin imported + engine)
+  includes/bootstrap.php               loads the engine (one require_once in the main file)
+  includes/calculators.php             manifest: hand-written entries / overrides
+  includes/legacy-calcs-plugin.php     turns the Calculators plugin's saved shortcodes into entries
+  includes/calculator-registry.php     GPACalc_Registry: types, entries, gpacalc_calculators filter
+  includes/calculator-assets.php       serves calculator JS/CSS from the plugin (old handles kept)
+  includes/shortcodes.php              takes free tags, mount markup, "safe to deactivate" notice
+  assets/calc-assets/                  every calculator's JS/CSS/HTML, same filenames as the theme
+    core/                              shared core (calc-core.css/js, course-catalog.js)
+    _starter/                          template for new calculators (not shipped)
+legacy/calcs-plugin/                   Calculators plugin source, for reference + tests (not shipped)
 tests/                                 QA (python3 tests/run_all.py)
-scripts/import_live.py                 pulls uploaded live theme/plugin zips into the repo
+scripts/import_live.py                 pulls uploaded live zips into the repo
 scripts/package.sh                     builds installable zips into dist/
-shortcodes.lock                        every shortcode the site uses, with its source plugin/theme
+shortcodes.lock                        every shortcode the site uses, with its source
 ```
 
-### Calculator engine
+### How a calculator reaches a page
 
-Every calculator is one entry in `includes/calculators.php`:
+**Before:** a page has e.g. `[gpa-calculator]`. The Calculators plugin prints `<div id="root"></div>`
+and enqueues `main-js-gpa-calculator` / `main-css-gpa-calculator` from
+`…/themes/generatepress-child/calc-assets/`. The theme prints `module` tags, cache-busts, and
+prerenders `calc-assets/<name>.html` into the empty `#root`.
+
+**After (Calculators plugin deactivated):** the engine reads the same saved list and, on `init`
+priority 20, registers each tag that no other plugin holds. It prints the same markup
+(`#root` once per page, `#gpa-converter-app`, `#gpa-conversion-app`), enqueues the same handles
+in `<head>`, and points them at the plugin copy when one exists in `assets/calc-assets/`
+(otherwise the original URL). Scripts print as `type="module"`, and calculator CSS depends on
+`gpa-design-tokens`.
+
+**While the Calculators plugin is active**, it keeps its tags and the engine stays out of the way,
+so installing the new plugin changes nothing until you deactivate the old one. Reactivating it is
+the rollback.
+
+New calculators are manifest entries in `includes/calculators.php`:
 
 ```php
 'conversion' => array(
   'title'      => 'Grade Conversion',
   'type'       => 'grade-conversion',   // gpa | university-gpa | grade | grade-conversion | other
-  'source'     => 'grades-gpa-plugin',  // theme | gpacalculator-manager | grades-gpa-plugin | new
+  'source'     => 'new',                // theme | gpacalculator-manager | calcs-plugin | new
   'js'         => 'grade-conversion.js', 'css' => 'grade-conversion.css',   // in assets/calc-assets/
-  'shortcodes' => array( 'old_tag', 'grade_conversion' ),                  // old names kept forever
+  'shortcodes' => array( 'grade_conversion' ),                             // never removed
   'atts'       => array( 'country' => 'us' ),                              // shortcode defaults -> JS
 ),
 ```
 
-How it reaches a page:
+They render `<div class="gpacalc-mount" data-calc="slug" data-atts="{...}">`, mounted with
+`mountsFor(slug)` / `readAtts(el)`. An entry with slug `calcs-<tag>` overrides the one generated
+from the Calculators plugin's list.
 
-1. **Shortcode calculators** (old plugin tags and new ones). On `init` (priority 20, after
-   other plugins) the engine registers each tag *only if no other plugin has it*. While an old
-   plugin is active, it keeps serving its own tags. After it's deactivated, the engine answers the
-   same tags on the next page load. The output is
-   `<div class="gpacalc-mount" data-calc="slug" data-atts="{...}">`, and the calculator JS mounts into
-   it (`mountsFor(slug)`, `readAtts(el)`). An entry can set `render` for server-rendered HTML.
-2. **Theme calculators** (`#root` page templates). The theme keeps enqueueing its handle. At
-   `wp_enqueue_scripts` 999 the loader repoints that same handle's `src` at the plugin file.
-   Deps, footer placement, localized data and inline scripts stay. Theme entries reuse the theme's
-   handles; entries ported from old plugins use `gpacalc-<slug>`, so new JS never loads onto old
-   plugin markup.
-3. If a calculator's files aren't in the plugin yet, nothing changes and the old file keeps loading.
-4. Assets go in `<head>` when the page content has a tag the engine owns, or the page is in
-   `page_ids`. A shortcode in a widget or elsewhere enqueues itself when it renders.
-5. Scripts print as `type="module"`. Calculator CSS starts with `@import url('core/calc-core.css');`,
-   which is scoped to `:is(#root, .gpacalc-mount) .calc` and maps each theme token to a local one
-   with a fallback (`--calc-brand-1: var(--gpa-brand-1, #7c3aed)`). `mountLayout()` builds the shell once.
+**Safe to deactivate?** On the Plugins screen the engine lists, per plugin that registers
+shortcodes, how many it already covers. Green means deactivate with no page edits.
+`tests/check_shortcodes.py` reports the same from the repo.
 
-**Safe to deactivate?** On the Plugins screen the engine shows, for each plugin that registers
-shortcodes, how many of them it already covers (manifest entry + files present). A green notice
-means that plugin can be deactivated with no page edits. `tests/check_shortcodes.py` reports the
-same from the repo, and fails if a theme or gpacalculator-manager shortcode stops being served.
+### Tokens
 
-### Merge plan (after the live files are imported)
+`gpa-design-tokens.css` (theme) is the single source. Site tokens (`--gpa-font`, `--gpa-text-body`,
+`--gpa-text-muted`, `--gpa-border`, `--gpa-bg-*`, `--gpa-radius-*` …) plus a calculator block:
+`--gpa-calc-brand-1/2`, `--gpa-calc-tint`, `--gpa-calc-focus`, `--gpa-calc-ink`, `--gpa-calc-font`,
+`--gpa-calc-radius-card`, `--gpa-calc-shadow`, `--gpa-calc-shadow-pop`.
+`core/calc-core.css` maps each to a local `--calc-*` with a built-in fallback, so calculators
+look right without the theme. Never rename a token; add new ones. Site-content rules use
+`:not(#root *, .gpacalc-mount *)` so they never reach into a calculator.
 
-1. Import everything:
-   `python3 scripts/import_live.py --theme ... --plugin ... --grades-plugin ...`
-   Every shortcode is locked with its source. Add `require_once __DIR__ . '/includes/bootstrap.php';`
-   to the main plugin file and `require_once get_stylesheet_directory() . '/inc/brand-tokens.php';`
-   to functions.php.
-2. Per calculator, one at a time:
-   a. Copy or port its JS/CSS into `assets/calc-assets/` (theme calculators keep their filenames).
-      Old-plugin calculators get rewritten onto the core when they rely on PHP output, with every
-      prefix moved to `gpacalc_`/`GPACalc_` so nothing collides while the old plugin is still active.
-   b. Add the manifest entry with all of its old shortcodes and attributes.
-   c. Switch colors and fonts to brand tokens with fallbacks; port or write its QA suite.
-3. Ship the plugin, purge Cloudflare, check each page. Theme calculators switch to plugin files at once.
-4. When the Plugins screen says an old plugin is fully covered, deactivate it, then re-check its pages.
-5. Later cleanup: remove the theme's calculator enqueues and `calc-assets/` copies.
-
-No page URL or shortcode changes at any step. Only asset file URLs move into the plugin
-folder, and the old files stay reachable until step 5.
-
-### Shared core API (calc-core.js)
+### Shared core API (calc-core.js, v1.3.0)
 
 | Area | Exports |
 | --- | --- |
 | DOM | `h`, `setText` |
 | Parsing | `parseScore` (84, 84%, 42/50, "42 out of 50", B+), `parseNumber`, `round`, `fmtPct`, `fmtNum` |
 | Grades | `STANDARD_SCALE`, `PLAIN_SCALE`, `gradeFor`, `gpaForLetter`, `bandOf`, `nextGrade` |
-| Save | `createStore(key)`: debounced draft autosave flushed on pagehide, named saves, seen flag; safe when storage is blocked |
-| Share | `encodeState`/`decodeState` (UTF-8 base64url), `readHash`, `shareUrl`, `clearHash`, `copyText`, `toCSV`, `downloadCSV` |
+| Save | `createStore(key)`: debounced draft autosave, named saves, seen flag; safe when storage is blocked |
+| Share | `encodeState`/`decodeState`, `readHash`, `shareUrl`, `clearHash`, `copyText`, `toCSV`, `downloadCSV` |
 | Analytics | `createTracker(prefix)`: GA4 `prefix_event`, once per page view unless repeatable |
-| Layout | `mountLayout`, `createResultHero` (count-up score, ring, F to A scale), `createLivePill`, `createMenu`, `createToast`, `enterToNext`, `wireSavesAndShare` |
+| Mounts | `mountsFor`, `readAtts` |
+| Layout | `mountLayout`, `createResultHero`, `createLivePill`, `createMenu`, `createToast`, `enterToNext`, `wireSavesAndShare` |
 
-Course catalog: `LEVELS` (Regular 0, Honors +0.5, AP/IB/Dual Enrollment +1.0),
-`COURSES` (core subjects with Honors variants, 40 AP and 18 IB courses), `guessLevel`,
-`searchCourses`, `weightedPoints` (no bonus on an F by default; bonuses overridable),
-`courseDatalist`.
-
-### Tokens
-
-Theme (`brand-tokens.css`, on `:root`): `--gpa-brand-1/2`, `--gpa-tint`, `--gpa-focus`,
-`--gpa-ink`, `--gpa-text`, `--gpa-muted`, `--gpa-faint`, `--gpa-line`, `--gpa-line-strong`,
-`--gpa-surface`, `--gpa-surface-2`, `--gpa-font`, `--gpa-radius-card`, `--gpa-radius`,
-`--gpa-radius-pill`, `--gpa-shadow`, `--gpa-shadow-pop`. Never rename one; add new ones.
-
-Calculator-only (in `calc-core.css`): letter grade colors, control sizes, motion.
+Course catalog: `LEVELS` (Regular 0, Honors +0.5, AP/IB/Dual Enrollment +1.0), `COURSES`,
+`guessLevel`, `searchCourses`, `weightedPoints`, `courseDatalist`.
 
 ### House rules
 
 - Plain JS, no frameworks, nothing on `window`. ES modules.
-- Every calculator lives in gpacalculator-manager as a manifest entry. The theme gets no
-  calculator code, and no new plugins.
-- CSS scoped under `#root .calc` plus a unique prefix per calculator (`.gcx`, `.hsg`, ...).
-  Brand values only through `--gpa-*` tokens with fallbacks.
-- 800px max width, Inter, no hero inside the calculator, no outer bottom margin.
+- Every calculator lives in Grade + GPA. The theme gets no calculator code; no new plugins.
+- CSS scoped under `:is(#root, .gpacalc-mount) .calc` plus a unique prefix per calculator.
+  Brand values only through tokens with fallbacks.
+- 800px max width, no hero inside the calculator, no outer bottom margin.
 - Results are live; storage behind try/catch with a unique key per calculator.
-- Every calculator ships a Playwright math suite in `tests/<name>_qa.py` with expected
-  values computed in Python. 100% passing before delivery.
-- Never remove or rename a shortcode or page URL. `shortcodes.lock` + `tests/check_shortcodes.py`
-  enforce shortcodes.
+- Every calculator ships a Playwright math suite with expected values computed in Python,
+  100% passing before delivery.
+- Never remove or rename a shortcode or page URL (`shortcodes.lock` + `check_shortcodes.py`).
+
+## Rollout
+
+1. Upload `gpacalculator-manager-0.6.0.zip` (Replace current). Nothing changes while Calculators is active.
+2. Upload `generatepress-child-1.2.zip` (Replace current). Adds the `--gpa-calc-*` tokens.
+3. Plugins screen: the Grade + GPA notice should say Calculators is fully covered.
+4. Purge Cloudflare, deactivate **Calculators**, check the calculator pages. Rollback = reactivate it.
+5. Later cleanup: delete theme `calc-assets/`, the Calculators plugin, and move the theme's
+   prerender and `main-js` module filter into the plugin.
 
 ## Workflow
 
-1. **Import live files** (first time, and whenever the site was edited outside the repo):
-   `python3 scripts/import_live.py --theme <zip> --plugin <zip> --grades-plugin <zip>`
-   (see Merge plan for the two `require_once` lines).
+1. **Import live files** (whenever the site was edited outside the repo):
+   `python3 scripts/import_live.py --theme <zip> --plugin <zip> --calcs-plugin <zip>`
 2. **QA**: `npm install && pip install -r tests/requirements.txt && python3 tests/run_all.py`
-   (CI runs the same on every PR): shortcode guard, core suite, PHP engine tests.
-3. **Package**: `bash scripts/package.sh` builds `dist/`. Full theme and plugin zips are only
-   built from imported live source and only when no locked shortcode is missing.
-4. **Install**: plugin/theme zip via WordPress upload ("Replace current with uploaded"), or
-   upload the additive zips' files over FTP/file manager. Then purge the Cloudflare cache.
+   (shortcode guard, core suite, calculator smoke suite, PHP engine + legacy tests).
+3. **Package**: `bash scripts/package.sh` builds full theme and plugin zips in `dist/`.
+4. **Install**: WordPress upload ("Replace current with uploaded"), then purge Cloudflare.
 
 ## Calculator status
 
-| Calculator | Comes from | In repo | Served by engine | Uses core | QA suite |
-| --- | --- | --- | --- | --- | --- |
-| High School GPA v2.9 | Theme | Waiting on live files | Not yet | Not yet | To port |
-| Grade Calculator v3 (reference build) | Theme | Waiting on live files | Not yet | Not yet | To port (12 cases + validation) |
-| Homepage GPA calculator | gpacalculator-manager | Waiting on upload | Not yet | Not yet | To write |
-| College GPA calculator | gpacalculator-manager | Waiting on upload | Not yet | Not yet | To write |
-| High school GPA calculator | gpacalculator-manager | Waiting on upload | Not yet | Not yet | To write |
-| Country grade conversion | Grades & GPA Plugin | Waiting on upload | Not yet | Not yet | To write |
-| University GPA calculators | Grades & GPA Plugin | Waiting on upload | Not yet | Not yet | To write |
-| Starter template | New (not shipped) | Yes | Yes | Yes | `core_qa.py`, 121 checks |
+Calculators-plugin shortcodes are DB-defined, so the exact tag per calculator is confirmed from its
+Export Settings JSON. All 11 below are in the plugin, byte-identical to live, and pass the mount smoke test.
 
-The full list (and each one's shortcodes) gets filled in from the imported source.
-The theme and gpacalculator-manager both have a high school GPA calculator: decide whether they merge into
-one calculator type with both shortcodes, once both sources are in.
+| Calculator file | Type | Served by engine | Uses core | Math QA |
+| --- | --- | --- | --- | --- |
+| gpa-calculator (homepage, + prerender) | gpa | Yes, after Calculators is off | No | To port |
+| college-gpa-calculator (+ prerender) | gpa | Yes | No | To write |
+| high-school-gpa-calculator (v2.9) | gpa | Yes | No | To port |
+| high-school-gpa-calc | gpa | Yes | No | To write |
+| middle-school-gpa-calculator | gpa | Yes | No | To write |
+| raise-gpa-calculator | gpa | Yes | No | To write |
+| sgpa-to-cgpa-calculator | university-gpa | Yes | No | To write |
+| grade-calculator | grade | Yes | No | To port |
+| final-grade-calculator | grade | Yes | No | To write |
+| semester-grade-calculator | grade | Yes | No | To write |
+| weighted-grade-calculator | grade | Yes | No | To write |
+| `[gpa-scale]`, `[gpa_conversion]` (external JS) | grade-conversion | Yes, original URLs | No | To write |
+| `[gpcm_calculator]`, `[country_grade]`, `[country_grade_scale]` | university-gpa / grade-conversion | Native Grade + GPA | No | To write |
+| Starter template | — | Yes | Yes | `core_qa.py` |
 
 ## Open items
 
-- Import the live child theme, gpacalculator-manager ("Calc Plugin") and Grades & GPA Plugin (the build
-  environment can't reach gpacalculator.net, and PHP isn't served over HTTP). Then follow the merge plan.
-- Reconcile the live theme's existing tokens file with `brand-tokens.css` (same values, `--gpa-*` names).
-- Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves
-  onto the core, so live results don't change.
+- Calculators plugin Export Settings JSON, to lock its exact shortcode list in `shortcodes.lock`.
+- Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
+- `calc-assets/formidable-pro-6.35.zip` sits in the public theme folder on the live server (licensed plugin); delete it there. It is excluded from the repo.
+- Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
 
 ## Changelog
 
-### 2026-10-01: Calc Plugin clarified
-- Calc Plugin is gpacalculator-manager itself, so the merge is gpacalculator-manager
-  absorbing the theme's calculators and Grades & GPA Plugin. Dropped the separate calc-plugin import.
+### 2026-10-01: merge (plugin 0.6.0, theme 1.2, core 1.3.0)
+- Imported the live theme, Grade + GPA (gpacalculator-manager) and Calculators (calcs-plugin) as-is.
+- Grade + GPA loads the engine. `legacy-calcs-plugin.php` serves every Calculators-plugin shortcode
+  from its saved settings with identical markup and handles, so Calculators can be deactivated with no page edits.
+- All 11 theme calculators copied into `assets/calc-assets/`; served from there once the engine owns the tag.
+- Tokens: dropped the separate `brand-tokens.css`; calculator tokens now live in `gpa-design-tokens.css`
+  (`--gpa-calc-*`), and core maps site neutrals and the font from the existing `--gpa-*` tokens.
+- Packaging builds full plugin and theme zips. QA adds `calculators_qa.py` and `legacy_calcs_test.php`
+  (runs the real Calculators plugin side by side with the engine).
 
 ### 2026-10-01: core v1.2.0
-- One plugin: gpacalculator-manager gets a calculator engine (`includes/`): manifest, registry with
-  calculator types, asset loader, and shortcodes that take over Grades & GPA Plugin
-  tags once those plugins are deactivated. The Plugins screen shows which plugins are safe to deactivate.
-- Core mounts into shortcode output too (`mountsFor`, `readAtts`; CSS scoped to `:is(#root, .gpacalc-mount)`).
-- `shortcodes.lock` records each shortcode's source; the guard reports per-plugin port progress.
-- `import_live.py` takes `--grades-plugin` into `legacy/`.
-- QA: core 121/121 (shortcode mounts added), PHP engine 32/32.
+- Calculator engine (`includes/`): manifest, registry with types, asset loader, shortcodes that take
+  over old plugin tags once those plugins are deactivated; Plugins-screen coverage notice.
+- Core mounts into shortcode output (`mountsFor`, `readAtts`; CSS scoped to `:is(#root, .gpacalc-mount)`).
 
 ### 2026-10-01: core v1.1.0
-- Calculators moved to the plugin: core and starter now live in
-  `plugin/gpacalculator-manager/assets/calc-assets/`.
-- Theme keeps site design and brand tokens only: `brand-tokens.css` (`--gpa-*`) plus
-  `inc/brand-tokens.php`. Core reads every brand token with a built-in fallback.
-- Plugin asset loader (`includes/calculator-assets.php`): serves calculators under the theme's
-  existing handles, falls back to the theme file when not moved, loads by shortcode/page ID,
-  prints module tags. PHP tests: 16/16.
-- QA: token tests (with theme tokens, without them, brand override): core suite 115/115.
-- Packaging: additive plugin-core and theme-tokens zips; full zips warn until the
-  `require_once` lines are in.
+- Core and starter moved into the plugin; theme keeps design and tokens only. Plugin asset loader.
 
 ### 2026-10-01: core v1.0.0
-- Repo set up with `plugin/` and `child-theme/`.
-- Shared core: tokens, layout template, save/share, GA4 tracker, course catalog.
-- Starter calculator template wired to the core.
-- Playwright QA harness (local server, local Inter, live-page routing, page-error capture)
-  and core suite: 110/110 passing.
-- Shortcode guard, import script, packaging script, CI workflow.
+- Repo set up with `plugin/` and `child-theme/`; shared core, starter template, Playwright harness,
+  shortcode guard, import and packaging scripts, CI workflow.

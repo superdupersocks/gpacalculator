@@ -22,13 +22,13 @@
   window.dataLayer = [];
   window.gtag = function (cmd, name, params) { if (cmd === 'event') window.__events.push(name); };
 </script>
-<link rel="stylesheet" id="tokens" href="/child-theme/generatepress-child/brand-tokens.css">
+<link rel="stylesheet" id="tokens" href="/child-theme/generatepress-child/gpa-design-tokens.css">
 <script>
   // ?tokens=off drops the theme's brand tokens (fallback test); ?brand=<color> overrides one.
   (function () {
     var q = new URLSearchParams(location.search);
     if (q.get('tokens') === 'off') document.getElementById('tokens').remove();
-    if (q.get('brand')) document.documentElement.style.setProperty('--gpa-brand-1', q.get('brand'));
+    if (q.get('brand')) document.documentElement.style.setProperty('--gpa-calc-brand-1', q.get('brand'));
   })();
 </script>
 <link rel="stylesheet" href="/plugin/gpacalculator-manager/assets/calc-assets/_starter/starter.css">

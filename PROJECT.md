@@ -192,9 +192,6 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - Eight /gpa-scale/ pages (3.6, 2.7, 2.5, 2.2, 2.1, 1.7–1.5, 1.3) keep some pasted-in `<div>` wrappers or nested lists as
   Custom HTML blocks. On the ones whose FAQ sits inside those wrappers, the theme can't build FAQ schema.
   Unwrapping them into normal blocks would fix that.
-- /gpa-scale/3-5 … 3-9-gpa/ still have two sentences in their Freshman/Sophomore paragraphs pointing to
-  "our search tool in the next section" to check admission chances. Edit them in the post content, or leave them until the
-  new college tool ships.
 - The 189 trashed `colleges` posts are not exported; empty the trash or restore deliberately.
 - Country configs (`gpcm_international_profiles`) and any uploaded shared JS/CSS (`gpcm_shared_assets`)
   still live only in the site database.
@@ -203,6 +200,16 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog
+
+### 2026-10-01: /gpa-scale/ content fixes, prev/next links, Updated date (live)
+- After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-content.sql.gz`), `scripts/build_content_pass.py`:
+  64 sentences that pointed at the removed college search rewritten to link the GPA calculator (homepage) or the Raise
+  GPA calculator (/how-to-raise-gpa/); the first "national average 3.0" mention cites the NAEP High School Transcript
+  Study (3.11 for the class of 2019); weighted-GPA note after the table on 3.5-3.9 and 4.0 (links the Weighted GPA
+  calculator); 4.0's empty Rank Math FAQ block turned into headings + paragraphs; 3.9 got its FAQ H2; pasted `<div>`
+  FAQs and nested lists unwrapped into normal blocks (no Custom HTML blocks left). FAQPage schema now on 30 of 31 pages.
+- Theme: "Updated <date>" under the hero intro and prev / next / "All GPA scale pages" links at the end of every
+  /gpa-scale/<x-x>-gpa/ page (`gpa_scale_updated_date()`, `gpa_scale_page_nav()`).
 
 ### 2026-10-01: /gpa-scale/ Rank Math titles and descriptions (live)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-meta.sql.gz`), the 31 pages got the titles and descriptions

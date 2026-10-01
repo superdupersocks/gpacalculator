@@ -3319,3 +3319,62 @@ function gpa_scale_table_mark_rows( $html, $block ) {
 		$html
 	);
 }
+
+/**
+ * /gpa-scale/<x-x>-gpa/ pages: "Updated <date>" under the hero intro, and prev / next links to the
+ * neighbouring GPA pages plus the /gpa-scale/ hub at the end of the content.
+ */
+function gpa_scale_page_gpa() {
+	if ( ! is_page() ) {
+		return null;
+	}
+	$post = get_queried_object();
+	if ( ! $post instanceof WP_Post || ! preg_match( '#^([0-4])-([0-9])-gpa$#', $post->post_name, $m ) ) {
+		return null;
+	}
+	$parent = $post->post_parent ? get_post( $post->post_parent ) : null;
+	if ( ! $parent || 'gpa-scale' !== $parent->post_name ) {
+		return null;
+	}
+	return array( (int) $m[1] * 10 + (int) $m[2], $parent );
+}
+
+add_action( 'generate_after_page_title', 'gpa_scale_updated_date', 20 );
+function gpa_scale_updated_date() {
+	if ( ! gpa_scale_page_gpa() ) {
+		return;
+	}
+	printf(
+		'<p class="gpa-updated">Updated <time datetime="%s">%s</time></p>',
+		esc_attr( get_the_modified_date( 'c' ) ),
+		esc_html( get_the_modified_date( 'F j, Y' ) )
+	);
+}
+
+add_filter( 'the_content', 'gpa_scale_page_nav', 20 );
+function gpa_scale_page_nav( $content ) {
+	if ( ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	$found = gpa_scale_page_gpa();
+	if ( ! $found ) {
+		return $content;
+	}
+	list( $tenths, $hub ) = $found;
+	$link = function ( $t, $label_fmt ) use ( $hub ) {
+		if ( $t < 10 || $t > 40 ) {
+			return '';
+		}
+		$slug = intdiv( $t, 10 ) . '-' . ( $t % 10 ) . '-gpa';
+		$page = get_page_by_path( $hub->post_name . '/' . $slug );
+		if ( ! $page || 'publish' !== $page->post_status ) {
+			return '';
+		}
+		$gpa = sprintf( '%d.%d', intdiv( $t, 10 ), $t % 10 );
+		return sprintf( $label_fmt, esc_url( get_permalink( $page ) ), esc_html( $gpa ) );
+	};
+	$prev = $link( $tenths - 1, '<a class="gpa-scale-nav__prev" href="%1$s" rel="prev"><span aria-hidden="true">&larr;</span> %2$s GPA</a>' );
+	$next = $link( $tenths + 1, '<a class="gpa-scale-nav__next" href="%1$s" rel="next">%2$s GPA <span aria-hidden="true">&rarr;</span></a>' );
+	$hub_link = sprintf( '<a class="gpa-scale-nav__hub" href="%s">All GPA scale pages</a>', esc_url( get_permalink( $hub ) ) );
+	return $content . '<nav class="gpa-scale-nav" aria-label="Other GPA values">' . $prev . $hub_link . $next . '</nav>';
+}

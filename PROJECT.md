@@ -174,16 +174,24 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | `[gpcm_calculator id="…"]` on 88 `/college-gpa-calculator/` pages: 87 university profiles (`tests/fixtures/gpcm-university-profiles.tsv`) | university-gpa | Native Grade + GPA | No | Per-profile QA on the site; `gpcm_profiles_test.php` checks each id renders |
 | `[country_grade]`, `[country_grade_scale]` | grade-conversion | Native Grade + GPA | No | To write |
 | Starter template | — | Yes | Yes | `core_qa.py` |
-| `[CollegeDB gpa="…"]` on 31 `/gpa-scale/` pages | other | Theme placeholder (prints nothing) | No | To rebuild from Scorecard/CDS data |
+| College list on the 31 `/gpa-scale/` pages (was `[CollegeDB gpa="…"]`) | other | Removed from the pages; `[CollegeDB]` placeholder still registered | No | To rebuild from Scorecard/CDS data |
 
 ## Open issues
 
 - **CollegeDB retired (2026-10-01):** deactivated after a full database backup. `[CollegeDB]` and `[CollegeDB_full]`
-  now print nothing (child theme placeholders). The 31 /gpa-scale/ tables get rebuilt from Scorecard/CDS data after the
+  now print nothing (child theme placeholders, kept as a safety net). The 31 /gpa-scale/ pages no longer contain the
+  shortcode or its "admission chances" section (removed in the block conversion). The tables get rebuilt from Scorecard/CDS data after the
   admissions import, not from the old CollegeDB table. UniversityTemplate deactivated too. That closes CollegeDB's
   logged-out `cdb_change_url` rewrite and UniversityTemplate's `?update_universities` meta rewrite.
   Rollback: reactivate the plugins; the pre-change backup is `~/backups/gpacalculator-2026-10-01-pre-collegedb.sql.gz`
   on the server (copy in `~/gpacalculator-backups/` on Digant's Mac), never in the repo.
+- /gpa-scale/3-8-gpa/: the caption now says 90-92% / A-, but the chart image `3.8-GPA-870x1024.png` may still say
+  93% / A. Check the image text by eye.
+- /gpa-scale/4-0-gpa/: its Rank Math FAQ block renders nothing (the block has no saved question data), so the
+  4.0 FAQ never shows and there is no FAQ schema. Re-save the FAQ in the editor or turn it into headings + paragraphs.
+- Eight /gpa-scale/ pages (3.6, 2.7, 2.5, 2.2, 2.1, 1.7–1.5, 1.3) keep some pasted-in `<div>` wrappers or nested lists as
+  Custom HTML blocks. On the ones whose FAQ sits inside those wrappers, the theme can't build FAQ schema.
+  Unwrapping them into normal blocks would fix that.
 - /gpa-scale/3-5 … 3-9-gpa/ still have two sentences in their Freshman/Sophomore paragraphs pointing to
   "our search tool in the next section" to check admission chances. Edit them in the post content, or leave them until the
   new college tool ships.
@@ -195,6 +203,21 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog
+
+### 2026-10-01: /gpa-scale/ pages converted to blocks, with intros
+- After a fresh DB backup (`~/backups/gpacalculator-2026-10-01-pre-blocks.sql.gz`), `scripts/build_gpa_scale_convert.py`
+  converted the 30 Classic pages to paragraph/heading/list blocks (Custom HTML for pasted wrappers and the 3.8 caption).
+  Each page only saved after its new blocks rendered the same as the old content minus the removed section.
+- Each page opens with an intro paragraph (`content/gpa-scale-intros.md`), which the content-page hero shows under the H1.
+- The "admission chances" section and `[CollegeDB]` are removed from all 31 pages (4.0 was already blocks).
+- Body fixes to match the site scale: 3.8 caption 90-92% / A-, 3.5 89–90% / B+/A-, 1.8 72% / C-.
+- `wp_update_post()` from WP-CLI rejected the `gpa-content-page` template *after* writing the content, so it skipped
+  revisions. Two revisions (old, new) were then added per page, so each page can be restored from the editor.
+  The script now registers that template first.
+- The theme's hide-section filter is removed (repo and live); the `[CollegeDB]` placeholder stays.
+- Side effect: the theme's heading-based FAQ schema now finds the answers (they're real `<p>` blocks now), so most
+  pages gained FAQPage schema. Checked: all 31 pages + homepage + `[gpcm_calculator]` + /admissions/ page (200, intro in
+  the hero, no leftover section).
 
 ### 2026-10-01: hide the closing "admission chances" section while [CollegeDB] is empty
 - Child theme `the_content` filter (priority 9), active only while `[CollegeDB]` is the empty placeholder. On the

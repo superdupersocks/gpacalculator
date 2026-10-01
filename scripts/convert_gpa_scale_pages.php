@@ -12,7 +12,42 @@
  * GPC_SAVE = true saves passing pages with wp_update_post (a revision keeps the old content).
  */
 
-// Filled in by the build script: GPC_SAVE, $intros (slug => text), $fixes (slug => [from => to]), $hide (closure).
+// Filled in by the build script: GPC_SAVE, $intros (slug => text), $fixes (slug => [from => to]).
+
+// The retired closing section: the "Your Admission Chances" / "List of Colleges" / "Colleges likely to accept"
+// heading(s) above [CollegeDB] and the lead-in promising the admissions calculator. Same logic as the theme filter
+// that hid it on the live pages until this conversion removed it (2026-10-01).
+$hide = function ( $content ) {
+	global $shortcode_tags;
+	$at = strpos( $content, '[CollegeDB' );
+	if ( false === $at || ! isset( $shortcode_tags['CollegeDB'] ) || '__return_empty_string' !== $shortcode_tags['CollegeDB'] ) {
+		return $content;
+	}
+	// Keep the block/paragraph wrapper the shortcode sits in, so the markup stays balanced.
+	$before = substr( $content, 0, $at );
+	if ( preg_match( '#(?:<!--\s*wp:(?:paragraph|shortcode)\b[^>]*-->\s*)?(?:<p>\s*)?$#i', $before, $wrap ) ) {
+		$at -= strlen( $wrap[0] );
+		$before = substr( $content, 0, $at );
+	}
+	if ( ! preg_match_all( '#(?:<!--\s*wp:heading\b[^>]*-->\s*)?<h([1-6])\b[^>]*>(.*?)</h\1>#is', $before, $heads, PREG_SET_ORDER | PREG_OFFSET_CAPTURE ) ) {
+		return $content;
+	}
+	$start = $at;
+	foreach ( array_reverse( $heads ) as $h ) {
+		if ( ! preg_match( '#admission chances|list of colleges|colleges likely to accept#i', wp_strip_all_tags( $h[2][0] ) ) ) {
+			break;
+		}
+		$start = $h[0][1];
+	}
+	// Some pages put an FAQ between that lead-in section and the last heading: drop any earlier
+	// "Admission Chances" section that promises the admissions calculator, up to the next heading.
+	$kept = preg_replace(
+		'#(?:<!--\s*wp:heading\b[^>]*-->\s*)?<h([1-6])\b[^>]*>(?:(?!</h\1>).)*?admission chances(?:(?!</h\1>).)*</h\1>(?:(?!<h[1-6]\b|<!--\s*wp:heading\b).)*?admissions calculator(?:(?!<h[1-6]\b|<!--\s*wp:heading\b).)*#is',
+		'',
+		substr( $content, 0, $start )
+	);
+	return ( null === $kept ? substr( $content, 0, $start ) : $kept ) . substr( $content, $at );
+};
 
 function gpc_block( $name, $html, $attrs = array() ) {
 	$json = $attrs ? ' ' . wp_json_encode( $attrs, JSON_UNESCAPED_SLASHES ) : '';
@@ -146,6 +181,9 @@ function gpc_render( $content ) {
 
 if ( GPC_SAVE ) {
 	kses_remove_filters(); // content is ours; keep block comments and inline styles exactly
+	// The pages use the 'gpa-content-page' template, which WP-CLI's theme template list doesn't include;
+	// without this wp_update_post() saves the content but returns 'Invalid page template' before revisions.
+	add_filter( 'theme_page_templates', function ( $t ) { return $t + array( 'gpa-content-page' => 'GPA content page' ); } );
 }
 global $wpdb;
 $rows = $wpdb->get_results( "SELECT ID, post_name, post_content FROM {$wpdb->posts} WHERE post_type='page' AND post_status='publish' AND post_content LIKE '%[CollegeDB %' ORDER BY post_name DESC" );

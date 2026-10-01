@@ -137,8 +137,9 @@ Course catalog: `LEVELS` (Regular 0, Honors +0.5, AP/IB/Dual Enrollment +1.0), `
 
 ## Calculator status
 
-Calculators-plugin shortcodes are DB-defined, so the exact tag per calculator is confirmed from its
-Export Settings JSON. All 11 below are in the plugin, byte-identical to live, and pass the mount smoke test.
+Calculators-plugin shortcodes are DB-defined; the live list is saved in
+`tests/fixtures/calcs-plugin-export.json` (from Export Settings) and locked. All 11 files below are in
+the plugin, byte-identical to live, and pass the mount smoke test.
 
 | Calculator file | Type | Served by engine | Uses core | Math QA |
 | --- | --- | --- | --- | --- |
@@ -151,7 +152,7 @@ Export Settings JSON. All 11 below are in the plugin, byte-identical to live, an
 | sgpa-to-cgpa-calculator | university-gpa | Yes | No | To write |
 | grade-calculator | grade | Yes | No | To port |
 | final-grade-calculator | grade | Yes | No | To write |
-| semester-grade-calculator | grade | Yes | No | To write |
+| semester-grade-calculator (`[semester-grade-calculator]` and `[semester-gpa-calculator]`) | grade | Yes | No | To write |
 | weighted-grade-calculator | grade | Yes | No | To write |
 | `[gpa-scale]`, `[gpa_conversion]` (external JS) | grade-conversion | Yes, original URLs | No | To write |
 | `[gpcm_calculator]`, `[country_grade]`, `[country_grade_scale]` | university-gpa / grade-conversion | Native Grade + GPA | No | To write |
@@ -159,12 +160,15 @@ Export Settings JSON. All 11 below are in the plugin, byte-identical to live, an
 
 ## Open items
 
-- Calculators plugin Export Settings JSON, to lock its exact shortcode list in `shortcodes.lock`.
 - Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
 - `calc-assets/formidable-pro-6.35.zip` sits in the public theme folder on the live server (licensed plugin); delete it there. It is excluded from the repo.
 - Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
 
 ## Changelog
+
+### 2026-10-01: Calculators shortcodes locked
+- Locked the 12 shortcodes from the Calculators plugin's Export Settings (20 locked in total).
+  `check_shortcodes.py` and `legacy_calcs_test.php` check every exported shortcode has its plugin copy.
 
 ### 2026-10-01: merge (plugin 0.6.0, theme 1.2, core 1.3.0)
 - Imported the live theme, Grade + GPA (gpacalculator-manager) and Calculators (calcs-plugin) as-is.

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "grade calculator",
+    "shortcode": "[grade-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/grade-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/grade-calculator.js"
+  },
+  {
+    "name": "final grade calculator",
+    "shortcode": "[final-grade-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/final-grade-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/final-grade-calculator.js"
+  },
+  {
+    "name": "semester grade calculator",
+    "shortcode": "[semester-grade-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/semester-grade-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/semester-grade-calculator.js"
+  },
+  {
+    "name": "weighted grade calculator",
+    "shortcode": "[weighted-grade-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/weighted-grade-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/weighted-grade-calculator.js"
+  },
+  {
+    "name": "sgpa to cgpa calculator",
+    "shortcode": "[sgpa-to-cgpa-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/sgpa-to-cgpa-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/sgpa-to-cgpa-calculator.js"
+  },
+  {
+    "name": "high school gpa calculator",
+    "shortcode": "[high-school-gpa-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/high-school-gpa-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/high-school-gpa-calculator.js"
+  },
+  {
+    "name": "raise gpa calculator",
+    "shortcode": "[raise-gpa-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/raise-gpa-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/raise-gpa-calculator.js"
+  },
+  {
+    "name": "middle school gpa calculator",
+    "shortcode": "[middle-school-gpa-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/middle-school-gpa-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/middle-school-gpa-calculator.js"
+  },
+  {
+    "name": "semester gpa calculator",
+    "shortcode": "[semester-gpa-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/semester-grade-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/semester-grade-calculator.js"
+  },
+  {
+    "name": "High School GPA Calc",
+    "shortcode": "[high-school-gpa-calc]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/high-school-gpa-calc.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/high-school-gpa-calc.js"
+  },
+  {
+    "name": "GPA Calculator",
+    "shortcode": "[gpa-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/gpa-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/gpa-calculator.js"
+  },
+  {
+    "name": "College GPA Calculator",
+    "shortcode": "[college-gpa-calculator]",
+    "css_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/college-gpa-calculator.css",
+    "js_path": "https://gpacalculator.net/wp-content/themes/generatepress-child/calc-assets/college-gpa-calculator.js"
+  }
+]

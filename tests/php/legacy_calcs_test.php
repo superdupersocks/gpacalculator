@@ -124,5 +124,18 @@ $GLOBALS['filters']['gpacalc_calculators'] = function ( $list ) {
 };
 check( 'filter can adjust a saved entry', GPACalc_Registry::get( 'calcs-gpa-scale' )['title'], 'GPA Scale (manifest)' );
 
+// The live site's saved list (Export Settings), shortcodes saved with brackets.
+unset( $GLOBALS['filters']['gpacalc_calculators'] );
+$GLOBALS['options']['calcs_plugin_shortcodes'] = json_decode( file_get_contents( $repo . '/tests/fixtures/calcs-plugin-export.json' ), true );
+GPACalc_Registry::reset();
+$live = GPACalc_Registry::all();
+check( 'live export: one calculator per shortcode', count( $live ), 12 );
+check( 'live export: brackets stripped', GPACalc_Registry::for_shortcode( 'semester-gpa-calculator' )['js'], 'semester-grade-calculator.js' );
+$unmoved = array();
+foreach ( $live as $slug => $c ) {
+	if ( ! GPACalc_Calculator_Assets::is_moved( $c ) ) { $unmoved[] = $slug; }
+}
+check( 'live export: every calculator has its plugin copy', $unmoved, array() );
+
 echo "legacy_calcs_test: $pass/" . ( $pass + $fail ) . " passed\n";
 exit( $fail ? 1 : 0 );

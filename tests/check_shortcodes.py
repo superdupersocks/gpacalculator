@@ -12,6 +12,7 @@ calculator manifest (plugin/gpacalculator-manager/includes/calculators.php).
 
 --update adds new shortcodes found in plugin/, child-theme/ and legacy/ (never removes any).
 """
+import json
 import re
 import sys
 from pathlib import Path
@@ -24,6 +25,9 @@ LEGACY = {"calcs-plugin"}
 # Plugins whose shortcodes the engine serves wholesale through an adapter (it reads the plugin's
 # own saved shortcode list), so every tag they registered counts as served.
 ADAPTERS = {"calcs-plugin": REPO / "plugin" / "gpacalculator-manager" / "includes" / "legacy-calcs-plugin.php"}
+# The Calculators plugin's Export Settings output from the live site (its saved shortcode list).
+CALCS_EXPORT = REPO / "tests" / "fixtures" / "calcs-plugin-export.json"
+CALC_ASSETS = REPO / "plugin" / "gpacalculator-manager" / "assets" / "calc-assets"
 
 
 def php_files(base):
@@ -104,9 +108,31 @@ def main():
         else:
             how = " (via its saved shortcode list)" if name in adapted else ""
             print(f"  {name}: all {len(tags)} shortcodes served by the engine{how}; safe to deactivate once the plugin is live")
+    hard.update(check_export(lock))
     if not lock:
         print("  (lock is empty until the live plugins and theme are imported)")
     return 1 if hard else 0
+
+
+def check_export(lock):
+    """Every exported Calculators-plugin shortcode is locked, and each calc-assets file it loads
+    has a plugin copy (otherwise it would keep loading from the theme after deactivation)."""
+    if not CALCS_EXPORT.exists():
+        return {}
+    bad = {}
+    entries = json.loads(CALCS_EXPORT.read_text())
+    for e in entries:
+        tag = e["shortcode"].strip(" []")
+        if tag not in lock:
+            print(f"  NOT LOCKED [{tag}] (Calculators plugin export)")
+            bad[tag] = "calcs-plugin"
+        for key in ("js_path", "css_path"):
+            m = re.search(r"/calc-assets/([A-Za-z0-9._-]+\.(?:js|css))(?:[?#]|$)", e.get(key, ""))
+            if m and not (CALC_ASSETS / m.group(1)).is_file():
+                print(f"  [{tag}]: {m.group(1)} has no plugin copy")
+                bad[tag] = "calcs-plugin"
+    print(f"  calcs-plugin export: {len(entries)} shortcodes, all locked with plugin copies" if not bad else "")
+    return bad
 
 
 if __name__ == "__main__":

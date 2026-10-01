@@ -1,10 +1,22 @@
 # Shortcodes used on gpacalculator.net, with the code that registered them.
 # Never remove a line. See tests/check_shortcodes.py.
-gpa-scale            # calcs-plugin
-gpa_conversion       # calcs-plugin
-country_grade        # gpacalculator-manager
-country_grade_scale  # gpacalculator-manager
-gpcm_calculator      # gpacalculator-manager
-gpa_ad               # theme
-gpa_college_archive  # theme
-gpa_table            # theme
+college-gpa-calculator        # calcs-plugin
+final-grade-calculator        # calcs-plugin
+gpa-calculator                # calcs-plugin
+gpa-scale                     # calcs-plugin
+gpa_conversion                # calcs-plugin
+grade-calculator              # calcs-plugin
+high-school-gpa-calc          # calcs-plugin
+high-school-gpa-calculator    # calcs-plugin
+middle-school-gpa-calculator  # calcs-plugin
+raise-gpa-calculator          # calcs-plugin
+semester-gpa-calculator       # calcs-plugin
+semester-grade-calculator     # calcs-plugin
+sgpa-to-cgpa-calculator       # calcs-plugin
+weighted-grade-calculator     # calcs-plugin
+country_grade                 # gpacalculator-manager
+country_grade_scale           # gpacalculator-manager
+gpcm_calculator               # gpacalculator-manager
+gpa_ad                        # theme
+gpa_college_archive           # theme
+gpa_table                     # theme

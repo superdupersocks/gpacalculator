@@ -178,6 +178,10 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Open issues
 
+- Rank Math > General > Links: "Open external links in new window" is on, so citation links open in a new tab; Digant's
+  rule is same-tab. Turning it off changes every external link on the site; awaiting his call.
+- Internal Link Juicer keywords: the Weighted GPA calculator page (/weighted-gpa-calculator/) has none.
+
 - **CollegeDB retired (2026-10-01):** deactivated after a full database backup. `[CollegeDB]` and `[CollegeDB_full]`
   now print nothing (child theme placeholders, kept as a safety net). The 31 /gpa-scale/ pages no longer contain the
   shortcode or its "admission chances" section (removed in the block conversion). The tables get rebuilt from Scorecard/CDS data after the
@@ -198,6 +202,17 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog
+
+### 2026-10-01: /gpa-scale/ FAQs rewritten and restyled, internal link dedupe (live)
+- After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-faq.sql.gz`), `scripts/wp/gpa_scale_pass6.php`: every page's Rank
+  Math FAQ replaced with 6 questions from `content/gpa-scale-faqs.json` (`scripts/build_gpa_scale_faqs.py`: common query
+  patterns per GPA, answers use the page's own figures, no stats and no links); internal links deduped to one per
+  URL per page body (18 removed on 8 pages, `content/gpa-scale-link-changes.md`).
+- Theme CSS: FAQ cards (blue left accent, "Q" marker), overriding the older static FAQ rules.
+- Internal Link Juicer: every GPA page already has its keyword ("3.8 GPA" …) and the hub has "gpa scale".
+  The free ILJ version doesn't account for manual links (its existing-link check is empty), but after the dedupe no
+  page body links any URL twice. Rank Math's "Open external links in new window" adds target=_blank to the NAEP
+  link site-wide (left as is, pending Digant).
 
 ### 2026-10-01: /gpa-scale/ quote, Rank Math FAQ, template, hub links (live)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-pass5.sql.gz`), `scripts/wp/gpa_scale_pass5.php` on all 31 pages:

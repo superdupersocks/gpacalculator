@@ -1287,3 +1287,71 @@ body.gpa-hero-band .entry-header .gpa-updated {
     .content-page .entry-content .gpa-scale-nav__hub { grid-column: 1 / -1; grid-row: 2; }
     .content-page .entry-content .gpa-scale-nav__next { grid-column: 2; }
 }
+
+/* ==========================================================================
+   FAQ (Rank Math FAQ block): cards with a "Q" marker and a blue accent; answers stay in the HTML.
+   Overrides the older "FAQ cards, still static" rules above (same selectors + #rank-math-faq).
+   ========================================================================== */
+.content-page .entry-content #rank-math-faq .rank-math-list {
+    display: grid;
+    gap: 14px;
+    margin: 8px 0 32px !important;
+    padding: 0 !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-list-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--gpa-bg-white, #fff) !important;
+    border: 1px solid var(--gpa-border, #E5E7EB) !important;
+    border-left: 4px solid var(--gpa-primary, #2563EB) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, .04);
+    transition: box-shadow .15s ease;
+}
+.content-page .entry-content #rank-math-faq .rank-math-list-item:hover {
+    box-shadow: 0 8px 22px rgba(37, 99, 235, .09);
+}
+.content-page .entry-content #rank-math-faq .rank-math-question {
+    position: relative;
+    display: block !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 18px 24px 8px 62px !important;
+    font-size: 19px !important;
+    line-height: 1.4 !important;
+    color: var(--gpa-text-heading, #111827) !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-question::before {
+    content: "Q";
+    position: absolute;
+    left: 20px;
+    top: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gpa-band-b-bg, #EFF6FF);
+    color: var(--gpa-primary, #2563EB);
+    font-size: 15px;
+    font-weight: 700;
+}
+.content-page .entry-content #rank-math-faq .rank-math-answer {
+    margin: 0 !important;
+    padding: 0 24px 20px 62px !important;
+    border-top: none !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-answer,
+.content-page .entry-content #rank-math-faq .rank-math-answer p {
+    font-size: 16px !important;
+    line-height: 1.7 !important;
+    color: var(--gpa-text-body, #374151) !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-answer p { margin: 0 !important; padding: 0 !important; }
+.content-page .entry-content #rank-math-faq .rank-math-answer p + p { margin-top: 10px !important; }
+@media (max-width: 768px) {
+    .content-page .entry-content #rank-math-faq .rank-math-question { padding: 16px 16px 6px 54px !important; font-size: 17px !important; }
+    .content-page .entry-content #rank-math-faq .rank-math-question::before { left: 14px; top: 14px; width: 28px; height: 28px; }
+    .content-page .entry-content #rank-math-faq .rank-math-answer { padding: 0 16px 16px 54px !important; }
+}

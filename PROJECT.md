@@ -185,8 +185,6 @@ the plugin, byte-identical to live, and pass the mount smoke test.
   logged-out `cdb_change_url` rewrite and UniversityTemplate's `?update_universities` meta rewrite.
   Rollback: reactivate the plugins; the pre-change backup is `~/backups/gpacalculator-2026-10-01-pre-collegedb.sql.gz`
   on the server (copy in `~/gpacalculator-backups/` on Digant's Mac), never in the repo.
-- /gpa-scale/3-8-gpa/: the caption now says 90-92% / A-, but the chart image `3.8-GPA-870x1024.png` may still say
-  93% / A. Check the image text by eye.
 - /gpa-scale/4-0-gpa/: its Rank Math FAQ block renders nothing (the block has no saved question data), so the
   4.0 FAQ never shows and there is no FAQ schema. Re-save the FAQ in the editor or turn it into headings + paragraphs.
 - Eight /gpa-scale/ pages (3.6, 2.7, 2.5, 2.2, 2.1, 1.7–1.5, 1.3) keep some pasted-in `<div>` wrappers or nested lists as
@@ -200,6 +198,13 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog
+
+### 2026-10-01: /gpa-scale/ one-structure rewrite (live, 30 pages)
+- After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-rewrite.sql.gz`), the drafts in `content/gpa-scale-rewrite/`
+  were saved (revisions kept; each page saved only if unchanged since the drafts were built). Structure: intro, quick facts,
+  scale table, "Is a X GPA good?", "What a X GPA means for college", "How to raise a X GPA" (classes-needed table +
+  Raise GPA calculator), FAQ. 4.0 left as is. Wrong statements in the 2.x / 1.x year notes replaced; 2.2 FAQ grade and
+  1.1 cut-off FAQ answer fixed. All 31 pages checked live; FAQPage schema on 30.
 
 ### 2026-10-01: /gpa-scale/ content fixes, prev/next links, Updated date (live)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-content.sql.gz`), `scripts/build_content_pass.py`:

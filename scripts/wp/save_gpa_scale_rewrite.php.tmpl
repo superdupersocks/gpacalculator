@@ -1,0 +1,23 @@
+<?php
+$pages = json_decode( base64_decode( '<<base64 of {slug: {md5, html}} from content/gpa-scale-rewrite/>>' ), true );
+$save  = in_array( 'save', $args ?? array(), true ) || getenv( 'GPC_SAVE' ) === '1';
+kses_remove_filters();
+add_filter( 'theme_page_templates', function ( $t ) { return $t + array( 'gpa-content-page' => 'GPA content page' ); } );
+global $wpdb; $ok = 0;
+foreach ( $pages as $slug => $d ) {
+	$row = $wpdb->get_row( $wpdb->prepare( "SELECT ID, post_content FROM {$wpdb->posts} WHERE post_type='page' AND post_status='publish' AND post_name=%s", $slug ) );
+	if ( ! $row ) { echo "$slug: not found\n"; continue; }
+	if ( md5( $row->post_content ) !== $d['md5'] ) { echo "$slug: SKIP changed since snapshot\n"; continue; }
+	$blocks = array_filter( parse_blocks( $d['html'] ), function ( $b ) { return ! empty( $b['blockName'] ); } );
+	$names = array_count_values( array_map( function ( $b ) { return $b['blockName']; }, $blocks ) );
+	$html = apply_filters( 'the_content', $d['html'] );
+	$checks = ( strpos( $html, 'gpa-scale-table' ) !== false ) && ( stripos( $html, 'Frequently asked questions' ) !== false ) && empty( $names['core/html'] ) && strpos( $html, 'how-to-raise-gpa' ) !== false;
+	printf( "%-8s %s blocks=%d\n", $slug, $checks ? 'OK' : 'CHECK FAILED', count( $blocks ) );
+	if ( ! $checks ) { continue; }
+	$ok++;
+	if ( $save ) {
+		$r = wp_update_post( array( 'ID' => (int) $row->ID, 'post_content' => wp_slash( $d['html'] ) ), true );
+		echo is_wp_error( $r ) ? "  SAVE FAILED: " . $r->get_error_message() . "\n" : "  saved\n";
+	}
+}
+echo "$ok/" . count( $pages ) . ( $save ? " saved\n" : " pass (dry run)\n" );

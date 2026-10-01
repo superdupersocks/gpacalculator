@@ -144,6 +144,9 @@ Course catalog: `LEVELS` (Regular 0, Honors +0.5, AP/IB/Dual Enrollment +1.0), `
 
 ## Workflow
 
+Live-site rules and the log of every live change: `docs/LIVE_CHANGELOG.md`. Theme deploys: `scripts/deploy_theme.sh <commit>`.
+
+
 1. **Import live files** (whenever the site was edited outside the repo):
    `python3 scripts/import_live.py --theme <zip> --plugin <zip> --calcs-plugin <zip>`
 2. **QA**: `npm install && pip install -r tests/requirements.txt && python3 tests/run_all.py`
@@ -178,9 +181,8 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Open issues
 
-- Rank Math > General > Links: "Open external links in new window" is on, so citation links open in a new tab; Digant's
-  rule is same-tab. Turning it off changes every external link on the site; awaiting his call.
-- Internal Link Juicer keywords: the Weighted GPA calculator page (/weighted-gpa-calculator/) has none.
+- Live theme = repo theme minus the unreleased 1.2 edits. Ship 1.2 (or drop it) via `scripts/deploy_theme.sh` so
+  live and repo match; every live change is logged in `docs/LIVE_CHANGELOG.md`.
 
 - **CollegeDB retired (2026-10-01):** deactivated after a full database backup. `[CollegeDB]` and `[CollegeDB_full]`
   now print nothing (child theme placeholders, kept as a safety net). The 31 /gpa-scale/ pages no longer contain the

@@ -19,16 +19,46 @@ perm="$(stat -f '%Lp' "$ENV_FILE" 2>/dev/null || stat -c '%a' "$ENV_FILE")"
 case "$(cd "$(dirname "$ENV_FILE")" && pwd -P)" in
   "$(cd "$(dirname "$0")/.." && pwd -P)"*) echo "Credentials file must be outside the repo"; exit 1 ;;
 esac
+# Format checks (values are never printed): TextEdit can save smart quotes, CRLF or rich text.
+python3 - "$ENV_FILE" <<'PY' || exit 1
+import re, sys
+raw = open(sys.argv[1], "rb").read()
+problems = []
+if raw.startswith(b"{\\rtf"): problems.append("file is rich text (RTF): in TextEdit use Format > Make Plain Text, then save")
+if b"\r" in raw: problems.append("file has Windows/Mac line endings (CR)")
+text = raw.decode("utf-8", "replace")
+if any(c in text for c in "\u201c\u201d\u2018\u2019"): problems.append("file has curly quotes; use straight quotes or none")
+for name in ("CLOUDWAYS_EMAIL", "CLOUDWAYS_API_KEY"):
+    m = re.search(r"^\s*(export\s+)?" + name + r"(\s*)=(\s*)(.*)$", text, re.M)
+    if not m: problems.append(f"{name}= line not found"); continue
+    if m.group(2) or m.group(3): problems.append(f"{name}: remove spaces around '='")
+    v = m.group(4).strip().strip('"').strip("'")
+    if not v: problems.append(f"{name} is empty")
+    elif v != v.strip(): problems.append(f"{name} has spaces at the start or end")
+    if name == "CLOUDWAYS_EMAIL" and v and "@" not in v: problems.append("CLOUDWAYS_EMAIL doesn't look like an email address")
+if problems:
+    print("Fix the credentials file:"); [print(" -", p) for p in problems]; sys.exit(1)
+PY
 # shellcheck disable=SC1090
 source "$ENV_FILE"
 : "${CLOUDWAYS_EMAIL:?missing in $ENV_FILE}" "${CLOUDWAYS_API_KEY:?missing in $ENV_FILE}"
 
 json() { python3 -c "import json,sys; d=json.load(sys.stdin); print($1)"; }
 
-TOKEN="$(curl -sS -X POST "$API/oauth/access_token" \
-  --data-urlencode "email=$CLOUDWAYS_EMAIL" --data-urlencode "api_key=$CLOUDWAYS_API_KEY" | json "d.get('access_token','')")"
+LOGIN="$(curl -sS -X POST "$API/oauth/access_token" \
+  --data-urlencode "email=$CLOUDWAYS_EMAIL" --data-urlencode "api_key=$CLOUDWAYS_API_KEY" -w '\n%{http_code}')"
 unset CLOUDWAYS_API_KEY
-[[ -n "$TOKEN" ]] || { echo "Cloudways login failed (check the email and API key in $ENV_FILE)"; exit 1; }
+CODE="${LOGIN##*$'\n'}"; BODY="${LOGIN%$'\n'*}"
+TOKEN="$(echo "$BODY" | json "d.get('access_token','')" 2>/dev/null || true)"
+if [[ -z "$TOKEN" ]]; then
+  MSG="$(echo "$BODY" | python3 -c "import json,sys
+try:
+    d=json.load(sys.stdin); print(d.get('error_description') or d.get('message') or d.get('error') or '')
+except Exception: print(sys.stdin.read()[:200])" 2>/dev/null)"
+  echo "Cloudways login failed (HTTP $CODE): ${MSG:-no message}"
+  echo "Check CLOUDWAYS_EMAIL is your Cloudways login email and CLOUDWAYS_API_KEY is the key from Cloudways > Account > API Integration."
+  exit 1
+fi
 AUTH=(-H "Authorization: Bearer $TOKEN")
 
 SERVER_ID="$(curl -sS "${AUTH[@]}" "$API/server" | json "next((s['id'] for s in d.get('servers',[]) if s.get('public_ip')=='$SERVER_IP'),'')")"

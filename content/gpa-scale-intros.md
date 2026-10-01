@@ -53,8 +53,8 @@ pages themselves use. Pages marked ⚠ disagree with that scale or with themselv
 - **1.8** says "73% or a C- letter grade". On the site scale 73% is a C. Change it to "72% or C-" (as drafted).
 - **3.9** says "94% or A", while the 4.0 page puts a 4.0 at 93–95%, so a 3.9 reads as high as a 4.0. A minor issue:
   consider "about 93%". The draft keeps the page's 94% so the two don't disagree.
-- **1.1** has a stray "1.0 total GPA is equal to a 'D'" line; the page is about 1.1. Worth a look.
-- Not a conflict: 1.2, 1.1 and 1.0 give only a percentage ("on percentile scale"); the letters come from the site scale.
+- Checked and fine: 1.1 ("from a possible 4.0 total GPA is equal to a 'D'") and 1.2–1.0, which state both % and letter.
+- **3.8** image: the caption is fixed, but the chart image (`3.8-GPA-870x1024.png`) may also say 93%/A. Check it by eye.
 
 ## Block conversion plan (not done yet)
 

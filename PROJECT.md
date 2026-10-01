@@ -160,8 +160,12 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | `[country_grade]`, `[country_grade_scale]` | grade-conversion | Native Grade + GPA | No | To write |
 | Starter template | — | Yes | Yes | `core_qa.py` |
 
-## Open items
+## Open issues
 
+- **Not in the repo yet:** the UniversityTemplate plugin, the CollegeDB.disabled plugin (active despite
+  its name; what it renders is still to be confirmed), and the `/admissions/` college records with their
+  custom fields (planned for `data/colleges/`). They come off the server over SSH
+  (`master_rfzfmbbwze@67.205.161.226`, app `xwnzegvpyy`), which the cloud build environment can't reach.
 - Country configs (`gpcm_international_profiles`) and any uploaded shared JS/CSS (`gpcm_shared_assets`)
   still live only in the site database.
 - Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
@@ -169,6 +173,11 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
 
 ## Changelog
+
+### 2026-10-01: live database cleanup (done on the site, not in code)
+- `gpcm_university_profiles` set to autoload = no, so the 420 KB of profile rules no longer load on every request.
+  Grade + GPA still reads it with `get_option()` when a `[gpcm_calculator]` renders.
+- Deleted leftover options from removed plugins: Digg Digg, Thesis, Jetpack, Autoptimize.
 
 ### 2026-10-01: university profiles in the repo
 - The 86 database profiles are exported into `data/gpcm-university-profiles/` (`scripts/split_profiles.py`

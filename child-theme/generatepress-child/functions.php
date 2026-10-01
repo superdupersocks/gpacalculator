@@ -2615,6 +2615,10 @@ function gpa_heading_faq_schema( $data, $jsonld ) {
 	if ( ! $post || '' === trim( $post->post_content ) ) {
 		return $data;
 	}
+	// Pages with a Rank Math FAQ block get their FAQPage from Rank Math; never output a second one.
+	if ( has_block( 'rank-math/faq-block', $post ) ) {
+		return $data;
+	}
 
 	$items = gpa_heading_faq_items( $post->post_content );
 	if ( count( $items ) < 2 ) {

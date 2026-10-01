@@ -199,6 +199,16 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Changelog
 
+### 2026-10-01: /gpa-scale/ quote, Rank Math FAQ, template, hub links (live)
+- After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-pass5.sql.gz`), `scripts/wp/gpa_scale_pass5.php` on all 31 pages:
+  quick facts wrapped in a quote block (as Digant did on 3.6) followed by a lead-in sentence before the scale table;
+  at most one external link per page (the NAEP source, below the first H2); each FAQ section converted to a Rank
+  Math FAQ block (152 questions); template set to `page-templates/template-content.php` ("GPA – Content Page") on
+  the 30 pages that had the unregistered `gpa-content-page` value.
+- Theme: `gpa_heading_faq_schema()` skips pages with a Rank Math FAQ block, so each page outputs exactly one FAQPage.
+- Hub /gpa-scale/: the Grade points values in its scale table link to the 4.0 … 1.0 pages (11 links,
+  `scripts/wp/gpa_scale_hub_links.php`).
+
 ### 2026-10-01: /gpa-scale/ one-structure rewrite (live, 30 pages)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-rewrite.sql.gz`), the drafts in `content/gpa-scale-rewrite/`
   were saved (revisions kept; each page saved only if unchanged since the drafts were built). Structure: intro, quick facts,

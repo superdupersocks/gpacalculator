@@ -11,8 +11,8 @@ Feature-rich, easy-to-use calculators for students, delivered through WordPress
 | --- | --- | --- |
 | **Grade + GPA** (`gpacalculator-manager`, v0.6.0) | `plugin/gpacalculator-manager/` | The one plugin. Its own calculators (`[gpcm_calculator]` university GPA, `[country_grade]` / `[country_grade_scale]` country conversion) plus the calculator engine, which serves every calculator that used to load from the theme or the Calculators plugin. |
 | **Calculators** (`calcs-plugin`) | `legacy/calcs-plugin/` | Legacy. Its shortcode list (WP admin > Calculators, option `calcs_plugin_shortcodes`) is read by the engine, which answers every one of those shortcodes with identical markup and handles. Deactivate it after rollout; never shipped from this repo. |
-| **CollegeDB** (`CollegeDB.disabled`, active) | `legacy/CollegeDB.disabled/` | Legacy, not shipped. Registers `[CollegeDB gpa="x.x"]` (on the 31 `/gpa-scale/<x-x>-gpa/` pages) and `[CollegeDB_full]` (unused), an AngularJS table over the `gpa_college_db` table (1,529 rows). Still needed until those pages are rebuilt; see Open issues. |
-| **University Template** (`UniversityTemplate`, active) | `legacy/UniversityTemplate/` | Legacy, not shipped. Registers `[UniversityTemplate]`, which no post or meta uses. Safe to deactivate. |
+| **CollegeDB** (`CollegeDB.disabled`, deactivated 2026-10-01) | `legacy/CollegeDB.disabled/` | Legacy, not shipped. Registered `[CollegeDB gpa="x.x"]` (on the 31 `/gpa-scale/<x-x>-gpa/` pages) and `[CollegeDB_full]` (unused), an AngularJS table over the `gpa_college_db` table (1,529 rows, kept in the database). The child theme now answers both tags with an empty placeholder. |
+| **University Template** (`UniversityTemplate`, deactivated 2026-10-01) | `legacy/UniversityTemplate/` | Legacy, not shipped. Registered `[UniversityTemplate]`, which no post, meta, option or theme file used. |
 | **GeneratePress Child** (v1.2) | `child-theme/generatepress-child/` | Site design, page templates, `gpa-design-tokens.css`. `calc-assets/` stays as a fallback copy until cleanup. |
 
 The `/admissions/` college pages are the theme's `colleges` post type (`functions.php`,
@@ -171,37 +171,35 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | semester-grade-calculator (`[semester-grade-calculator]` and `[semester-gpa-calculator]`) | grade | Yes | No | To write |
 | weighted-grade-calculator | grade | Yes | No | To write |
 | `[gpa-scale]`, `[gpa_conversion]` (external JS) | grade-conversion | Yes, original URLs | No | To write |
-| `[gpcm_calculator id="…"]`: 87 university profiles (`tests/fixtures/gpcm-university-profiles.tsv`) | university-gpa | Native Grade + GPA | No | Per-profile QA on the site; `gpcm_profiles_test.php` checks each id renders |
+| `[gpcm_calculator id="…"]` on 88 `/college-gpa-calculator/` pages: 87 university profiles (`tests/fixtures/gpcm-university-profiles.tsv`) | university-gpa | Native Grade + GPA | No | Per-profile QA on the site; `gpcm_profiles_test.php` checks each id renders |
 | `[country_grade]`, `[country_grade_scale]` | grade-conversion | Native Grade + GPA | No | To write |
 | Starter template | — | Yes | Yes | `core_qa.py` |
-| `[CollegeDB gpa="…"]` on 31 `/gpa-scale/` pages (CollegeDB plugin) | other | No | No | Broken live (see Open issues); to rebuild |
+| `[CollegeDB gpa="…"]` on 31 `/gpa-scale/` pages | other | Theme placeholder (prints nothing) | No | To rebuild from Scorecard/CDS data |
 
 ## Open issues
 
 - **CollegeDB retired (2026-10-01):** deactivated after a full database backup. `[CollegeDB]` and `[CollegeDB_full]`
   now print nothing (child theme placeholders). The 31 /gpa-scale/ tables get rebuilt from Scorecard/CDS data after the
-  admissions import, not from the old CollegeDB table. UniversityTemplate deactivated too.
-- **31 GPA pages show a broken college table.** `/gpa-scale/4-0-gpa/` … `/gpa-scale/1-0-gpa/` contain
-  `[CollegeDB gpa="x.x"]`. The plugin prints its AngularJS template, but the theme's
-  `gpa_dequeue_legacy_scripts()` removes Angular and its CSS, so visitors see an empty filter form and a
-  literal `{{entry.school}}` row. Fix: rebuild it as an engine calculator (or render the theme's
-  `colleges` grid filtered by GPA) under the same `[CollegeDB]` tag, then deactivate CollegeDB.
-- **CollegeDB security (live now).** `wp_ajax_nopriv_cdb_change_url` lets anyone, logged out, rewrite the
-  `url` of any row in `gpa_college_db` (the links on those 31 pages). The search handler builds SQL from
-  `$_POST` with `addslashes` only, and the admin CSV upload has no nonce and drops and recreates the table.
-  Deactivating the plugin closes all three; until the pages are rebuilt, at least remove the nopriv action.
-- **University Template** runs `update_stuff()` on every request: any visitor adding `?update_universities`
-  makes it rewrite Yoast meta for every post by author 29. The shortcode is unused, so deactivate it.
-- `wp-content/plugins/CollegeDB/` holds only a `.gitignore` (leftover folder); delete it.
+  admissions import, not from the old CollegeDB table. UniversityTemplate deactivated too. That closes CollegeDB's
+  logged-out `cdb_change_url` rewrite and UniversityTemplate's `?update_universities` meta rewrite.
+  Rollback: reactivate the plugins; the pre-change backup is `~/backups/gpacalculator-2026-10-01-pre-collegedb.sql.gz`
+  on the server (copy in `~/gpacalculator-backups/` on Digant's Mac), never in the repo.
 - The 189 trashed `colleges` posts are not exported; empty the trash or restore deliberately.
 - Country configs (`gpcm_international_profiles`) and any uploaded shared JS/CSS (`gpcm_shared_assets`)
   still live only in the site database.
 - Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
-- `calc-assets/formidable-pro-6.35.zip` sits in the public theme folder on the live server (licensed plugin); delete it there. It is excluded from the repo.
 - Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog
+
+### 2026-10-01: CollegeDB and University Template retired on the live site
+- Database backed up first (20 MB gzip, outside the web root and copied off the server); live `functions.php` saved alongside.
+- Live child theme `functions.php` got the `[CollegeDB]` placeholder block (linted; live = import + that block only).
+- Deactivated `CollegeDB.disabled` and `UniversityTemplate`; deleted the empty `wp-content/plugins/CollegeDB/` folder.
+  `formidable-pro-6.35.zip` was already gone from the theme. Breeze + Varnish purged; Cloudflare bypasses HTML, no purge needed.
+- Checked after the change: all 31 `/gpa-scale/` pages return 200 with no `[CollegeDB` or `{{entry`, and all 88
+  `[gpcm_calculator]` pages return 200 with `data-gpcm-profile-id`.
 
 ### 2026-10-01: theme 1.2 adds CollegeDB placeholders
 - `[CollegeDB]` / `[CollegeDB_full]` print nothing when the CollegeDB plugin is off (same snippet applied to the live theme).

@@ -3269,3 +3269,17 @@ add_action( 'wp_footer', function () {
 </script>
 	<?php
 }, 30 );
+
+/**
+ * CollegeDB placeholders. The CollegeDB plugin is retired; its [CollegeDB gpa="x.x"] tables on the
+ * /gpa-scale/ pages will be rebuilt from Scorecard/CDS data. Until then these tags print nothing,
+ * so no page shows raw shortcode text. Only registered when the plugin isn't active.
+ */
+add_action( 'init', function () {
+	if ( ! shortcode_exists( 'CollegeDB' ) ) {
+		add_shortcode( 'CollegeDB', '__return_empty_string' );
+	}
+	if ( ! shortcode_exists( 'CollegeDB_full' ) ) {
+		add_shortcode( 'CollegeDB_full', '__return_empty_string' );
+	}
+}, 20 );

@@ -178,10 +178,9 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Open issues
 
-- **Security hotfix ready, not installed:** `mu-plugins/gpacalc-security-hotfix.php` blocks CollegeDB's logged-out
-  `cdb_change_url` link rewrite and UniversityTemplate's `?update_universities` bulk SEO rewrite. Install by copying it
-  to `wp-content/mu-plugins/`; delete the file to undo. Then rebuild the 31 `[CollegeDB gpa]` tables and retire CollegeDB.
-
+- **CollegeDB retired (2026-10-01):** deactivated after a full database backup. `[CollegeDB]` and `[CollegeDB_full]`
+  now print nothing (child theme placeholders). The 31 /gpa-scale/ tables get rebuilt from Scorecard/CDS data after the
+  admissions import, not from the old CollegeDB table. UniversityTemplate deactivated too.
 - **31 GPA pages show a broken college table.** `/gpa-scale/4-0-gpa/` … `/gpa-scale/1-0-gpa/` contain
   `[CollegeDB gpa="x.x"]`. The plugin prints its AngularJS template, but the theme's
   `gpa_dequeue_legacy_scripts()` removes Angular and its CSS, so visitors see an empty filter form and a
@@ -203,6 +202,9 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog
+
+### 2026-10-01: theme 1.2 adds CollegeDB placeholders
+- `[CollegeDB]` / `[CollegeDB_full]` print nothing when the CollegeDB plugin is off (same snippet applied to the live theme).
 
 ### 2026-10-01: server pull (read-only over SSH)
 - Compared the live Grade + GPA plugin, Calculators plugin and child theme with the repo: no drift since the import;

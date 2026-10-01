@@ -1,4 +1,4 @@
-/* gpacalculator.net calculator core v1.1.0 (lives in the gpacalculator-manager plugin)
+/* gpacalculator.net calculator core v1.2.0 (lives in the gpacalculator-manager plugin)
  * Shared helpers for every calculator: DOM builder, input parsing, grade scale,
  * storage (drafts + named saves), share (URL hash, summary, CSV), GA4 events,
  * count-up, live pill and the standard layout template.
@@ -8,7 +8,7 @@
  * The theme enqueues calculator scripts as type="module", so nothing here touches window.
  */
 
-export const CORE_VERSION = '1.1.0';
+export const CORE_VERSION = '1.2.0';
 
 /* ---------- DOM ---------- */
 
@@ -497,6 +497,36 @@ export function createMenu(trigger, menu, onOpen) {
   return { open, close };
 }
 
+/* ---------- Mount points ---------- */
+
+/**
+ * Elements a calculator should mount into: every shortcode mount
+ * (<div class="gpacalc-mount" data-calc="slug">, printed by the plugin), or #root on
+ * page-template calculators. Each element is returned once, so a script can't mount twice.
+ */
+export function mountsFor(slug) {
+  const els = [...document.querySelectorAll(`.gpacalc-mount[data-calc="${CSS.escape(slug)}"]`)];
+  if (!els.length) {
+    const root = document.getElementById('root');
+    if (root) els.push(root);
+  }
+  return els.filter((el) => {
+    if (el.dataset.calcMounted) return false;
+    el.dataset.calcMounted = slug;
+    return true;
+  });
+}
+
+/** Shortcode attributes the plugin passed in data-atts ({} on #root or bad JSON). */
+export function readAtts(el) {
+  try {
+    const a = JSON.parse(el.dataset.atts || '{}');
+    return a && typeof a === 'object' ? a : {};
+  } catch (e) {
+    return {};
+  }
+}
+
 /* ---------- Layout template ---------- */
 
 const SCALE_BANDS = [
@@ -588,13 +618,13 @@ export function createResultHero({ kicker = 'Current grade', gpaLabel = 'GPA' } 
 }
 
 /**
- * Standard calculator shell, mounted into #root:
+ * Standard calculator shell, mounted into #root or a .gpacalc-mount:
  *   toolbar (My classes menu + share) / step bar / sample banner / onboarding /
  *   inputs / result (hidden until data) / next step / insights / keep going / live pill.
  * Returns the nodes so the calculator fills them; static structure is built once.
  */
 export function mountLayout(root, { prefix, steps = ['Your grade'], savesLabel = 'My classes' }) {
-  root.classList.add('calc-mounted');
+  if (root.id === 'root') root.classList.add('calc-mounted');
   root.textContent = '';
   const stepItems = steps.map((label, i) => h('li', { class: 'calc-step' },
     h('span', { class: 'calc-step-dot' }, String(i + 1)), h('span', { class: 'calc-step-label' }, label)));

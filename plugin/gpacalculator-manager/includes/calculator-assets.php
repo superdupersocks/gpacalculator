@@ -1,21 +1,17 @@
 <?php
 /**
- * Calculator assets: serve calculator JS/CSS from this plugin instead of the theme.
+ * Calculator assets: serve every calculator's JS/CSS from this plugin.
  *
- * Calculators live in assets/calc-assets/ with the same filenames they had in
- * generatepress-child/calc-assets/, so relative ES module imports (./core/calc-core.js)
- * keep working. Pages, page URLs and shortcodes don't change.
+ * Calculators live in assets/calc-assets/ (theme calculators keep their old filenames, so
+ * relative ES module imports like ./core/calc-core.js keep working). Pages, page URLs and
+ * shortcodes don't change.
  *
- * How a calculator moves from the theme:
- *  1. Copy its JS/CSS into assets/calc-assets/ (same filenames).
- *  2. Add it to calculators() with the script/style handles the theme already uses.
- * On every page where those handles are enqueued, the loader repoints the same handle at the
- * plugin file. Dependencies, footer placement, localized data and inline scripts stay
- * attached to the handle, so the page behaves exactly as before. If a plugin file is missing,
- * the theme's file keeps being used. Calculators can also load by shortcode or page ID.
- *
- * Loaded from the main plugin file with:
- *   require_once __DIR__ . '/includes/calculator-assets.php';
+ * For each calculator in the registry (includes/calculators.php):
+ *  - If the theme or an old plugin already enqueued its handle, the same handle is repointed
+ *    at the plugin file. Dependencies, footer placement, localized data and inline scripts stay
+ *    attached to the handle, so the page behaves exactly as before.
+ *  - If the page uses one of its shortcodes or is one of its page_ids, it is enqueued in <head>.
+ *  - If the plugin file doesn't exist yet, nothing is touched and the old file keeps loading.
  *
  * @package gpacalculator-manager
  */
@@ -27,7 +23,7 @@ if ( ! class_exists( 'GPACalc_Calculator_Assets' ) ) {
 	final class GPACalc_Calculator_Assets {
 
 		const DIR           = 'assets/calc-assets/';
-		const TOKENS_HANDLE  = 'gpa-brand-tokens';
+		const TOKENS_HANDLE = 'gpa-brand-tokens';
 
 		/** @var string Any path in the plugin root; plugins_url() only uses its directory. */
 		private static $root_file = '';
@@ -41,22 +37,6 @@ if ( ! class_exists( 'GPACalc_Calculator_Assets' ) ) {
 			add_filter( 'script_loader_tag', array( __CLASS__, 'module_tag' ), 20, 2 );
 		}
 
-		/**
-		 * Registry. slug => array(
-		 *   'js'            => 'grade-calculator.js',   // file in assets/calc-assets/
-		 *   'css'           => 'grade-calculator.css',
-		 *   'script_handle' => 'theme-handle',          // the handle the theme enqueues today
-		 *   'style_handle'  => 'theme-handle-css',
-		 *   'shortcodes'    => array( 'grade_calculator' ), // optional: also load where used
-		 *   'page_ids'      => array( 123 ),            // optional: also load on these pages
-		 * )
-		 * Filled in as calculators move over from the theme.
-		 */
-		public static function calculators() {
-			$calculators = array();
-			return (array) apply_filters( 'gpacalc_calculators', $calculators );
-		}
-
 		public static function path( $file ) {
 			return dirname( self::$root_file ) . '/' . self::DIR . ltrim( $file, '/' );
 		}
@@ -65,28 +45,46 @@ if ( ! class_exists( 'GPACalc_Calculator_Assets' ) ) {
 			return plugins_url( self::DIR . ltrim( $file, '/' ), self::$root_file );
 		}
 
+		/** True when the calculator's files are in the plugin (it has been moved). */
+		public static function is_moved( array $calc ) {
+			foreach ( array( 'js', 'css' ) as $ext ) {
+				if ( $calc[ $ext ] && ! is_readable( self::path( $calc[ $ext ] ) ) ) {
+					return false;
+				}
+			}
+			return (bool) ( $calc['js'] || $calc['css'] );
+		}
+
 		public static function enqueue() {
-			foreach ( self::calculators() as $slug => $calc ) {
-				$wanted = self::wanted_here( $calc );
-				if ( ! empty( $calc['js'] ) ) {
-					self::serve( 'script', $calc['js'], isset( $calc['script_handle'] ) ? $calc['script_handle'] : 'gpacalc-' . $slug, $wanted );
-				}
-				if ( ! empty( $calc['css'] ) ) {
-					self::serve( 'style', $calc['css'], isset( $calc['style_handle'] ) ? $calc['style_handle'] : 'gpacalc-' . $slug, $wanted );
-				}
+			foreach ( GPACalc_Registry::all() as $calc ) {
+				self::load( $calc, self::wanted_here( $calc ) );
+			}
+		}
+
+		/** Enqueue one calculator now (used by its shortcode when the page didn't announce it). */
+		public static function require_calc( array $calc ) {
+			self::load( $calc, true );
+		}
+
+		private static function load( array $calc, $wanted ) {
+			if ( $calc['js'] ) {
+				self::serve( 'script', $calc['js'], $calc['script_handle'], $wanted );
+			}
+			if ( $calc['css'] ) {
+				self::serve( 'style', $calc['css'], $calc['style_handle'], $wanted );
 			}
 		}
 
 		/**
-		 * Point $handle at the plugin copy of $file. Only touches pages where the theme already
-		 * enqueued the handle, or where the registry asks for it ($wanted).
+		 * Point $handle at the plugin copy of $file. Only touches pages where the handle is
+		 * already enqueued, or where the calculator is wanted.
 		 */
 		private static function serve( $kind, $file, $handle, $wanted ) {
 			$path = self::path( $file );
 			if ( ! is_readable( $path ) ) {
-				return; // Not moved yet: the theme copy stays in use.
+				return; // Not moved yet: the old copy stays in use.
 			}
-			$deps = 'script' === $kind ? wp_scripts() : wp_styles();
+			$deps   = 'script' === $kind ? wp_scripts() : wp_styles();
 			$queued = 'script' === $kind ? wp_script_is( $handle, 'enqueued' ) : wp_style_is( $handle, 'enqueued' );
 			if ( ! $queued && ! $wanted ) {
 				return;
@@ -110,22 +108,25 @@ if ( ! class_exists( 'GPACalc_Calculator_Assets' ) ) {
 			}
 
 			if ( 'script' === $kind ) {
-				self::$module_handles[] = $handle;
+				if ( ! in_array( $handle, self::$module_handles, true ) ) {
+					self::$module_handles[] = $handle;
+				}
 				wp_enqueue_script( $handle );
 			} else {
 				wp_enqueue_style( $handle );
 			}
 		}
 
-		private static function wanted_here( $calc ) {
-			if ( ! empty( $calc['page_ids'] ) && is_page( $calc['page_ids'] ) ) {
+		private static function wanted_here( array $calc ) {
+			if ( $calc['page_ids'] && is_page( $calc['page_ids'] ) ) {
 				return true;
 			}
-			if ( ! empty( $calc['shortcodes'] ) && is_singular() ) {
+			if ( $calc['shortcodes'] && is_singular() ) {
 				$post = get_post();
 				if ( $post ) {
-					foreach ( (array) $calc['shortcodes'] as $tag ) {
-						if ( has_shortcode( $post->post_content, $tag ) ) {
+					foreach ( $calc['shortcodes'] as $tag ) {
+						// Only tags the engine serves: while an old plugin still owns a tag, it loads its own assets.
+						if ( has_shortcode( $post->post_content, $tag ) && GPACalc_Shortcodes::owns( $tag ) ) {
 							return true;
 						}
 					}

@@ -8,7 +8,7 @@
 import {
   h, setText, parseScore, parseNumber, fmtPct, round, gradeFor, nextGrade,
   createStore, createTracker, readHash, clearHash, mountLayout, createResultHero,
-  createLivePill, createToast, enterToNext, wireSavesAndShare,
+  createLivePill, createToast, enterToNext, wireSavesAndShare, mountsFor,
 } from '../core/calc-core.js';
 
 const PREFIX = 'stx';
@@ -254,5 +254,5 @@ function init(root) {
   else setState(blankState());
 }
 
-const root = document.getElementById('root');
-if (root) init(root);
+// Shortcode mounts ([starter_calculator]) or #root on a page template.
+mountsFor('starter').forEach(init);

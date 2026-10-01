@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Build installable zips into dist/.
-# Calculators (JS/CSS + shared core) live in the plugin; the theme keeps site design + brand tokens.
+# gpacalculator-manager is the one plugin for every calculator (theme, Calc Plugin and Grades & GPA
+# Plugin calculators merge into it); the theme keeps site design + brand tokens. legacy/ is never shipped.
 #   gpacalculator-manager-core-vX.zip      always: additive files for wp-content/plugins/
-#                                          (calc-assets/core + includes/calculator-assets.php)
+#                                          (calc-assets/core + the engine in includes/)
 #   generatepress-child-tokens-vX.zip      always: additive files for wp-content/themes/
 #                                          (brand-tokens.css + inc/brand-tokens.php)
 #   generatepress-child.zip                once the live theme (style.css + functions.php) is in the repo
@@ -26,7 +27,9 @@ if command -v php >/dev/null; then
 fi
 
 (cd plugin && zip -qrX "$DIST/gpacalculator-manager-core-v$VER.zip" \
-   gpacalculator-manager/assets/calc-assets/core gpacalculator-manager/includes/calculator-assets.php -x '*.DS_Store')
+   gpacalculator-manager/assets/calc-assets/core \
+   gpacalculator-manager/includes/{bootstrap,calculator-registry,calculator-assets,shortcodes,calculators}.php \
+   -x '*.DS_Store')
 echo "built dist/gpacalculator-manager-core-v$VER.zip"
 (cd child-theme && zip -qrX "$DIST/generatepress-child-tokens-v$VER.zip" \
    generatepress-child/brand-tokens.css generatepress-child/inc/brand-tokens.php)
@@ -41,7 +44,7 @@ else
 fi
 
 if grep -lq "Plugin Name:" $PLUGIN/*.php 2>/dev/null; then
-  grep -lq "includes/calculator-assets.php" $PLUGIN/*.php || echo "warning: main plugin file doesn't load includes/calculator-assets.php yet"
+  grep -lq "includes/bootstrap.php" $PLUGIN/*.php || echo "warning: main plugin file doesn't load includes/bootstrap.php yet"
   (cd plugin && zip -qrX "$DIST/gpacalculator-manager.zip" gpacalculator-manager \
      -x 'gpacalculator-manager/assets/calc-assets/_starter/*' -x '*/README.md' -x '*.DS_Store')
   echo "built dist/gpacalculator-manager.zip"

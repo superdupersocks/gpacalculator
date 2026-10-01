@@ -282,6 +282,26 @@ def ui_tests(s, R):
     ctx.close()
 
 
+def shortcode_mount_tests(s, R):
+    """Calculators printed by a shortcode mount into .gpacalc-mount (no #root), styled the same."""
+    ctx = s.context()
+    page = s.page(ctx, "/tests/fixtures/starter-shortcode.html")
+    page.wait_for_selector(".gpacalc-mount .calc")
+    R.check("shortcode: both mounts rendered", page.locator(".gpacalc-mount > .calc").count(), 2)
+    R.check("shortcode: scoped styles apply", page.evaluate(
+        "getComputedStyle(document.querySelector('.gpacalc-mount .calc-card')).borderTopLeftRadius"), "24px")
+    first = page.locator(".gpacalc-mount").first
+    first.locator("[aria-label='Category 1 score']").fill("42/50")
+    R.check("shortcode: live result", first.locator(".calc-score").inner_text().strip(), "84%")
+    R.ok("shortcode: other instance untouched", not page.locator(".gpacalc-mount").nth(1).locator(".calc-result").is_visible())
+    got = page.evaluate("""async (c) => { const m = await import(c);
+        const els = [...document.querySelectorAll('.gpacalc-mount')];
+        return { again: m.mountsFor('starter').length, atts: els.map(m.readAtts) }; }""", CORE)
+    R.check("shortcode: no double mount", got["again"], 0)
+    R.check("shortcode: readAtts", got["atts"], [{"country": "uk"}, {}])
+    ctx.close()
+
+
 def token_tests(s, R):
     """Calculators read the theme's brand tokens, with built-in fallbacks when they're missing."""
     probe = """() => { const b = document.querySelector('#root .calc-btn-text');
@@ -336,6 +356,7 @@ def main():
     with Session() as s:
         unit_tests(s, R)
         ui_tests(s, R)
+        shortcode_mount_tests(s, R)
         token_tests(s, R)
         visual_tests(s, R)
         R.check("page errors", s.errors, [])

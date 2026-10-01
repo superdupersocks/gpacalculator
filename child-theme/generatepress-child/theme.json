@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "settings": {
+    "appearanceTools": true,
+    "spacing": {
+      "padding": true,
+      "margin": true,
+      "blockGap": true,
+      "units": ["px", "em", "rem", "%", "vw"]
+    },
+    "layout": {
+      "contentSize": "1200px",
+      "wideSize": "1400px"
+    }
+  }
+}

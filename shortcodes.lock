@@ -1,2 +1,10 @@
 # Shortcodes used on gpacalculator.net, with the code that registered them.
 # Never remove a line. See tests/check_shortcodes.py.
+gpa-scale            # calcs-plugin
+gpa_conversion       # calcs-plugin
+country_grade        # gpacalculator-manager
+country_grade_scale  # gpacalculator-manager
+gpcm_calculator      # gpacalculator-manager
+gpa_ad               # theme
+gpa_college_archive  # theme
+gpa_table            # theme

@@ -2,12 +2,12 @@
 
 Usage:
   python3 scripts/import_live.py --theme generatepress-child.zip --plugin gpacalculator-manager.zip \
-      [--grades-plugin grades-gpa-plugin.zip]
+      [--calcs-plugin calcs-plugin.zip]
 
 Each argument can be a zip or a folder.
 - theme  -> child-theme/generatepress-child
-- plugin -> plugin/gpacalculator-manager (also called "Calc Plugin"; everything merges into it)
-- grades-plugin -> legacy/grades-gpa-plugin: source to port from, never shipped
+- plugin -> plugin/gpacalculator-manager ("Grade + GPA" in WP admin; everything merges into it)
+- calcs-plugin -> legacy/calcs-plugin ("Calculators" in WP admin): source to port from, never shipped
 
 Repo-owned files (engine, shared core, starter, brand tokens) are kept unless the live copy
 has its own version. Then every shortcode found is recorded in shortcodes.lock with its source.
@@ -27,14 +27,14 @@ REPO = Path(__file__).resolve().parent.parent
 TARGETS = {
     "theme": REPO / "child-theme" / "generatepress-child",
     "plugin": REPO / "plugin" / "gpacalculator-manager",
-    "grades-plugin": REPO / "legacy" / "grades-gpa-plugin",
+    "calcs-plugin": REPO / "legacy" / "calcs-plugin",
 }
 REPO_OWNED = {
-    "theme": ["brand-tokens.css", "inc/brand-tokens.php", "README.md"],
+    "theme": ["README.md"],
     "plugin": ["assets/calc-assets/core", "assets/calc-assets/_starter", "includes/bootstrap.php",
                "includes/calculator-registry.php", "includes/calculator-assets.php", "includes/shortcodes.php",
                "includes/calculators.php", "README.md"],
-    "grades-plugin": [],
+    "calcs-plugin": [],
 }
 
 
@@ -71,7 +71,7 @@ def copy(src, dst, kind):
             shutil.move(str(p), str(Path(hold) / rel))
         if dst.exists():
             shutil.rmtree(dst)
-        shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".DS_Store", "__MACOSX", "*.log", "node_modules"))
+        shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".DS_Store", "__MACOSX", "._*", "*.log", "node_modules", "*.zip"))
         for rel in keep:
             (dst / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(Path(hold) / rel), str(dst / rel))

@@ -82,6 +82,12 @@
     --gpa-warning: #D97706;
     --gpa-warning-dark: #B45309;
     --gpa-danger: #DC2626;
+    /* Grade bands (GPA scale table): text on a light tint */
+    --gpa-band-a: #15803D;   --gpa-band-a-bg: #F0FDF4;
+    --gpa-band-b: #1D4ED8;   --gpa-band-b-bg: #EFF6FF;
+    --gpa-band-c: #B45309;   --gpa-band-c-bg: #FFFBEB;
+    --gpa-band-d: #C2410C;   --gpa-band-d-bg: #FFF7ED;
+    --gpa-band-f: #B91C1C;   --gpa-band-f-bg: #FEF2F2;
     --gpa-purple: #9333EA;
 
     /* ---- Colors: text ---- */

@@ -3283,3 +3283,39 @@ add_action( 'init', function () {
 		add_shortcode( 'CollegeDB_full', '__return_empty_string' );
 	}
 }, 20 );
+
+/**
+ * GPA scale table on the /gpa-scale/<x-x>-gpa/ pages: a core Table block with the class gpa-scale-table
+ * (columns: GPA, Percentage, Letter grade). Marks the row whose GPA matches the page (from the slug, e.g.
+ * 3-6-gpa -> 3.6) with is-current-gpa and aria-current, and tags every row with its grade band
+ * (is-band-a … is-band-f) for colour. Works on whatever rows the editor keeps; no per-row editing needed.
+ */
+add_filter( 'render_block', 'gpa_scale_table_mark_rows', 10, 2 );
+function gpa_scale_table_mark_rows( $html, $block ) {
+	if ( 'core/table' !== $block['blockName'] || false === strpos( $html, 'gpa-scale-table' ) ) {
+		return $html;
+	}
+	$current = '';
+	$slug    = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
+	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) ) {
+		$current = $m[1] . '.' . $m[2];
+	}
+	return preg_replace_callback(
+		'#<tr>(.*?)</tr>#s',
+		function ( $row ) use ( $current ) {
+			if ( ! preg_match_all( '#<td\b[^>]*>(.*?)</td>#s', $row[1], $cells ) || count( $cells[1] ) < 3 ) {
+				return $row[0]; // header row or unexpected shape
+			}
+			$gpa    = trim( wp_strip_all_tags( $cells[1][0] ) );
+			$letter = strtolower( substr( trim( wp_strip_all_tags( end( $cells[1] ) ) ), 0, 1 ) );
+			$class  = in_array( $letter, array( 'a', 'b', 'c', 'd', 'f' ), true ) ? 'is-band-' . $letter : '';
+			$attrs  = '';
+			if ( '' !== $current && $gpa === $current ) {
+				$class .= ' is-current-gpa';
+				$attrs  = ' aria-current="true"';
+			}
+			return '' === trim( $class ) ? $row[0] : '<tr class="' . esc_attr( trim( $class ) ) . '"' . $attrs . '>' . $row[1] . '</tr>';
+		},
+		$html
+	);
+}

@@ -1177,3 +1177,81 @@ body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: 18px !imp
   text-align: center !important;
   border: none !important;
 }
+/* ==========================================================================
+   GPA SCALE TABLE (/gpa-scale/<x-x>-gpa/ pages)
+   Core Table block with class gpa-scale-table: GPA | Percentage | Letter grade.
+   Rows get is-band-a … is-band-f and the page's own GPA gets is-current-gpa
+   from gpa_scale_table_mark_rows() in functions.php.
+   ========================================================================== */
+.content-page .entry-content figure.wp-block-table.gpa-scale-table {
+    max-width: 560px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, .04), 0 8px 24px rgba(17, 24, 39, .06);
+}
+.content-page .entry-content .gpa-scale-table table { table-layout: fixed; }
+.content-page .entry-content .gpa-scale-table thead th {
+    background: var(--gpa-bg-gray-50, #F9FAFB) !important;
+    padding: 14px 16px !important;
+    font-size: 13px !important;
+}
+.content-page .entry-content .gpa-scale-table tbody td {
+    padding: 11px 16px !important;
+    font-size: 16px !important;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--gpa-border, #E5E7EB) !important;
+    transition: background-color .15s ease;
+}
+.content-page .entry-content .gpa-scale-table tbody tr:last-child td { border-bottom: none !important; }
+.content-page .entry-content .gpa-scale-table tbody td:first-child { font-weight: 600 !important; color: var(--gpa-text-heading, #111827) !important; }
+.content-page .entry-content .gpa-scale-table tbody td:last-child { font-weight: 700 !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-a td { background: var(--gpa-band-a-bg, #F0FDF4); }
+.content-page .entry-content .gpa-scale-table tr.is-band-b td { background: var(--gpa-band-b-bg, #EFF6FF); }
+.content-page .entry-content .gpa-scale-table tr.is-band-c td { background: var(--gpa-band-c-bg, #FFFBEB); }
+.content-page .entry-content .gpa-scale-table tr.is-band-d td { background: var(--gpa-band-d-bg, #FFF7ED); }
+.content-page .entry-content .gpa-scale-table tr.is-band-f td { background: var(--gpa-band-f-bg, #FEF2F2); }
+.content-page .entry-content .gpa-scale-table tr.is-band-a td:last-child { color: var(--gpa-band-a, #15803D) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-b td:last-child { color: var(--gpa-band-b, #1D4ED8) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-c td:last-child { color: var(--gpa-band-c, #B45309) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-d td:last-child { color: var(--gpa-band-d, #C2410C) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-f td:last-child { color: var(--gpa-band-f, #B91C1C) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td,
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child,
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:last-child {
+    background: var(--gpa-primary, #2563EB) !important;
+    color: #fff !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+    border-bottom-color: var(--gpa-primary, #2563EB) !important;
+}
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after {
+    content: "Your GPA";
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: var(--gpa-radius-pill, 999px);
+    background: #fff;
+    color: var(--gpa-primary, #2563EB);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    vertical-align: 2px;
+}
+.content-page .entry-content .gpa-scale-table figcaption {
+    margin: 0 !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+    color: var(--gpa-text-muted, #6B7280) !important;
+    text-align: center;
+    border-top: 1px solid var(--gpa-border, #E5E7EB);
+    background: var(--gpa-bg-white, #fff);
+}
+@media (max-width: 480px) {
+    .content-page .entry-content .gpa-scale-table thead th,
+    .content-page .entry-content .gpa-scale-table tbody td { padding-left: 10px !important; padding-right: 10px !important; }
+    .content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after { display: block; width: max-content; margin: 4px auto 0; }
+}

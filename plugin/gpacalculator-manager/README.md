@@ -1,7 +1,8 @@
 # gpacalculator-manager
 
-The one plugin for every calculator on gpacalculator.net. Calculators from the theme, Calc Plugin
-and Grades & GPA Plugin merge into it as calculator types, answering to their old shortcodes.
+The one plugin for every calculator on gpacalculator.net (also called "Calc Plugin").
+The theme's calculators and Grades & GPA Plugin merge into it as calculator types, answering to
+their old shortcodes.
 
 - `includes/` the engine: `bootstrap.php` (load this), `calculators.php` (manifest),
   `calculator-registry.php`, `calculator-assets.php`, `shortcodes.php`.

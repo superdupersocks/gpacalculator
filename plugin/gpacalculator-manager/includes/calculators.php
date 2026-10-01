@@ -5,7 +5,7 @@
  *   'slug' => array(
  *     'title'         => 'High School GPA Calculator',
  *     'type'          => 'gpa',          // see GPACalc_Registry::TYPES
- *     'source'        => 'theme',        // where it came from: theme | gpacalculator-manager | calc-plugin | grades-gpa-plugin | new
+ *     'source'        => 'theme',        // where it came from: theme | gpacalculator-manager | grades-gpa-plugin | new
  *     'js'            => 'hs-gpa.js',    // in assets/calc-assets/
  *     'css'           => 'hs-gpa.css',
  *     'script_handle' => 'hs-gpa',       // the handle the theme or old plugin used, if any
@@ -17,7 +17,7 @@
  *   ),
  *
  * Handles: calculators moved from the THEME reuse the theme's handles (the theme keeps enqueueing
- * them during the move). Calculators ported from Calc Plugin or Grades & GPA Plugin leave the
+ * them during the move). Calculators ported from Grades & GPA Plugin leave the
  * handles empty (gpacalc-<slug>), so the new JS never lands on markup the old plugin printed
  * while it's still active.
  *

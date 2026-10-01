@@ -3,8 +3,8 @@
  * Calculator engine bootstrap. The main plugin file loads it with:
  *   require_once __DIR__ . '/includes/bootstrap.php';
  *
- * gpacalculator-manager is the one plugin for every calculator on the site. Calculators that
- * used to live in the theme, Calc Plugin and Grades & GPA Plugin are registered here as
+ * gpacalculator-manager (also called "Calc Plugin") is the one plugin for every calculator on the
+ * site. Its own calculators, the theme's and Grades & GPA Plugin's are registered here as
  * calculator types (includes/calculators.php) and keep their old shortcodes.
  *
  * @package gpacalculator-manager

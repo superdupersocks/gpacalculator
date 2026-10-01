@@ -6,7 +6,7 @@ registers it: add_shortcode() in plugin/ or child-theme/, or a 'shortcodes' entr
 calculator manifest (plugin/gpacalculator-manager/includes/calculators.php).
 
 - theme / gpacalculator-manager shortcodes must always be served: missing ones fail.
-- calc-plugin / grades-gpa-plugin shortcodes are served by the old plugin until ported:
+- grades-gpa-plugin shortcodes are served by the old plugin until ported:
   missing ones are reported as "keep <plugin> active", and the plugin is reported as safe to
   deactivate once all of its shortcodes are served.
 
@@ -20,7 +20,7 @@ REPO = Path(__file__).resolve().parent.parent
 LOCK = REPO / "shortcodes.lock"
 MANIFEST = REPO / "plugin" / "gpacalculator-manager" / "includes" / "calculators.php"
 ADD = re.compile(r"add_shortcode\s*\(\s*['\"]([^'\"]+)['\"]")
-LEGACY = {"calc-plugin", "grades-gpa-plugin"}
+LEGACY = {"grades-gpa-plugin"}
 
 
 def php_files(base):

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build installable zips into dist/.
-# gpacalculator-manager is the one plugin for every calculator (theme, Calc Plugin and Grades & GPA
-# Plugin calculators merge into it); the theme keeps site design + brand tokens. legacy/ is never shipped.
+# gpacalculator-manager is the one plugin for every calculator (the theme's and Grades & GPA
+# Plugin's calculators merge into it); the theme keeps site design + brand tokens. legacy/ is never shipped.
 #   gpacalculator-manager-core-vX.zip      always: additive files for wp-content/plugins/
 #                                          (calc-assets/core + the engine in includes/)
 #   generatepress-child-tokens-vX.zip      always: additive files for wp-content/themes/

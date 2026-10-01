@@ -1,7 +1,7 @@
 <?php
 /**
- * Shortcodes for every registered calculator, including the old tags from Calc Plugin,
- * Grades & GPA Plugin and the theme, so those can be deactivated with no page edits.
+ * Shortcodes for every registered calculator, including the old tags from Grades & GPA Plugin
+ * and the theme, so Grades & GPA Plugin can be deactivated with no page edits.
  *
  * A tag is only taken when no other plugin has registered it, so while an old plugin is
  * still active it keeps serving its own shortcodes. Once it's deactivated, the engine

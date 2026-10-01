@@ -2,12 +2,12 @@
 
 Usage:
   python3 scripts/import_live.py --theme generatepress-child.zip --plugin gpacalculator-manager.zip \
-      [--calc-plugin calc-plugin.zip] [--grades-plugin grades-gpa-plugin.zip]
+      [--grades-plugin grades-gpa-plugin.zip]
 
 Each argument can be a zip or a folder.
 - theme  -> child-theme/generatepress-child
-- plugin -> plugin/gpacalculator-manager (the one plugin everything is merged into)
-- calc-plugin / grades-plugin -> legacy/<name>: source to port from, never shipped
+- plugin -> plugin/gpacalculator-manager (also called "Calc Plugin"; everything merges into it)
+- grades-plugin -> legacy/grades-gpa-plugin: source to port from, never shipped
 
 Repo-owned files (engine, shared core, starter, brand tokens) are kept unless the live copy
 has its own version. Then every shortcode found is recorded in shortcodes.lock with its source.
@@ -27,7 +27,6 @@ REPO = Path(__file__).resolve().parent.parent
 TARGETS = {
     "theme": REPO / "child-theme" / "generatepress-child",
     "plugin": REPO / "plugin" / "gpacalculator-manager",
-    "calc-plugin": REPO / "legacy" / "calc-plugin",
     "grades-plugin": REPO / "legacy" / "grades-gpa-plugin",
 }
 REPO_OWNED = {
@@ -35,7 +34,6 @@ REPO_OWNED = {
     "plugin": ["assets/calc-assets/core", "assets/calc-assets/_starter", "includes/bootstrap.php",
                "includes/calculator-registry.php", "includes/calculator-assets.php", "includes/shortcodes.php",
                "includes/calculators.php", "README.md"],
-    "calc-plugin": [],
     "grades-plugin": [],
 }
 

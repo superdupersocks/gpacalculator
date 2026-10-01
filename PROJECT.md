@@ -6,10 +6,11 @@ Feature-rich, easy-to-use calculators for students, delivered through WordPress
 ## Architecture
 
 **One plugin owns every calculator; the theme owns site design and brand tokens.**
-gpacalculator-manager is the base. Calculators from the theme, Calc Plugin (homepage, college
-and high school GPA calculators) and Grades & GPA Plugin (country-level grade conversion,
-university-level GPA calculators, etc.) become calculator types on its engine, answering to
-their old shortcodes, so the old plugins can be deactivated with no page edits.
+gpacalculator-manager (also called "Calc Plugin") is the base and already holds the
+homepage, college and high school GPA calculators. It absorbs the theme's calculators and
+Grades & GPA Plugin (country-level grade conversion, university-level GPA calculators, etc.) as
+calculator types on its engine, answering to their old shortcodes, so Grades & GPA Plugin can be
+deactivated with no page edits.
 Calculators read the theme's brand tokens with built-in fallbacks, so they still look right
 if the theme's token file isn't loaded, and a brand change in the theme restyles all of them.
 
@@ -32,7 +33,6 @@ plugin/gpacalculator-manager/          the one plugin (live plugin imported from
       calc-core.js                     ES module: parsing, grade scale, storage, share, GA4, layout
       course-catalog.js                course levels, weighting bonuses, course list
     _starter/                          layout template for new calculators (not shipped)
-legacy/calc-plugin/                    Calc Plugin source, to port from (never shipped)
 legacy/grades-gpa-plugin/              Grades & GPA Plugin source, to port from (never shipped)
 tests/                                 QA (python3 tests/run_all.py)
 scripts/import_live.py                 pulls uploaded live theme/plugin zips into the repo
@@ -48,7 +48,7 @@ Every calculator is one entry in `includes/calculators.php`:
 'conversion' => array(
   'title'      => 'Grade Conversion',
   'type'       => 'grade-conversion',   // gpa | university-gpa | grade | grade-conversion | other
-  'source'     => 'grades-gpa-plugin',  // theme | gpacalculator-manager | calc-plugin | grades-gpa-plugin | new
+  'source'     => 'grades-gpa-plugin',  // theme | gpacalculator-manager | grades-gpa-plugin | new
   'js'         => 'grade-conversion.js', 'css' => 'grade-conversion.css',   // in assets/calc-assets/
   'shortcodes' => array( 'old_tag', 'grade_conversion' ),                  // old names kept forever
   'atts'       => array( 'country' => 'us' ),                              // shortcode defaults -> JS
@@ -83,7 +83,7 @@ same from the repo, and fails if a theme or gpacalculator-manager shortcode stop
 ### Merge plan (after the live files are imported)
 
 1. Import everything:
-   `python3 scripts/import_live.py --theme ... --plugin ... --calc-plugin ... --grades-plugin ...`
+   `python3 scripts/import_live.py --theme ... --plugin ... --grades-plugin ...`
    Every shortcode is locked with its source. Add `require_once __DIR__ . '/includes/bootstrap.php';`
    to the main plugin file and `require_once get_stylesheet_directory() . '/inc/brand-tokens.php';`
    to functions.php.
@@ -143,7 +143,7 @@ Calculator-only (in `calc-core.css`): letter grade colors, control sizes, motion
 ## Workflow
 
 1. **Import live files** (first time, and whenever the site was edited outside the repo):
-   `python3 scripts/import_live.py --theme <zip> --plugin <zip> --calc-plugin <zip> --grades-plugin <zip>`
+   `python3 scripts/import_live.py --theme <zip> --plugin <zip> --grades-plugin <zip>`
    (see Merge plan for the two `require_once` lines).
 2. **QA**: `npm install && pip install -r tests/requirements.txt && python3 tests/run_all.py`
    (CI runs the same on every PR): shortcode guard, core suite, PHP engine tests.
@@ -158,20 +158,20 @@ Calculator-only (in `calc-core.css`): letter grade colors, control sizes, motion
 | --- | --- | --- | --- | --- | --- |
 | High School GPA v2.9 | Theme | Waiting on live files | Not yet | Not yet | To port |
 | Grade Calculator v3 (reference build) | Theme | Waiting on live files | Not yet | Not yet | To port (12 cases + validation) |
-| Homepage GPA calculator | Calc Plugin | Waiting on upload | Not yet | Not yet | To write |
-| College GPA calculator | Calc Plugin | Waiting on upload | Not yet | Not yet | To write |
-| High school GPA calculator | Calc Plugin | Waiting on upload | Not yet | Not yet | To write |
+| Homepage GPA calculator | gpacalculator-manager | Waiting on upload | Not yet | Not yet | To write |
+| College GPA calculator | gpacalculator-manager | Waiting on upload | Not yet | Not yet | To write |
+| High school GPA calculator | gpacalculator-manager | Waiting on upload | Not yet | Not yet | To write |
 | Country grade conversion | Grades & GPA Plugin | Waiting on upload | Not yet | Not yet | To write |
 | University GPA calculators | Grades & GPA Plugin | Waiting on upload | Not yet | Not yet | To write |
 | Starter template | New (not shipped) | Yes | Yes | Yes | `core_qa.py`, 121 checks |
 
 The full list (and each one's shortcodes) gets filled in from the imported source.
-The theme and Calc Plugin both have a high school GPA calculator: decide whether they merge into
+The theme and gpacalculator-manager both have a high school GPA calculator: decide whether they merge into
 one calculator type with both shortcodes, once both sources are in.
 
 ## Open items
 
-- Import the live child theme, gpacalculator-manager, Calc Plugin and Grades & GPA Plugin (the build
+- Import the live child theme, gpacalculator-manager ("Calc Plugin") and Grades & GPA Plugin (the build
   environment can't reach gpacalculator.net, and PHP isn't served over HTTP). Then follow the merge plan.
 - Reconcile the live theme's existing tokens file with `brand-tokens.css` (same values, `--gpa-*` names).
 - Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves
@@ -179,13 +179,17 @@ one calculator type with both shortcodes, once both sources are in.
 
 ## Changelog
 
+### 2026-10-01: Calc Plugin clarified
+- Calc Plugin is gpacalculator-manager itself, so the merge is gpacalculator-manager
+  absorbing the theme's calculators and Grades & GPA Plugin. Dropped the separate calc-plugin import.
+
 ### 2026-10-01: core v1.2.0
 - One plugin: gpacalculator-manager gets a calculator engine (`includes/`): manifest, registry with
-  calculator types, asset loader, and shortcodes that take over Calc Plugin / Grades & GPA Plugin
+  calculator types, asset loader, and shortcodes that take over Grades & GPA Plugin
   tags once those plugins are deactivated. The Plugins screen shows which plugins are safe to deactivate.
 - Core mounts into shortcode output too (`mountsFor`, `readAtts`; CSS scoped to `:is(#root, .gpacalc-mount)`).
 - `shortcodes.lock` records each shortcode's source; the guard reports per-plugin port progress.
-- `import_live.py` takes `--calc-plugin` / `--grades-plugin` into `legacy/`.
+- `import_live.py` takes `--grades-plugin` into `legacy/`.
 - QA: core 121/121 (shortcode mounts added), PHP engine 32/32.
 
 ### 2026-10-01: core v1.1.0

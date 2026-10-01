@@ -661,8 +661,8 @@ body.gpa-rails-on .gpa-rail { display: flex; }
 /* Kargo spotlight is auto-sized by Freestar */
 #gpacalculator-net_kargo_spotlight { min-height: 0 !important; }
  
-/* Never on tablet / mobile */
-@media (max-width: 1023px) {
+/* Never below the smallest rail tier (tablet / mobile / small laptops) */
+@media (max-width: 1259px) {
 	.gpa-rail { display: none !important; }
 }
 
@@ -680,14 +680,28 @@ body.home .entry-content > .wp-block-group {
   body.home .site-content { max-width: 900px !important; }
 }
 
-@media (min-width: 1440px) {
+/* 01-OCT-2026: side-rail tiers, matching the Freestar size mapping for the rail units.
+   The column leaves room for a rail on each side: 2 x (rail + 20px gap + 8px edge) + 16px for a desktop scrollbar.
+   1440+: 336px rails | 1350-1439: 300px rails | 1260-1349: 160px rails | below 1260: no rails. */
+@media (min-width: 1260px) { :root { --gpa-rail-reserve: 392px; } }
+@media (min-width: 1350px) { :root { --gpa-rail-reserve: 672px; } }
+@media (min-width: 1440px) { :root { --gpa-rail-reserve: 744px; } }
+@media (min-width: 1260px) {
 	body.page-template-template-calculator .entry-content,
 	body.page-template-template-content .entry-content,
 	body.gpa-template-content .entry-content,
+	body.single-post .entry-header,
+	body.single-post .entry-content,
 	body.home .site-content,
 	body.single-colleges .db-container,
 	body.post-type-archive-colleges .db-container {
-		width: min(100%, calc(100vw - 680px)) !important;
+		width: min(100%, calc(100vw - var(--gpa-rail-reserve))) !important;
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+	/* Calculators that set their own width (e.g. High School GPA at 800px) stay inside the column */
+	body.page-template-template-calculator .entry-content #root {
+		max-width: 100% !important;
 		margin-left: auto !important;
 		margin-right: auto !important;
 	}
@@ -696,7 +710,7 @@ body.home .entry-content > .wp-block-group {
 /* College templates force width:100% on page elements, which was
    stretching the rails to full screen width. Keep rails their own size. */
 html body div.gpa-rail {
-	width: max-content !important;
+	width: var(--gpa-rail-w, 300px) !important;
 	max-width: 336px !important;
 }
 
@@ -756,7 +770,7 @@ html body div.gpa-rail {
 }
  
  /* Give rail slots their size before the ad loads */
-.gpa-rail [id^="gpacalculator-net_siderail"] { min-width: 300px; }
+.gpa-rail [id^="gpacalculator-net_siderail"] { min-width: 0; width: 100%; }
 
 /* Rail ads: pin the ad to the top of its slot instead of floating mid-slot */
 .gpa-rail [id^="gpacalculator-net_siderail"] {

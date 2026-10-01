@@ -2729,6 +2729,7 @@ function gpa_freestar_cmp_link() {
 
 function gpa_freestar_slots() {
 	return array(
+		'incontent_top'        => '__240x400 __336x280',
 		'incontent_bottom'     => '__240x400 __336x280',
 		'incontent_midarticle' => '__240x400 __336x280',
 		'siderail_right_1'     => '__336x600',
@@ -2796,11 +2797,24 @@ function gpa_freestar_incontent_ads( $content ) {
 			}
 		}
 
-		if ( null !== $best && $best > strlen( $content ) / 5 ) {
+		$gap   = strlen( $content ) / 5;
+		$first = $m[0][0][1];
+		$top   = '';
+
+		// Early unit before the first H2, on guide posts only (not calculators or pages), when it sits well above the mid-article unit.
+		if ( is_singular( 'post' ) && null !== $best && $first > 0 && $first < $best - $gap
+			&& apply_filters( 'gpa_freestar_incontent_top', true ) ) {
+			$top = gpa_freestar_ad_markup( 'incontent_top' );
+		}
+
+		if ( null !== $best && $best > $gap ) {
 			$ad = gpa_freestar_ad_markup( 'incontent_midarticle' );
 			if ( '' !== $ad ) {
 				$content = substr( $content, 0, $best ) . $ad . substr( $content, $best );
 			}
+		}
+		if ( '' !== $top ) {
+			$content = substr( $content, 0, $first ) . $top . substr( $content, $first );
 		}
 	}
 
@@ -2821,58 +2835,64 @@ if ( ! function_exists( 'get_field' ) ) {
 }
 
 // 24/SEP/2026 — updated 27/SEP/2026: side rails V5 + jQuery UI removal on calculator pages
+// 01/OCT/2026: side rails V6 — left_1/left_2 + right_1/right_3, rail width per viewport tier (1440 / 1350 / 1260)
 
 add_action( 'wp_footer', 'gpa_freestar_siderails', 20 );
 function gpa_freestar_siderails() {
 	if ( is_admin() || is_feed() || is_404() || is_search() ) {
 		return;
 	}
-	// Slots registered at init (unchanged): used for Kargo Spotlight.
-	$tag = function ( $id, $size ) {
-		$attr = $size ? ' data-freestar-ad="' . esc_attr( $size ) . '"' : '';
-		return '<div align="center"' . $attr . ' id="' . esc_attr( $id ) . '">'
-			. '<script data-cfasync="false" type="text/javascript">freestar.config.enabled_slots.push({ placementName: "' . esc_js( $id ) . '", slotId: "' . esc_js( $id ) . '" });</script>'
-			. '</div>';
-	};
-	// Side-rail containers only: the V5 script requests these ads when the rails are actually visible.
-	$rail = function ( $id, $size ) {
-		return '<div align="center" data-freestar-ad="' . esc_attr( $size ) . '" id="' . esc_attr( $id ) . '"></div>';
+	// Side-rail containers only: the V6 script requests these ads when the rails are actually visible.
+	$rail = function ( $id ) {
+		return '<div class="gpa-rail__seg"><div class="gpa-rail__sticky"><div align="center" data-freestar-ad="__300x600" id="gpacalculator-net_' . esc_attr( $id ) . '"></div></div></div>';
 	};
 
-	echo "\n<!-- Freestar side rails (GPA_RAILS_V5) -->\n";
-	echo '<div class="gpa-rail gpa-rail--left"><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_2', '__300x600' )
-		. '</div></div></div>' . "\n";
-	echo '<div class="gpa-rail gpa-rail--right"><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_1', '__336x600' )
-		. '</div></div><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_3', '__300x600' )
-		. '</div></div></div>' . "\n";
-// echo "\n<!-- Tag ID: gpacalculator-net_kargo_spotlight -->\n" . $tag( 'gpacalculator-net_kargo_spotlight', '' ) . "\n";
+	echo "\n<!-- Freestar side rails (GPA_RAILS_V6) -->\n";
+	echo '<div class="gpa-rail gpa-rail--left">' . $rail( 'siderail_left_1' ) . $rail( 'siderail_left_2' ) . '</div>' . "\n";
+	echo '<div class="gpa-rail gpa-rail--right">' . $rail( 'siderail_right_1' ) . $rail( 'siderail_right_3' ) . '</div>' . "\n";
 	?>
 <script data-cfasync="false">
 (function () {
 	var L = document.querySelector('.gpa-rail--left'), R = document.querySelector('.gpa-rail--right');
 	if (!L || !R) { return; }
-	var s1 = R.children[0], s2 = R.children[1], GAP = 20, EDGE = 8, body = document.body;
-	var mq = window.matchMedia('(min-width: 1024px)');
+	var GAP = 20, LONG = 1300, body = document.body;
+	// Rail width per viewport tier. Must match the Freestar size mapping for the four rail units.
+	var tiers = [[1440, 336], [1350, 300], [1260, 160]].map(function (t) {
+		return { mq: window.matchMedia('(min-width: ' + t[0] + 'px)'), w: t[1] };
+	});
+	// Row 0 shows whenever the rails do; row 1 only on long pages.
+	var rows = [
+		{ segs: [L.children[0], R.children[0]], ids: ['gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_right_1'], asked: false },
+		{ segs: [L.children[1], R.children[1]], ids: ['gpacalculator-net_siderail_left_2', 'gpacalculator-net_siderail_right_3'], asked: false }
+	];
 	var header = document.querySelector('.entry-header');
 	var siteHeader = document.querySelector('.site-header');
 	var footer = document.querySelector('.site-footer');
 	var heroes = ['.gpa-hero', '.db-hero', '.db-archive-hero'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
 	var cols = ['.db-container', '.entry-content', '#content'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
-	var afterExtra = null, state = '', raf = 0, t = 0, adsRequested = false;
+	var calc = document.querySelector('.entry-content #root'); // calculators can be wider than the text column
+	var afterExtra = null, state = '', raf = 0, t = 0, lockedW = 0;
+
+	function tierWidth() {
+		for (var i = 0; i < tiers.length; i++) { if (tiers[i].mq.matches) { return tiers[i].w; } }
+		return 0;
+	}
 
 	// READ phase only — no style writes in here.
 	function measure() {
+		var w = tierWidth();
+		if (!w) { return null; }
+		// Ads already loaded for a wider tier would overflow a narrower rail, so hide the rails instead.
+		if (lockedW) { if (w < lockedW) { return null; } w = lockedW; }
 		var de = document.documentElement, vw = de.clientWidth, y = window.pageYOffset, c = null, r, i;
 		for (i = 0; i < cols.length; i++) {
 			r = cols[i].getBoundingClientRect();
 			if (r.width && r.width < vw - 100) { c = r; break; }
 		}
 		if (!c) { return null; }
-		var m = Math.min(c.left, vw - c.right);
-		if (m < 300 + GAP + EDGE) { return null; }
+		var cl = c.left, cr = c.right;
+		if (calc) { r = calc.getBoundingClientRect(); if (r.width) { cl = Math.min(cl, r.left); cr = Math.max(cr, r.right); } }
+		if (Math.min(cl, vw - cr) < w + GAP) { return null; }
 		var b = 0;
 		if (header) {
 			r = header.getBoundingClientRect();
@@ -2885,41 +2905,43 @@ function gpa_freestar_siderails() {
 		for (i = 0; i < heroes.length; i++) {
 			r = heroes[i].getBoundingClientRect();
 			if (r.height) { b = Math.max(b, r.bottom + y); }
-	}
+		}
 		if (!b && siteHeader) { b = siteHeader.getBoundingClientRect().bottom + y; }
 		var top = b + 24;
 		var bottom = footer ? footer.getBoundingClientRect().top + y - 24 : de.scrollHeight - 24;
-		var h = Math.max(620, bottom - top), wide = m >= 336 + GAP + EDGE;
+		var h = Math.max(620, bottom - top);
 		return {
-			top: Math.round(top), h: Math.round(h), wide: wide,
-			l: Math.round(window.pageXOffset + Math.min((c.left - 300) / 2, c.left - GAP - 300)),
-			r: Math.round(window.pageXOffset + Math.max(c.right + (vw - c.right - (wide ? 336 : 300)) / 2, c.right + GAP))
+			top: Math.round(top), h: Math.round(h), w: w, long: h >= LONG,
+			l: Math.round(window.pageXOffset + Math.min((cl - w) / 2, cl - GAP - w)),
+			r: Math.round(window.pageXOffset + Math.max(cr + (vw - cr - w) / 2, cr + GAP))
 		};
 	}
 	function requestAds(p) {
-		if (adsRequested || !window.freestar) { return; }
-		adsRequested = true;
-		var ids = ['gpacalculator-net_siderail_right_2'];
-		if (p.wide) { ids.push('gpacalculator-net_siderail_right_1'); }
-		if (!p.wide || p.h >= 1300) { ids.push('gpacalculator-net_siderail_right_3'); }
-		var slots = ids.map(function (id) { return { placementName: id, slotId: id }; });
+		if (!window.freestar) { return; }
+		var slots = [];
+		rows.forEach(function (row, i) {
+			if (row.asked || (i && !p.long)) { return; }
+			row.asked = true;
+			row.ids.forEach(function (id) { slots.push({ placementName: id, slotId: id }); });
+		});
+		if (!slots.length) { return; }
+		lockedW = lockedW || p.w;
 		freestar.queue.push(function () { freestar.newAdSlots(slots); });
 	}
 
 	// WRITE phase — only runs when something actually changed.
 	function apply() {
 		raf = 0;
-		var p = mq.matches ? measure() : null;
-		var key = p ? [p.top, p.h, p.wide, p.l, p.r].join() : 'off';
+		var p = measure();
+		var key = p ? [p.top, p.h, p.w, p.l, p.r].join() : 'off';
 		if (key === state) { return; }
 		state = key;
 		if (!p) { body.classList.remove('gpa-rails-on'); return; }
-		s1.style.display = p.wide ? '' : 'none';
-		s2.style.display = (!p.wide || p.h >= 1300) ? '' : 'none';
+		rows[1].segs.forEach(function (s) { s.style.display = p.long ? '' : 'none'; });
 		L.style.top = R.style.top = p.top + 'px';
 		L.style.height = R.style.height = p.h + 'px';
-		L.style.width = '300px';
-		R.style.width = (p.wide ? 336 : 300) + 'px';
+		L.style.setProperty('--gpa-rail-w', p.w + 'px');
+		R.style.setProperty('--gpa-rail-w', p.w + 'px');
 		L.style.left = p.l + 'px';
 		R.style.left = p.r + 'px';
 		body.classList.add('gpa-rails-on');
@@ -2932,10 +2954,10 @@ function gpa_freestar_siderails() {
 	schedule();
 	window.addEventListener('resize', later, { passive: true });
 	window.addEventListener('load', schedule);
-	if (mq.addEventListener) { mq.addEventListener('change', schedule); }
+	tiers.forEach(function (tier) { if (tier.mq.addEventListener) { tier.mq.addEventListener('change', schedule); } });
 	if (window.ResizeObserver) {
 		var ro = new ResizeObserver(later);
-		cols.concat(heroes, header ? [header] : []).forEach(function (el) { ro.observe(el); });
+		cols.concat(heroes, header ? [header] : [], calc ? [calc] : []).forEach(function (el) { ro.observe(el); });
 	}
 })();
 </script>

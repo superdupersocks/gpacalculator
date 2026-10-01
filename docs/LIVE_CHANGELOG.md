@@ -11,9 +11,8 @@ Full DB restore: `gunzip -c ~/backups/<file>.sql.gz | wp db import -` then `wp b
 ## Rules (Digant, 2026-10-01)
 1. Content: edit through WordPress so a revision is saved.
 2. Code (theme, plugins): commit to the repo first, then deploy from it (`scripts/deploy_theme.sh`); never edit server files directly.
-3. Settings, plugins, menus: take a Cloudways on-demand backup first; if that isn't possible, stop and ask.
-   Digant runs `bash scripts/cloudways_backup.sh` (reads his API key from `~/.config/gpacalculator/cloudways.env`,
-   outside the repo; Claude doesn't use the key itself) or clicks Backups > Take Backup Now in Cloudways.
+3. Settings, plugins, menus: Digant dropped the Cloudways on-demand backup requirement (2026-10-01 21:41). Before these
+   changes take a database backup (`wp db export` to `~/backups/`, copied to the Mac) and note the old value or state here.
 4. After every push: affected pages load, calculators work, ads show. If anything breaks, revert at once and report.
 5. Log every live change here.
 

@@ -204,6 +204,16 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Changelog
 
+### 2026-10-01: /gpa-scale/ scale table and heading cleanup (live)
+- After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-table.sql.gz`), each page's chart image in the content
+  became a core Table block (class `gpa-scale-table`): the hub page's standard scale plus the page's own GPA row.
+- Theme: `gpa_scale_table_mark_rows()` highlights the page's row (from the slug) and tags grade bands; table CSS
+  and `--gpa-band-*` tokens. Applied live on top of the live theme files (not the unreleased 1.2 CSS).
+- Inline bold / colour / `<mark>` removed from all H2–H4 headings on the 31 pages (108 headings), so the theme's
+  heading style applies. Revisions kept for every page.
+- The old charts are still each page's featured image; `scripts/render_gpa_scale_images.py` draws replacements
+  (same file names and pixel sizes), pending approval.
+
 ### 2026-10-01: /gpa-scale/ pages converted to blocks, with intros
 - After a fresh DB backup (`~/backups/gpacalculator-2026-10-01-pre-blocks.sql.gz`), `scripts/build_gpa_scale_convert.py`
   converted the 30 Classic pages to paragraph/heading/list blocks (Custom HTML for pasted wrappers and the 3.8 caption).

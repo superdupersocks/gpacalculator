@@ -256,6 +256,13 @@ def build(slug, content, fig):
     return "\n\n".join(out) + "\n"
 
 
+# Small text fixes inside kept blocks: slug -> {old: new}, each must match exactly once.
+PAGE_FIXES = {
+    "2-2-gpa": {"A 2.2 GPA signifies a 'C' average": "A 2.2 GPA signifies a 'C+' average"},
+    "1-1-gpa": {"despite initial academ</p>": "despite initial academic struggles.</p>"},
+}
+
+
 def main():
     pages = json.load(open(sys.argv[1]))
     out = Path(sys.argv[2])
@@ -264,6 +271,9 @@ def main():
     # 4.0 already has its own modern structure (how to get / keep a 4.0), so it is left as it is.
     for slug in sys.argv[3:] or [x for x in sorted(pages, reverse=True) if x != "4-0-gpa"]:
         html = build(slug, pages[slug], figs[slug])
+        for a_, b_ in PAGE_FIXES.get(slug, {}).items():
+            assert html.count(a_) == 1, (slug, a_)
+            html = html.replace(a_, b_)
         (out / f"{slug}.html").write_text(html)
         print(slug, len(text(pages[slug]).split()), "->", len(text(html).split()), "words")
 

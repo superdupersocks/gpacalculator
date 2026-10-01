@@ -184,6 +184,9 @@ the plugin, byte-identical to live, and pass the mount smoke test.
   logged-out `cdb_change_url` rewrite and UniversityTemplate's `?update_universities` meta rewrite.
   Rollback: reactivate the plugins; the pre-change backup is `~/backups/gpacalculator-2026-10-01-pre-collegedb.sql.gz`
   on the server (copy in `~/gpacalculator-backups/` on Digant's Mac), never in the repo.
+- /gpa-scale/3-5 … 3-9-gpa/ still have two sentences in their Freshman/Sophomore paragraphs pointing to
+  "our search tool in the next section" to check admission chances. Edit them in the post content, or leave them until the
+  new college tool ships.
 - The 189 trashed `colleges` posts are not exported; empty the trash or restore deliberately.
 - Country configs (`gpcm_international_profiles`) and any uploaded shared JS/CSS (`gpcm_shared_assets`)
   still live only in the site database.
@@ -193,11 +196,14 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Changelog
 
-### 2026-10-01: hide the "List of Colleges" headings while [CollegeDB] is empty
-- Child theme `the_content` filter (priority 9) drops a heading containing "List of Colleges" directly above
-  `[CollegeDB]`, only while the placeholder is in use. Affects /gpa-scale/3-5 … 3-9-gpa/; post content untouched.
-  Applied live (previous functions.php in `~/backups/functions-2026-10-01-pre-listheading.php`), caches purged,
-  all 31 /gpa-scale/ pages, the homepage and two `[gpcm_calculator]` pages checked.
+### 2026-10-01: hide the closing "admission chances" section while [CollegeDB] is empty
+- Child theme `the_content` filter (priority 9), active only while `[CollegeDB]` is the empty placeholder. On the
+  31 /gpa-scale/ pages it drops the headings directly above the shortcode ("Your Admission Chances With a X GPA",
+  "List of Colleges accepting…", "Colleges likely to accept…") and the lead-in promising the admissions calculator,
+  including the copy on 2.4 and 1.9 that sits above the FAQ. Post content is untouched; the text returns
+  once the new database tool takes over `[CollegeDB]`.
+- Applied live (previous files: `~/backups/functions-2026-10-01-pre-listheading.php`, `…-pre-fullsection.php`),
+  caches purged; all 31 /gpa-scale/ pages, the homepage, two `[gpcm_calculator]` pages and an /admissions/ page checked.
 
 ### 2026-10-01: CollegeDB and University Template retired on the live site
 - Database backed up first (20 MB gzip, outside the web root and copied off the server); live `functions.php` saved alongside.

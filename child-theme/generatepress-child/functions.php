@@ -3285,18 +3285,40 @@ add_action( 'init', function () {
 }, 20 );
 
 /**
- * While [CollegeDB] is the empty placeholder, hide the "List of Colleges accepting average GPA of X or less"
- * heading that sits directly above it on the /gpa-scale/ pages, so no heading introduces an empty spot.
- * Runs before shortcodes and wpautop; the post content in the database is not changed.
+ * While [CollegeDB] is the empty placeholder, hide the closing "admission chances" section above it on the
+ * /gpa-scale/ pages: the "Your Admission Chances With a X GPA" / "List of Colleges accepting…" /
+ * "Colleges likely to accept…" heading(s) and the lead-in that promises the admissions calculator.
+ * Walks back from the shortcode through consecutive matching headings and drops everything from the first
+ * one to the shortcode. Runs before shortcodes and wpautop; the post content in the database is not changed.
  */
 add_filter( 'the_content', function ( $content ) {
 	global $shortcode_tags;
-	if ( false === strpos( $content, '[CollegeDB' ) || ! isset( $shortcode_tags['CollegeDB'] ) || '__return_empty_string' !== $shortcode_tags['CollegeDB'] ) {
+	$at = strpos( $content, '[CollegeDB' );
+	if ( false === $at || ! isset( $shortcode_tags['CollegeDB'] ) || '__return_empty_string' !== $shortcode_tags['CollegeDB'] ) {
 		return $content;
 	}
-	return preg_replace(
-		'#(?:<!--\s*wp:heading\b[^>]*-->\s*)?<h([1-6])\b[^>]*>(?:(?!</h\1>).)*?List of Colleges(?:(?!</h\1>).)*</h\1>\s*(?:<!--\s*/wp:heading\s*-->\s*)?(?=(?:<!--\s*wp:(?:paragraph|shortcode)\b[^>]*-->\s*)?(?:<p>\s*)?\[CollegeDB\b)#is',
+	// Keep the block/paragraph wrapper the shortcode sits in, so the markup stays balanced.
+	$before = substr( $content, 0, $at );
+	if ( preg_match( '#(?:<!--\s*wp:(?:paragraph|shortcode)\b[^>]*-->\s*)?(?:<p>\s*)?$#i', $before, $wrap ) ) {
+		$at -= strlen( $wrap[0] );
+		$before = substr( $content, 0, $at );
+	}
+	if ( ! preg_match_all( '#(?:<!--\s*wp:heading\b[^>]*-->\s*)?<h([1-6])\b[^>]*>(.*?)</h\1>#is', $before, $heads, PREG_SET_ORDER | PREG_OFFSET_CAPTURE ) ) {
+		return $content;
+	}
+	$start = $at;
+	foreach ( array_reverse( $heads ) as $h ) {
+		if ( ! preg_match( '#admission chances|list of colleges|colleges likely to accept#i', wp_strip_all_tags( $h[2][0] ) ) ) {
+			break;
+		}
+		$start = $h[0][1];
+	}
+	// Some pages put an FAQ between that lead-in section and the last heading: drop any earlier
+	// "Admission Chances" section that promises the admissions calculator, up to the next heading.
+	$kept = preg_replace(
+		'#(?:<!--\s*wp:heading\b[^>]*-->\s*)?<h([1-6])\b[^>]*>(?:(?!</h\1>).)*?admission chances(?:(?!</h\1>).)*</h\1>(?:(?!<h[1-6]\b|<!--\s*wp:heading\b).)*?admissions calculator(?:(?!<h[1-6]\b|<!--\s*wp:heading\b).)*#is',
 		'',
-		$content
+		substr( $content, 0, $start )
 	);
+	return ( null === $kept ? substr( $content, 0, $start ) : $kept ) . substr( $content, $at );
 }, 9 );

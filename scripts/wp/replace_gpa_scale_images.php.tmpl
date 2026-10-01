@@ -1,0 +1,41 @@
+<?php
+// Replace each /gpa-scale/ page's chart attachment file in place (same name, same pixel size), regenerate
+// sizes and .webp siblings, set alt text, and set the Rank Math social image to the same attachment.
+$alts = json_decode( base64_decode( '<<base64 of content/gpa-scale-images/alt.json>>' ), true );
+$src  = getenv( 'HOME' ) . '/backups/new-charts/';
+require_once ABSPATH . 'wp-admin/includes/image.php';
+global $wpdb;
+$ok = 0;
+foreach ( $alts as $slug => $alt ) {
+	$pid = (int) $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='page' AND post_status='publish' AND post_name=%s", $slug ) );
+	$att = (int) get_post_thumbnail_id( $pid );
+	$file = get_attached_file( $att );
+	$name = basename( $file );
+	$new  = $src . $name;
+	$meta = wp_get_attachment_metadata( $att );
+	if ( ! $pid || ! $att || ! is_file( $new ) || $name !== substr( $slug, 0, 1 ) . '.' . substr( $slug, 2, 1 ) . '-GPA.png' ) { echo "$slug: SKIP (pid $pid att $att file $name)\n"; continue; }
+	list( $w, $h ) = getimagesize( $new );
+	if ( $w !== (int) $meta['width'] || $h !== (int) $meta['height'] ) { echo "$slug: SKIP size $w x $h vs {$meta['width']} x {$meta['height']}\n"; continue; }
+	$old_sizes = array();
+	foreach ( $meta['sizes'] as $s ) { $old_sizes[] = $s['file']; }
+	copy( $new, $file );
+	$m2 = wp_generate_attachment_metadata( $att, $file );
+	wp_update_attachment_metadata( $att, $m2 );
+	$files = array( $file );
+	$new_sizes = array();
+	foreach ( $m2['sizes'] as $s ) { $files[] = dirname( $file ) . '/' . $s['file']; $new_sizes[] = $s['file']; }
+	$webp = 0;
+	foreach ( $files as $f ) {
+		$ed = wp_get_image_editor( $f );
+		if ( ! is_wp_error( $ed ) && ! is_wp_error( $ed->save( $f . '.webp', 'image/webp' ) ) ) { $webp++; }
+	}
+	update_post_meta( $att, '_wp_attachment_image_alt', $alt );
+	update_post_meta( $pid, 'rank_math_facebook_image', wp_get_attachment_url( $att ) );
+	update_post_meta( $pid, 'rank_math_facebook_image_id', $att );
+	update_post_meta( $pid, 'rank_math_twitter_use_facebook', 'on' );
+	clean_post_cache( $pid ); clean_post_cache( $att );
+	$same = array_diff( $old_sizes, $new_sizes ) ? 'NAMES CHANGED: ' . implode( ',', array_diff( $old_sizes, $new_sizes ) ) : 'same names';
+	printf( "%-8s att=%d files=%d webp=%d %s%s\n", $slug, $att, count( $files ), $webp, $same, array_diff( $new_sizes, $old_sizes ) ? ' +new: ' . implode( ',', array_diff( $new_sizes, $old_sizes ) ) : '' );
+	$ok++;
+}
+echo "$ok replaced\n";

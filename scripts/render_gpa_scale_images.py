@@ -91,7 +91,7 @@ def html_for(slug, gpa, pct, letter, rows, w, h):
 <style>{CSS % {'w': w, 'h': h}}</style></head><body><div class="card">
 <div class="top"><h1>{gpa} GPA</h1><p>{grade} &middot; <b>{pct}</b> on the 4.0 scale</p></div>
 <div class="grid">{''.join(cells)}</div>
-<div class="foot"><span>Standard unweighted scale. Cutoffs vary by school.</span><b>gpacalculator.net</b></div>
+<div class="foot"><span>Standard unweighted scale. Cutoffs vary by school.</span><b>GPAcalculator.net</b></div>
 </div></body></html>"""
 
 

@@ -207,7 +207,13 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 ### 2026-10-01: /gpa-scale/ Rank Math titles and descriptions (live)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-meta.sql.gz`), the 31 pages got the titles and descriptions
   in `content/gpa-scale-meta.md` (focus keywords unchanged). Every page's `<title>` and meta description checked live.
-- Draft chart images for all 31 pages are in `content/gpa-scale-images/` (not uploaded yet).
+
+### 2026-10-01: /gpa-scale/ chart images replaced (live)
+- The 31 featured-image charts were redrawn (`content/gpa-scale-images/`, footer "GPAcalculator.net") and written over the
+  originals with the same names and pixel sizes; WordPress sizes, the legacy 960x700 / 400x300 crops and every
+  `.png.webp` sibling were rebuilt (512 files). Originals: `~/backups/gpa-charts-orig-2026-10-01.tar.gz` (server + Mac).
+- New alt text per image; Rank Math social image set to the same attachment (Twitter uses the Facebook image).
+- Cloudflare caches `/wp-content/uploads/` for a year: purge it after any image swap.
 
 ### 2026-10-01: /gpa-scale/ scale table and heading cleanup (live)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-table.sql.gz`), each page's chart image in the content

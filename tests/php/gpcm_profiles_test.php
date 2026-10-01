@@ -29,10 +29,10 @@ foreach ( file( $repo . '/tests/fixtures/gpcm-university-profiles.tsv' ) as $lin
 	$cols  = explode( "\t", rtrim( $line, "\n" ) );
 	$ids[] = $cols[1];
 }
-// What the site's option holds (minimal stand-ins; the real rules stay in the database).
+// What the site's option holds: the exported profiles in data/gpcm-university-profiles/.
 $profiles = array();
-foreach ( $ids as $id ) {
-	if ( 'stanford' !== $id ) { $profiles[ $id ] = array( 'id' => $id, 'schemaVersion' => 1 ); }
+foreach ( glob( $repo . '/data/gpcm-university-profiles/*.json' ) as $file ) {
+	$profiles[ basename( $file, '.json' ) ] = json_decode( file_get_contents( $file ), true );
 }
 $GLOBALS['options']['gpcm_university_profiles'] = $profiles;
 $GLOBALS['options']['calcs_plugin_shortcodes']  = array();
@@ -52,6 +52,23 @@ check( 'live profile ids', count( $ids ), 87 );
 check( 'plugin keeps [gpcm_calculator]', $GLOBALS['shortcode_tags']['gpcm_calculator'], 'gpcm_shortcode' );
 check( 'engine does not own it', GPACalc_Shortcodes::owns( 'gpcm_calculator' ), false );
 check( 'stanford bundled', is_array( gpcm_builtin_stanford() ), true );
+$all_ids = array_keys( $profiles );
+$all_ids[] = 'stanford';
+sort( $all_ids );
+$want_ids = $ids;
+sort( $want_ids );
+check( 'exported profiles + stanford = live list', $all_ids, $want_ids );
+
+$invalid = array();
+foreach ( $profiles as $id => $profile ) {
+	try {
+		gpcm_validate_profile( $profile );
+		if ( $profile['slug'] !== $id ) { $invalid[] = $id; }
+	} catch ( Exception $e ) {
+		$invalid[ $id ] = $e->getMessage();
+	}
+}
+check( 'every exported profile passes the plugin validator', $invalid, array() );
 
 $broken = array();
 foreach ( $ids as $id ) {

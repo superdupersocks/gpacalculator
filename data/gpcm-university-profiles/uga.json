@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uga",
+  "universityName": "University of Georgia",
+  "pageTitle": "Calculate Your University of Georgia GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades and GPA calculation",
+      "url": "https://reg.uga.edu/student-records/grades/"
+    },
+    {
+      "label": "Undergraduate repeat policy",
+      "url": "https://apps.reg.uga.edu/UniversityCouncil/meetingMinute/embed/2045"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://osfa.uga.edu/resources/policies/satisfactory-academic-progress/undergraduate-students/"
+    },
+    {
+      "label": "Transfer admission GPA and repeats",
+      "url": "https://admissions.uga.edu/apply/transfer-applicants/transfer-criteria/"
+    },
+    {
+      "label": "First-year admission GPA",
+      "url": "https://admissions.uga.edu/apply/first-year-applicants/first-year-criteria/"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://reg.uga.edu/student-records/graduation/"
+    },
+    {
+      "label": "Transfer credit evaluation",
+      "url": "https://transfer.uga.edu/current-students/transfer-credit-reevaluation/"
+    },
+    {
+      "label": "Graduate GPA requirement and repeats",
+      "url": "https://grad.uga.edu/policy-update-cumulative-grade-point-average-requirement/"
+    },
+    {
+      "label": "Graduate/professional SAP",
+      "url": "https://osfa.uga.edu/resources/policies/satisfactory-academic-progress/graduate-students/"
+    },
+    {
+      "label": "Graduate admission academic records",
+      "url": "https://grad.uga.edu/admissions/requirements/transcripts-and-academic-records/"
+    }
+  ],
+  "helpIntro": "UGA uses a 4.0 plus/minus scale. Enter UGA residence credit hours and final grades to estimate your cumulative UGA GPA.",
+  "helpNote": "This profile estimates the UGA cumulative GPA for undergraduate residence coursework. UGA also reports an overall GPA that includes transfer work. The calculator displays three decimals, while UGA truncates official GPAs to two decimals. Repeat Impact is unavailable because ordinary undergraduate UGA repeats count all UGA grades.",
+  "helpExample": "A 3-credit A earns 12 grade points and a 3-credit B earns 9. Together, 21 ÷ 6 = 3.50.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D": 1,
+      "F": 0,
+      "W": null,
+      "I": null,
+      "S": null,
+      "U": null,
+      "V": null,
+      "K": null,
+      "NG": null,
+      "ER": null,
+      "NR": null,
+      "WM": null,
+      "WP": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 points per credit hour.",
+      "A-": "A- = 3.7 points per credit hour.",
+      "B+": "B+ = 3.3 points per credit hour.",
+      "B": "B = 3.0 points per credit hour.",
+      "B-": "B- = 2.7 points per credit hour.",
+      "C+": "C+ = 2.3 points per credit hour.",
+      "C": "C = 2.0 points per credit hour.",
+      "C-": "C- = 1.7 points; it does not satisfy requirements that require C (2.0) or better.",
+      "D": "D = 1.0 point per credit hour.",
+      "F": "F = zero points; attempted letter-grade hours remain in the GPA denominator.",
+      "W": "Withdrawal is excluded from GPA.",
+      "I": "Incomplete is excluded until resolved; after three semesters an unresolved I becomes F (or U for S/U coursework).",
+      "S": "Satisfactory earns credit where applicable but is excluded from GPA.",
+      "U": "Unsatisfactory in S/U coursework is excluded from GPA.",
+      "V": "Audit is excluded from GPA.",
+      "K": "Credit by examination is excluded from GPA.",
+      "NG": "No grade reported; excluded until replaced by a final grade.",
+      "ER": "Error/record symbol is excluded from GPA while unresolved.",
+      "NR": "Not received; excluded until replaced by a final grade.",
+      "WM": "Military withdrawal is excluded from GPA.",
+      "WP": "Legacy/record withdrawal-pass symbol is excluded from GPA when present."
+    },
+    "specialTypes": [
+      {
+        "name": "UGA course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for UGA residence coursework on the standard University grade scale."
+      },
+      {
+        "name": "External transfer course",
+        "grades": [],
+        "excluded": false,
+        "note": "UGA overall GPA can include transfer grades/hours, but transfer conversion and acceptance require the official record. Do not enter as ordinary UGA cumulative-GPA coursework.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate or professional-school course",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate and professional programs can have different GPA/repeat/standing rules; use the appropriate official record.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each completed UGA attempt as a separate course row. All UGA grades remain in the cumulative GPA; this calculator does not decide degree-credit use.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UGA cumulative GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL 1101",
+        "units": "3",
+        "grade": "A",
+        "special": "UGA course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1113",
+        "units": "4",
+        "grade": "B+",
+        "special": "UGA course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "HIST 2111",
+        "units": "3",
+        "grade": "C-",
+        "special": "UGA course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1211",
+        "units": "3",
+        "grade": "F",
+        "special": "UGA course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "BIOL 1107",
+        "units": "3",
+        "grade": "A-",
+        "special": "UGA course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "9a439307a364"
+}

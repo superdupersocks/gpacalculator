@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "usc",
+  "universityName": "University of Southern California",
+  "pageTitle": "Calculate Your USC GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades and GPA numeric equivalents",
+      "url": "https://arr.usc.edu/grades/"
+    },
+    {
+      "label": "Repeated coursework",
+      "url": "https://arr.usc.edu/grades/"
+    },
+    {
+      "label": "Transfer admission and transfer GPA",
+      "url": "https://admission.usc.edu/prospective-students/how-to-apply/transfer-students/"
+    },
+    {
+      "label": "Transfer Credit Services",
+      "url": "https://arr.usc.edu/transfer-credit-services/"
+    },
+    {
+      "label": "Academic notice and disqualification",
+      "url": "https://arr.usc.edu/academic-counseling/"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://financialaid.usc.edu/undergraduate-financial-aid/admitted-and-continuing-students/maintaining-your-eligibility/"
+    },
+    {
+      "label": "University honors",
+      "url": "https://viterbiundergrad.usc.edu/commencement/"
+    },
+    {
+      "label": "Gould Law grading scale",
+      "url": "https://gould.usc.edu/assets/docs/portal/academics/registration/reg/grading-scale.pdf"
+    },
+    {
+      "label": "Undergraduate graduation GPA context",
+      "url": "https://annenberg.usc.edu/current-students/faq/faq-communication"
+    }
+  ],
+  "helpIntro": "USC uses a 4.0 scale with plus/minus grades from A through D-. Enter USC semester units and final grades to estimate your current, cumulative, projected, or target GPA.",
+  "helpNote": "For the standard USC undergraduate institutional GPA. A+ is not used. F, UW, and IX count as 0.0; CR/NC/P/NP/W/IP/MG/IN do not affect GPA. Transfer GPA and Gould Law grading are separate. Repeat Impact is disabled because freshman grade substitution has eligibility rules.",
+  "helpExample": "A 4-unit A earns 16.0 grade points and a 4-unit B+ earns 13.2. Together, 29.2 ÷ 8 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 20,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "UW": 0,
+      "IX": 0,
+      "CR": null,
+      "NC": null,
+      "P": null,
+      "NP": null,
+      "W": null,
+      "IP": null,
+      "MG": null,
+      "IN": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 grade points per unit.",
+      "A-": "A- = 3.7 grade points per unit.",
+      "B+": "B+ = 3.3 grade points per unit.",
+      "B": "B = 3 grade points per unit.",
+      "B-": "B- = 2.7 grade points per unit.",
+      "C+": "C+ = 2.3 grade points per unit.",
+      "C": "C = 2 grade points per unit.",
+      "C-": "C- = 1.7 grade points per unit.",
+      "D+": "D+ = 1.3 grade points per unit.",
+      "D": "D = 1 grade points per unit.",
+      "D-": "D- = 0.7 grade points per unit.",
+      "F": "F counts as zero grade points.",
+      "UW": "Unofficial withdrawal counts as zero grade points.",
+      "IX": "Expired incomplete counts as zero grade points.",
+      "CR": "Credit; no effect on USC GPA.",
+      "NC": "No Credit; no effect on USC GPA.",
+      "P": "Pass; no effect on USC GPA.",
+      "NP": "No Pass; no effect on USC GPA.",
+      "W": "Withdrawal; no effect on USC GPA.",
+      "IP": "In Progress; excluded until resolved.",
+      "MG": "Missing Grade; excluded while unresolved; if unresolved for one year it becomes UW.",
+      "IN": "Incomplete; excluded while unresolved; if it expires it normally becomes IX."
+    },
+    "specialTypes": [
+      {
+        "name": "USC course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final USC transcript grade and semester units."
+      },
+      {
+        "name": "Verified freshman-forgiveness original attempt",
+        "grades": null,
+        "excluded": true,
+        "note": "Use only after confirming the course qualifies for USC freshman grade substitution; the replacement grade should be entered separately as a standard USC course."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades are kept separate from the USC institutional GPA. Graduation/honors may also consider a combined USC-transfer GPA."
+      },
+      {
+        "name": "Gould Law course / law record",
+        "grades": [],
+        "excluded": false,
+        "note": "Gould Law uses a more granular grading system. Do not apply the ordinary USC undergraduate mapping without record-specific review.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled because USC repeat treatment depends on freshman status, timing, grade, and substitution eligibility. Use the special course type only after confirming freshman-forgiveness eligibility.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "USC undergraduate institutional GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "WRIT 150",
+        "units": "4",
+        "grade": "A",
+        "special": "USC course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 125",
+        "units": "4",
+        "grade": "B+",
+        "special": "USC course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 105a",
+        "units": "1",
+        "grade": "F",
+        "special": "USC course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "Elective P",
+        "units": "4",
+        "grade": "P",
+        "special": "USC course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Planned course",
+        "units": "15",
+        "grade": "A",
+        "special": "USC course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "28a219fca667"
+}

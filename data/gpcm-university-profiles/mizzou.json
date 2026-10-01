@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "mizzou",
+  "universityName": "University of Missouri",
+  "pageTitle": "Calculate Your Mizzou GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula and GPA of Record",
+      "url": "https://catalog.missouri.edu/academicpolicies/grades/"
+    },
+    {
+      "label": "Grade values and excluded marks",
+      "url": "https://registrar.missouri.edu/grades-calculators/grading-system/"
+    },
+    {
+      "label": "GPA of Record",
+      "url": "https://registrar.missouri.edu/policies-procedures/gpa-of-record/"
+    },
+    {
+      "label": "GPA adjustment calculator / transfer scope",
+      "url": "https://registrar.missouri.edu/grades-calculators/gpa-adjustment-calculator/"
+    },
+    {
+      "label": "Transfer credit and degree applicability",
+      "url": "https://catalog.missouri.edu/academicpolicies/transfercreditanddegreeapplicability/"
+    },
+    {
+      "label": "Financial aid SAP and professional-school scope",
+      "url": "https://financialaid.missouri.edu/receiving-aid/satisfactory-academic-progress/"
+    },
+    {
+      "label": "Undergraduate course repeat and GPA adjustment",
+      "url": "https://registrar.missouri.edu/policies-procedures/course-repeat/"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://catalog.missouri.edu/academicpolicies/academicstanding/"
+    },
+    {
+      "label": "Latin honors",
+      "url": "https://catalog.missouri.edu/academicpolicies/latinhonors/"
+    },
+    {
+      "label": "Graduate grades and GPA",
+      "url": "https://catalog.missouri.edu/academicpolicies/gradesandcreditsg/"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admissions.missouri.edu/apply/transfer/admission-requirements/"
+    },
+    {
+      "label": "Freshman admission requirements",
+      "url": "https://admissions.missouri.edu/apply/freshmen/admission-requirements/"
+    }
+  ],
+  "helpIntro": "Mizzou uses a 4.0 plus/minus scale. Enter credit hours and final grades to estimate your current, cumulative, projected, or target GPA.",
+  "helpNote": "For the standard undergraduate GPA of record. UM System coursework can affect the cumulative GPA; ordinary external transfer grades do not. Repeat GPA adjustment is request-based, so Repeat Impact is not automated.",
+  "helpExample": "A 3-credit A earns 12 grade points; a 3-credit B earns 9. Together, 21 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "S": null,
+      "U": null,
+      "H": null,
+      "W": null,
+      "NR": null,
+      "I": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.00 points per credit hour.",
+      "A": "A = 4.00 points per credit hour.",
+      "A-": "A- = 3.70 points per credit hour.",
+      "B+": "B+ = 3.30 points per credit hour.",
+      "B": "B = 3.00 points per credit hour.",
+      "B-": "B- = 2.70 points per credit hour.",
+      "C+": "C+ = 2.30 points per credit hour.",
+      "C": "C = 2.00 points per credit hour.",
+      "C-": "C- = 1.70 points per credit hour.",
+      "D+": "D+ = 1.30 points per credit hour.",
+      "D": "D = 1.00 point per credit hour.",
+      "D-": "D- = 0.70 points per credit hour.",
+      "F": "F = 0 points; attempted GPA hours still count.",
+      "S": "S earns credit but is excluded from GPA.",
+      "U": "U earns no credit and is excluded from GPA.",
+      "H": "Hearer/auditor mark; excluded from GPA.",
+      "W": "Withdrawal mark; excluded from GPA.",
+      "NR": "Not recorded; excluded until a final grade is posted.",
+      "I": "Incomplete; excluded until resolved."
+    },
+    "specialTypes": [
+      {
+        "name": "Mizzou course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final Mizzou grade and credit hours."
+      },
+      {
+        "name": "Other UM System campus course",
+        "grades": null,
+        "excluded": false,
+        "note": "UM System grades and credits are included in the undergraduate GPA of record."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted non-UM transfer credit does not affect the Mizzou cumulative GPA."
+      },
+      {
+        "name": "Law, Medicine, or Veterinary Medicine course",
+        "grades": [],
+        "excluded": false,
+        "note": "Professional programs use separate academic standards; verify with the school.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat adjustment is request-based and has multi-attempt rules, so Repeat Impact is not automated here. Use the Registrar GPA Adjustment process for an official estimate.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA of Record"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENGLSH 1000",
+        "units": "3",
+        "grade": "A",
+        "special": "Mizzou course",
+        "planned": false
+      },
+      {
+        "name": "MATH 1100",
+        "units": "4",
+        "grade": "B-",
+        "special": "Mizzou course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1100",
+        "units": "3",
+        "grade": "F",
+        "special": "Mizzou course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 1100",
+        "units": "3",
+        "grade": "A-",
+        "special": "Mizzou course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "eeeec220c9b4"
+}

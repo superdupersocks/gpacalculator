@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uc-davis",
+  "universityName": "University of California, Davis",
+  "pageTitle": "Calculate Your UC Davis GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades, GPA formula, grade points, P/NP/S/U/I/IP exclusions",
+      "url": "https://catalog.ucdavis.edu/academic-information-policies-regulations/grades-grading/"
+    },
+    {
+      "label": "Undergraduate and graduate repeat rules",
+      "url": "https://catalog.ucdavis.edu/academic-information-policies-regulations/grades-grading/"
+    },
+    {
+      "label": "Repeat annotations and illegal repeats",
+      "url": "https://registrar.ucdavis.edu/faculty-staff/itg/repeat"
+    },
+    {
+      "label": "UC GPA scope",
+      "url": "https://catalog.ucdavis.edu/academic-information-policies-regulations/grades-grading/"
+    },
+    {
+      "label": "Transfer credit and transcript GPA treatment",
+      "url": "https://registrar.ucdavis.edu/records/transcripts/read"
+    },
+    {
+      "label": "Transfer credit FAQ",
+      "url": "https://registrar.ucdavis.edu/records/transfer-credit"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://catalog.ucdavis.edu/academic-information-policies-regulations/academic-standing/"
+    },
+    {
+      "label": "Bachelor scholarship requirement",
+      "url": "https://catalog.ucdavis.edu/undergraduate-education/university-degree-requirements/scholarship-requirement/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.ucdavis.edu/consumer/sap"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://www.ucdavis.edu/admissions/undergraduate/transfer/requirements"
+    },
+    {
+      "label": "Graduate GPA and standing",
+      "url": "https://grad.ucdavis.edu/progress-and-academic-probation"
+    },
+    {
+      "label": "Graduate admissions minimum",
+      "url": "https://grad.ucdavis.edu/minimum-requirements"
+    },
+    {
+      "label": "Honors thresholds",
+      "url": "https://catalog.ucdavis.edu/academic-information-policies-regulations/honors-awards/"
+    }
+  ],
+  "helpIntro": "UC Davis uses a 4.0 UC GPA scale: A+ and A are 4.0, plus/minus grades change by 0.3, and F is 0. Enter GPA-applicable UC quarter units and final letter grades to estimate your current or projected GPA.",
+  "helpNote": "P/NP, S/U, I, IP and other non-grade-point marks are excluded from ordinary GPA. Non-UC transfer grades do not enter the UC GPA. Repeat Impact is disabled because undergraduate replacement is limited to the first 16 eligible repeated units and transcript context matters.",
+  "helpExample": "A 4-unit A- earns 14.8 grade points. A 4-unit B+ earns 13.2. Together, 28.0 ÷ 8 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "IP": null,
+      "NG": null,
+      "Y": null,
+      "NS": null,
+      "H": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0 points per unit, same as A.",
+      "A": "A = 4.0 points per unit.",
+      "A-": "A- = 3.7 points per unit.",
+      "B+": "B+ = 3.3 points per unit.",
+      "B": "B = 3.0 points per unit.",
+      "B-": "B- = 2.7 points per unit.",
+      "C+": "C+ = 2.3 points per unit.",
+      "C": "C = 2.0 points per unit.",
+      "C-": "C- = 1.7 points per unit.",
+      "D+": "D+ = 1.3 points per unit.",
+      "D": "D = 1.0 point per unit.",
+      "D-": "D- = 0.7 points per unit.",
+      "F": "F = 0 points; letter-graded units remain in the GPA denominator unless excluded by an approved repeat.",
+      "P": "Passed; units may earn credit but do not enter GPA.",
+      "NP": "Not Passed; no grade points and excluded from GPA.",
+      "S": "Satisfactory graduate grading; excluded from GPA.",
+      "U": "Unsatisfactory graduate grading; excluded from GPA.",
+      "I": "Incomplete is excluded from ordinary GPA while pending; special graduation/standing rules can differ.",
+      "IP": "In Progress is excluded until replaced by a final grade.",
+      "NG": "No Grade notation; excluded from GPA.",
+      "Y": "Pending judicial/remediation notation; excluded from ordinary GPA.",
+      "NS": "No grade submitted notation; excluded from GPA.",
+      "H": "Honors notation listed without grade points; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UC Davis or other UC letter-graded course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use GPA-applicable letter-graded UC coursework. Other UC campus work contributes to the overall UC GPA."
+      },
+      {
+        "name": "UC Davis Continuing and Professional Education",
+        "grades": null,
+        "excluded": false,
+        "note": "Only GPA-applicable UC Davis CPE/Extension work that appears in UC totals should be entered."
+      },
+      {
+        "name": "Non-UC transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Non-UC transfer credit may count toward degree units but does not enter the cumulative UC GPA."
+      },
+      {
+        "name": "Course affected by repeat rules",
+        "grades": [],
+        "excluded": false,
+        "note": "Use your official transcript repeat annotation or adviser guidance. The first 16 eligible undergraduate repeated units can replace prior GPA work; later/partial-limit cases can count both attempts.",
+        "manualReview": true
+      },
+      {
+        "name": "Professional-school course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law, Medicine, Veterinary Medicine, and other professional-school grading may follow separate rules; use the school record and adviser guidance.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Use the official transcript repeat annotations or adviser guidance before adjusting a cumulative GPA baseline.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "UC GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CHE 2A",
+        "units": "4",
+        "grade": "A+",
+        "special": "UC Davis or other UC letter-graded course",
+        "planned": false
+      },
+      {
+        "name": "MAT 21A",
+        "units": "4",
+        "grade": "B-",
+        "special": "UC Davis or other UC letter-graded course",
+        "planned": false
+      },
+      {
+        "name": "BIS 2A",
+        "units": "4",
+        "grade": "F",
+        "special": "UC Davis or other UC letter-graded course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "STA 13",
+        "units": "4",
+        "grade": "A-",
+        "special": "UC Davis or other UC letter-graded course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "1c95cfe595b8"
+}

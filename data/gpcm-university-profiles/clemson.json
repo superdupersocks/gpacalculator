@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "clemson",
+  "universityName": "Clemson University",
+  "pageTitle": "Calculate Your Clemson GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; undergraduate GPA; P/NP; I; planning calculator",
+      "url": "https://www.clemson.edu/asc/success-resources/gpa-calculator.html"
+    },
+    {
+      "label": "Academic Forgiveness",
+      "url": "https://www.clemson.edu/registrar/student-records/academic-forgiveness.html"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://www.clemson.edu/registrar/student-records/transfer-credits.html"
+    },
+    {
+      "label": "Repeat / forgiveness calculator behavior",
+      "url": "https://www.clemson.edu/asc/success-resources/gpa-calculator.html"
+    },
+    {
+      "label": "Academic eligibility",
+      "url": "https://www.clemson.edu/undergraduate-learning/resources/academic-eligibility/"
+    },
+    {
+      "label": "Graduate grading scale",
+      "url": "https://www.clemson.edu/graduate/_files/policy-handbook-2022-2023-fourth-edition.pdf"
+    },
+    {
+      "label": "Academic Renewal",
+      "url": "https://www.clemson.edu/undergraduate-learning/resources/academic-eligibility/appeals-process.html"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://www.clemson.edu/financial-aid/how-aid-works/specific-aid-tasks/maintain-your-eligibility/"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://www.clemson.edu/commencement/traditions/honors-awards.html"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://www.app.clemson.edu/admissions/undergraduate-admissions/apply/transfer.html"
+    }
+  ],
+  "helpIntro": "Clemson uses a 4.0 undergraduate scale. Enter Clemson credit hours and grades to estimate current, projected, or target GPA.",
+  "helpNote": "For undergraduate Clemson GPA only. Transfer grades and P/NP do not count. An I is treated as an F until resolved. Academic Forgiveness is request-based, so exclude a D/F only after Clemson approves it. Graduate grading uses a different scale.",
+  "helpExample": "A 3-credit A earns 12 quality points and a 4-credit B earns 12; 24 ÷ 7 = 3.429.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "I": 0,
+      "P": null,
+      "NP": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 quality points per credit hour.",
+      "B": "B = 3 quality points per credit hour.",
+      "C": "C = 2 quality points per credit hour.",
+      "D": "D = 1 quality point per credit hour; eligible D grades may be removed only through approved Academic Forgiveness.",
+      "F": "F = 0 quality points; the course still affects GPA unless officially forgiven.",
+      "I": "I is temporary and is calculated as an F until replaced by a final grade.",
+      "P": "P does not affect Clemson GPA.",
+      "NP": "NP does not affect Clemson GPA.",
+      "W": "W does not affect Clemson GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Clemson course, undergraduate grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use A/B/C/D/F/I or excluded P/NP/W as recorded."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer credit may apply to the degree, but transfer grades do not enter Clemson GPA."
+      },
+      {
+        "name": "Officially forgiven Clemson D/F course",
+        "grades": null,
+        "excluded": true,
+        "note": "Select only after Clemson has approved Academic Forgiveness for that course; this calculator does not decide eligibility."
+      },
+      {
+        "name": "Graduate-level / graduate record course",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate grading uses a different scale; calculate the graduate record separately.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Enter repeated attempts as separate Clemson courses unless an attempt has officially been removed from GPA through Academic Forgiveness.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate Clemson GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL 1030",
+        "units": "3",
+        "grade": "A",
+        "special": "Clemson course, undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1060",
+        "units": "4",
+        "grade": "B",
+        "special": "Clemson course, undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1010",
+        "units": "3",
+        "grade": "F",
+        "special": "Clemson course, undergraduate grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSYC 2010",
+        "units": "3",
+        "grade": "A",
+        "special": "Clemson course, undergraduate grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "737e068c1010"
+}

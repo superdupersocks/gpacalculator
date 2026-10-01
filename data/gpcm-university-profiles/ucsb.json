@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ucsb",
+  "universityName": "University of California, Santa Barbara",
+  "pageTitle": "Calculate Your UCSB GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula and grade points",
+      "url": "https://www.duels.ucsb.edu/degree-planning/grades-gpa-calculator"
+    },
+    {
+      "label": "Passed/Not Passed",
+      "url": "https://catalog.ucsb.edu/pages/2tQTS2uUZ4TLvlGTjXi8"
+    },
+    {
+      "label": "Course repetition",
+      "url": "https://catalog.ucsb.edu/pages/21vV9Th2ZcY3WTIpHyCL"
+    },
+    {
+      "label": "Withdrawal grade",
+      "url": "https://catalog.ucsb.edu/pages/pkSr5ZNmRq9uKclqFenT"
+    },
+    {
+      "label": "Incomplete grades",
+      "url": "https://catalog.ucsb.edu/pages/TNkyLUBcAU6RC4pswF81"
+    },
+    {
+      "label": "In-progress grades",
+      "url": "https://catalog.ucsb.edu/pages/32y7bmme7mQrASeXHYw5"
+    },
+    {
+      "label": "Transfer and external coursework",
+      "url": "https://admissions.sa.ucsb.edu/transfer-credit"
+    },
+    {
+      "label": "UC cross-campus and PaCE",
+      "url": "https://catalog.ucsb.edu/pages/p5ikTyrGBAzLaUYTM9bW"
+    },
+    {
+      "label": "Undergraduate academic eligibility",
+      "url": "https://catalog.ucsb.edu/pages/7fjJg27BKthWqbNPQdin"
+    },
+    {
+      "label": "Graduation GPA requirements",
+      "url": "https://www.duels.ucsb.edu/lasar/general-university-requirements"
+    },
+    {
+      "label": "Honors at graduation",
+      "url": "https://catalog.ucsb.edu/pages/SzjRNcv6fvy0E5RrM1cu"
+    },
+    {
+      "label": "Graduate academic eligibility",
+      "url": "https://catalog.ucsb.edu/pages/j0lxSeoTNZTWUG1VZh0M"
+    },
+    {
+      "label": "Transfer admission eligibility",
+      "url": "https://admissions.sa.ucsb.edu/transfer-eligibility-selection"
+    },
+    {
+      "label": "First-year admissions FAQ",
+      "url": "https://admissions.sa.ucsb.edu/faq"
+    }
+  ],
+  "helpIntro": "UC Santa Barbara uses a 4.0 UC GPA scale. Enter quarter units and final grades to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "A+ and A are both 4.0. P/NP, W, and IP do not enter the GPA. Repeat Impact is disabled because UCSB replacement depends on the first 16 repeated units; UC Extension/PaCE may need transcript review.",
+  "helpExample": "A 4-unit A earns 16 grade points and a 4-unit B+ earns 13.2; together, 29.2 ÷ 8 = 3.65.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "I": null,
+      "IP": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0 grade points per unit.",
+      "A": "A = 4.0 grade points per unit.",
+      "A-": "A- = 3.7 grade points per unit.",
+      "B+": "B+ = 3.3 grade points per unit.",
+      "B": "B = 3.0 grade points per unit.",
+      "B-": "B- = 2.7 grade points per unit.",
+      "C+": "C+ = 2.3 grade points per unit.",
+      "C": "C = 2.0 grade points per unit.",
+      "C-": "C- = 1.7 grade points per unit.",
+      "D+": "D+ = 1.3 grade points per unit.",
+      "D": "D = 1.0 grade points per unit.",
+      "D-": "D- = 0.7 grade points per unit.",
+      "F": "F = 0.0 grade points per unit.",
+      "P": "Passed; excluded from university GPA.",
+      "NP": "Not Passed; excluded from university GPA and earns no credit.",
+      "I": "Incomplete; do not count until a final grade is posted. An unresolved I may later convert under UCSB policy.",
+      "IP": "In Progress; excluded until the final grade replaces it.",
+      "W": "Withdrawal; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UCSB or other UC course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for UC coursework whose grade is part of the UC GPA."
+      },
+      {
+        "name": "Non-UC transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transferable non-UC work may earn credit but its grade does not enter the UCSB UC GPA."
+      },
+      {
+        "name": "UC Extension / PaCE course",
+        "grades": [],
+        "excluded": false,
+        "note": "Most extension work is not in the UC GPA, but qualifying UCSB Open University coursework can be included. Check the transcript before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Use your official UC GPA baseline or confirm repeat treatment in GOLD/advising before manually entering repeated work.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UC GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "WRIT 2",
+        "units": "4",
+        "grade": "A+",
+        "special": "UCSB or other UC course",
+        "planned": false
+      },
+      {
+        "name": "MATH 3A",
+        "units": "4",
+        "grade": "B+",
+        "special": "UCSB or other UC course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1A",
+        "units": "4",
+        "grade": "F",
+        "special": "UCSB or other UC course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 4A",
+        "units": "4",
+        "grade": "A-",
+        "special": "UCSB or other UC course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "a8553df4f3c7"
+}

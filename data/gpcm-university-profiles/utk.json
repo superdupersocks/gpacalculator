@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "utk",
+  "universityName": "University of Tennessee, Knoxville",
+  "pageTitle": "Calculate Your UT Knoxville GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula, current undergraduate grades, exclusions, transfer GPA",
+      "url": "https://onestop.utk.edu/registration-records/transcripts-academic-history/"
+    },
+    {
+      "label": "GPA display precision and excluded grades",
+      "url": "https://onestop.utk.edu/registration-records/grades-gpa-levels-of-distinction/"
+    },
+    {
+      "label": "Undergraduate repeats and grade replacement overview",
+      "url": "https://studentlife.utk.edu/hilltopics/academics/"
+    },
+    {
+      "label": "Detailed undergraduate grade replacement rules",
+      "url": "https://senate.utk.edu/wp-content/uploads/sites/16/2020/04/UG-Council-Minutes.2020.04.14.pdf"
+    },
+    {
+      "label": "Transfer GPA and repeated transfer coursework",
+      "url": "https://admissions.utk.edu/admitted-students/transfer/"
+    },
+    {
+      "label": "Academic probation and dismissal",
+      "url": "https://studentsuccess.utk.edu/academicsuccess/academic-probation/"
+    },
+    {
+      "label": "Dean’s List",
+      "url": "https://registrar.utk.edu/deans-list/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://onestop.utk.edu/scholarships-financial-aid/financial-aid/keep-your-financial-aid-sap/"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://admissions.utk.edu/undergraduate-application/transfer-student/"
+    },
+    {
+      "label": "First-year admission core GPA",
+      "url": "https://admissions.utk.edu/undergraduate-application/first-year-student/"
+    },
+    {
+      "label": "Graduate repeat rules",
+      "url": "https://gradschool.utk.edu/academics/forms-central/permission-to-repeat-a-graduate-course/"
+    }
+  ],
+  "helpIntro": "UT Knoxville uses a 4.0 undergraduate scale with plus/minus grades. Enter UT credit hours and final grades to estimate your current, cumulative, projected, or target GPA.",
+  "helpNote": "For current undergraduate UT coursework. Transfer grades from fall 1985 onward are excluded from the official UT GPA. Graduate, Law, Veterinary Medicine, historical records, and repeat replacement need separate review.",
+  "helpExample": "A 3-credit A earns 12 quality points and a 3-credit B earns 9. Together, 21 ÷ 6 = 3.50.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "I": null,
+      "S": null,
+      "NC": null,
+      "W": null,
+      "WP": null,
+      "WF": null,
+      "NR": null,
+      "P": null,
+      "IW": null,
+      "IC": null,
+      "IS": null,
+      "SI": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 quality points per credit hour.",
+      "A-": "A- = 3.7 quality points per credit hour.",
+      "B+": "B+ = 3.3 quality points per credit hour.",
+      "B": "B = 3.0 quality points per credit hour.",
+      "B-": "B- = 2.7 quality points per credit hour.",
+      "C+": "C+ = 2.3 quality points per credit hour.",
+      "C": "C = 2.0 quality points per credit hour.",
+      "C-": "C- = 1.7 quality points per credit hour.",
+      "D+": "D+ = 1.3 quality points per credit hour.",
+      "D": "D = 1.0 quality points per credit hour.",
+      "D-": "D- = 0.7 quality points per credit hour.",
+      "F": "F = 0.0 quality points per credit hour.",
+      "I": "Incomplete; excluded from GPA until resolved.",
+      "S": "Satisfactory; excluded from GPA.",
+      "NC": "No Credit; excluded from GPA.",
+      "W": "Withdrawn; excluded from GPA.",
+      "WP": "Withdrew passing; excluded from GPA.",
+      "WF": "Withdrew failing; current notation excluded from GPA.",
+      "NR": "Grade not reported; excluded pending resolution.",
+      "P": "Progress toward thesis/dissertation; not an undergraduate GPA grade; excluded.",
+      "IW": "Incomplete due to writing deficiency; excluded pending resolution.",
+      "IC": "Incomplete notation; excluded pending resolution.",
+      "IS": "Incomplete satisfactory/no-credit notation; excluded pending resolution.",
+      "SI": "Incomplete satisfactory/no-credit notation; excluded pending resolution."
+    },
+    "specialTypes": [
+      {
+        "name": "UT Knoxville undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use current undergraduate grades and UT credit hours."
+      },
+      {
+        "name": "Transfer course (fall 1985 or later)",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer hours may apply to the degree, but transfer grades do not enter the official UT GPA."
+      },
+      {
+        "name": "Historical UT grading period",
+        "grades": [],
+        "excluded": false,
+        "note": "Pre-fall-2006 undergraduate grade values and older incomplete/WF rules differ; use the transcript and Registrar guidance.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate, Law, or Veterinary Medicine course/record",
+        "grades": [],
+        "excluded": false,
+        "note": "These records can use different grade sets or repeat rules and should not be calculated with the undergraduate profile.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Confirm eligibility with the current catalog/advisor; do not model a replacement by simply deleting a grade unless your UT record already reflects it.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate institutional GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENGL 101",
+        "units": "3",
+        "grade": "A",
+        "special": "UT Knoxville undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 125",
+        "units": "3",
+        "grade": "B+",
+        "special": "UT Knoxville undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "BIOL 150",
+        "units": "3",
+        "grade": "C",
+        "special": "UT Knoxville undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSYC 110",
+        "units": "15",
+        "grade": "A",
+        "special": "UT Knoxville undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "96dbd8c49e43"
+}

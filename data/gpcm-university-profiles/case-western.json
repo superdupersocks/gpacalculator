@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "case-western",
+  "universityName": "Case Western Reserve University",
+  "pageTitle": "Calculate Your Case Western GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate grades; GPA formula; P/NP; incomplete",
+      "url": "https://bulletin.case.edu/undergraduate-academics/grades/"
+    },
+    {
+      "label": "Undergraduate course repetition",
+      "url": "https://bulletin.case.edu/undergraduate-academics/academic-policies-procedures/"
+    },
+    {
+      "label": "Transfer and external coursework",
+      "url": "https://bulletin.case.edu/undergraduate-academics/academic-policies-procedures/"
+    },
+    {
+      "label": "University GPA calculation",
+      "url": "https://bulletin.case.edu/about-university/university-registrar/"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://bulletin.case.edu/undergraduate-academics/academic-standing-regulations/"
+    },
+    {
+      "label": "Undergraduate honors",
+      "url": "https://bulletin.case.edu/undergraduate-academics/honors-awards/"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://case.edu/financialaid/resources/financial-aid-satisfactory-academic-progress-undergraduate-students"
+    },
+    {
+      "label": "Graduate GPA and repeat differences",
+      "url": "https://bulletin.case.edu/graduate-studies/academic-requirements-policies/"
+    },
+    {
+      "label": "First-year admission GPA",
+      "url": "https://case.edu/admission/apply/first-year-applicants"
+    }
+  ],
+  "helpIntro": "Case Western Reserve undergraduate GPA uses a 4.0 scale: A=4, B=3, C=2, D=1, F=0. Enter CWRU credit hours and final grades to estimate current or projected GPA.",
+  "helpNote": "For the general undergraduate record only. P/NP, transfer and exam credit are excluded. Both graded attempts of a repeated undergraduate course count, so Repeat Impact is unavailable. Graduate and professional programs use different rules.",
+  "helpExample": "A 3-credit A earns 12 quality points and a 3-credit B earns 9. Together, 21 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "I": null,
+      "W": null,
+      "WD": null,
+      "P": null,
+      "NP": null,
+      "R": null,
+      "AD": null,
+      "NG": null,
+      "NOG": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 quality points per credit hour.",
+      "B": "B = 3 quality points per credit hour.",
+      "C": "C = 2 quality points per credit hour.",
+      "D": "D = 1 quality point per credit hour.",
+      "F": "F = 0 quality points, but its credit hours remain in the GPA calculation.",
+      "I": "Incomplete is excluded until replaced by a final evaluative grade; unresolved I grades may later convert to F.",
+      "W": "Course withdrawal is excluded from GPA.",
+      "WD": "Complete-semester withdrawal is excluded from GPA.",
+      "P": "Pass earns credit when applicable but is excluded from GPA.",
+      "NP": "No Pass earns no credit and is excluded from GPA.",
+      "R": "Multi-semester course notation; exclude until the course receives its final evaluative grade.",
+      "AD": "Successful audit is not an evaluative GPA grade.",
+      "NG": "Unsuccessful audit is not an evaluative GPA grade and does not appear on the transcript.",
+      "NOG": "Non-graded course notation is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "CWRU undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final undergraduate CWRU grades and course credit hours."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external grades are not entered on the CWRU record and do not enter the CWRU GPA."
+      },
+      {
+        "name": "AP, IB, proficiency, or exam credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Credit based on examinations is excluded from the undergraduate GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. Both attempts count in GPA; this calculator does not determine degree-credit treatment.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "BIOL 214",
+        "units": "3",
+        "grade": "A",
+        "special": "CWRU undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 121",
+        "units": "4",
+        "grade": "B",
+        "special": "CWRU undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 105",
+        "units": "3",
+        "grade": "F",
+        "special": "CWRU undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PHYS 121",
+        "units": "3",
+        "grade": "A",
+        "special": "CWRU undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "e6dec26e1e14"
+}

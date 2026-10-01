@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ku",
+  "universityName": "University of Kansas",
+  "pageTitle": "Calculate Your University of Kansas GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade points, GPA formula, plus/minus, exclusions",
+      "url": "https://services.ku.edu/TDClient/818/Portal/KB/Article/21294/University-Senate-Rules-and-Regulations-USRR"
+    },
+    {
+      "label": "Credit/no credit and S/U",
+      "url": "https://services.ku.edu/TDClient/818/Portal/KB/Article/21294/University-Senate-Rules-and-Regulations-USRR"
+    },
+    {
+      "label": "Undergraduate grade replacement",
+      "url": "https://catalog.ku.edu/regulations/"
+    },
+    {
+      "label": "Academic forgiveness",
+      "url": "https://catalog.ku.edu/regulations/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.ku.edu/apply-for-aid/maintain-aid/satisfactory-academic-progress"
+    },
+    {
+      "label": "Undergraduate and transfer admission",
+      "url": "https://admissions.ku.edu/apply"
+    },
+    {
+      "label": "Graduate GPA requirement",
+      "url": "https://catalog.ku.edu/graduate-studies/"
+    },
+    {
+      "label": "Transfer GPA calculation",
+      "url": "https://catalog.ku.edu/regulations/"
+    }
+  ],
+  "helpIntro": "KU uses a 4.0 credit-hour GPA. Enter KU credit hours and grades; A=4, B=3, C=2, D=1, F=0, with ±0.3 intermediate grades where adopted.",
+  "helpNote": "For standard undergraduate KU GPA planning. CR/NC, S/U, I and W are excluded. Repeat Impact is disabled because eligible KU repeats use the higher grade and have policy limits.",
+  "helpExample": "A 3-credit A earns 12 grade points; a 3-credit B+ earns 9.9. Together, 21.9 ÷ 6 = 3.65.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "CR": null,
+      "NC": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "W": null,
+      "P": null,
+      "SP": null,
+      "LP": null,
+      "NP": null,
+      "M": null,
+      "NM": null,
+      "IP": null,
+      "+": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 grade points per credit hour.",
+      "A-": "A- = 3.7 points where plus/minus grading is used.",
+      "B+": "B+ = 3.3 points where plus/minus grading is used.",
+      "B": "B = 3.0 points per credit hour.",
+      "B-": "B- = 2.7 points where plus/minus grading is used.",
+      "C+": "C+ = 2.3 points where plus/minus grading is used.",
+      "C": "C = 2.0 points per credit hour.",
+      "C-": "C- = 1.7 points where plus/minus grading is used.",
+      "D+": "D+ = 1.3 points where plus/minus grading is used.",
+      "D": "D = 1.0 point per credit hour.",
+      "D-": "D- = 0.7 points where plus/minus grading is used.",
+      "F": "F = 0 points; attempted graded hours remain in the GPA unless an approved policy changes the record.",
+      "CR": "Credit; excluded from GPA.",
+      "NC": "No Credit; excluded from GPA.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory; excluded from GPA.",
+      "I": "Incomplete; no grade points until resolved.",
+      "W": "Withdrawal; excluded from GPA.",
+      "P": "Progress notation; excluded from GPA.",
+      "SP": "Satisfactory Progress for thesis/dissertation; excluded from GPA.",
+      "LP": "Limited Progress for thesis/dissertation; excluded from GPA.",
+      "NP": "No Progress for thesis/dissertation; excluded from GPA.",
+      "M": "Mastered competency notation; excluded from GPA.",
+      "NM": "Not Mastered competency notation; excluded from GPA.",
+      "IP": "In Progress competency notation; excluded from GPA.",
+      "+": "Credit awarded by exam/experience/training; not a plus letter grade and excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "KU course, standard letter grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the grade shown on the KU record. Plus/minus values apply where the school or College uses them."
+      },
+      {
+        "name": "KU non-GPA grading (CR/NC, S/U, progress/competency)",
+        "grades": null,
+        "excluded": false,
+        "note": "Select the actual notation; excluded marks add no GPA points or GPA hours."
+      },
+      {
+        "name": "External transfer coursework",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer GPA is a separate admissions/credit concept; external grades do not become KU institutional GPA in this profile."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. KU may exclude inferior eligible attempts and keep the highest grade, so confirm repeat eligibility on your KU record.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate KU GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENGL 101",
+        "units": "3",
+        "grade": "A",
+        "special": "KU course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 115",
+        "units": "3",
+        "grade": "B+",
+        "special": "KU course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 130",
+        "units": "3",
+        "grade": "F",
+        "special": "KU course, standard letter grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 128",
+        "units": "3",
+        "grade": "A-",
+        "special": "KU course, standard letter grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "3e02a46818bc"
+}

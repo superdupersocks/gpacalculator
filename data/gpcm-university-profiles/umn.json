@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "umn",
+  "universityName": "University of Minnesota Twin Cities",
+  "pageTitle": "Calculate Your University of Minnesota GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading scale; GPA formula; symbols; repeats",
+      "url": "https://policy.umn.edu/education/gradingtranscripts"
+    },
+    {
+      "label": "Repeat guidance",
+      "url": "https://onestop.umn.edu/academics/transcripts-and-grades/grading-policies"
+    },
+    {
+      "label": "Transfer and SAP treatment",
+      "url": "https://onestop.umn.edu/finances/financial-aid/satisfactory-academic-progress"
+    },
+    {
+      "label": "Transcript grading history and Law exception",
+      "url": "https://onestop.umn.edu/academics/transcripts-and-grades/transcripts"
+    },
+    {
+      "label": "Undergraduate academic warning",
+      "url": "https://policy.umn.edu/education/acadprobation"
+    },
+    {
+      "label": "Undergraduate degree GPA",
+      "url": "https://policy.umn.edu/education/bacreditreq"
+    },
+    {
+      "label": "Honors and distinction",
+      "url": "https://policy.umn.edu/education/degreeshonors"
+    },
+    {
+      "label": "Freshman admissions profile",
+      "url": "https://admissions.tc.umn.edu/admissions/freshman-admission/frequently-asked-questions-about-how-we-determine-college-admissions"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://admissions.tc.umn.edu/admissions/transfer-university-minnesota-twin-cities"
+    }
+  ],
+  "helpIntro": "University of Minnesota Twin Cities uses a 4.000 GPA scale for standard A-F courses. Enter semester credits and final grades to estimate your current or projected GPA.",
+  "helpNote": "S/N grades and transcript symbols are excluded from GPA. For eligible undergraduate repeats, the most recent enrollment replaces the earlier attempt in GPA; graduate and Law records use different rules.",
+  "helpExample": "A 3-credit A earns 12 grade points; a 3-credit B+ earns 9.999. Together, 21.999 ÷ 6 = 3.667.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.667,
+      "B+": 3.333,
+      "B": 3,
+      "B-": 2.667,
+      "C+": 2.333,
+      "C": 2,
+      "C-": 1.667,
+      "D+": 1.333,
+      "D": 1,
+      "F": 0,
+      "S": null,
+      "N": null,
+      "I": null,
+      "W": null,
+      "V": null,
+      "X": null,
+      "K": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.000 grade points per credit.",
+      "A-": "A- = 3.667 grade points per credit.",
+      "B+": "B+ = 3.333 grade points per credit.",
+      "B": "B = 3.000 grade points per credit.",
+      "B-": "B- = 2.667 grade points per credit.",
+      "C+": "C+ = 2.333 grade points per credit.",
+      "C": "C = 2.000 grade points per credit.",
+      "C-": "C- = 1.667 grade points per credit.",
+      "D+": "D+ = 1.333 grade points per credit.",
+      "D": "D = 1.000 grade points per credit.",
+      "F": "F earns 0 grade points; course credits count in GPA.",
+      "S": "S is excluded from GPA; degree credit may count if allowed.",
+      "N": "N is excluded from GPA and earns no degree credit.",
+      "I": "Incomplete is excluded until resolved; undergraduate I may lapse to F or N under policy.",
+      "W": "Withdrawal symbol; excluded from GPA.",
+      "V": "Audit/visitor symbol; excluded from GPA.",
+      "X": "Continuation-course symbol; excluded until replaced by a final grade.",
+      "K": "Course-in-progress symbol; excluded until replaced by a final grade.",
+      "NR": "No grade reported; carries no GPA points."
+    },
+    "specialTypes": [
+      {
+        "name": "U of M course, standard A-F/S-N grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard U of M coursework. S/N and transcript symbols are excluded by grade rule."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external transfer credits can affect degree/SAP credit measures but do not enter the U of M GPA."
+      },
+      {
+        "name": "Twin Cities Law School course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law allows A+ 4.333 and excludes D+; use the Law record rather than this undergraduate profile.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible undergraduate repeat, only the most recent enrollment counts in GPA, even if the new grade is lower. An N does not replace a prior F; third attempts and repeatable-for-credit courses need review.",
+      "originalGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Twin Cities undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "45",
+    "completed": [
+      {
+        "name": "WRIT 1301",
+        "units": "3",
+        "grade": "A-",
+        "special": "U of M course, standard A-F/S-N grading",
+        "planned": false
+      },
+      {
+        "name": "ECON 1101",
+        "units": "3",
+        "grade": "B",
+        "special": "U of M course, standard A-F/S-N grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1271",
+        "units": "3",
+        "grade": "B+",
+        "special": "U of M course, standard A-F/S-N grading",
+        "planned": false
+      },
+      {
+        "name": "HIST 1011",
+        "units": "3",
+        "grade": "A",
+        "special": "U of M course, standard A-F/S-N grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "STAT 3011",
+        "units": "3",
+        "grade": "A",
+        "special": "U of M course, standard A-F/S-N grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "28a3e715b91a"
+}

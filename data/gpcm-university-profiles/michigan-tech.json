@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "michigan-tech",
+  "universityName": "Michigan Technological University",
+  "pageTitle": "Calculate Your Michigan Tech GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA formula; special grades",
+      "url": "https://www.mtu.edu/catalog/policies/grade/"
+    },
+    {
+      "label": "Repeating a course",
+      "url": "https://www.mtu.edu/registrar/students/registration/policies/repeat-course/"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://www.mtu.edu/catalog/policies/transfer/"
+    },
+    {
+      "label": "Academic Renewal",
+      "url": "https://www.mtu.edu/registrar/students/registration/policies/renewal/"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://www.mtu.edu/catalog/policies/standing/"
+    },
+    {
+      "label": "Graduation and honors",
+      "url": "https://www.mtu.edu/catalog/policies/graduation/"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://www.mtu.edu/finaid/aid/progress/undergrad/"
+    },
+    {
+      "label": "Graduate good standing",
+      "url": "https://www.mtu.edu/gradschool/policies-procedures/academic/good-standing/"
+    },
+    {
+      "label": "Graduate scholastic standards",
+      "url": "https://www-cf.mtu.edu/senate/policies-procedures/policies-new-list/418.1/index.html"
+    },
+    {
+      "label": "First-year admission GPA treatment",
+      "url": "https://www.mtu.edu/admissions/apply/requirements/"
+    },
+    {
+      "label": "Transfer admission GPA",
+      "url": "https://www.mtu.edu/admissions/connect/transfer/faqs/"
+    }
+  ],
+  "helpIntro": "Michigan Tech uses a 4.0 scale with half-step grades: A=4.0, AB=3.5, B=3.0, BC=2.5, C=2.0, CD=1.5, D=1.0, and F/X=0. Enter grade-point credits and final grades to estimate your GPA.",
+  "helpNote": "Transfer grades do not enter Michigan Tech GPA. For ordinary eligible repeats, the most recent final grade replaces the earlier grade even if it is lower. The shared calculator displays three decimals; Michigan Tech states that its GPA is truncated, so your official transcript controls.",
+  "helpExample": "A 3-credit A earns 12 grade points and a 4-credit AB earns 14. Together, 26 ÷ 7 ≈ 3.714 in this planning display.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "AB": 3.5,
+      "B": 3,
+      "BC": 2.5,
+      "C": 2,
+      "CD": 1.5,
+      "D": 1,
+      "F": 0,
+      "F*": 0,
+      "X": 0,
+      "I": null,
+      "IS": null,
+      "M": null,
+      "N": null,
+      "P": null,
+      "Q": null,
+      "W": null,
+      "CR": null,
+      "S": null,
+      "E": null,
+      "E*": null,
+      "V": null,
+      "U": null,
+      "U*": null,
+      "SCV": null,
+      "LCV": null,
+      "ECV": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per credit.",
+      "AB": "AB = 3.50.",
+      "B": "B = 3.00.",
+      "BC": "BC = 2.50.",
+      "C": "C = 2.00.",
+      "CD": "CD = 1.50.",
+      "D": "D = 1.00.",
+      "F": "F = 0.00; credits still count as grade point hours.",
+      "F*": "Academic-dishonesty failure; 0.00 points. Repeat eligibility needs official review.",
+      "X": "Conditional X is computed as F until resolved; it can later change to the earned grade.",
+      "I": "Incomplete is excluded while pending; if unresolved by the deadline it converts to F. At graduation an I is treated as F.",
+      "IS": "In-session temporary grade; excluded until a final grade posts.",
+      "M": "Missing grade; excluded until corrected.",
+      "N": "No grade/no credit; excluded from GPA.",
+      "P": "Progress grade; excluded from GPA.",
+      "Q": "Inadequate progress; excluded from GPA.",
+      "W": "Late drop; excluded from GPA.",
+      "CR": "Credit by examination/advanced placement; excluded from GPA.",
+      "S": "Pass/fail satisfactory; credit but no grade points and excluded from GPA.",
+      "E": "Pass/fail effort unsatisfactory; no credit or grade points and excluded from GPA.",
+      "E*": "Pass/fail effort unsatisfactory due to academic dishonesty; excluded from GPA.",
+      "V": "Satisfactory audit; excluded from GPA.",
+      "U": "Unsatisfactory audit; excluded from GPA.",
+      "U*": "Unsatisfactory audit due to academic dishonesty; excluded from GPA.",
+      "SCV": "COVID-19 satisfactory pass grade; excluded from GPA.",
+      "LCV": "COVID-19 satisfactory-low pass grade; excluded from GPA.",
+      "ECV": "COVID-19 effort-unsatisfactory grade; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Michigan Tech course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use posted Michigan Tech grade and credits."
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades and transfer GPAs do not enter University or departmental GPA."
+      },
+      {
+        "name": "Academic Renewal coursework",
+        "grades": null,
+        "excluded": true,
+        "note": "Use only after Academic Renewal is officially granted; renewed terms are excluded from University GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an ordinary eligible repeat with the same credits and final letter grades, the most recent grade replaces the earlier grade in GPA. Confirm waivers, third attempts, similar repeats, and repeatable-for-credit courses with your advisor/Registrar.",
+      "originalGrades": [
+        "A",
+        "AB",
+        "B",
+        "BC",
+        "C",
+        "CD",
+        "D",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "AB",
+        "B",
+        "BC",
+        "C",
+        "CD",
+        "D",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate University GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "CS 1121",
+        "units": "3",
+        "grade": "A",
+        "special": "Michigan Tech course",
+        "planned": false
+      },
+      {
+        "name": "MA 1160",
+        "units": "4",
+        "grade": "AB",
+        "special": "Michigan Tech course",
+        "planned": false
+      },
+      {
+        "name": "PH 2100",
+        "units": "3",
+        "grade": "B",
+        "special": "Michigan Tech course",
+        "planned": false
+      },
+      {
+        "name": "CH 1150",
+        "units": "3",
+        "grade": "F",
+        "special": "Michigan Tech course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ENG 1102",
+        "units": "3",
+        "grade": "BC",
+        "special": "Michigan Tech course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "e6a982c634f8"
+}

@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ohio-state",
+  "universityName": "The Ohio State University",
+  "pageTitle": "Calculate Your Ohio State GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula, grades, repeats, Fresh Start, honors",
+      "url": "https://registrar.osu.edu/policies-information/university-policy/buckeyes-guide-to-academic-policies/"
+    },
+    {
+      "label": "Transcript grade-point key",
+      "url": "https://registrar.osu.edu/student-hub/transcripts-and-verifications/transcript-key/"
+    },
+    {
+      "label": "Grade forgiveness",
+      "url": "https://ugeducation.osu.edu/advising/students/grades-grade-forgiveness"
+    },
+    {
+      "label": "Faculty rules: repeats and forgiveness",
+      "url": "https://trustees.osu.edu/bylaws-and-rules/3335-8"
+    },
+    {
+      "label": "Transfer credit FAQ",
+      "url": "https://registrar.osu.edu/student-hub/transfer-credit/transfer-credit-policies/ohio-state-transfer-credit-frequently-asked-questions/"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://ugeducation.osu.edu/advising/students/academic-standing"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://sfa.osu.edu/contact-us/consumer-disclosure/satisfactory-academic-progress-policy"
+    },
+    {
+      "label": "Graduate School Handbook",
+      "url": "https://gradsch.osu.edu/all/graduate-school-handbook-gsh"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://registrar.osu.edu/graduation-information/diploma-information/"
+    },
+    {
+      "label": "Graduate admissions GPA calculation",
+      "url": "https://gpadmissions.osu.edu/resources/calculate-gpa.html"
+    }
+  ],
+  "helpIntro": "Ohio State uses a 4.0 point-hour ratio. Enter semester credit hours and final grades; E and EN count at 0.0, while PA/NP, S/U, transfer K credit, incompletes and withdrawals are excluded from GPA.",
+  "helpNote": "For the standard undergraduate record. Graduate/professional careers use separate records. Repeat Impact estimates approved Grade Forgiveness only; ordinary repeats and Fresh Start need separate handling. Exceptional/historical marks may require review.",
+  "helpExample": "A 3-credit A earns 12.0 points and a 3-credit B+ earns 9.9. Together, 21.9 / 6 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "E": 0,
+      "EN": 0,
+      "EM": null,
+      "I": null,
+      "IX": null,
+      "K": null,
+      "KD": null,
+      "NG": null,
+      "P": null,
+      "PA": null,
+      "NP": null,
+      "PE": null,
+      "R": null,
+      "S": null,
+      "U": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 points per credit hour.",
+      "A-": "A- = 3.7 points per credit hour.",
+      "B+": "B+ = 3.3 points per credit hour.",
+      "B": "B = 3.0 points per credit hour.",
+      "B-": "B- = 2.7 points per credit hour.",
+      "C+": "C+ = 2.3 points per credit hour.",
+      "C": "C = 2.0 points per credit hour.",
+      "C-": "C- = 1.7 points per credit hour.",
+      "D+": "D+ = 1.3 points per credit hour.",
+      "D": "D = 1.0 points per credit hour.",
+      "E": "E is zero points; credit hours remain in the GPA denominator.",
+      "EN": "EN is treated as E in the point-hour ratio.",
+      "EM": "Credit by examination; excluded from GPA.",
+      "I": "Incomplete; excluded pending resolution.",
+      "IX": "Extended incomplete; excluded pending resolution.",
+      "K": "Transfer credit; excluded from Ohio State GPA.",
+      "KD": "Transfer credit notation; excluded from GPA.",
+      "NG": "Grade unreported; excluded pending a final grade.",
+      "P": "Progress mark; excluded until final grade.",
+      "PA": "Pass; excluded from GPA.",
+      "NP": "No Pass; excluded from GPA.",
+      "PE": "Emergency Pass; excluded from GPA.",
+      "R": "Audit; excluded from GPA.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory S/U mark; excluded from GPA.",
+      "W": "Withdrawal; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Ohio State course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "E and EN count at zero; excluded marks contribute neither points nor GPA hours."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades and GPA from prior institutions do not transfer into the Ohio State GPA."
+      },
+      {
+        "name": "Exceptional/historical grading record",
+        "grades": [],
+        "excluded": false,
+        "note": "NEN/UEN and exceptional or historical grading can depend on policy period; confirm transcript treatment.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate or professional career course",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate/professional point-hour ratios are separate from the undergraduate record.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Use Repeat Impact only for an approved second-attempt Grade Forgiveness case. The second grade replaces the first in Ohio State cumulative GPA even if lower; both remain on the transcript.",
+      "originalGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "E",
+        "EN"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "E",
+        "EN"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate cumulative GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENGLISH 1110",
+        "units": "3",
+        "grade": "A-",
+        "special": "Ohio State course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1151",
+        "units": "4",
+        "grade": "E",
+        "special": "Ohio State course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSYCH 1100",
+        "units": "3",
+        "grade": "B+",
+        "special": "Ohio State course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "bb44d246f541"
+}

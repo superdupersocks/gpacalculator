@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uf",
+  "universityName": "University of Florida",
+  "pageTitle": "Calculate Your University of Florida GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate grades, GPA formula, precision, repeats and transfer",
+      "url": "https://catalog.ufl.edu/UGRD/academic-regulations/grades-grading-policies/"
+    },
+    {
+      "label": "Grade forgiveness and petitions",
+      "url": "https://registrar.ufl.edu/services/petitions/"
+    },
+    {
+      "label": "Undergraduate academic progress and graduation",
+      "url": "https://catalog.ufl.edu/UGRD/academic-regulations/academic-progress-policies/"
+    },
+    {
+      "label": "Undergraduate academic advising / graduation GPA",
+      "url": "https://catalog.ufl.edu/UGRD/academic-advising/"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://www.sfa.ufl.edu/process/additional-information/satisfactory-academic-progress-policy/"
+    },
+    {
+      "label": "Graduate academic regulations",
+      "url": "https://gradcatalog.ufl.edu/graduate/regulations/"
+    },
+    {
+      "label": "Transfer admission eligibility",
+      "url": "https://admissions.ufl.edu/apply/transfer/eligibility"
+    },
+    {
+      "label": "First-year admission requirements",
+      "url": "https://admissions.ufl.edu/apply/freshman/requirements"
+    }
+  ],
+  "helpIntro": "UF uses a 4.0 undergraduate GPA scale. Enter UF semester credits and grades to estimate your current, cumulative, projected, or target GPA using current UF grade values.",
+  "helpNote": "For current undergraduate UF coursework. Transfer grades are excluded from the UF GPA. The calculator shows three decimals for planning, while UF displays GPA to hundredths without rounding up. Repeat Impact is disabled because repeat eligibility and recorded-attempt treatment need policy context.",
+  "helpExample": "A 3-credit A- earns 11.01 grade points and a 3-credit B+ earns 9.99; together, 21.00 ÷ 6 = 3.50.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "E": 0,
+      "WF": 0,
+      "I": 0,
+      "NG": 0,
+      "S": null,
+      "U": null,
+      "W": null,
+      "H": null,
+      "I*": null,
+      "N*": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per credit.",
+      "A-": "A- = 3.67 grade points per credit.",
+      "B+": "B+ = 3.33 grade points per credit.",
+      "B": "B = 3.00 grade points per credit.",
+      "B-": "B- = 2.67 grade points per credit.",
+      "C+": "C+ = 2.33 grade points per credit.",
+      "C": "C = 2.00 grade points per credit.",
+      "C-": "C- = 1.67 grade points per credit.",
+      "D+": "D+ = 1.33 grade points per credit.",
+      "D": "D = 1.00 grade point per credit.",
+      "D-": "D- = 0.67 grade points per credit.",
+      "E": "E is failure: credits count in GPA at zero points.",
+      "WF": "Legacy WF is punitive and counts at zero points.",
+      "I": "Punitive incomplete I counts at zero points; an initial I* is non-punitive until it converts.",
+      "NG": "Punitive NG counts at zero points; an initial N* is non-punitive until it converts.",
+      "S": "S is excluded from UF GPA; credit may be earned.",
+      "U": "U is excluded from UF GPA under the S/U option.",
+      "W": "W is non-punitive and excluded from UF GPA.",
+      "H": "H is deferred and initially excluded; it may later become punitive under UF rules.",
+      "I*": "Initial-term I* is non-punitive and excluded until resolved or converted.",
+      "N*": "Initial-term N* is non-punitive and excluded until resolved or converted."
+    },
+    "specialTypes": [
+      {
+        "name": "UF coursework",
+        "grades": null,
+        "excluded": false,
+        "note": "Use current UF undergraduate grade values and semester credits."
+      },
+      {
+        "name": "Transfer/external coursework",
+        "grades": null,
+        "excluded": true,
+        "note": "Grades from other institutions are not averaged into the UF GPA."
+      },
+      {
+        "name": "Program/professional or historical record",
+        "grades": [],
+        "excluded": false,
+        "note": "Use separate policy review for graduate/professional/program-specific GPA or pre-May-11-2009 grade values.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Repeat Impact is disabled. Enter UF attempts that count on your record as separate completed rows; confirm repeat eligibility and credit treatment with your college.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UF GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENC 1101",
+        "units": "3",
+        "grade": "A-",
+        "special": "UF coursework",
+        "planned": false
+      },
+      {
+        "name": "MAC 2311",
+        "units": "3",
+        "grade": "E",
+        "special": "UF coursework",
+        "planned": false
+      },
+      {
+        "name": "Elective S/U",
+        "units": "3",
+        "grade": "S",
+        "special": "UF coursework",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Planned course",
+        "units": "3",
+        "grade": "A",
+        "special": "UF coursework",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "ee593bcb9d28"
+}

@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ucla",
+  "universityName": "University of California, Los Angeles",
+  "pageTitle": "Calculate Your UCLA GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula, grade points, included coursework",
+      "url": "https://registrar.ucla.edu/file/9550e7b2-01c8-402c-8270-6a963976c9cb"
+    },
+    {
+      "label": "Undergraduate grading and P/NP",
+      "url": "https://caac.ucla.edu/policies/grading-repeats/"
+    },
+    {
+      "label": "Undergraduate repeats",
+      "url": "https://catalog.registrar.ucla.edu/browse/College%20and%20Schools/CollegeofLettersandScience/Policies-and-Regulations?siteYear=current"
+    },
+    {
+      "label": "Transfer credit processing",
+      "url": "https://registrar.ucla.edu/student-records/transfer-credit-processing"
+    },
+    {
+      "label": "Undergraduate degree GPA",
+      "url": "https://registrar.ucla.edu/registration-classes/graduation/final-degree-audit/undergraduate-degree-checks"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.ucla.edu/types-of-aid/maintaining-eligibility"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://admission.ucla.edu/apply/transfer/transfer-requirements"
+    },
+    {
+      "label": "First-year admission profile",
+      "url": "https://admission.ucla.edu/apply/first-year/first-year-profile/2025"
+    },
+    {
+      "label": "Academic difficulty / grade point balance",
+      "url": "https://caac.ucla.edu/policies/academic-difficulty/grade-point-balance/"
+    }
+  ],
+  "helpIntro": "UCLA uses a 4.0, unit-weighted GPA for standard undergraduate UC coursework. Enter quarter units and final grades; A+/A=4.0 through F=0.0.",
+  "helpNote": "P/NP and unresolved temporary grades are excluded. Non-UC transfer grades do not enter the UCLA GPA. Repeat Impact is unavailable because repeat treatment changes after the first 16 repeated units.",
+  "helpExample": "A 4-unit A earns 16.0 grade points and a 4-unit B+ earns 13.2; together, 29.2 ÷ 8 = 3.65.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "I": null,
+      "IP": null,
+      "DR": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ carries the same 4.0 points per unit as A.",
+      "A": "A = 4.0 points per unit.",
+      "A-": "A- = 3.7 points per unit.",
+      "B+": "B+ = 3.3 points per unit.",
+      "B": "B = 3.0 points per unit.",
+      "B-": "B- = 2.7 points per unit.",
+      "C+": "C+ = 2.3 points per unit.",
+      "C": "C = 2.0 points per unit.",
+      "C-": "C- = 1.7 points per unit.",
+      "D+": "D+ = 1.3 points per unit.",
+      "D": "D = 1.0 point per unit.",
+      "D-": "D- = 0.7 points per unit.",
+      "F": "F = 0.0 points; attempted units remain in the GPA denominator.",
+      "P": "Passed coursework does not affect the UC GPA.",
+      "NP": "Not Passed coursework does not affect the UC GPA and earns no units.",
+      "I": "Incomplete has no GPA effect until replaced by a final grade.",
+      "IP": "In Progress is excluded until a final grade is assigned.",
+      "DR": "Deferred Report is excluded while unresolved.",
+      "NR": "No Report is excluded while unresolved."
+    },
+    "specialTypes": [
+      {
+        "name": "UCLA course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final UCLA grade and official quarter units."
+      },
+      {
+        "name": "Other UC campus course",
+        "grades": null,
+        "excluded": false,
+        "note": "Grades earned in regular or summer sessions at another UC campus are included in the UC/UCLA GPA."
+      },
+      {
+        "name": "UCLA Extension XLC course",
+        "grades": null,
+        "excluded": false,
+        "note": "Undergraduate UCLA Extension courses prefixed XLC are included in the UCLA GPA."
+      },
+      {
+        "name": "Non-UC transfer / other institution",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted non-UC transfer credit may count toward degree requirements, but its grades do not affect the UCLA GPA."
+      },
+      {
+        "name": "Repeated UCLA/UC course",
+        "grades": [],
+        "excluded": false,
+        "note": "Repeat treatment depends on eligibility and how many repeat units have already been used; check your transcript/adviser before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is unavailable because UCLA repeat treatment depends on your prior repeated-unit history. Use the official record or an adviser to determine which attempt(s) belong in the GPA.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UC GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CHEM 14A",
+        "units": "4",
+        "grade": "A",
+        "special": "UCLA course",
+        "planned": false
+      },
+      {
+        "name": "MATH 31A",
+        "units": "4",
+        "grade": "B+",
+        "special": "UCLA course",
+        "planned": false
+      },
+      {
+        "name": "ECON 1",
+        "units": "4",
+        "grade": "F",
+        "special": "UCLA course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PHYSICS 5A",
+        "units": "4",
+        "grade": "A-",
+        "special": "UCLA course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "b4dd756ab91d"
+}

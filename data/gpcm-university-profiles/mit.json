@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "mit",
+  "universityName": "Massachusetts Institute of Technology",
+  "pageTitle": "Calculate Your MIT GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Calculating GPA; grade values; precision; careers",
+      "url": "https://registrar.mit.edu/classes-grades-evaluations/grades/calculating-gpa"
+    },
+    {
+      "label": "Grade definitions; modifiers and notations",
+      "url": "https://catalog.mit.edu/mit/procedures/academic-performance-grades/"
+    },
+    {
+      "label": "First-year grading",
+      "url": "https://registrar.mit.edu/classes-grades-evaluations/grades/grading-policies/first-year-grading"
+    },
+    {
+      "label": "Repeat subjects",
+      "url": "https://registrar.mit.edu/classes-grades-evaluations/grades/grading-policies/repeating-subject"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://registrar.mit.edu/registration-academics/transfer-credit"
+    },
+    {
+      "label": "Flexible P/NR option",
+      "url": "https://registrar.mit.edu/classes-grades-evaluations/grades/grading-policies/flexible-pnr-grading-option"
+    },
+    {
+      "label": "Cross-registration",
+      "url": "https://registrar.mit.edu/registration-academics/registration-information/cross-registration/harvard/translating-harvard"
+    },
+    {
+      "label": "Cross-registration units",
+      "url": "https://registrar.mit.edu/registration-academics/registration-information/cross-registration/harvard/converting-harvard"
+    },
+    {
+      "label": "Undergraduate degree and standing",
+      "url": "https://registrar.mit.edu/graduation/undergraduate-degree-requirements"
+    },
+    {
+      "label": "Undergraduate academic standards",
+      "url": "https://advising.mit.edu/committee-on-academic-performance/academic-standards/"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://mitadmissions.org/apply/transfer/before-applying/"
+    },
+    {
+      "label": "First-year admission GPA",
+      "url": "https://mitadmissions.org/help/faq/class-rank-gpa/"
+    }
+  ],
+  "helpIntro": "MIT uses a 5.0 scale. Enter MIT units and final grades; A=5, B=4, C=3, D=2, F/O=0. The result is a planning estimate.",
+  "helpNote": "For standard upper-level undergraduate work. First-year fall has no GPA; graduate records are separate. The shared calculator displays three decimals; MIT rounds the official GPA to one decimal. Repeat Impact is unavailable because MIT counts every graded attempt.",
+  "helpExample": "A 12-unit A earns 60 grade points; a 12-unit B earns 48. Together, 108 ÷ 24 = 4.5.",
+  "baseContext": {
+    "scaleMax": 5,
+    "scaleLabel": "5 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 5,
+      "A": 5,
+      "A-": 5,
+      "B+": 4,
+      "B": 4,
+      "B-": 4,
+      "C+": 3,
+      "C": 3,
+      "C-": 3,
+      "D": 2,
+      "F": 0,
+      "O": 0,
+      "P": null,
+      "S": null,
+      "URN": null,
+      "SA": null,
+      "T": null,
+      "I": null,
+      "OX": null,
+      "J": null,
+      "U": null,
+      "DN": null,
+      "FN": null,
+      "ON": null,
+      "OXN": null,
+      "DR": null,
+      "LIS": null,
+      "PE": null,
+      "NE": null,
+      "IE": null
+    },
+    "gradeExplanations": {
+      "A+": "MIT internal modifier; same 5 points as A.",
+      "A": "A = 5 points per MIT unit.",
+      "A-": "MIT internal modifier; same 5 points as A.",
+      "B+": "MIT internal modifier; same 4 points as B.",
+      "B": "B = 4 points per MIT unit.",
+      "B-": "MIT internal modifier; same 4 points as B.",
+      "C+": "MIT internal modifier; same 3 points as C.",
+      "C": "C = 3 points per MIT unit.",
+      "C-": "MIT internal modifier; same 3 points as C.",
+      "D": "D = 2 points per MIT unit on standard grading.",
+      "F": "F = zero points; its units still count in GPA.",
+      "O": "Unexcused absence O = zero points; confirm if later changed to OX.",
+      "P": "Pass is excluded from MIT GPA.",
+      "S": "Transfer credit S is excluded from MIT GPA.",
+      "URN": "UROP pay/volunteer notation is excluded.",
+      "SA": "Completed doctoral thesis notation is excluded.",
+      "T": "Temporary notation; include the final grade only when recorded.",
+      "I": "Incomplete: excluded pending final grade.",
+      "OX": "Excused absence: excluded pending final grade.",
+      "J": "Ongoing work: excluded until completion; earlier J units may later take final grade.",
+      "U": "Uncompleted thesis: excluded pending final outcome.",
+      "DN": "First-year or Flexible P/NR no-record D; excluded from MIT GPA.",
+      "FN": "First-year or Flexible P/NR no-record F; excluded from MIT GPA.",
+      "ON": "First-year no-record O; excluded; review the internal grade report.",
+      "OXN": "First-year no-record OX; excluded; review the internal grade report.",
+      "DR": "Dropped subject; excluded from GPA.",
+      "LIS": "Listener notation; excluded from GPA.",
+      "PE": "Emergency alternate pass grade; excluded from GPA.",
+      "NE": "Emergency alternate no-record grade; excluded from GPA.",
+      "IE": "Emergency incomplete; excluded unless a later final letter grade is assigned."
+    },
+    "specialTypes": [
+      {
+        "name": "MIT subject, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter finalized MIT grade and MIT units. Plus/minus modifiers do not change points."
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "S credit does not enter MIT GPA; acceptance is separate."
+      },
+      {
+        "name": "ASE or ROTC subject",
+        "grades": null,
+        "excluded": true,
+        "note": "These do not enter MIT GPA."
+      },
+      {
+        "name": "Cross-registered subject",
+        "grades": [],
+        "excluded": false,
+        "note": "Check the posted MIT-equivalent grade and converted MIT units before calculating.",
+        "manualReview": true
+      },
+      {
+        "name": "First-year grading record",
+        "grades": [],
+        "excluded": false,
+        "note": "Fall/IAP has no GPA; spring ABC/NR requires separate review.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter both graded attempts as separate completed courses; both contribute to GPA, but this tool does not decide repeat eligibility or degree credit.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Upper-level undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "4.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "18.01",
+        "units": "12",
+        "grade": "A",
+        "special": "MIT subject, standard grading",
+        "planned": false
+      },
+      {
+        "name": "8.01",
+        "units": "9",
+        "grade": "B-",
+        "special": "MIT subject, standard grading",
+        "planned": false
+      },
+      {
+        "name": "5.12",
+        "units": "6",
+        "grade": "F",
+        "special": "MIT subject, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "6.001",
+        "units": "12",
+        "grade": "A",
+        "special": "MIT subject, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "42a0b24e9a78"
+}

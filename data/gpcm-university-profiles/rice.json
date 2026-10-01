@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "rice",
+  "universityName": "Rice University",
+  "pageTitle": "Calculate Your Rice GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA calculation; P/F and S/U",
+      "url": "https://ga.rice.edu/undergraduate-students/academic-policies-procedures/grades/"
+    },
+    {
+      "label": "Repeated courses",
+      "url": "https://registrar.rice.edu/students/reg_repeated_courses"
+    },
+    {
+      "label": "Undergraduate transfer credit",
+      "url": "https://ga.rice.edu/undergraduate-students/academic-policies-procedures/transfer-credit/"
+    },
+    {
+      "label": "Transfer credit FAQ",
+      "url": "https://registrar.rice.edu/students/undergraduates-transferring-college-credit"
+    },
+    {
+      "label": "Undergraduate graduation requirements",
+      "url": "https://ga.rice.edu/undergraduate-students/academic-policies-procedures/graduation-requirements/"
+    },
+    {
+      "label": "Academic honors",
+      "url": "https://registrar.rice.edu/students/academic-honors"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://financialaid.rice.edu/forms-resources/satisfactory-academic-progress"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://admission.rice.edu/apply/transfer-applicants"
+    },
+    {
+      "label": "Graduate applicant qualifications",
+      "url": "https://graduate.rice.edu/admissions/qualifications"
+    },
+    {
+      "label": "Graduate academic regulations",
+      "url": "https://ga.rice.edu/graduate-students/academic-policies-procedures/regulations-procedures-all-degrees/regulations-procedures-all-degrees.pdf"
+    },
+    {
+      "label": "First-year application philosophy",
+      "url": "https://admission.rice.edu/apply/application-philosophy"
+    }
+  ],
+  "helpIntro": "Rice uses a 4.0 scale weighted by semester credit hours. Enter final Rice grades and credit hours to estimate your current, cumulative, projected, or target GPA.",
+  "helpNote": "A+ and A are both 4.00. P and S/U grades are excluded from GPA, while F counts at 0.00. Rice counts all letter-graded repeat attempts, so Repeat Impact is disabled; enter each attempt separately.",
+  "helpExample": "A 3-credit A- earns 11.01 quality points; a 3-credit B earns 9.00. Together, 20.01 ÷ 6 = 3.335.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "P": null,
+      "S": null,
+      "U": null,
+      "AUD": null,
+      "NC": null,
+      "NG": null,
+      "INC": null,
+      "OT": null,
+      "SA": null,
+      "TR": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ and A are both 4.00 at Rice.",
+      "F": "F = 0.00 and attempted credit hours count in GPA.",
+      "P": "Pass is excluded from GPA; a failing P/F outcome is recorded as F and counts.",
+      "S": "Satisfactory is excluded from GPA.",
+      "U": "Unsatisfactory is excluded from GPA and earns no credit.",
+      "AUD": "Audit has no credit hours and no GPA effect.",
+      "NC": "No Credit for audit has no credit hours and no GPA effect.",
+      "NG": "Administrative No Grade is non-punitive and excluded.",
+      "INC": "Incomplete is temporary; use the final grade when resolved.",
+      "OT": "Other is temporary; use the final grade when resolved.",
+      "SA": "Study Away placeholder carries no grade points or credit hours.",
+      "TR": "Transfer credit normally has no effect on Rice GPA.",
+      "W": "Withdrawal is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Rice course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter Rice semester credit hours and the final posted grade."
+      },
+      {
+        "name": "Ordinary transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transferred grades normally do not enter the Rice GPA; TR has no GPA effect."
+      },
+      {
+        "name": "Program-required external coursework",
+        "grades": [],
+        "excluded": false,
+        "note": "Some explicitly specified program curriculum taken elsewhere may be entered and counted in Rice GPA; verify the program rule before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each letter-graded Rice attempt as a separate completed course. The Repeat Impact estimator is disabled because Rice does not use ordinary grade replacement.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "COMP 140",
+        "units": "3",
+        "grade": "A-",
+        "special": "Rice course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 101",
+        "units": "3",
+        "grade": "F",
+        "special": "Rice course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "HIST 101",
+        "units": "3",
+        "grade": "B",
+        "special": "Rice course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "BIOS 201",
+        "units": "3",
+        "grade": "A",
+        "special": "Rice course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "1d57fe8a4159"
+}

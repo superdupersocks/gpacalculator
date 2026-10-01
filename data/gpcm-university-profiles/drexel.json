@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "drexel",
+  "universityName": "Drexel University",
+  "pageTitle": "Calculate Your Drexel GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula and precision",
+      "url": "https://drexel.edu/registrar/grades/gpa-calculation"
+    },
+    {
+      "label": "Grade scale and special grades",
+      "url": "https://drexel.edu/registrar/grades/grading"
+    },
+    {
+      "label": "Undergraduate repeats and GPA adjustment",
+      "url": "https://drexel.edu/drexelcentral/records/grades/earned-credit/"
+    },
+    {
+      "label": "Repeat policy status",
+      "url": "https://drexel.edu/provost/policies-calendars/policies"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://drexel.edu/admissions/undergrad/transfer/credits"
+    },
+    {
+      "label": "Transfer grade GPA exclusion",
+      "url": "https://drexel.edu/~/media/Files/provost/policies/pdf/transfercredit.ashx"
+    },
+    {
+      "label": "Study abroad grading",
+      "url": "https://drexel.edu/global/student-programs/education-abroad/accepted-students/after-return/grades-transcripts/"
+    },
+    {
+      "label": "Graduate repeat policy",
+      "url": "https://drexel.edu/graduatecollege/forms-policies/policies-procedures-guidelines/course-repeat/"
+    },
+    {
+      "label": "Kline Law grading",
+      "url": "https://drexel.edu/~/media/Files/law/Student%20Life/Office%20of%20Student%20Affairs/JD%20Handbook.ashx?la=en"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://drexel.edu/registrar/grades/acadmic-standing"
+    },
+    {
+      "label": "Federal financial aid SAP",
+      "url": "https://drexel.edu/drexelcentral/finaid/eligibility/terms-and-conditions/satisfactory-academic-progress"
+    },
+    {
+      "label": "Latin honors",
+      "url": "https://drexel.edu/commencement/graduates/diplomas/honors"
+    },
+    {
+      "label": "Credit/No Credit option",
+      "url": "https://drexel.edu/drexelcentral/~/media/Drexel/EMSS-Site-Group/DrexelCentral/Documents/pdfs/credit-nocredit-option.pdf"
+    },
+    {
+      "label": "Academic policy directory",
+      "url": "https://drexel.edu/provost/policies-calendars/policies"
+    }
+  ],
+  "helpIntro": "Drexel uses a 4.0 scale with A+ and A both worth 4.00. Enter Drexel credits and finalized undergraduate grades to estimate your current and projected GPA.",
+  "helpNote": "For standard undergraduate GPA. Drexel reports GPA to two decimal places without rounding up; this shared calculator displays three decimals for planning. Repeat GPA adjustments require an approved petition, so Repeat Impact is not automated.",
+  "helpExample": "A 4-credit A earns 16 grade points and a 3-credit B- earns 8.01. Together, 24.01 ÷ 7 = 3.430.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "F": 0,
+      "I/F": 0,
+      "N/F": 0,
+      "AU": null,
+      "INC": null,
+      "W": null,
+      "CR": null,
+      "NCR": null,
+      "GNS": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.00 points per credit.",
+      "A": "A = 4.00 points per credit.",
+      "A-": "A- = 3.67 points per credit.",
+      "B+": "B+ = 3.33 points per credit.",
+      "B": "B = 3.00 points per credit.",
+      "B-": "B- = 2.67 points per credit.",
+      "C+": "C+ = 2.33 points per credit.",
+      "C": "C = 2.00 points per credit.",
+      "C-": "C- = 1.67 points per credit.",
+      "D+": "D+ = 1.33 points per credit.",
+      "D": "D = 1.00 point per credit.",
+      "F": "F = 0 points; GPA-bearing credits still count in the denominator.",
+      "I/F": "Administrative incomplete/failure is reflected in GPA as a failure when posted.",
+      "N/F": "Unresolved GNS that converts to N/F is calculated as a failure.",
+      "AU": "Audit designation does not enter GPA.",
+      "INC": "Incomplete is excluded until resolved; it can later become I/F.",
+      "W": "Withdrawal does not enter GPA.",
+      "CR": "Credit/No Credit CR does not affect term or cumulative GPA.",
+      "NCR": "Credit/No Credit NCR does not affect term or cumulative GPA.",
+      "GNS": "Grade Not Submitted is temporary; use the final grade once posted."
+    },
+    "specialTypes": [
+      {
+        "name": "Drexel course, standard letter grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for finalized undergraduate Drexel letter grades, including approved credit-by-exam grades."
+      },
+      {
+        "name": "External transfer or advanced-placement credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer/AP credit can count toward degree progress but external grades do not enter the Drexel GPA."
+      },
+      {
+        "name": "Drexel-sponsored exchange course (CR/NCR)",
+        "grades": null,
+        "excluded": true,
+        "note": "Exchange courses recorded CR/NCR do not factor into the Drexel GPA."
+      },
+      {
+        "name": "Graduate, Law, or other separately governed record",
+        "grades": [],
+        "excluded": false,
+        "note": "This profile is undergraduate only; use the rules for the applicable academic record.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is not automated. Drexel repeats normally remain in GPA unless an eligible undergraduate GPA-adjustment petition is approved; use your official adjusted GPA after Drexel processes it.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate cumulative GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "BIO 101",
+        "units": "4",
+        "grade": "A",
+        "special": "Drexel course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 121",
+        "units": "3",
+        "grade": "B-",
+        "special": "Drexel course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 101",
+        "units": "3",
+        "grade": "F",
+        "special": "Drexel course, standard letter grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ENGR 102",
+        "units": "4",
+        "grade": "A-",
+        "special": "Drexel course, standard letter grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "170ab6e27013"
+}

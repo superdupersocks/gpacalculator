@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "texas-am",
+  "universityName": "Texas A&M University",
+  "pageTitle": "Calculate Your Texas A&M GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading system, GPA, S/U, repeats",
+      "url": "https://catalog.tamu.edu/undergraduate/general-information/grading-system/"
+    },
+    {
+      "label": "GPA calculation examples and undergraduate/graduate U distinction",
+      "url": "https://aggie.tamu.edu/my-courses-and-registration/final-exams-and-grades/how-to-calculate-gpa.html"
+    },
+    {
+      "label": "Transfer admission and transfer GPA rules",
+      "url": "https://admissions.tamu.edu/apply/transfer/index.html"
+    },
+    {
+      "label": "Undergraduate degree and Latin honors",
+      "url": "https://catalog.tamu.edu/undergraduate/general-information/degree-information/"
+    },
+    {
+      "label": "Academic status and semester honors",
+      "url": "https://catalog.tamu.edu/undergraduate/general-information/registration-academic-status/"
+    },
+    {
+      "label": "Financial aid eligibility",
+      "url": "https://aggie.tamu.edu/paying-for-college/accept-and-maintain-aid/maintaining-aid-eligibility.html"
+    },
+    {
+      "label": "Graduate GPA context",
+      "url": "https://catalog.tamu.edu/graduate/academic-expectations-general-degree-requirements/academic-expectations-general-degree-requirements.pdf"
+    }
+  ],
+  "helpIntro": "Texas A&M undergraduates use a 4.0 scale: A=4, B=3, C=2, D=1, and F/U=0. Enter semester credit hours and final grades for a planning estimate.",
+  "helpNote": "For College Station undergraduate institutional GPA. S, W, Q, I, NG and X are excluded. Graduate GPA rules differ, and Repeat Impact is unavailable because Texas A&M does not use simple grade replacement.",
+  "helpExample": "A 3-hour A earns 12 grade points and a 4-hour B earns 12. Together, 24 ÷ 7 = 3.429.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "U": 0,
+      "S": null,
+      "I": null,
+      "NG": null,
+      "Q": null,
+      "X": null,
+      "W": null,
+      "F*": 0,
+      "U*": 0
+    },
+    "gradeExplanations": {
+      "A": "A = 4 points per semester credit hour.",
+      "B": "B = 3 points per semester credit hour.",
+      "C": "C = 2 points per semester credit hour.",
+      "D": "D = 1 point per semester credit hour.",
+      "F": "F = 0 points; attempted hours count in GPA.",
+      "U": "Undergraduate U affects GPA like F: zero points and attempted hours count.",
+      "S": "S is excluded from GPA.",
+      "I": "Incomplete is excluded until resolved.",
+      "NG": "No Grade is excluded from GPA.",
+      "Q": "Q-drop is excluded from GPA.",
+      "X": "No grade submitted; excluded until resolved.",
+      "W": "Withdrawal is excluded from GPA.",
+      "F*": "Honor Code F*: zero points; hours count in GPA.",
+      "U*": "Honor Code U*: zero points; hours count in GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Texas A&M course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard undergraduate Texas A&M coursework."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades do not enter the Texas A&M institutional GPA."
+      },
+      {
+        "name": "Repeat after original A or B",
+        "grades": [],
+        "excluded": false,
+        "note": "A repeat after a B or better has a special no-grade-points rule; confirm transcript/GPA treatment with the registrar before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Repeat Impact is unavailable. For ordinary eligible repeats below B, enter each graded attempt separately; if the original grade was A or B, use manual review.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate institutional GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "MATH",
+        "units": "3",
+        "grade": "A",
+        "special": "Texas A&M course",
+        "planned": false
+      },
+      {
+        "name": "CHEM",
+        "units": "3",
+        "grade": "F",
+        "special": "Texas A&M course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST",
+        "units": "3",
+        "grade": "A",
+        "special": "Texas A&M course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "73bf245934a3"
+}

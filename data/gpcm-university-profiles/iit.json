@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "iit",
+  "universityName": "Illinois Institute of Technology",
+  "pageTitle": "Calculate Your IIT GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate grades, GPA formula, major GPA and repeat overview",
+      "url": "https://catalog.iit.edu/undergraduate/academic-policies-procedures/grades-and-transcripts/"
+    },
+    {
+      "label": "Grade legend and temporary/administrative grades",
+      "url": "https://www.iit.edu/registrar/students-and-alumni/grade-legend"
+    },
+    {
+      "label": "Undergraduate admission and transfer GPA treatment",
+      "url": "https://catalog.iit.edu/undergraduate/undergraduate-admission/"
+    },
+    {
+      "label": "Undergraduate course repeat for grade exclusion",
+      "url": "https://www.iit.edu/ugaa/services/course-repeat-change-grade"
+    },
+    {
+      "label": "Undergraduate academic progress",
+      "url": "https://catalog.iit.edu/undergraduate/academic-policies-procedures/advising-academic-progress/academic-progress/"
+    },
+    {
+      "label": "Undergraduate graduation requirements",
+      "url": "https://catalog.iit.edu/undergraduate/academic-policies-procedures/graduation/"
+    },
+    {
+      "label": "Undergraduate graduation honors",
+      "url": "https://catalog.iit.edu/undergraduate/academic-policies-procedures/graduation/graduation-with-honors/"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://www.iit.edu/financial-aid/policies-and-procedures/satisfactory-academic-progress"
+    },
+    {
+      "label": "Graduate GPA and repeat policy",
+      "url": "https://catalog.iit.edu/graduate/academic-policies-procedures/gpa/"
+    },
+    {
+      "label": "Chicago-Kent GPA calculators and law grading scale",
+      "url": "https://kentlaw.iit.edu/law/about/directories/office-registrar/gpa-calculators"
+    },
+    {
+      "label": "Undergraduate transfer admission",
+      "url": "https://www.iit.edu/admissions-aid/undergraduate-admission/transfer-students/application-process"
+    },
+    {
+      "label": "Graduate admission GPA",
+      "url": "https://www.iit.edu/admissions-aid/graduate-admission/domestic-students/admission-requirements-and-checklist"
+    }
+  ],
+  "helpIntro": "Illinois Tech uses a 4.0 undergraduate GPA scale: A=4, B=3, C=2, D=1, E/NA=0. Enter graded semester credit hours and final grades to estimate your cumulative or projected GPA.",
+  "helpNote": "For Mies-campus undergraduate cumulative GPA. P/F, S/U, transfer, audit, withdrawal and temporary grades are excluded. Major GPA is a separate subset. Graduate and Chicago-Kent Law records use separate rules. Repeat Impact is only an estimate for an approved undergraduate grade-exclusion repeat.",
+  "helpExample": "A 3-credit A earns 12 quality points and a 3-credit B earns 9; 21 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "E": 0,
+      "NA": 0,
+      "I": null,
+      "R": null,
+      "NG": null,
+      "P": null,
+      "F": null,
+      "S": null,
+      "U": null,
+      "TR": null,
+      "AU": null,
+      "W": null,
+      "X": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 quality points per graded credit hour.",
+      "B": "B = 3.00 quality points per graded credit hour.",
+      "C": "C = 2.00 quality points per graded credit hour.",
+      "D": "D = 1.00 quality point per graded credit hour for undergraduate work.",
+      "E": "E = 0.00; its graded credit hours still count in GPA.",
+      "NA": "NA is equivalent to E for GPA calculations and counts at 0.00.",
+      "I": "Incomplete is excluded until a final grade is posted.",
+      "R": "Research (R) is temporary and excluded from GPA until resolved.",
+      "NG": "NG is excluded from GPA.",
+      "P": "P is excluded from GPA.",
+      "F": "F on the P/F basis is excluded from the institutional GPA.",
+      "S": "S is excluded from GPA.",
+      "U": "U is excluded from GPA.",
+      "TR": "Transfer credit is excluded from Illinois Tech cumulative and major GPA.",
+      "AU": "AU is excluded from GPA.",
+      "W": "W is excluded from GPA.",
+      "X": "X is temporary and excluded until a final grade is posted."
+    },
+    "specialTypes": [
+      {
+        "name": "Illinois Tech undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for Mies-campus undergraduate A/B/C/D/E/NA grades and excluded notations."
+      },
+      {
+        "name": "Transfer credit / external course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer credit may apply to the degree, but transfer grades are excluded from Illinois Tech cumulative and major GPA."
+      },
+      {
+        "name": "Chicago-Kent College of Law course",
+        "grades": [],
+        "excluded": false,
+        "note": "Chicago-Kent has its own grading scale and calculators; do not use the Mies-campus undergraduate mapping.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Use Repeat Impact only for an approved undergraduate grade-exclusion repeat of the same course with the same credits and an eligible final second grade. The second grade replaces the first in GPA even if lower.",
+      "originalGrades": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "NA"
+      ],
+      "newGrades": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate cumulative GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "MATH 151",
+        "units": "3",
+        "grade": "A",
+        "special": "Illinois Tech undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CS 100",
+        "units": "3",
+        "grade": "B",
+        "special": "Illinois Tech undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 100",
+        "units": "3",
+        "grade": "E",
+        "special": "Illinois Tech undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "S/U elective",
+        "units": "3",
+        "grade": "S",
+        "special": "Illinois Tech undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PHYS 200",
+        "units": "3",
+        "grade": "A",
+        "special": "Illinois Tech undergraduate course",
+        "planned": true
+      },
+      {
+        "name": "HUM 200",
+        "units": "3",
+        "grade": "B",
+        "special": "Illinois Tech undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "e999fe7ccd54"
+}

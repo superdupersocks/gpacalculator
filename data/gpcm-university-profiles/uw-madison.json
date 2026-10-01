@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uw-madison",
+  "universityName": "University of Wisconsin–Madison",
+  "pageTitle": "Calculate Your UW–Madison GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades, GPA, transfer, repeats",
+      "url": "https://registrar.wisc.edu/student-grades/"
+    },
+    {
+      "label": "Valid grades and GPA inclusion",
+      "url": "https://registrar.wisc.edu/valid-grades/"
+    },
+    {
+      "label": "Transfer credit GPA treatment",
+      "url": "https://registrar.wisc.edu/course-credit/"
+    },
+    {
+      "label": "Law School grading",
+      "url": "https://law.wisc.edu/current/rules/chap2.html"
+    },
+    {
+      "label": "Graduate GPA and repeats",
+      "url": "https://grad.wisc.edu/academics/grading/"
+    },
+    {
+      "label": "Graduate progress threshold",
+      "url": "https://grad.wisc.edu/academics/degree-progress/"
+    },
+    {
+      "label": "First-year admission requirements",
+      "url": "https://admissions.wisc.edu/first-year-academic-requirements/"
+    },
+    {
+      "label": "Transfer admission review",
+      "url": "https://admissions.wisc.edu/apply-as-a-transfer/"
+    },
+    {
+      "label": "L&S academic standing and Dean’s List",
+      "url": "https://guide.wisc.edu/undergraduate/letters-science/"
+    },
+    {
+      "label": "Business graduation GPA",
+      "url": "https://guide.wisc.edu/undergraduate/business/"
+    }
+  ],
+  "helpIntro": "UW–Madison uses a 4.0 scale with A, AB, B, BC, C, D and F. Enter UW–Madison credits and grades to estimate your current, cumulative, projected or target GPA.",
+  "helpNote": "Transfer and exam credits do not enter the UW–Madison GPA. All A–F grades from repeated UW–Madison courses remain in the GPA. Law School records use a separate 4.3 scale and are not supported by this profile.",
+  "helpExample": "A 4-credit AB earns 14 grade points; a 3-credit B earns 9. Together, 23 ÷ 7 = 3.286.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "AB": 3.5,
+      "B": 3,
+      "BC": 2.5,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "S": null,
+      "U": null,
+      "CR": null,
+      "N": null,
+      "I": null,
+      "NR": null,
+      "P": null,
+      "PI": null,
+      "DR": null,
+      "AU": null,
+      "T": null,
+      "Q": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 grade points per credit.",
+      "AB": "AB = 3.5 grade points per credit.",
+      "B": "B = 3.0 grade points per credit.",
+      "BC": "BC = 2.5 grade points per credit.",
+      "C": "C = 2.0 grade points per credit.",
+      "D": "D = 1.0 grade point per credit.",
+      "F": "F = 0 grade points; credits count in the GPA.",
+      "S": "S is excluded from GPA.",
+      "U": "U is excluded from GPA.",
+      "CR": "Credit grade; excluded from GPA.",
+      "N": "No Credit grade; excluded from GPA.",
+      "I": "Incomplete; temporary and excluded until resolved.",
+      "NR": "No Report; temporary and excluded until resolved.",
+      "P": "Progress; excluded from GPA.",
+      "PI": "Permanent Incomplete; excluded from GPA.",
+      "DR": "Dropped course; excluded from GPA.",
+      "AU": "Audit; excluded from GPA.",
+      "T": "Transfer/exam credit notation; excluded from UW–Madison GPA.",
+      "Q": "Question on credits or grade; resolve before relying on GPA planning."
+    },
+    "specialTypes": [
+      {
+        "name": "UW–Madison course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the standard A/AB/B/BC/C/D/F system."
+      },
+      {
+        "name": "Transfer or exam credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades and exam credits do not factor into the UW–Madison GPA."
+      },
+      {
+        "name": "UW Law School course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law uses a separate 4.3 grading scale; do not calculate it with this profile.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. Repeat Impact is disabled because UW–Madison counts all A–F attempts.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "45",
+    "completed": [
+      {
+        "name": "CHEM 103",
+        "units": "4",
+        "grade": "AB",
+        "special": "UW–Madison course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 221",
+        "units": "5",
+        "grade": "BC",
+        "special": "UW–Madison course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "ENGL 100",
+        "units": "3",
+        "grade": "B",
+        "special": "UW–Madison course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 201",
+        "units": "3",
+        "grade": "A",
+        "special": "UW–Madison course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "a3ebfdd3ba07"
+}

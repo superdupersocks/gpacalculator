@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "pitt",
+  "universityName": "University of Pittsburgh",
+  "pageTitle": "Calculate Your Pitt GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "University grading; grade values and symbols",
+      "url": "https://www.registrar.pitt.edu/sites/default/files/assets/University-Grading.pdf"
+    },
+    {
+      "label": "Course repeat policy",
+      "url": "https://www.registrar.pitt.edu/sites/default/files/assets/AR_Course_Repeat_2025.pdf"
+    },
+    {
+      "label": "Transcript GPA and career-level record",
+      "url": "https://www.registrar.pitt.edu/information-included-transcripts"
+    },
+    {
+      "label": "Transfer units",
+      "url": "https://www.registrar.pitt.edu/transcripts-verification"
+    },
+    {
+      "label": "Undergraduate grading regulations",
+      "url": "https://catalog.upp.pitt.edu/content.php?catoid=241&navoid=27484"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://www.policy.pitt.edu/sites/default/files/Policies/Academic/Policy_AC_31.pdf"
+    },
+    {
+      "label": "Dietrich academic standing and Dean’s List",
+      "url": "https://catalog.upp.pitt.edu/preview_entity.php?catoid=225&ent_oid=15094"
+    },
+    {
+      "label": "Pitt Business standards and honors",
+      "url": "https://www.cba.pitt.edu/academics/standards-and-policies/"
+    },
+    {
+      "label": "Dietrich Dean’s List and honors",
+      "url": "https://catalog.upp.pitt.edu/content.php?catoid=5&navoid=59"
+    },
+    {
+      "label": "Course repeat FAQ",
+      "url": "https://www.registrar.pitt.edu/course-repeat-policy-frequently-asked-questions1"
+    },
+    {
+      "label": "Enrollment and grade options",
+      "url": "https://www.registrar.pitt.edu/enrollment"
+    },
+    {
+      "label": "PCHE cross-registration",
+      "url": "https://www.registrar.pitt.edu/enrollment/pche-cross-registration"
+    }
+  ],
+  "helpIntro": "Pitt uses a 4.0 scale with A+ and A both worth 4.00. Enter Pitt credits and final grades to estimate your current or cumulative GPA, then plan future courses or a target GPA.",
+  "helpNote": "S/NC, H/S/U, audit, withdrawal, and unfinished grades carry no quality points. For repeats, Pitt uses the most recent graded attempt; the simple Repeat Impact tool models one same-credit replacement only.",
+  "helpExample": "A 3-credit A earns 12 quality points and a 3-credit B+ earns 9.75. Together, 21.75 ÷ 6 = 3.625.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.75,
+      "B+": 3.25,
+      "B": 3,
+      "B-": 2.75,
+      "C+": 2.25,
+      "C": 2,
+      "C-": 1.75,
+      "D+": 1.25,
+      "D": 1,
+      "D-": 0.75,
+      "F": 0,
+      "H": null,
+      "S": null,
+      "U": null,
+      "NC": null,
+      "G": null,
+      "I": null,
+      "NG": null,
+      "M": null,
+      "N": null,
+      "R": null,
+      "W": null,
+      "Z": null,
+      "**": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.00 quality points per credit.",
+      "A": "A = 4.00 quality points per credit.",
+      "A-": "A- = 3.75 quality points per credit.",
+      "B+": "B+ = 3.25 quality points per credit.",
+      "B": "B = 3.00 quality points per credit.",
+      "B-": "B- = 2.75 quality points per credit.",
+      "C+": "C+ = 2.25 quality points per credit.",
+      "C": "C = 2.00 quality points per credit.",
+      "C-": "C- = 1.75 quality points per credit.",
+      "D+": "D+ = 1.25 quality points per credit.",
+      "D": "D = 1.00 quality point per credit.",
+      "D-": "D- = 0.75 quality points per credit.",
+      "F": "F = 0.00 quality points; its credits count in the GPA denominator.",
+      "H": "Honors grade under H/S/U; no quality points and excluded from GPA.",
+      "S": "Satisfactory grade; may earn credit but is excluded from GPA.",
+      "U": "Unsatisfactory under H/S/U; no quality points and excluded from GPA.",
+      "NC": "No Credit; excluded from GPA.",
+      "G": "Unfinished ongoing coursework; excluded until a final grade is recorded.",
+      "I": "Incomplete due to the nature of the course; excluded pending completion.",
+      "NG": "Lapsed unfinished coursework; no quality points.",
+      "M": "Military duty notation; no quality points.",
+      "N": "Audit; no quality points, graduation credit, or GPA impact.",
+      "R": "Resigned from term; no quality points.",
+      "W": "Withdrawal; no quality points.",
+      "Z": "Invalid grade submitted; unresolved and carries no quality points.",
+      "**": "No grade reported; unresolved and carries no quality points."
+    },
+    "specialTypes": [
+      {
+        "name": "Pitt course, University grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the official Pitt grade on the career-level academic record."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer units may apply to degree requirements but external grades are not entered as Pitt letter-grade GPA rows."
+      },
+      {
+        "name": "School of Medicine or other special grading context",
+        "grades": [],
+        "excluded": false,
+        "note": "Professional and program-specific grading or GPA requirements need the applicable school policy.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For a simple graded repeat, the most recent graded attempt replaces the prior grade in GPA even if it is lower. The calculator estimates one same-credit replacement; verify eligibility and multi-attempt cases with the Registrar.",
+      "originalGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Career-level GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CHEM 0110",
+        "units": "3",
+        "grade": "A-",
+        "special": "Pitt course, University grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 0220",
+        "units": "3",
+        "grade": "B-",
+        "special": "Pitt course, University grading",
+        "planned": false
+      },
+      {
+        "name": "BIOSC 0150",
+        "units": "3",
+        "grade": "F",
+        "special": "Pitt course, University grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSY 0010",
+        "units": "3",
+        "grade": "A",
+        "special": "Pitt course, University grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "3b959f78c374"
+}

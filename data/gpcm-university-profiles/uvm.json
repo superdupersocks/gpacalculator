@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uvm",
+  "universityName": "University of Vermont",
+  "pageTitle": "Calculate Your UVM GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades; GPA values; exclusions; truncation",
+      "url": "https://www.uvm.edu/registrar/grades"
+    },
+    {
+      "label": "Repeat policy and exceptions",
+      "url": "https://www.uvm.edu/registrar/frequently-asked-questions-about-grading"
+    },
+    {
+      "label": "Repeated courses catalogue policy",
+      "url": "https://catalogue.uvm.edu/undergraduate/academicinfo/repeatedcourses/"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://www.uvm.edu/registrar/frequently-asked-transfer-questions"
+    },
+    {
+      "label": "Undergraduate graduation GPA",
+      "url": "https://catalogue.uvm.edu/undergraduate/academicinfo/degreerequirements/"
+    },
+    {
+      "label": "Academic standing and reprieve",
+      "url": "https://catalogue.uvm.edu/undergraduate/academicinfo/academicstanding/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://www.uvm.edu/studentfinancialservices/handbook-and-consumer-information"
+    },
+    {
+      "label": "Graduate grading and GPA",
+      "url": "https://catalogue.uvm.edu/graduate/academicenrollment/gradingpolicies/"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://www.uvm.edu/admissions/undergraduate/how-apply-transfer-students"
+    },
+    {
+      "label": "Scholarship renewal",
+      "url": "https://www.uvm.edu/studentfinancialservices/uvm-scholarship-policies"
+    },
+    {
+      "label": "University honors",
+      "url": "https://www.uvm.edu/registrar/frequently-asked-questions"
+    }
+  ],
+  "helpIntro": "UVM uses a 4.0 quality-point scale. Enter UVM credits and final grades to estimate your undergraduate GPA, projected GPA, and target GPA.",
+  "helpNote": "UVM officially truncates GPA beyond two decimals, while this planning calculator displays three decimals. Transfer grades do not enter the UVM GPA. The repeat estimate is only for standard undergraduate courses repeated after August 30, 2020 in a two-attempt, same-credit scenario.",
+  "helpExample": "A 3-credit A earns 12.00 quality points and a 3-credit B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665; UVM evaluates the official GPA by truncating beyond two decimals.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "AF": 0,
+      "XF": 0,
+      "AU": null,
+      "INC": null,
+      "P/NP": null,
+      "R": null,
+      "S/U": null,
+      "SP/UP": null,
+      "W": null,
+      "ANP": null,
+      "AUP": null
+    },
+    "gradeExplanations": {
+      "A+": "Excellent; 4.00 points per credit.",
+      "A": "Excellent; 4.00 points per credit.",
+      "A-": "Excellent; 3.67 points per credit.",
+      "B+": "Good; 3.33 points per credit.",
+      "B": "Good; 3.00 points per credit.",
+      "B-": "Good; 2.67 points per credit.",
+      "C+": "Fair; 2.33 points per credit.",
+      "C": "Fair; 2.00 points per credit.",
+      "C-": "Fair; 1.67 points per credit.",
+      "D+": "Poor; 1.33 points per credit.",
+      "D": "Poor; 1.00 point per credit.",
+      "D-": "Poor; 0.67 points per credit.",
+      "F": "Failure; credits count in GPA at 0.00 points.",
+      "AF": "Administrative Failure; equivalent to F for GPA and standing.",
+      "XF": "Academic-dishonesty failure; equivalent to F for GPA, but an original XF is not replaced by R under the repeat policy.",
+      "AU": "Audit; excluded from GPA.",
+      "INC": "Incomplete; excluded until resolved.",
+      "P/NP": "Pass/No Pass; excluded from GPA.",
+      "R": "Repeated-course marker replacing an earlier undergraduate grade; excluded from GPA.",
+      "S/U": "Satisfactory/Unsatisfactory; excluded from GPA.",
+      "SP/UP": "Satisfactory/Unsatisfactory Progress; excluded from GPA.",
+      "W": "Withdrawn; excluded from GPA and not replaced by R.",
+      "ANP": "Administrative No Pass; excluded from GPA.",
+      "AUP": "Administrative Unsatisfactory Progress; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UVM course, standard undergraduate grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for UVM undergraduate courses carrying the standard institutional grade symbols."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer credit may count toward the degree, but the external grade does not enter the UVM GPA."
+      },
+      {
+        "name": "Graduate-level record or Graduate College GPA",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate students use a related but different grading/repeat policy; use the Graduate College record rather than this undergraduate calculator.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For a standard undergraduate course repeated after August 30, 2020, the completed repeat replaces the earlier GPA grade even if the new grade is lower. This estimate is for two same-credit attempts; I, W, XF, repeatable-for-credit courses, older repeats, and additional attempts need separate review.",
+      "originalGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F",
+        "AF"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F",
+        "AF"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "PSYS 1400",
+        "units": "3",
+        "grade": "A-",
+        "special": "UVM course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1234",
+        "units": "4",
+        "grade": "B+",
+        "special": "UVM course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1400",
+        "units": "3",
+        "grade": "F",
+        "special": "UVM course, standard undergraduate grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "STAT 1110",
+        "units": "3",
+        "grade": "A",
+        "special": "UVM course, standard undergraduate grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "3915a7f63be1"
+}

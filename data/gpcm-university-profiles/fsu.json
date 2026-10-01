@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "fsu",
+  "universityName": "Florida State University",
+  "pageTitle": "Calculate Your Florida State GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading system, GPA, repeats, standing",
+      "url": "https://registrar.fsu.edu/bulletin/undergraduate-information/academic-regulations-procedures"
+    },
+    {
+      "label": "Transcript legend and historical grading",
+      "url": "https://registrar.fsu.edu/sites/g/files/upcbnu3886/files/documents/records/transcript-legend.pdf"
+    },
+    {
+      "label": "Current registration forgiveness statement",
+      "url": "https://registrar.fsu.edu/spring-2027-registration-information"
+    },
+    {
+      "label": "Undergraduate degree requirements and distinction",
+      "url": "https://registrar.fsu.edu/bulletin/undergraduate-information/degree-requirements"
+    },
+    {
+      "label": "Degrees of distinction",
+      "url": "https://registrar.fsu.edu/graduation/distinction"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://www.financialaid.fsu.edu/resources/financial-aid-processes/satisfactory-academic-progress-policy-sap/undergraduate"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://admissions.fsu.edu/transfer/wwlf"
+    },
+    {
+      "label": "Graduate admissions",
+      "url": "https://registrar.fsu.edu/bulletin/graduate-information/admissions"
+    },
+    {
+      "label": "Graduate academic regulations",
+      "url": "https://registrar.fsu.edu/bulletin/graduate-information/academic-regulations-procedures"
+    },
+    {
+      "label": "Grade services and S/U",
+      "url": "https://registrar.fsu.edu/records/grade-services"
+    }
+  ],
+  "helpIntro": "Florida State University uses a 4.00 scale with quarter-point plus/minus values: A=4.00, A-=3.75, B+=3.25, and F=0.00. Enter FSU semester hours and final grades to estimate your cumulative GPA.",
+  "helpNote": "For standard undergraduate FSU cumulative GPA. Transfer and combined overall GPAs are separate; Law and Medicine use different grading systems. FSU discontinued grade forgiveness in Fall 2004, so the Repeat Impact replacement tool is unavailable.",
+  "helpExample": "A 3-credit A earns 12.00 quality points and a 3-credit B+ earns 9.75. Together, 21.75 / 6 = 3.625.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.75,
+      "B+": 3.25,
+      "B": 3,
+      "B-": 2.75,
+      "C+": 2.25,
+      "C": 2,
+      "C-": 1.75,
+      "D+": 1.25,
+      "D": 1,
+      "D-": 0.75,
+      "F": 0,
+      "P": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "IE": 0,
+      "NG": null,
+      "GE": 0,
+      "W": null,
+      "WD": null,
+      "EC": null,
+      "ED": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 quality points per credit hour.",
+      "A-": "A- = 3.75 quality points per credit hour.",
+      "B+": "B+ = 3.25 quality points per credit hour.",
+      "B": "B = 3.00 quality points per credit hour.",
+      "B-": "B- = 2.75 quality points per credit hour.",
+      "C+": "C+ = 2.25 quality points per credit hour.",
+      "C": "C = 2.00 quality points per credit hour.",
+      "C-": "C- = 1.75 quality points per credit hour.",
+      "D+": "D+ = 1.25 quality points per credit hour.",
+      "D": "D = 1.00 quality points per credit hour.",
+      "D-": "D- = 0.75 quality points per credit hour.",
+      "F": "F earns 0.00 quality points; its credit hours count in the GPA denominator.",
+      "P": "Pass has no quality-point value and is excluded from GPA.",
+      "S": "Satisfactory is excluded from GPA.",
+      "U": "Unsatisfactory under S/U grading is excluded from GPA.",
+      "I": "Incomplete is temporary and excluded until resolved.",
+      "IE": "Expired incomplete carries 0.00 quality points.",
+      "NG": "No grade received is temporary and excluded until resolved.",
+      "GE": "Expired no-grade carries 0.00 quality points.",
+      "W": "Withdrawn while passing is excluded from GPA.",
+      "WD": "Withdrawn with dean permission is excluded from GPA.",
+      "EC": "Examination credit is excluded from GPA.",
+      "ED": "Departmental examination credit is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "FSU undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use standard FSU undergraduate grading."
+      },
+      {
+        "name": "Transfer or dual-enrollment work",
+        "grades": null,
+        "excluded": true,
+        "note": "Do not add transfer grades to the FSU cumulative GPA. FSU reports transfer and combined overall GPA separately."
+      },
+      {
+        "name": "College of Law course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law uses a different grade-point map (including A+ 4.33); do not use the standard undergraduate scale.",
+        "manualReview": true
+      },
+      {
+        "name": "College of Medicine course",
+        "grades": [],
+        "excluded": false,
+        "note": "Medicine uses HM/HP/PM and program-specific grading; review the medical record separately.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. Repeat Impact is disabled because FSU does not use ordinary grade replacement for current students.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate FSU cumulative GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENC 1101",
+        "units": "3",
+        "grade": "A",
+        "special": "FSU undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MAC 2311",
+        "units": "3",
+        "grade": "B+",
+        "special": "FSU undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CHM 1045",
+        "units": "3",
+        "grade": "F",
+        "special": "FSU undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSY 2012",
+        "units": "3",
+        "grade": "A-",
+        "special": "FSU undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "ef3d8c76e8b2"
+}

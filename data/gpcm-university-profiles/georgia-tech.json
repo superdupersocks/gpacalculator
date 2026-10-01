@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "georgia-tech",
+  "universityName": "Georgia Institute of Technology",
+  "pageTitle": "Calculate Your Georgia Tech GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading system, GPA calculation and precision",
+      "url": "https://catalog.gatech.edu/policies/grading-gpa/grading-system/"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://registrar.gatech.edu/transfer-credit"
+    },
+    {
+      "label": "Undergraduate grade substitution",
+      "url": "https://catalog.gatech.edu/policies/grading-gpa/grade-substitution/"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://catalog.gatech.edu/rules/6/"
+    },
+    {
+      "label": "Undergraduate degree and honors",
+      "url": "https://catalog.gatech.edu/rules/13/"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://finaid.gatech.edu/manage-aid/academic-progress"
+    },
+    {
+      "label": "Transfer admission GPA requirements",
+      "url": "https://admission.gatech.edu/transfer/gpa-requirements"
+    },
+    {
+      "label": "First-year admission GPA review",
+      "url": "https://admission.gatech.edu/first-year/academic-preparation"
+    }
+  ],
+  "helpIntro": "Georgia Tech uses a 4.0 scale: A=4, B=3, C=2, D=1, F=0. Enter credit hours and final grades to estimate your undergraduate institutional GPA.",
+  "helpNote": "S/U, audit, incomplete, withdrawal, NR/IJ and transfer grades are excluded. Georgia Tech truncates the official GPA after two decimals; this calculator shows three decimals for planning. Repeat Impact is only an estimate for an approved undergraduate grade substitution.",
+  "helpExample": "A 3-credit A earns 12 quality points and a 4-credit B earns 12. Together, 24 ÷ 7 = 3.428…; Georgia Tech’s official reported GPA is truncated to 3.42.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "S": null,
+      "U": null,
+      "V": null,
+      "I": null,
+      "W": null,
+      "NR": null,
+      "IJ": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 quality points per credit hour.",
+      "B": "B = 3 quality points per credit hour.",
+      "C": "C = 2 quality points per credit hour.",
+      "D": "D = 1 quality point per credit hour; eligible as an original undergraduate grade-substitution grade when all policy conditions are met.",
+      "F": "F = 0 quality points; attempted credit hours remain in the GPA denominator unless an approved grade substitution removes the original attempt.",
+      "S": "S is excluded from GPA.",
+      "U": "U is excluded from GPA.",
+      "V": "V (audit) is excluded from GPA.",
+      "I": "Incomplete is excluded until replaced by a final grade.",
+      "W": "Withdrawal is excluded from GPA.",
+      "NR": "Not Reported is excluded until a final grade is entered.",
+      "IJ": "Incomplete Judicial is a temporary placeholder and is excluded until a permanent grade is assigned."
+    },
+    "specialTypes": [
+      {
+        "name": "Georgia Tech course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final Georgia Tech course grade and credit hours."
+      },
+      {
+        "name": "Transfer or transient credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted non-resident credit can count toward degree/pace, but external grades do not enter the Georgia Tech GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Repeat Impact estimates an approved undergraduate grade substitution only. It does not confirm eligibility, the two-course lifetime limit, misconduct status, deadlines, or whether substitution has been processed. Without approved substitution, enter both attempts as completed courses.",
+      "originalGrades": [
+        "D",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate Georgia Tech GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CS 1331",
+        "units": "3",
+        "grade": "A",
+        "special": "Georgia Tech course",
+        "planned": false
+      },
+      {
+        "name": "MATH 2551",
+        "units": "4",
+        "grade": "C",
+        "special": "Georgia Tech course",
+        "planned": false
+      },
+      {
+        "name": "PHYS 2211",
+        "units": "3",
+        "grade": "F",
+        "special": "Georgia Tech course",
+        "planned": false
+      },
+      {
+        "name": "APPH elective",
+        "units": "3",
+        "grade": "S",
+        "special": "Georgia Tech course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Next course",
+        "units": "3",
+        "grade": "B",
+        "special": "Georgia Tech course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "55801b0a005e"
+}

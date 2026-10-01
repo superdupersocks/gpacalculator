@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "penn-state",
+  "universityName": "Penn State",
+  "pageTitle": "Calculate Your Penn State GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA calculation and grade points",
+      "url": "https://registrar.psu.edu/grades/grade-point-average.cfm"
+    },
+    {
+      "label": "Grading system and symbols",
+      "url": "https://www.registrar.psu.edu/grades/grading-system.cfm"
+    },
+    {
+      "label": "Grade forgiveness",
+      "url": "https://www.registrar.psu.edu/grades/grade-forgiveness.cfm"
+    },
+    {
+      "label": "Undergraduate course repeats",
+      "url": "https://www.dus.psu.edu/policy/c-7-undergraduate-student-course-repeats"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://student.worldcampus.psu.edu/enrollment-and-registration/transferring-credits"
+    },
+    {
+      "label": "Satisfactory/Unsatisfactory",
+      "url": "https://www.registrar.psu.edu/grades/satisfactory-unsatisfactory-grades.cfm"
+    },
+    {
+      "label": "Academic progress",
+      "url": "https://www.registrar.psu.edu/academic-progress/"
+    },
+    {
+      "label": "Dean’s List",
+      "url": "https://www.registrar.psu.edu/grades/deans-list.cfm"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://www.psu.edu/costs-aid/managing-aid/satisfactory-academic-progress"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://www.psu.edu/resources/transfer-students/application-review"
+    },
+    {
+      "label": "First-year admission",
+      "url": "https://www.psu.edu/resources/first-year-students/application-review"
+    },
+    {
+      "label": "Academic renewal",
+      "url": "https://www.registrar.psu.edu/enrollment/returning/academic-renewal.cfm"
+    },
+    {
+      "label": "Undergraduate graduation",
+      "url": "https://bulletins.psu.edu/undergraduate/general-information/academic-information/undergraduate-degrees-requirements/graduation/graduation.pdf"
+    },
+    {
+      "label": "Graduate satisfactory scholarship",
+      "url": "https://gradschool.psu.edu/graduate-education-policies/gcac/gcac-400/gcac-404-satisfactory-scholarship"
+    }
+  ],
+  "helpIntro": "Penn State uses a 4.0 credit-weighted GPA scale. Enter Penn State credits and final grades to estimate your semester, cumulative, projected, or target GPA.",
+  "helpNote": "For the standard undergraduate Penn State GPA. Transfer grades and SA/UN work do not enter the GPA. Grade forgiveness is request-based and is not automated by the Repeat Impact tool.",
+  "helpExample": "A 3-credit A earns 12.00 grade points and a 3-credit B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "SA": null,
+      "UN": null,
+      "P": null,
+      "PS": null,
+      "W": null,
+      "DF": null,
+      "NG": null,
+      "AU": null,
+      "AUS": null,
+      "AUU": null,
+      "CRX": null,
+      "S": null,
+      "R": null,
+      "LD": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per credit.",
+      "A-": "A- = 3.67 grade points per credit.",
+      "B+": "B+ = 3.33 grade points per credit.",
+      "B": "B = 3.00 grade points per credit.",
+      "B-": "B- = 2.67 grade points per credit.",
+      "C+": "C+ = 2.33 grade points per credit.",
+      "C": "C = 2.00 grade points per credit.",
+      "D": "D = 1.00 grade points per credit.",
+      "F": "F earns 0.00 grade points and its credits count in GPA.",
+      "SA": "Satisfactory/Unsatisfactory courses are excluded from GPA.",
+      "UN": "Satisfactory/Unsatisfactory courses are excluded from GPA.",
+      "P": "Pass is not a letter-grade GPA value.",
+      "PS": "Pass is not a letter-grade GPA value.",
+      "W": "Withdrawal is not included in GPA.",
+      "DF": "Deferred grade; wait for the final grade before calculating.",
+      "NG": "No Grade Reported; resolve the grade before relying on a GPA estimate.",
+      "AU": "Audit is excluded from GPA.",
+      "AUS": "Audit is excluded from GPA.",
+      "AUU": "Audit is excluded from GPA.",
+      "CRX": "Credit by examination is not a letter-grade GPA value.",
+      "S": "Proficiency exam passed; excluded from GPA.",
+      "R": "Research notation; not a standard undergraduate letter-grade GPA value.",
+      "LD": "Late drop; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Penn State course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final Penn State undergraduate grades and course credits."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transferred credits may apply to the degree, but external letter grades do not affect the Penn State GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Do not use a simple replacement estimate. Penn State grade forgiveness requires a qualifying D/F original, a better repeat grade, and an approved request in LionPATH.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate Penn State GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENGL 15",
+        "units": "3",
+        "grade": "A",
+        "special": "Penn State course",
+        "planned": false
+      },
+      {
+        "name": "MATH 110",
+        "units": "3",
+        "grade": "B+",
+        "special": "Penn State course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 110",
+        "units": "3",
+        "grade": "F",
+        "special": "Penn State course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSYCH 100",
+        "units": "3",
+        "grade": "A-",
+        "special": "Penn State course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "b7b3b63b1396"
+}

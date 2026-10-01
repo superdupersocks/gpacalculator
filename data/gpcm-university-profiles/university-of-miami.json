@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "university-of-miami",
+  "universityName": "University of Miami",
+  "pageTitle": "Calculate Your University of Miami GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate grades, GPA formula, symbols and standing",
+      "url": "https://bulletin.miami.edu/general-university-information/undergraduate-policies-and-procedures/grades/"
+    },
+    {
+      "label": "Undergraduate transfer credit",
+      "url": "https://bulletin.miami.edu/general-university-information/undergraduate-policies-and-procedures/undergraduate-transfer-credit-policy/"
+    },
+    {
+      "label": "Repeat rules",
+      "url": "https://bulletin.miami.edu/general-university-information/university-policies/course-information/"
+    },
+    {
+      "label": "Graduation and Latin honors",
+      "url": "https://bulletin.miami.edu/general-university-information/undergraduate-policies-and-procedures/graduation/"
+    },
+    {
+      "label": "Financial-aid satisfactory academic progress",
+      "url": "https://bulletin.miami.edu/general-university-information/university-policies/financial-assistance/satisfactory-academic-progress/"
+    },
+    {
+      "label": "Graduate academic policies",
+      "url": "https://bulletin.miami.edu/general-university-information/graduate-policies-and-procedures/academic-policies/"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://bulletin.miami.edu/general-university-information/undergraduate-policies-and-procedures/admission/transfer-admission/"
+    },
+    {
+      "label": "Miami Herbert Business undergraduate rules",
+      "url": "https://bulletin.miami.edu/undergraduate-academic-programs/business/"
+    }
+  ],
+  "helpIntro": "University of Miami uses a 4.0 quality-point scale. Enter UM credit hours and final grades to estimate your current/cumulative GPA, projected GPA, and target GPA.",
+  "helpNote": "This profile estimates the standard undergraduate UM institutional GPA. Transfer grades are excluded from that GPA, and graduation honors use a separate lower-of UM versus combined GPA rule. Use Repeat Impact only for an eligible, elected Undergraduate Repeat Rule case.",
+  "helpExample": "A 3-credit A earns 12.0 quality points and a 3-credit B+ earns 9.9. Together, 21.9 / 6 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "XF": 0,
+      "IE": 0,
+      "IF": 0,
+      "E": 0,
+      "CR": null,
+      "NC": null,
+      "I": null,
+      "IP": null,
+      "W": null,
+      "NG": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ carries the same 4.00 quality points per credit as A.",
+      "A": "A = 4.00 quality points per credit hour.",
+      "A-": "A- = 3.70 quality points per credit hour.",
+      "B+": "B+ = 3.30 quality points per credit hour.",
+      "B": "B = 3.00 quality points per credit hour.",
+      "B-": "B- = 2.70 quality points per credit hour.",
+      "C+": "C+ = 2.30 quality points per credit hour.",
+      "C": "C = 2.00 quality points per credit hour.",
+      "C-": "C- = 1.70 quality points per credit hour.",
+      "D+": "D+ = 1.30 quality points per credit hour.",
+      "D": "D = 1.00 quality points per credit hour.",
+      "F": "F carries 0 quality points and its attempted credits count in GPA.",
+      "XF": "Academic-integrity failure; 0 points and not eligible for the Undergraduate Repeat Rule.",
+      "IE": "Incomplete notation that counts as attempted credit with 0 quality points.",
+      "IF": "Incomplete failure notation; attempted credits count with 0 quality points.",
+      "E": "Historical failing grade used prior to Fall 1995; 0 points.",
+      "CR": "Credit earned; excluded from GPA attempted hours and quality points.",
+      "NC": "No Credit; excluded from GPA attempted hours and quality points.",
+      "I": "Incomplete; excluded until replaced by a final grade.",
+      "IP": "In Progress; excluded from GPA while unresolved.",
+      "W": "Withdrawal; excluded from GPA attempted hours and quality points.",
+      "NG": "No grade reported; excluded until resolved."
+    },
+    "specialTypes": [
+      {
+        "name": "UM course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for ordinary undergraduate University of Miami courses with final grades."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer credit does not enter the UM cumulative GPA. Graduation honors use a separate combined-GPA test."
+      },
+      {
+        "name": "Test, military, or other non-quality-point credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Credit may be awarded, but these categories do not carry UM quality points for the institutional GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Use Repeat Impact only when you qualify for and elect the Undergraduate Repeat Rule. It estimates replacement of an eligible D/D+/F with the second final grade; confirm timing, course identity, school rules, and filing requirements with your advisor.",
+      "originalGrades": [
+        "D+",
+        "D",
+        "F"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate institutional GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "MTH 101",
+        "units": "3",
+        "grade": "A",
+        "special": "UM course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "ENG 105",
+        "units": "3",
+        "grade": "B+",
+        "special": "UM course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "CHM 121",
+        "units": "3",
+        "grade": "F",
+        "special": "UM course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSY 110",
+        "units": "3",
+        "grade": "A-",
+        "special": "UM course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "5e7a7c5b13bd"
+}

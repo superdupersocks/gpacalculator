@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "baylor",
+  "universityName": "Baylor University",
+  "pageTitle": "Calculate Your Baylor GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades, grade points, GPA formula and truncation",
+      "url": "https://catalog.baylor.edu/undergraduate/general-information/grading-policies/grading-policies.pdf"
+    },
+    {
+      "label": "Standard university grading scale",
+      "url": "https://registrar.web.baylor.edu/exams-grading/grading-resources-facultystaff/grading-scale"
+    },
+    {
+      "label": "Undergraduate repeats and Academic Forgiveness",
+      "url": "https://registrar.web.baylor.edu/records-services/undergraduate-course-repeat-policy"
+    },
+    {
+      "label": "Transfer credit and Baylor GPA",
+      "url": "https://catalog.baylor.edu/undergraduate/undergraduate-archived-catalogs/2017-18_Catalog_ug.pdf"
+    },
+    {
+      "label": "Law School grading context",
+      "url": "https://law.baylor.edu/career-development/employers/why-hire-baylor-law/grading-system"
+    },
+    {
+      "label": "Academic notice",
+      "url": "https://catalog.baylor.edu/undergraduate/general-information/academic-actions-student-success/"
+    },
+    {
+      "label": "Dean’s Academic Honor List",
+      "url": "https://catalog.baylor.edu/undergraduate/general-information/deans-academic-honor-list/deans-academic-honor-list.pdf"
+    },
+    {
+      "label": "Freshman admission GPA",
+      "url": "https://admissions.web.baylor.edu/admission/incoming-freshman/application-process/terms-know"
+    },
+    {
+      "label": "Major-specific admission requirements",
+      "url": "https://admissions.web.baylor.edu/admission/incoming-freshman/major-specific-admission-requirements"
+    },
+    {
+      "label": "Graduate probation",
+      "url": "https://catalog.baylor.edu/graduate-school/general-information/graduate-school-policies/probation-dismissal/"
+    }
+  ],
+  "helpIntro": "Baylor uses a 4.0 scale with plus/minus grades. Enter Baylor semester hours and final grades to estimate your current or projected undergraduate GPA.",
+  "helpNote": "Baylor truncates the official GPA after two decimal places rather than rounding. Repeat Impact is disabled because ordinary repeats count all Baylor grades unless undergraduate Academic Forgiveness has actually been approved.",
+  "helpExample": "A 3-hour A earns 12.00 grade points; a 3-hour B- earns 8.01. Together, 20.01 ÷ 6 = 3.335, while Baylor’s official method truncates to 3.33.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "I": null,
+      "IP": null,
+      "W": null,
+      "P": null,
+      "FA": null,
+      "CR": null,
+      "NC": null,
+      "AU": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per semester hour.",
+      "A-": "A- = 3.67 grade points per semester hour.",
+      "B+": "B+ = 3.33 grade points per semester hour.",
+      "B": "B = 3.00 grade points per semester hour.",
+      "B-": "B- = 2.67 grade points per semester hour.",
+      "C+": "C+ = 2.33 grade points per semester hour.",
+      "C": "C = 2.00 grade points per semester hour.",
+      "C-": "C- = 1.67 grade points per semester hour.",
+      "D+": "D+ = 1.33 grade points per semester hour.",
+      "D": "D = 1.00 grade points per semester hour.",
+      "D-": "D- = 0.67 grade points per semester hour.",
+      "F": "Fail; zero grade points and GPA-bearing hours count.",
+      "I": "Incomplete; excluded until replaced by a final grade.",
+      "IP": "Incomplete extension; excluded until resolved.",
+      "W": "Withdrawal; excluded from GPA.",
+      "P": "Pass; credit may be earned but the grade is excluded from GPA.",
+      "FA": "Fail under Pass/Fail; excluded from GPA.",
+      "CR": "Credit; excluded from GPA.",
+      "NC": "No Credit; excluded from GPA.",
+      "AU": "Audit; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Baylor undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard Baylor undergraduate courses with final Baylor grades."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer credit does not change the Baylor institutional GPA."
+      },
+      {
+        "name": "Baylor Law School course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law has separate academic rules; use the Law School record, not this undergraduate calculator.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Enter all counted attempts. If Baylor has already approved Academic Forgiveness, omit the transcript grade marked excluded (E); otherwise include every Baylor grade.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate Baylor GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENG 1302",
+        "units": "3",
+        "grade": "A",
+        "special": "Baylor undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "HIS 1305",
+        "units": "3",
+        "grade": "B-",
+        "special": "Baylor undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MTH 1321",
+        "units": "3",
+        "grade": "F",
+        "special": "Baylor undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSC 2302",
+        "units": "3",
+        "grade": "A-",
+        "special": "Baylor undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "987b1de48423"
+}

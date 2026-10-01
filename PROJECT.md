@@ -33,6 +33,7 @@ plugin/gpacalculator-manager/          Grade + GPA (live plugin imported + engin
   assets/calc-assets/                  every calculator's JS/CSS/HTML, same filenames as the theme
     core/                              shared core (calc-core.css/js, course-catalog.js)
     _starter/                          template for new calculators (not shipped)
+data/gpcm-university-profiles/         the 86 university profiles exported from the site (not shipped)
 legacy/calcs-plugin/                   Calculators plugin source, for reference + tests (not shipped)
 tests/                                 QA (python3 tests/run_all.py)
 scripts/import_live.py                 pulls uploaded live zips into the repo
@@ -161,15 +162,17 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Open items
 
-- University profile rules (and any uploaded shared JS/CSS) live only in the site database
-  (`gpcm_university_profiles`, `gpcm_shared_assets`; country: `gpcm_international_*`). Plugin updates
-  keep them, but the repo has no copy except Stanford. Get the source JSON files or a WP-CLI export.
-
+- Country configs (`gpcm_international_profiles`) and any uploaded shared JS/CSS (`gpcm_shared_assets`)
+  still live only in the site database.
 - Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
 - `calc-assets/formidable-pro-6.35.zip` sits in the public theme folder on the live server (licensed plugin); delete it there. It is excluded from the repo.
 - Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
 
 ## Changelog
+
+### 2026-10-01: university profiles in the repo
+- The 86 database profiles are exported into `data/gpcm-university-profiles/` (`scripts/split_profiles.py`
+  refreshes them). The test runs each through the plugin's own validator and shortcode.
 
 ### 2026-10-01: university profiles locked
 - Recorded the 87 live `[gpcm_calculator]` profile ids; `gpcm_profiles_test.php` runs Grade + GPA's own

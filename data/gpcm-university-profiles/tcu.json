@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "tcu",
+  "universityName": "Texas Christian University",
+  "pageTitle": "Calculate Your TCU GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; undergraduate/graduate grading",
+      "url": "https://registrar.tcu.edu/faculty-staff/instructors.php"
+    },
+    {
+      "label": "GPA formula; P/NC; repeats; I/Q/U",
+      "url": "https://registrar.tcu.edu/current-students/enrollment/grading.php"
+    },
+    {
+      "label": "Academic policies index",
+      "url": "https://undergraduate.catalog.tcu.edu/policies/academic/list"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://financialaid.tcu.edu/consumer-information/policies/academic-satisfactory-progress.php"
+    },
+    {
+      "label": "First-year admission GPA context",
+      "url": "https://admissions.tcu.edu/frequently-asked-questions/what-are-tcus-admission-requirements.php"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admissions.tcu.edu/apply/transfer/requirements.php"
+    },
+    {
+      "label": "Transfer admission GPA calculation",
+      "url": "https://admissions.tcu.edu/frequently-asked-questions/how-do-i-calculate-my-gpa-for-admission.php"
+    },
+    {
+      "label": "Transfer scholarships",
+      "url": "https://admissions.tcu.edu/afford/scholarship-aid/transfer.php"
+    }
+  ],
+  "helpIntro": "TCU uses a 4.0 undergraduate scale with plus/minus grades. Enter TCU credit hours and final grades to estimate your semester or cumulative GPA.",
+  "helpNote": "P/NC courses are excluded from GPA. For a TCU course repeated at TCU, only the last letter grade counts in GPA; graduate grading and transfer-admission GPA use different rules.",
+  "helpExample": "A 3-credit A earns 12.00 grade points; a 3-credit B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 20,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "P": null,
+      "NC": null,
+      "I": null,
+      "Q": null,
+      "W": null,
+      "AU": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per credit hour.",
+      "A-": "A- = 3.67 grade points per credit hour.",
+      "B+": "B+ = 3.33 grade points per credit hour.",
+      "B": "B = 3.00 grade points per credit hour.",
+      "B-": "B- = 2.67 grade points per credit hour.",
+      "C+": "C+ = 2.33 grade points per credit hour.",
+      "C": "C = 2.00 grade points per credit hour.",
+      "C-": "C- = 1.67 grade points per credit hour.",
+      "D+": "D+ = 1.33 grade points per credit hour.",
+      "D": "D = 1.00 grade points per credit hour.",
+      "D-": "D- = 0.67 grade points per credit hour.",
+      "F": "F = 0.00 grade points per credit hour.",
+      "P": "Pass; earns credit but is excluded from GPA.",
+      "NC": "No Credit; excluded from GPA.",
+      "I": "Incomplete; excluded until a final grade is assigned; ordinarily converts to F if not removed by the deadline.",
+      "Q": "Course grade removed after approved post-deadline drop; exclude from GPA.",
+      "W": "Withdrawal; exclude from GPA.",
+      "AU": "Audit; exclude from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "TCU undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use TCU credit hours and the final undergraduate grade."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "External grades are not part of the enrolled TCU GPA; transfer-admission GPA is a separate calculation."
+      },
+      {
+        "name": "Graduate/professional TCU course or record",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate grading differs and program standards vary; use the appropriate graduate record policy.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For a TCU course repeated at TCU, the last letter grade is used in the GPA even if it is lower; all grades remain on the transcript. Notify the Registrar of the repeat.",
+      "originalGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate TCU GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL 10803",
+        "units": "3",
+        "grade": "A-",
+        "special": "TCU undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 10043",
+        "units": "3",
+        "grade": "B+",
+        "special": "TCU undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 10603",
+        "units": "3",
+        "grade": "A",
+        "special": "TCU undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "f5a8ef85aba0"
+}

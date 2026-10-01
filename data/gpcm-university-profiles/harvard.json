@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "harvard",
+  "universityName": "Harvard University",
+  "pageTitle": "Calculate Your Harvard GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Harvard College grading, GPA, repeats, cross-registration",
+      "url": "https://handbook.college.harvard.edu/sites/g/files/omnuum5551/files/2025-12/Harvard%20College%20Student%20Handbook.pdf"
+    },
+    {
+      "label": "Harvard College honors",
+      "url": "https://registrar.fas.harvard.edu/honors"
+    },
+    {
+      "label": "Harvard Summer School grades",
+      "url": "https://summer.harvard.edu/academic-opportunities-support/policies-and-regulations/grades/"
+    },
+    {
+      "label": "Harvard College transfer admission",
+      "url": "https://college.harvard.edu/resources/faq/how-do-i-know-if-i-am-competitive-how-hard-it-get-transfer-student"
+    },
+    {
+      "label": "Harvard College first-year admission grades",
+      "url": "https://college.harvard.edu/resources/faq/do-i-need-certain-grades-or-marks-be-considered-admission"
+    },
+    {
+      "label": "Harvard College financial aid SAP",
+      "url": "https://college.harvard.edu/financial-aid/federal-disclosures"
+    },
+    {
+      "label": "Transfer credit eligibility",
+      "url": "https://college.harvard.edu/admissions/apply/transfer-applicants"
+    }
+  ],
+  "helpIntro": "Harvard College uses a 4.0 FAS scale with A=4.00, A-=3.67, B+=3.33 through D-=0.67, while E and other failing marks count as zero. Use Harvard credits to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For Harvard College undergraduates only. Harvard has no A+ grade. Passing Pass/Fail/SAT grades and passing external work are excluded; failed courses count. Repeat treatment depends on whether the original course was passed, so the replacement-only Repeat Impact tool is disabled.",
+  "helpExample": "A 4-credit A earns 16.00 grade points and a 4-credit B+ earns 13.32. Together, 29.32 ÷ 8 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "E": 0,
+      "ABS": 0,
+      "NCR": 0,
+      "FL": 0,
+      "UNS": 0,
+      "EXL": 0,
+      "PA": null,
+      "SAT": null,
+      "CR": null,
+      "EXT": null,
+      "WD": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00.",
+      "A-": "A- = 3.67.",
+      "B+": "B+ = 3.33.",
+      "B": "B = 3.00.",
+      "B-": "B- = 2.67.",
+      "C+": "C+ = 2.33.",
+      "C": "C = 2.00.",
+      "C-": "C- = 1.67; satisfactory and passing.",
+      "D+": "D+ = 1.33; passing but unsatisfactory.",
+      "D": "D = 1.00; passing but unsatisfactory.",
+      "D-": "D- = 0.67; passing but unsatisfactory.",
+      "E": "E is failing and counts as 0.00 in GPA.",
+      "ABS": "Absent is a failing grade and counts as 0.00.",
+      "NCR": "No Credit is failing and counts as 0.00.",
+      "FL": "Fail in a Pass/Fail course counts as 0.00.",
+      "UNS": "Unsatisfactory counts as 0.00.",
+      "EXL": "Excluded is treated as failing and counts as 0.00.",
+      "PA": "Pass is excluded from GPA.",
+      "SAT": "Satisfactory is excluded from GPA.",
+      "CR": "Credit is excluded from GPA.",
+      "EXT": "Extension is temporary; use the final grade when posted.",
+      "WD": "Approved withdrawal carries no course credit and is not part of the College GPA formula."
+    },
+    "specialTypes": [
+      {
+        "name": "Harvard FAS course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final FAS grade and Harvard credits. There is no A+ grade."
+      },
+      {
+        "name": "Harvard Summer School course for College credit",
+        "grades": null,
+        "excluded": false,
+        "note": "Harvard College includes Summer School courses taken for credit in its GPA."
+      },
+      {
+        "name": "Transfer / out-of-residence course",
+        "grades": null,
+        "excluded": true,
+        "note": "Passing external/out-of-residence grades do not enter the Harvard College GPA."
+      },
+      {
+        "name": "Repeated course after a passing first attempt",
+        "grades": null,
+        "excluded": true,
+        "note": "The second iteration of a course already passed shows zero credit and does not count in GPA."
+      },
+      {
+        "name": "Cross-registered course",
+        "grades": [],
+        "excluded": false,
+        "note": "Passing cross-registration is normally excluded from College GPA, while failing grades count. Confirm the posted Harvard treatment before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Do not use a replacement estimate. For a failed-course repeat, enter both counted attempts as completed courses. For a repeat after a passing grade, mark the second attempt as the excluded repeat course type.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Harvard College undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.5",
+    "previousUnits": "32",
+    "completed": [
+      {
+        "name": "ECON 10",
+        "units": "4",
+        "grade": "A",
+        "special": "Harvard FAS course",
+        "planned": false
+      },
+      {
+        "name": "MATH 21A",
+        "units": "4",
+        "grade": "B+",
+        "special": "Harvard FAS course",
+        "planned": false
+      },
+      {
+        "name": "HIST 12",
+        "units": "4",
+        "grade": "E",
+        "special": "Harvard FAS course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "GOV 20",
+        "units": "4",
+        "grade": "A-",
+        "special": "Harvard FAS course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "9be346a5d846"
+}

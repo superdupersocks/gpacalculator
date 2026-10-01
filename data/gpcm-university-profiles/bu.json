@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "bu",
+  "universityName": "Boston University",
+  "pageTitle": "Calculate Your Boston University GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades & GPA / GPA formula",
+      "url": "https://www.bu.edu/reg/academics/grades-gpa/"
+    },
+    {
+      "label": "University grades and course units",
+      "url": "https://www.bu.edu/academics/policies/grades-and-course-credits/"
+    },
+    {
+      "label": "Undergraduate Pass/Fail",
+      "url": "https://www.bu.edu/academics/policies/policy-on-passfail-courses-for-undergraduate-students/"
+    },
+    {
+      "label": "Repeated undergraduate courses",
+      "url": "https://www.bu.edu/academics/policies/repeated-courses-for-undergraduate-students/"
+    },
+    {
+      "label": "Transfer of undergraduate units",
+      "url": "https://www.bu.edu/academics/policies/transfer-of-undergraduate-credits/"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://www.bu.edu/academics/policies/academic-standing-for-undergraduate-students-in-full-time-programs/"
+    },
+    {
+      "label": "Undergraduate graduation minimums",
+      "url": "https://www.bu.edu/academics/policies/academic-progress-and-graduation/"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://www.bu.edu/finaid/how-aid-works/eligibility/satisfactory-academic-progress/"
+    },
+    {
+      "label": "Latin Honors",
+      "url": "https://www.bu.edu/reg/graduation/awards-and-achievements/"
+    }
+  ],
+  "helpIntro": "Boston University uses a 4.0 honor-point scale. Multiply each GPA-bearing course grade value by its BU units, add the honor points, and divide by GPA-bearing units.",
+  "helpNote": "For standard undergraduate BU GPA planning. P/P* and other non-honor-point marks are excluded; F/F* count at 0.0 with units. External transfer grades do not enter BU GPA. Repeat Impact is unavailable because BU counts all graded attempts.",
+  "helpExample": "A 4-unit A earns 16.0 honor points and a 4-unit B+ earns 13.2. Together, 29.2 ÷ 8 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D": 1,
+      "F": 0,
+      "F*": 0,
+      "P": null,
+      "P*": null,
+      "CR": null,
+      "NC": null,
+      "AU": null,
+      "W": null,
+      "MG": null,
+      "I": null,
+      "J": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 honor points per unit.",
+      "A-": "A- = 3.7 honor points per unit.",
+      "B+": "B+ = 3.3 honor points per unit.",
+      "B": "B = 3.0 honor points per unit.",
+      "B-": "B- = 2.7 honor points per unit.",
+      "C+": "C+ = 2.3 honor points per unit.",
+      "C": "C = 2.0 honor points per unit.",
+      "C-": "C- = 1.7 honor points per unit.",
+      "D": "D = 1.0 honor point per unit; degree/program applicability may vary.",
+      "F": "F = 0.0; attempted units remain in the GPA denominator.",
+      "F*": "F* = failing grade in a student-elected Pass/Fail course; units and zero points count in GPA.",
+      "P": "P carries no honor points and is excluded from GPA.",
+      "P*": "P* carries units toward degree requirements but is excluded from GPA.",
+      "CR": "CR is excluded from GPA.",
+      "NC": "NC is excluded from GPA.",
+      "AU": "Audit is excluded from GPA.",
+      "W": "W is excluded from GPA.",
+      "MG": "Missing grade is unresolved and excluded until resolved.",
+      "I": "Incomplete is excluded until required work is completed and a letter grade is assigned.",
+      "J": "Continuing-course J is excluded until the course is completed; units enter with the final grade later."
+    },
+    "specialTypes": [
+      {
+        "name": "Boston University course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter finalized BU grade and BU units. P/P* and other excluded symbols do not add GPA units; F/F* count at zero."
+      },
+      {
+        "name": "Approved external transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "External grades do not enter the Boston University cumulative GPA; transfer-unit acceptance is separate."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. BU includes all repeated grades and units in GPA; the calculator does not decide repeat eligibility or degree-unit credit.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "40",
+    "completed": [
+      {
+        "name": "CAS EC 101",
+        "units": "4",
+        "grade": "A",
+        "special": "Boston University course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "CAS MA 123",
+        "units": "4",
+        "grade": "B+",
+        "special": "Boston University course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "CAS CH 101",
+        "units": "4",
+        "grade": "F",
+        "special": "Boston University course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "CAS WR 120",
+        "units": "4",
+        "grade": "A-",
+        "special": "Boston University course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "dfb1f1936edc"
+}

@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "georgetown",
+  "universityName": "Georgetown University",
+  "pageTitle": "Calculate Your Georgetown GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values, QPI formula, precision, repeats, external credit",
+      "url": "https://bulletin.georgetown.edu/academics/undergraduate-regulations/studying-grades-credit/"
+    },
+    {
+      "label": "Registrar grading and provisional grades",
+      "url": "https://registrar.georgetown.edu/records/final-grades/"
+    },
+    {
+      "label": "Transfer admission and transfer credit",
+      "url": "https://uadmissions.georgetown.edu/apply/transfer-applicants/preparing-for-georgetown-transfer/"
+    },
+    {
+      "label": "Academic standards and graduation GPA",
+      "url": "https://bulletin.georgetown.edu/academics/undergraduate-regulations/academic-standards/"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://finaid.georgetown.edu/undergrad/aid-for-undergrads/policies/"
+    },
+    {
+      "label": "Official cumulative QPI versus major GPA",
+      "url": "https://college.georgetown.edu/academics/undergraduate/academic-policies/"
+    },
+    {
+      "label": "Graduate grading system",
+      "url": "https://bulletin.georgetown.edu/academics/graduate-regulations/academic-regulations-procedures/"
+    },
+    {
+      "label": "Georgetown Law grading system",
+      "url": "https://www.law.georgetown.edu/wp-content/uploads/2021/02/Explanation-of-Grading-System_09-01-20.pdf"
+    },
+    {
+      "label": "Undergraduate honors",
+      "url": "https://bulletin.georgetown.edu/academics/honors-awards/"
+    },
+    {
+      "label": "First-year undergraduate admissions",
+      "url": "https://uadmissions.georgetown.edu/apply/first-year-applicants/how-to-prepare/"
+    }
+  ],
+  "helpIntro": "Georgetown undergraduate GPA is the cumulative Quality Point Index (QPI): multiply each quality grade by course credits, total the quality points, and divide by attempted quality-grade credits.",
+  "helpNote": "For main-campus undergraduate QPI only. S/U and most external grades are excluded. Georgetown truncates the official QPI to three decimals without rounding; this planning calculator displays three decimals using normal rounding. Repeat Impact is disabled because Georgetown repeat treatment depends on the original result.",
+  "helpExample": "A 3-credit A earns 12.00 quality points and a 4-credit B+ earns 13.32. Together, 25.32 ÷ 7 = 3.617142…, so Georgetown’s official QPI is 3.617.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "F": 0,
+      "S": null,
+      "U": null,
+      "N": null,
+      "W": null,
+      "AU": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 quality points per credit.",
+      "A-": "A- = 3.67.",
+      "B+": "B+ = 3.33.",
+      "B": "B = 3.00.",
+      "B-": "B- = 2.67.",
+      "C+": "C+ = 2.33.",
+      "C": "C = 2.00.",
+      "C-": "C- = 1.67.",
+      "D+": "D+ = 1.33.",
+      "D": "D = 1.00.",
+      "F": "F = 0.00; attempted credits still count in the QPI denominator.",
+      "S": "Satisfactory pass/fail grade; earns credit but does not affect QPI.",
+      "U": "Unsatisfactory pass/fail grade; no credit and does not affect QPI.",
+      "N": "Provisional undergraduate grade; wait for the final grade before calculating.",
+      "W": "Withdrawal is excluded from QPI.",
+      "AU": "Audit carries no quality points and is excluded from QPI."
+    },
+    "specialTypes": [
+      {
+        "name": "Georgetown undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the undergraduate grade table for Georgetown main-campus undergraduate coursework, including Georgetown-administered work that posts to the cumulative QPI."
+      },
+      {
+        "name": "External transfer, most study abroad, or consortium credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Credits may apply to the degree, but external grades generally do not enter the cumulative QPI."
+      },
+      {
+        "name": "Law, graduate, or another grading system",
+        "grades": [],
+        "excluded": false,
+        "note": "Do not apply the undergraduate 4.0/QPI map to a different Georgetown academic record.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. If you repeat a failed course and pass, enter both attempts as separate completed rows; consult your dean for any other repeat situation.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Main-campus undergraduate QPI"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.4",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ECON 1001",
+        "units": "3",
+        "grade": "A",
+        "special": "Georgetown undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "HIST 1099",
+        "units": "4",
+        "grade": "B+",
+        "special": "Georgetown undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "PHIL 1000",
+        "units": "3",
+        "grade": "A-",
+        "special": "Georgetown undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "GOVT 1200",
+        "units": "3",
+        "grade": "A",
+        "special": "Georgetown undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "14736388f639"
+}

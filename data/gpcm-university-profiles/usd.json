@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "usd",
+  "universityName": "University of San Diego",
+  "pageTitle": "Calculate Your University of San Diego GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Credit/grading, GPA formula, Pass/Fail, withdrawals, standing, honors",
+      "url": "https://catcher.sandiego.edu/items/admissions/2025-2026_Undergraduate_Catalog_3.11.2026.pdf"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://www.sandiego.edu/admission-and-aid/undergraduate/transfer/transfer-credits.php"
+    },
+    {
+      "label": "Repeated courses",
+      "url": "https://catcher.sandiego.edu/items/admissions/2025-2026_Undergraduate_Catalog_3.11.2026.pdf"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://catcher.sandiego.edu/items/financialaid/Consumer_Guide_25-26--.pdf"
+    },
+    {
+      "label": "Honors Convocation",
+      "url": "https://www.sandiego.edu/commencement/honors-convocation.php"
+    }
+  ],
+  "helpIntro": "USD uses a 4.0 scale with plus/minus grades. Enter semester units and final USD grades to estimate your current and projected GPA.",
+  "helpNote": "P, I, W, and transferred grades are excluded from the cumulative USD GPA. A failing Pass/Fail outcome affects GPA. Repeat adjustment is not automated because USD applies a special first-10-repeated-units rule.",
+  "helpExample": "A 3-unit A earns 12.00 grade points; a 3-unit B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "P": null,
+      "I": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per unit.",
+      "A-": "A- = 3.67 grade points per unit.",
+      "B+": "B+ = 3.33 grade points per unit.",
+      "B": "B = 3.00 grade points per unit.",
+      "B-": "B- = 2.67 grade points per unit.",
+      "C+": "C+ = 2.33 grade points per unit.",
+      "C": "C = 2.00 grade points per unit.",
+      "C-": "C- = 1.67 grade points per unit.",
+      "D+": "D+ = 1.33 grade points per unit.",
+      "D": "D = 1.00 grade points per unit.",
+      "D-": "D- = 0.67 grade points per unit.",
+      "F": "F = 0.00 and its attempted units count in GPA; this also applies to a failing Pass/Fail outcome.",
+      "P": "Pass; units do not enter the USD GPA.",
+      "I": "Incomplete; excluded while incomplete.",
+      "W": "Withdrawal; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "USD course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter USD semester units and the final posted grade."
+      },
+      {
+        "name": "Transferred course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transferred courses count for approved unit credit only and are not calculated into the cumulative USD GPA."
+      },
+      {
+        "name": "Repeated D/F course",
+        "grades": [],
+        "excluded": false,
+        "note": "USD repeat treatment depends on the student's cumulative repeated-unit history. The first 10 repeated D/F units use the most recent grade; later repetitions count all grades. Registrar adjustment may be required.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Use the Repeated D/F course type for a repeat scenario and confirm the adjusted cumulative GPA with the Registrar.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate USD GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "MATH 150",
+        "units": "3",
+        "grade": "A-",
+        "special": "USD course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "ECON 101",
+        "units": "3",
+        "grade": "B+",
+        "special": "USD course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 101",
+        "units": "3",
+        "grade": "F",
+        "special": "USD course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "THEA 100",
+        "units": "3",
+        "grade": "P",
+        "special": "USD course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "COMM 203",
+        "units": "3",
+        "grade": "A",
+        "special": "USD course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "d09ed7f55a5f"
+}

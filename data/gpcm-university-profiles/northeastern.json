@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "northeastern",
+  "universityName": "Northeastern University",
+  "pageTitle": "Calculate Your Northeastern GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade table and GPA",
+      "url": "https://catalog.northeastern.edu/undergraduate/academic-policies-procedures/student-records-transcripts-related-policies/"
+    },
+    {
+      "label": "Retaking courses",
+      "url": "https://catalog.northeastern.edu/undergraduate/academic-policies-procedures/retaking-courses/"
+    },
+    {
+      "label": "Satisfactory/unsatisfactory grading",
+      "url": "https://catalog.northeastern.edu/undergraduate/academic-policies-procedures/registration-taking-courses/"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://admissions.northeastern.edu/application-information/transferring-credit/"
+    },
+    {
+      "label": "Academic progression standards",
+      "url": "https://catalog.northeastern.edu/undergraduate/academic-policies-procedures/progression-standards/"
+    },
+    {
+      "label": "Universitywide graduation requirements",
+      "url": "https://catalog.northeastern.edu/undergraduate/university-academics/university-wide-requirements/"
+    },
+    {
+      "label": "Academic honors",
+      "url": "https://catalog.northeastern.edu/undergraduate/academic-policies-procedures/honors/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://catalog.northeastern.edu/undergraduate/expenses/financial-aid/"
+    },
+    {
+      "label": "Graduate minimum cumulative GPA",
+      "url": "https://catalog.northeastern.edu/graduate/academic-policies-procedures/minimum-gpa/"
+    },
+    {
+      "label": "Transfer admission context",
+      "url": "https://admissions.northeastern.edu/application-information/transfer-applicants/"
+    }
+  ],
+  "helpIntro": "Northeastern uses a 4.000 scale weighted by semester hours. Enter your final Northeastern grades and credits to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For the standard undergraduate record. S/U, incomplete, transfer, withdrawal, audit, and other non-GPA marks are excluded. Graduate, School of Law, and College of Professional Studies rules need separate review.",
+  "helpExample": "A 4-credit A earns 16.000 quality points and a 4-credit B+ earns 13.332. Together, 29.332 ÷ 8 = 3.667.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.667,
+      "B+": 3.333,
+      "B": 3,
+      "B-": 2.667,
+      "C+": 2.333,
+      "C": 2,
+      "C-": 1.667,
+      "D+": 1.333,
+      "D": 1,
+      "D-": 0.667,
+      "F": 0,
+      "I": null,
+      "IP": null,
+      "S": null,
+      "U": null,
+      "X": null,
+      "NE": null,
+      "NG": null,
+      "L": null,
+      "T": null,
+      "W": null,
+      "AD": null,
+      "AW": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.000 grade points per semester hour.",
+      "A-": "A- = 3.667 grade points per semester hour.",
+      "B+": "B+ = 3.333 grade points per semester hour.",
+      "B": "B = 3.000 grade points per semester hour.",
+      "B-": "B- = 2.667 grade points per semester hour.",
+      "C+": "C+ = 2.333 grade points per semester hour.",
+      "C": "C = 2.000 grade points per semester hour.",
+      "C-": "C- = 1.667 grade points per semester hour.",
+      "D+": "D+ = 1.333 grade points per semester hour.",
+      "D": "D = 1.000 grade points per semester hour.",
+      "D-": "D- = 0.667 grade points per semester hour.",
+      "F": "F = 0.000 points; semester hours remain in the GPA denominator.",
+      "I": "Incomplete; excluded until resolved.",
+      "IP": "In progress; excluded while unchanged.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory on S/U basis; excluded from GPA.",
+      "X": "Incomplete on S/U basis; excluded until resolved.",
+      "NE": "Not enrolled; excluded from GPA.",
+      "NG": "Grade not reported; temporary and excluded until resolved.",
+      "L": "Audit; no credit and excluded from GPA.",
+      "T": "Transfer notation; excluded from Northeastern GPA.",
+      "W": "Withdrawal; excluded from GPA.",
+      "AD": "Administrative drop; no GPA calculation.",
+      "AW": "Administrative withdrawal; no GPA calculation."
+    },
+    "specialTypes": [
+      {
+        "name": "Northeastern course",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter final Northeastern grade and semester hours."
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external transfer work does not supply a Northeastern grade for institutional GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Use Repeat Impact only for a nonrepeatable course with the same semester hours. The calculator replaces the selected original attempt with the new final grade; repeatable-for-credit courses should be entered as separate completed rows.",
+      "originalGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Standard undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CS 2500",
+        "units": "4",
+        "grade": "A",
+        "special": "Northeastern course",
+        "planned": false
+      },
+      {
+        "name": "MATH 1341",
+        "units": "4",
+        "grade": "B+",
+        "special": "Northeastern course",
+        "planned": false
+      },
+      {
+        "name": "ENGW 1111",
+        "units": "4",
+        "grade": "C-",
+        "special": "Northeastern course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Next term course",
+        "units": "4",
+        "grade": "A-",
+        "special": "Northeastern course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "0947f0c7c7ad"
+}

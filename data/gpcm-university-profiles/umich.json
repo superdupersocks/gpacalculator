@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "umich",
+  "universityName": "University of Michigan",
+  "pageTitle": "Calculate Your University of Michigan GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula; included/excluded grades",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-academic-policies-and-procedures/grade-point-average.html"
+    },
+    {
+      "label": "Grade values and grading systems",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-academic-policies-and-procedures/grading-and-transcript-notations/grades-and-transcript-notations.html"
+    },
+    {
+      "label": "Transfer credit and U-M campus grades",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-academic-policies-and-procedures/transfer-information---residence-policy.html"
+    },
+    {
+      "label": "Incomplete grades",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-academic-policies-and-procedures/incompletes.html"
+    },
+    {
+      "label": "Repeating a course",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-academic-policies-and-procedures/repeating-a-course.html"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-academic-policies-and-procedures/academic-standing.html"
+    },
+    {
+      "label": "Rackham graduate standing",
+      "url": "https://rackham.umich.edu/policy/section3/"
+    },
+    {
+      "label": "LSA first-semester grade covering",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-first-semester-grade-covering-pilot-program.html"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://finaid.umich.edu/managing-your-aid/satisfactory-academic-progress"
+    },
+    {
+      "label": "LSA distinction",
+      "url": "https://lsa.umich.edu/lsa/academics/lsa-academic-policies-and-procedures/distinction-levels.html"
+    }
+  ],
+  "helpIntro": "U-M LSA uses a 4.0 scale. Enter Michigan Semester Hours and final grades; A+/A=4.0, A-=3.7 through D-=0.7, and E=0. The result is a planning estimate.",
+  "helpNote": "For Ann Arbor LSA undergraduates. P/F and other non-graded marks are excluded, outside transfer grades usually do not count, and repeat treatment needs manual review. Fall 2027 first-semester grade covering needs a separate cohort rule.",
+  "helpExample": "A 3-credit A earns 12.0 Michigan Honor Points; a 4-credit B+ earns 13.2. Together, 25.2 ÷ 7 = 3.600.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "E": 0,
+      "P": null,
+      "F": null,
+      "CR": null,
+      "NC": null,
+      "S": null,
+      "U": null,
+      "NR": null,
+      "I": null,
+      "Y": null,
+      "VI": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0 honor points per credit.",
+      "A": "A = 4.0.",
+      "A-": "A- = 3.7.",
+      "B+": "B+ = 3.3.",
+      "B": "B = 3.0.",
+      "B-": "B- = 2.7.",
+      "C+": "C+ = 2.3.",
+      "C": "C = 2.0.",
+      "C-": "C- = 1.7.",
+      "D+": "D+ = 1.3.",
+      "D": "D = 1.0.",
+      "D-": "D- = 0.7.",
+      "E": "E earns 0 honor points and is included in GPA.",
+      "P": "Pass/Fail P earns credit but no honor points and is excluded from GPA.",
+      "F": "Pass/Fail F earns no credit or honor points and is excluded from GPA.",
+      "CR": "Credit notation; excluded from GPA.",
+      "NC": "No Credit notation; excluded from GPA.",
+      "S": "Satisfactory notation; excluded from GPA.",
+      "U": "Unsatisfactory notation; excluded from GPA.",
+      "NR": "No Report is temporary and initially excluded; unresolved graded elections may later affect GPA.",
+      "I": "Incomplete is temporary and initially excluded; if unfinished by the deadline it can lapse to E for a graded election.",
+      "Y": "Extended-course notation; initially excluded from GPA.",
+      "VI": "Visitor/audit notation; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "U-M Ann Arbor LSA course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the LSA grade table for standard Ann Arbor LSA elections."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Grades from institutions outside the U-M system do not enter the Ann Arbor GPA."
+      },
+      {
+        "name": "UM-Dearborn or UM-Flint course",
+        "grades": null,
+        "excluded": false,
+        "note": "For LSA, grades from UM-Dearborn and UM-Flint transfer and are included in the Ann Arbor GPA."
+      },
+      {
+        "name": "Other U-M school/college or special record",
+        "grades": [],
+        "excluded": false,
+        "note": "School/college grading and repeat rules can differ; verify the home academic unit before calculating.",
+        "manualReview": true
+      },
+      {
+        "name": "Fall 2027+ LSA first-year first semester",
+        "grades": [],
+        "excluded": false,
+        "note": "LSA plans P/NC grade covering beginning Fall 2027; these first-semester grades do not enter GPA and require cohort-specific review.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. For an LSA repeat, check the original grade and transcript repeat status before deciding whether the later attempt belongs in GPA.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "LSA undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.4",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "PSYCH 111",
+        "units": "3",
+        "grade": "A",
+        "special": "U-M Ann Arbor LSA course",
+        "planned": false
+      },
+      {
+        "name": "ECON 101",
+        "units": "4",
+        "grade": "B+",
+        "special": "U-M Ann Arbor LSA course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 130",
+        "units": "3",
+        "grade": "E",
+        "special": "U-M Ann Arbor LSA course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HISTORY 244",
+        "units": "3",
+        "grade": "A-",
+        "special": "U-M Ann Arbor LSA course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "6af432db0c08"
+}

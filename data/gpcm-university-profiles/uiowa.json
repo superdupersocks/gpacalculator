@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uiowa",
+  "universityName": "University of Iowa",
+  "pageTitle": "Calculate Your University of Iowa GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA exclusions",
+      "url": "https://catalog.registrar.uiowa.edu/academics-iowa/grading/"
+    },
+    {
+      "label": "CLAS grading and Second-Grade-Only option",
+      "url": "https://clas.uiowa.edu/academics/handbook/grading-system"
+    },
+    {
+      "label": "Transfer GPA and repeat policy",
+      "url": "https://admissions.uiowa.edu/transfer-policies"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://financialaid.uiowa.edu/eligibility/satisfactory-academic-progress/undergraduate-sap"
+    },
+    {
+      "label": "CLAS academic probation",
+      "url": "https://clas.uiowa.edu/academics/handbook/standards/probation"
+    },
+    {
+      "label": "Undergraduate distinction",
+      "url": "https://catalog.registrar.uiowa.edu/academics-iowa/grading/grading.pdf"
+    },
+    {
+      "label": "Graduate marking system",
+      "url": "https://grad.uiowa.edu/academics/manual/academic-program/section-vi-marking-system"
+    },
+    {
+      "label": "First-year admission",
+      "url": "https://admissions.uiowa.edu/academics/first-year-admission"
+    }
+  ],
+  "helpIntro": "The University of Iowa uses semester-hour-weighted letter grades from A+ = 4.33 through F = 0. Enter finalized UI grades and semester hours to estimate your UI cumulative GPA.",
+  "helpNote": "This profile is for the standard undergraduate UI cumulative GPA. Transfer/overall GPA, Law numeric grading, graduate GPA, and college-specific Second-Grade-Only repeat decisions require separate review.",
+  "helpExample": "A 3-semester-hour A earns 12 grade points; a 3-semester-hour B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4.33,
+    "scaleLabel": "4.33 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4.33,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "AUS": null,
+      "AUU": null,
+      "IP": null,
+      "N": null,
+      "P": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "O": null,
+      "R": null,
+      "W": null,
+      "X": null
+    },
+    "gradeExplanations": {
+      "F": "Failing; semester hours count in GPA at 0 points.",
+      "AUS": "Audit successful; excluded from GPA.",
+      "AUU": "Audit unsuccessful; excluded from GPA.",
+      "IP": "In progress; excluded until a final grade is recorded.",
+      "N": "Nonpass; excluded from GPA.",
+      "P": "Pass; excluded from GPA.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory; excluded from GPA.",
+      "I": "Incomplete; not included until resolved.",
+      "O": "No grade reported; excluded from GPA.",
+      "R": "Registered, no grade reported; excluded from GPA.",
+      "W": "Withdrawn; excluded from GPA.",
+      "X": "Excused; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UI course, standard letter grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for finalized University of Iowa courses on the standard letter-grade system."
+      },
+      {
+        "name": "Transfer or external coursework",
+        "grades": [],
+        "excluded": false,
+        "note": "Transfer grades are tracked in transfer/overall GPA contexts; do not mix them into this UI cumulative GPA estimate.",
+        "manualReview": true
+      },
+      {
+        "name": "College of Law numeric course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law uses a numeric grading system and is outside this standard undergraduate letter-grade profile.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate-level record calculation",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate GPA has additional rules, including a 4.00 cumulative cap, and needs separate review.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Iowa repeats are not automatically replaced. Confirm your home-college Second-Grade-Only eligibility and request status before excluding the first grade.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UI cumulative GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "45",
+    "completed": [
+      {
+        "name": "RHET:1030",
+        "units": "3",
+        "grade": "A+",
+        "special": "UI course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "MATH:1550",
+        "units": "3",
+        "grade": "B-",
+        "special": "UI course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM:1110",
+        "units": "3",
+        "grade": "F",
+        "special": "UI course, standard letter grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSY:1001",
+        "units": "3",
+        "grade": "A-",
+        "special": "UI course, standard letter grading",
+        "planned": true
+      },
+      {
+        "name": "ART:1100",
+        "units": "1.5",
+        "grade": "B+",
+        "special": "UI course, standard letter grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "1f485fc7de29"
+}

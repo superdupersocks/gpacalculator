@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "alabama",
+  "universityName": "The University of Alabama",
+  "pageTitle": "Calculate Your University of Alabama GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades, grade points, GPA formula, repeats, pass/fail",
+      "url": "https://catalog.ua.edu/undergraduate/about/academic-regulations/records/grades-grade-points-gpa/"
+    },
+    {
+      "label": "Incomplete grade reporting",
+      "url": "https://registrar.ua.edu/faculty-staff/grade-reporting/"
+    },
+    {
+      "label": "Transfer credit and Overall vs UA GPA",
+      "url": "https://registrar.ua.edu/student-services/transfer-credit/"
+    },
+    {
+      "label": "Academic standing and Scholastic Progress Standard",
+      "url": "https://catalog.ua.edu/undergraduate/about/academic-regulations/policies/warning-suspension/"
+    },
+    {
+      "label": "Graduation GPA",
+      "url": "https://catalog.ua.edu/undergraduate/about/academic-regulations/curriculum/graduation/"
+    },
+    {
+      "label": "Honors lists",
+      "url": "https://catalog.ua.edu/undergraduate/about/academic-regulations/records/honors/"
+    },
+    {
+      "label": "Federal financial aid SAP",
+      "url": "https://afford.ua.edu/financial-aid/sap/"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admissions.ua.edu/transfer/requirements/"
+    },
+    {
+      "label": "Freshman admission requirements",
+      "url": "https://admissions.ua.edu/freshman/requirements/"
+    },
+    {
+      "label": "Graduate grading and standing",
+      "url": "https://catalog.ua.edu/graduate/about/academic-policies/grades-academic-standing/"
+    },
+    {
+      "label": "Academic Second Opportunity",
+      "url": "https://catalog.ua.edu/undergraduate/about/admissions/general-requirements/academic-second-opportunity/"
+    }
+  ],
+  "helpIntro": "UA undergraduate grades use plus/minus quality points from A+ = 4.33 through F = 0. Enter semester hours and final UA grades to estimate your institutional GPA.",
+  "helpNote": "This profile calculates the undergraduate institutional UA GPA only. Accepted transfer grades belong to the separate Overall GPA. UA caps the undergraduate cumulative GPA at 4.0 even though A+ earns 4.33 quality points. Repeat Impact is unavailable because every attempt remains in GPA.",
+  "helpExample": "A 3-credit A+ earns 12.99 quality points and a 3-credit B earns 9.00. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4.33,
+    "scaleLabel": "4 cumulative scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4.33,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "IN": null,
+      "N": null,
+      "NC": null,
+      "IP": null,
+      "P": null,
+      "W": null,
+      "NG": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ earns 4.33 quality points per semester hour.",
+      "A": "A earns 4.00 quality points per semester hour.",
+      "A-": "A- earns 3.67 quality points per semester hour.",
+      "B+": "B+ earns 3.33 quality points per semester hour.",
+      "B": "B earns 3.00 quality points per semester hour.",
+      "B-": "B- earns 2.67 quality points per semester hour.",
+      "C+": "C+ earns 2.33 quality points per semester hour.",
+      "C": "C earns 2.00 quality points per semester hour.",
+      "C-": "C- earns 1.67 quality points per semester hour.",
+      "D+": "D+ earns 1.33 quality points per semester hour.",
+      "D": "D earns 1.00 quality point per semester hour.",
+      "D-": "D- earns 0.67 quality points per semester hour.",
+      "F": "F earns zero quality points and its GPA hours still count.",
+      "IN": "Incomplete is non-punitive while unresolved; it normally changes to F if not resolved by the deadline.",
+      "N": "No Grade Reported is not used in this undergraduate GPA profile; confirm the final posted grade.",
+      "NC": "No Credit is excluded from GPA.",
+      "IP": "In Progress is excluded until a final grade is posted.",
+      "P": "Pass does not affect GPA.",
+      "W": "Withdrawn is excluded from GPA.",
+      "NG": "Non-Graded Class is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UA undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter the final grade and semester hours for coursework completed at The University of Alabama."
+      },
+      {
+        "name": "Accepted transfer course",
+        "grades": [],
+        "excluded": false,
+        "note": "Transfer grades affect the separate Overall GPA, not the institutional UA GPA. Use the official record for Overall GPA questions.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. The calculator estimates GPA only; it does not determine earned-hour or degree-credit treatment.",
+      "originalGrades": [],
+      "newGrades": []
+    },
+    "gpaCap": 4
+  },
+  "records": [
+    {
+      "name": "Undergraduate institutional (UA) GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENG 200",
+        "units": "3",
+        "grade": "A+",
+        "special": "UA undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 200",
+        "units": "4",
+        "grade": "B-",
+        "special": "UA undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 200",
+        "units": "3",
+        "grade": "F",
+        "special": "UA undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 200",
+        "units": "3",
+        "grade": "A+",
+        "special": "UA undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "f013562122af"
+}

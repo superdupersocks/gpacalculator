@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "duke",
+  "universityName": "Duke University",
+  "pageTitle": "Calculate Your Duke GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade Point Average; school mappings",
+      "url": "https://registrar.duke.edu/student-resources/grade-point-average-gpa/"
+    },
+    {
+      "label": "Undergraduate grades and notations",
+      "url": "https://trinity.duke.edu/undergraduate/academic-policies/grades-notations"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://registrar.duke.edu/student-resources/transfer-credit/"
+    },
+    {
+      "label": "Repeating courses",
+      "url": "https://policies.provost.duke.edu/docs/faculty-handbook-faculty-responsibilities-with-respect-to-students"
+    },
+    {
+      "label": "Graduate/professional grading systems",
+      "url": "https://policies.provost.duke.edu/docs/faculty-handbook-faculty-responsibilities-with-respect-to-students"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://financialaid.duke.edu/forms-resources/awarding-policy/"
+    },
+    {
+      "label": "Academic honors and recognition",
+      "url": "https://registrar.duke.edu/student-resources/academic-honors-and-recognition/"
+    },
+    {
+      "label": "Trinity probation and continuation",
+      "url": "https://trinity.duke.edu/undergraduate/academic-policies/grades-probation"
+    }
+  ],
+  "helpIntro": "Duke undergraduates in Trinity and Pratt use a 4.0 GPA scale. Enter Duke course credits and final grades to estimate semester, cumulative, projected, and target GPA.",
+  "helpNote": "A+ and A are both 4.0; D and D- are both 1.0. Transfer grades are excluded. Repeat Impact is disabled because Duke repeat rules are not simple replacement; a passed retake after F needs manual review.",
+  "helpExample": "A 1.0-credit A earns 4.0 grade points and a 1.0-credit B earns 3.0; together, 7.0 ÷ 2.0 = 3.5.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 1,
+      "F": 0,
+      "S": null,
+      "U": 0,
+      "I": null,
+      "X": null,
+      "Z": null,
+      "W": null,
+      "N": null,
+      "AD": null,
+      "WA": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0 points per Duke course credit.",
+      "A": "A = 4.0.",
+      "A-": "A- = 3.7.",
+      "B+": "B+ = 3.3.",
+      "B": "B = 3.0.",
+      "B-": "B- = 2.7.",
+      "C+": "C+ = 2.3.",
+      "C": "C = 2.0.",
+      "C-": "C- = 1.7.",
+      "D+": "D+ = 1.3.",
+      "D": "D = 1.0.",
+      "D-": "D- = 1.0.",
+      "F": "F = 0.0 and remains GPA-bearing.",
+      "S": "Satisfactory is excluded from GPA.",
+      "U": "U is 0.0 in the undergraduate GPA table; it also has separate standing consequences.",
+      "I": "Incomplete is not a final GPA grade; update the row when a final grade posts.",
+      "X": "Absent from final examination; temporary notation pending resolution.",
+      "Z": "First half of a two-semester sequence; final grade is assigned later.",
+      "W": "Withdrawal is excluded from GPA.",
+      "N": "No grade submitted; excluded until resolved.",
+      "AD": "Audit notation; excluded from GPA.",
+      "WA": "Withdrawal from audited course; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Duke undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for ordinary Trinity/Pratt Duke-credit coursework."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades are not included in Duke GPA."
+      },
+      {
+        "name": "Retake after an original F",
+        "grades": [],
+        "excluded": false,
+        "note": "Duke policy gives special GPA treatment to a passed retake after F; do not use ordinary count-all math.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate or professional school course/system",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate and professional schools use different grading systems or GPA rules.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Repeat Impact is disabled. Enter an eligible D-range repeat as separate completed rows; select manual review for a retake after an F.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA (Trinity & Pratt)"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "10",
+    "completed": [
+      {
+        "name": "WRITING 101",
+        "units": "1",
+        "grade": "A",
+        "special": "Duke undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "ECON 101",
+        "units": "1",
+        "grade": "B+",
+        "special": "Duke undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 111",
+        "units": "1",
+        "grade": "D-",
+        "special": "Duke undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "BIO 201",
+        "units": "1",
+        "grade": "A-",
+        "special": "Duke undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "aa83ae0d4019"
+}

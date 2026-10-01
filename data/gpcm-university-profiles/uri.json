@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uri",
+  "universityName": "University of Rhode Island",
+  "pageTitle": "Calculate Your URI GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA formula; predictor",
+      "url": "https://web.uri.edu/advising/academic-status/calculate-your-gpa/"
+    },
+    {
+      "label": "Grades and non-GPA marks",
+      "url": "https://web.uri.edu/manual/chapter-8/chapter-8-4/"
+    },
+    {
+      "label": "Current transcript key",
+      "url": "https://web.uri.edu/registration-records/current-key-to-the-transcript/"
+    },
+    {
+      "label": "Fall 2026 repeat and Second Grade Option",
+      "url": "https://web.uri.edu/registration-records/grading-and-honors/"
+    },
+    {
+      "label": "Repeat policy authority",
+      "url": "https://web.uri.edu/manual/chapter-8/chapter-8-3/"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://web.uri.edu/transfer/transfer-credit/"
+    },
+    {
+      "label": "Undergraduate standing and honors",
+      "url": "https://web.uri.edu/advising/academic-status/"
+    },
+    {
+      "label": "Undergraduate graduation GPA",
+      "url": "https://web.uri.edu/manual/chapter-8/chapter-8-2/"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://web.uri.edu/financial-aid/satisfactory-academic-progress-sap-requirements-undergraduate-students/"
+    },
+    {
+      "label": "Graduate scholastic standing",
+      "url": "https://web.uri.edu/graduate-manual/scholastic-standing/"
+    },
+    {
+      "label": "Graduate S/U and pass-fail",
+      "url": "https://web.uri.edu/graduate-manual/registration/"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://web.uri.edu/admission/transfer/transfer-requirements/"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://web.uri.edu/commencement/prepare/undergraduate-checklist/"
+    }
+  ],
+  "helpIntro": "The University of Rhode Island uses a 4.0 quality-point scale. Enter URI credits and final undergraduate grades to estimate your current and projected GPA.",
+  "helpNote": "For standard undergraduate URI GPA planning. Transfer grades generally do not enter the URI GPA. Repeat Impact is unavailable because the Fall 2026 rule removes the lower of two qualifying grades; older repeats follow the prior policy. Graduate grading needs separate review.",
+  "helpExample": "A 3-credit A- earns 11.1 quality points. A 4-credit B+ earns 13.2. Together, 24.3 ÷ 7 = 3.471.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "U": 0,
+      "P": null,
+      "S": null,
+      "I": null,
+      "NC": null,
+      "NR": null,
+      "NW": null,
+      "W": null,
+      "U*": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 quality points per credit.",
+      "A-": "A- = 3.70 quality points per credit.",
+      "B+": "B+ = 3.30 quality points per credit.",
+      "B": "B = 3.00 quality points per credit.",
+      "B-": "B- = 2.70 quality points per credit.",
+      "C+": "C+ = 2.30 quality points per credit.",
+      "C": "C = 2.00 quality points per credit.",
+      "C-": "C- = 1.70 quality points per credit.",
+      "D+": "D+ = 1.30 quality points per credit.",
+      "D": "D = 1.00 quality point per credit.",
+      "F": "F = 0 quality points; its GPA-applicable credits remain in the denominator.",
+      "U": "For the standard undergraduate S-U grading basis, U carries 0 quality points. Graduate pass-fail U* is different.",
+      "P": "Pass under the Pass-Fail option does not carry quality points.",
+      "S": "Satisfactory earns no quality points and is excluded from GPA.",
+      "I": "Incomplete is not a final GPA grade; use the final grade when resolved.",
+      "NC": "NC is not calculated in GPA.",
+      "NR": "No grade reported; wait for a final grade.",
+      "NW": "No work submitted has no effect on QPA under the University Manual.",
+      "W": "Withdrawal does not enter GPA.",
+      "U*": "Graduate Pass-Fail unsatisfactory is excluded from graduate GPA; graduate records are outside this profile."
+    },
+    "specialTypes": [
+      {
+        "name": "URI course, standard undergraduate grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for URI courses with final grades under the standard undergraduate grading rules."
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Most accepted transfer credit posts as T and does not enter the URI GPA. Program admission may still review the original external grade."
+      },
+      {
+        "name": "Repeat needing policy review",
+        "grades": [],
+        "excluded": false,
+        "note": "Use official record processing for repeats. Fall 2026 removes the lower of two qualifying grades; pre-Fall-2026 repeats use the older Second Grade Option rules.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate grading / graduate Pass-Fail",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate grading and S/U treatment require a separate graduate record review.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is unavailable. For qualifying Fall 2026-or-later undergraduate repeats, URI removes the lower of the two grades from GPA/earned credits; older repeats may follow the prior Second Grade Option.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate URI GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "BIO 101",
+        "units": "4",
+        "grade": "A-",
+        "special": "URI course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "MTH 111",
+        "units": "3",
+        "grade": "B+",
+        "special": "URI course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "CHM 101",
+        "units": "4",
+        "grade": "F",
+        "special": "URI course, standard undergraduate grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ENG 110",
+        "units": "3",
+        "grade": "A",
+        "special": "URI course, standard undergraduate grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "2fa5258f6d01"
+}

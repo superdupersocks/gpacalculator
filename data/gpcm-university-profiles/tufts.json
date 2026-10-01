@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "tufts",
+  "universityName": "Tufts University",
+  "pageTitle": "Calculate Your Tufts GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades; GPA formula; precision",
+      "url": "https://students.tufts.edu/registrar/forms-and-policies/bulletin/bulletin-general-undergraduate-policies-and-information"
+    },
+    {
+      "label": "Transcript key; school differences",
+      "url": "https://sis.it.tufts.edu/psp/paprd/EMPLOYEE/EMPL/s/WEBLIB_IS_AW.ISCRIPT1.FieldFormula.IScript_AssemblePage?AWGroupID=TFP_TRANSCRIPT_KEY&AWObjName=TFP_TRANSCRIPT_KEY_LPG&AWPageID=TFP_TRANSCRIPT_KEY"
+    },
+    {
+      "label": "Repeated courses",
+      "url": "https://students.tufts.edu/academic-advising-and-undergraduate-studies/guidance-academic-policies-arts-and-sciences-babs"
+    },
+    {
+      "label": "Pass/Fail option",
+      "url": "https://students.tufts.edu/group/36/content/1356"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://students.tufts.edu/registrar/make-request/transfer-credit"
+    },
+    {
+      "label": "External study abroad grades",
+      "url": "https://students.tufts.edu/group/26/content/2121"
+    },
+    {
+      "label": "Tufts Programs abroad",
+      "url": "https://students.tufts.edu/tufts-global-education/explore/semesteryear-programs"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://students.tufts.edu/academic-advising-and-undergraduate-studies/academic-alert-and-probation"
+    },
+    {
+      "label": "Dean’s List and Latin honors",
+      "url": "https://students.tufts.edu/academic-advising-and-undergraduate-studies/advising/deans-list-and-honors"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://students.tufts.edu/financial-services/undergrad-aid/aid-policies/aid-future-years-undergraduate-students"
+    },
+    {
+      "label": "BFA grading",
+      "url": "https://students.tufts.edu/registrar/forms-and-policies/bulletin/bulletin-college-liberal-arts-bfa"
+    },
+    {
+      "label": "Reserved undergraduate courses for graduate degrees",
+      "url": "https://students.tufts.edu/registrar/courses-and-calendars/register-courses/reserving-courses-graduate-degrees"
+    }
+  ],
+  "helpIntro": "Tufts AS&E undergraduates use a 4.0, semester-hour-weighted GPA. Enter SHUs and final grades; plus/minus grades use 0.333 steps and A+ is capped at 4.00.",
+  "helpNote": "P, CR, NC, approved external transfer grades, and unresolved marks do not add GPA points or units. Repeat Impact is unavailable because Tufts repeat treatment depends on the original grade and course type. Graduate AS&E records do not receive an official GPA.",
+  "helpExample": "A 3-SHU A- earns 11.001 quality points and a 4-SHU B+ earns 13.332; 24.333 ÷ 7 = 3.476, which Tufts reports as 3.48.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.667,
+      "B+": 3.333,
+      "B": 3,
+      "B-": 2.667,
+      "C+": 2.333,
+      "C": 2,
+      "C-": 1.667,
+      "D+": 1.333,
+      "D": 1,
+      "D-": 0.667,
+      "F": 0,
+      "P": null,
+      "CR": null,
+      "NC": null,
+      "I": null,
+      "W": null,
+      "EP": null,
+      "EN": null,
+      "PI": null,
+      "Y": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ is capped at 4.00.",
+      "A": "A = 4.000 quality points per SHU.",
+      "A-": "A- = 3.667 quality points per SHU.",
+      "B+": "B+ = 3.333 quality points per SHU.",
+      "B": "B = 3.000 quality points per SHU.",
+      "B-": "B- = 2.667 quality points per SHU.",
+      "C+": "C+ = 2.333 quality points per SHU.",
+      "C": "C = 2.000 quality points per SHU.",
+      "C-": "C- = 1.667 quality points per SHU.",
+      "D+": "D+ = 1.333 quality points per SHU.",
+      "D": "D = 1.000 quality point per SHU.",
+      "D-": "D- = 0.667 quality points per SHU.",
+      "F": "F earns zero quality points but its SHUs remain in the GPA denominator.",
+      "P": "Pass (D- or better under P/F) does not affect GPA.",
+      "CR": "Credit is excluded from GPA.",
+      "NC": "No Credit is excluded from GPA.",
+      "I": "Incomplete is not a final GPA grade; use the final grade after it is resolved.",
+      "W": "Withdrawal is excluded from GPA.",
+      "EP": "Exceptional Pass is a historical 2020-21 grade that carries credit but no GPA points.",
+      "EN": "Exceptional No Credit is a historical 2020-21 grade with no GPA impact.",
+      "PI": "Permanent Incomplete is not a GPA-bearing letter grade.",
+      "Y": "Year-long course notation is not a final GPA-bearing grade."
+    },
+    "specialTypes": [
+      {
+        "name": "Tufts undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard Tufts AS&E undergraduate courses, including letter-graded non-studio BFA work. P/CR/NC and temporary marks are excluded by grade."
+      },
+      {
+        "name": "Approved external transfer / external study abroad",
+        "grades": null,
+        "excluded": true,
+        "note": "Approved external transfer and external-program grades do not enter the Tufts GPA."
+      },
+      {
+        "name": "Tufts Program abroad course",
+        "grades": null,
+        "excluded": false,
+        "note": "Tufts Programs abroad post grades to the Tufts transcript and those grades enter the Tufts GPA."
+      },
+      {
+        "name": "Course reserved for graduate degree",
+        "grades": null,
+        "excluded": true,
+        "note": "A course formally reserved for a graduate degree is not calculated into the undergraduate GPA."
+      },
+      {
+        "name": "Repeated / duplicate course",
+        "grades": [],
+        "excluded": false,
+        "note": "Repeat treatment depends on the first grade and whether the course is repeatable. Review the duplicate-course rule before adding attempts.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled because Tufts duplicate-course treatment depends on the original grade and course type. Review the repeat policy before entering repeated attempts.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "AS&E undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "BIO 13",
+        "units": "3",
+        "grade": "A-",
+        "special": "Tufts undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "EC 5",
+        "units": "4",
+        "grade": "B+",
+        "special": "Tufts undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 32",
+        "units": "3",
+        "grade": "F",
+        "special": "Tufts undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "CS 11",
+        "units": "4",
+        "grade": "A",
+        "special": "Tufts undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "4d0c6cea65c5"
+}

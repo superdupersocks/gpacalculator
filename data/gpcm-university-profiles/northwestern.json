@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "northwestern",
+  "universityName": "Northwestern University",
+  "pageTitle": "Calculate Your Northwestern GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate grades and GPA treatment",
+      "url": "https://catalogs.northwestern.edu/undergraduate/requirements-policies/grades/"
+    },
+    {
+      "label": "Undergraduate course units and repeats",
+      "url": "https://catalogs.northwestern.edu/undergraduate/requirements-policies/courses-credit/"
+    },
+    {
+      "label": "Undergraduate transfer credit",
+      "url": "https://www.registrar.northwestern.edu/registration-graduation/transfer-and-test-credit/transfer-credit-policies.html"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://catalogs.northwestern.edu/undergraduate/requirements-policies/student-status/academic-standing/"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://catalogs.northwestern.edu/undergraduate/financial-aid/eligibility/"
+    },
+    {
+      "label": "Study abroad GPA treatment",
+      "url": "https://www.northwestern.edu/abroad/northwestern-students/returning-to-northwestern/credit-transfer/"
+    },
+    {
+      "label": "Graduate grading distinction",
+      "url": "https://www.northwestern.edu/tgs/academic-policies-procedures/policies/general-registration-policies.html"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://catalogs.northwestern.edu/undergraduate/requirements-policies/graduation-degrees/graduation-honors/"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://catalogs.northwestern.edu/undergraduate/admission/"
+    },
+    {
+      "label": "First-year admissions review",
+      "url": "https://admissions.northwestern.edu/faqs/standardized-testing-policy/"
+    },
+    {
+      "label": "Weinberg degree GPA context",
+      "url": "https://catalogs.northwestern.edu/undergraduate/arts-sciences/"
+    },
+    {
+      "label": "McCormick degree GPA context",
+      "url": "https://catalogs.northwestern.edu/undergraduate/engineering-applied-science/"
+    },
+    {
+      "label": "Medill program GPA context",
+      "url": "https://catalogs.northwestern.edu/undergraduate/journalism-media-integrated-marketing-communications/"
+    }
+  ],
+  "helpIntro": "Northwestern uses a 4.0 undergraduate scale. Enter Northwestern course units and grades to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For the standard Evanston undergraduate record. X and Y count as 0.0 in this profile; graduate incompletes are treated differently. Repeat Impact is unavailable because Northwestern counts all graded attempts. External transfer grades are excluded.",
+  "helpExample": "A 1-unit A earns 4.0 grade points and a 1-unit B+ earns 3.3; together, 7.3 ÷ 2 = 3.65.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D": 1,
+      "F": 0,
+      "X": 0,
+      "Y": 0,
+      "P": null,
+      "N": null,
+      "K": null,
+      "S": null,
+      "U": null,
+      "W": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 grade points per course unit.",
+      "A-": "A- = 3.7.",
+      "B+": "B+ = 3.3.",
+      "B": "B = 3.0.",
+      "B-": "B- = 2.7.",
+      "C+": "C+ = 2.3.",
+      "C": "C = 2.0.",
+      "C-": "C- = 1.7.",
+      "D": "D = 1.0; whether it satisfies a requirement depends on the school/program.",
+      "F": "F = 0.0 and counts in the undergraduate GPA.",
+      "X": "Undergraduate X = 0.0 while unresolved; it can later change to a final grade.",
+      "Y": "Undergraduate Y = 0.0 while unresolved; it can later change to a final grade.",
+      "P": "Pass with credit; excluded from GPA.",
+      "N": "No grade/no credit; excluded from GPA.",
+      "K": "In progress; excluded until resolved.",
+      "S": "Satisfactory noncredit notation; excluded from GPA.",
+      "U": "Unsatisfactory noncredit notation; excluded from GPA.",
+      "W": "Withdrawal by permission; excluded from GPA.",
+      "NR": "No grade reported; excluded until resolved."
+    },
+    "specialTypes": [
+      {
+        "name": "Northwestern undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final Northwestern undergraduate grade and Northwestern course units."
+      },
+      {
+        "name": "Northwestern direct-credit study abroad",
+        "grades": null,
+        "excluded": false,
+        "note": "Northwestern -SA/direct-credit courses appear with letter grades and count in term and cumulative GPA."
+      },
+      {
+        "name": "External transfer or transfer-credit study abroad",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external transfer grades are recorded as T/transfer credit and do not enter the Northwestern GPA."
+      },
+      {
+        "name": "Course transferred from another Northwestern career",
+        "grades": [],
+        "excluded": false,
+        "note": "Some accepted courses from another Northwestern career retain prior grades and can count; confirm the posted undergraduate record before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. Both grades count in GPA; the calculator does not decide duplicate credit or repeat eligibility.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Evanston undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.4",
+    "previousUnits": "20",
+    "completed": [
+      {
+        "name": "ECON 201",
+        "units": "1",
+        "grade": "A",
+        "special": "Northwestern undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 220-1",
+        "units": "1",
+        "grade": "B+",
+        "special": "Northwestern undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 131",
+        "units": "1",
+        "grade": "F",
+        "special": "Northwestern undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HISTORY 250",
+        "units": "1",
+        "grade": "A-",
+        "special": "Northwestern undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "b0866b83f11f"
+}

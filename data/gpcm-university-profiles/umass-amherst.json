@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "umass-amherst",
+  "universityName": "University of Massachusetts Amherst",
+  "pageTitle": "Calculate Your UMass Amherst GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA formula; precision; transfer/Five College",
+      "url": "https://www.umass.edu/registrar/grading-system-gpa-calculation"
+    },
+    {
+      "label": "Undergraduate grading, incompletes, repeats, Five College",
+      "url": "https://www.umass.edu/senate/book/academic-regulations-grading-system-and-credit-guidelines"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://www.umass.edu/registrar/transfer-credit-guidelines"
+    },
+    {
+      "label": "Repeat transcript codes",
+      "url": "https://www.umass.edu/registrar/explanation-repeat-codes"
+    },
+    {
+      "label": "Pass/Fail",
+      "url": "https://www.umass.edu/senate/book/academic-regulations-pass-fail-option"
+    },
+    {
+      "label": "Fresh Start",
+      "url": "https://www.umass.edu/registrar/fresh-start"
+    },
+    {
+      "label": "Academic status",
+      "url": "https://www.umass.edu/senate/book/academic-regulations-academic-status"
+    },
+    {
+      "label": "Graduation requirements",
+      "url": "https://www.umass.edu/senate/book/academic-regulations-graduation-requirements"
+    },
+    {
+      "label": "Dean's List",
+      "url": "https://www.umass.edu/registrar/deans-list-honors"
+    },
+    {
+      "label": "Graduate grading",
+      "url": "https://www.umass.edu/graduate/book/graduate-student-handbook/education-records/graduate-school-grading-policies"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://www.umass.edu/admissions/transfer-admissions-requirements"
+    },
+    {
+      "label": "Graduate admission",
+      "url": "https://www.umass.edu/graduate/apply/how-apply"
+    }
+  ],
+  "helpIntro": "UMass Amherst uses a 4.0 scale. Enter semester credits and grades to estimate your current, cumulative, projected, or target undergraduate GPA.",
+  "helpNote": "For current undergraduate records. Five College courses use a separate plus/minus point map; transfer grades are excluded. INC/IF can count as zero, and elective Pass/Fail has special transcript logic. Fresh Start and unusual repeat cases need record review.",
+  "helpExample": "A 3-credit A earns 12.0 grade points and a 4-credit B+ earns 13.2; 25.2 ÷ 7 = 3.600.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "INC": 0,
+      "IF": 0,
+      "P": null,
+      "NR": null,
+      "Y": null,
+      "AUD": null,
+      "W": null,
+      "CR": null,
+      "DR": null,
+      "IP": null,
+      "SAT": null,
+      "WF": null,
+      "WP": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 grade points per credit.",
+      "A-": "A- = 3.7 grade points per credit.",
+      "B+": "B+ = 3.3 grade points per credit.",
+      "B": "B = 3.0 grade points per credit.",
+      "B-": "B- = 2.7 grade points per credit.",
+      "C+": "C+ = 2.3 grade points per credit.",
+      "C": "C = 2.0 grade points per credit.",
+      "C-": "C- = 1.7 grade points per credit.",
+      "D+": "D+ = 1.3 grade points per credit.",
+      "D": "D = 1.0 grade points per credit.",
+      "F": "F = 0.0 grade points per credit.",
+      "INC": "Incomplete currently counts as 0.0 for undergraduates until resolved; unresolved INC later becomes IF.",
+      "IF": "Incomplete Failure counts as 0.0.",
+      "P": "Pass has no effect on cumulative GPA.",
+      "NR": "NR is excluded from GPA.",
+      "Y": "Y is excluded from GPA.",
+      "AUD": "AUD is excluded from GPA.",
+      "W": "Withdrawal has no effect on cumulative GPA.",
+      "CR": "CR is excluded from GPA.",
+      "DR": "DR is excluded from GPA.",
+      "IP": "IP is excluded from GPA.",
+      "SAT": "SAT is excluded from GPA.",
+      "WF": "WF is excluded from GPA.",
+      "WP": "WP is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UMass Amherst undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for current Amherst undergraduate grading. INC/IF count as zero while applicable."
+      },
+      {
+        "name": "Five College Interchange course",
+        "grades": [
+          "A",
+          "A-",
+          "B+",
+          "B",
+          "B-",
+          "C+",
+          "C",
+          "C-",
+          "D+",
+          "D",
+          "D-",
+          "F"
+        ],
+        "excluded": false,
+        "note": "Five College grades and credits enter the undergraduate record as sent; plus/minus values differ from Amherst values.",
+        "gradePoints": {
+          "A": 4,
+          "A-": 3.75,
+          "B+": 3.25,
+          "B": 3,
+          "B-": 2.75,
+          "C+": 2.25,
+          "C": 2,
+          "C-": 1.75,
+          "D+": 1.25,
+          "D": 1,
+          "D-": 0.75,
+          "F": 0
+        }
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer grades do not enter the UMass Amherst GPA."
+      },
+      {
+        "name": "Fresh Start / historical record",
+        "grades": [],
+        "excluded": false,
+        "note": "Fresh Start can exclude prior Amherst work after eligible re-enrollment; use the post-Fresh-Start official baseline rather than recreating it here.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible same-credit UMass Amherst repeat, the last grade normally replaces the earlier grade in GPA. Third attempts and exceptions need registrar/dean review.",
+      "originalGrades": [
+        "C-",
+        "D+",
+        "D",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENG 101",
+        "units": "3",
+        "grade": "A",
+        "special": "UMass Amherst undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "BIO 151",
+        "units": "4",
+        "grade": "B+",
+        "special": "UMass Amherst undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 111",
+        "units": "4",
+        "grade": "F",
+        "special": "UMass Amherst undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 110",
+        "units": "3",
+        "grade": "A-",
+        "special": "UMass Amherst undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "97198dda33d4"
+}

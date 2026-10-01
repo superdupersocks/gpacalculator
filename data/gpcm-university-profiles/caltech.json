@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "caltech",
+  "universityName": "California Institute of Technology",
+  "pageTitle": "Calculate Your Caltech GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA formula; pass/fail; repeats; E/I/W",
+      "url": "https://catalog.caltech.edu/current/general-information/grades-and-grading/"
+    },
+    {
+      "label": "Undergraduate standing; graduation; option GPA",
+      "url": "https://catalog.caltech.edu/current/information-for-undergraduate-students/scholastic-requirements/"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://catalog.caltech.edu/current/information-for-undergraduate-students/scholastic-requirements/#allowance-and-transfer-of-credit"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://catalog.caltech.edu/current/information-for-undergraduate-students/financial-aid/satisfactory-academic-progress-sap/"
+    },
+    {
+      "label": "Graduate degree GPA",
+      "url": "https://www.catalog.caltech.edu/current/information-for-graduate-students/general-requirements-for-graduate-degrees/"
+    }
+  ],
+  "helpIntro": "Caltech GPA is total grade credits divided by GPA-bearing units. Letter grades use Caltech’s published credit table, including plus/minus grades.",
+  "helpNote": "P/F courses are excluded from GPA. A letter-grade F counts its units at zero credits, and repeated attempts remain in the GPA. The target-GPA tool is disabled because Caltech rounds grade credits course by course.",
+  "helpExample": "A 9-unit A+ earns 39 credits and a 9-unit A- earns 33; 72 credits ÷ 18 units = 4.000.",
+  "baseContext": {
+    "scaleMax": 4.333333333333333,
+    "scaleLabel": "4.33333 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4.333333333333333,
+      "A": 4,
+      "A-": 3.666666666666667,
+      "B+": 3.333333333333333,
+      "B": 3,
+      "B-": 2.666666666666667,
+      "C+": 2.333333333333333,
+      "C": 2,
+      "C-": 1.666666666666667,
+      "D+": 1.333333333333333,
+      "D": 1,
+      "F": 0,
+      "E": null,
+      "I": null,
+      "W": null
+    },
+    "coursePointRounding": "nearest-integer",
+    "gradeExplanations": {
+      "A+": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "A": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "A-": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "B+": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "B": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "B-": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "C+": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "C": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "C-": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "D+": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "D": "Caltech letter grade; course credits follow the published unit-by-grade table.",
+      "F": "Failed letter grade; units remain in GPA at zero credits.",
+      "E": "Conditional/incomplete work; excluded until resolved, then may convert to F if unresolved.",
+      "I": "Incomplete; excluded until resolved; after one year normally converts to W.",
+      "W": "Withdrawn; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Caltech letter-graded course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for letter-graded Caltech courses. Credits are rounded per course under the official table."
+      },
+      {
+        "name": "Caltech pass/fail course",
+        "grades": [
+          "P",
+          "F"
+        ],
+        "excluded": false,
+        "note": "P and F earned on a pass/fail basis are excluded from GPA.",
+        "gradePoints": {
+          "P": null,
+          "F": null
+        }
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer credit acceptance is evaluated separately; do not import an external grade into this Caltech GPA estimate."
+      }
+    ],
+    "targetEnabled": false,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each letter-graded attempt as a separate completed course. The original F and units remain in the GPA.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA after first two terms"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.5",
+    "previousUnits": "90",
+    "completed": [
+      {
+        "name": "Ma 2",
+        "units": "9",
+        "grade": "A+",
+        "special": "Caltech letter-graded course",
+        "planned": false
+      },
+      {
+        "name": "Ph 2",
+        "units": "9",
+        "grade": "A-",
+        "special": "Caltech letter-graded course",
+        "planned": false
+      },
+      {
+        "name": "HSS",
+        "units": "9",
+        "grade": "B+",
+        "special": "Caltech letter-graded course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Elective",
+        "units": "9",
+        "grade": "B-",
+        "special": "Caltech letter-graded course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "33ce2886f86a"
+}

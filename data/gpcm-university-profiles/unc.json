@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "unc",
+  "universityName": "University of North Carolina at Chapel Hill",
+  "pageTitle": "Calculate Your UNC GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate grading system and GPA calculation",
+      "url": "https://catalog.unc.edu/policies-procedures/attendance-grading-examination/"
+    },
+    {
+      "label": "Pass/Low Pass/Fail and special enrollment",
+      "url": "https://catalog.unc.edu/policies-procedures/registration-enrollment-withdrawal/"
+    },
+    {
+      "label": "Repeating course enrollments",
+      "url": "https://catalog.unc.edu/policies-procedures/registration-enrollment-withdrawal/"
+    },
+    {
+      "label": "Academic standing and transfer treatment",
+      "url": "https://catalog.unc.edu/policies-procedures/academic-standing/"
+    },
+    {
+      "label": "Undergraduate degree requirements",
+      "url": "https://catalog.unc.edu/undergraduate/degree-requirements/"
+    }
+  ],
+  "helpIntro": "UNC-Chapel Hill uses a 4.0 plus/minus scale. Enter UNC credit hours and final grades to estimate your current, cumulative, projected, or target GPA.",
+  "helpNote": "For the standard undergraduate UNC-Chapel Hill record. PS and LP are excluded, F counts as zero, and all graded repeat attempts remain in the cumulative GPA. Graduate and professional grading systems need separate review.",
+  "helpExample": "A 3-credit A earns 12.0 quality points and a 3-credit B- earns 8.1. Together, 20.1 ÷ 6 = 3.350.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "FA": 0,
+      "F*": 0,
+      "IN": 0,
+      "AB": 0,
+      "PS": null,
+      "LP": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 grade points per credit hour.",
+      "A-": "A- = 3.7 grade points per credit hour.",
+      "B+": "B+ = 3.3 grade points per credit hour.",
+      "B": "B = 3 grade points per credit hour.",
+      "B-": "B- = 2.7 grade points per credit hour.",
+      "C+": "C+ = 2.3 grade points per credit hour.",
+      "C": "C = 2 grade points per credit hour.",
+      "C-": "C- = 1.7 grade points per credit hour.",
+      "D+": "D+ = 1.3 grade points per credit hour.",
+      "D": "D = 1 grade points per credit hour.",
+      "F": "Fail; counts as zero quality points.",
+      "FA": "Fail for attendance; permanent failing grade.",
+      "F*": "Unresolved incomplete/absence converted to failing grade.",
+      "IN": "Incomplete; temporarily calculated as F until a permanent grade is assigned.",
+      "AB": "Absent from final; temporarily calculated as F until a permanent grade is assigned.",
+      "PS": "Pass; excluded from GPA.",
+      "LP": "Low Pass; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UNC course, standard undergraduate grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the posted UNC grade and course credit hours."
+      },
+      {
+        "name": "Transfer credit from another institution",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades and attempted hours are not included in the UNC GPA."
+      },
+      {
+        "name": "Interinstitutional / special external enrollment",
+        "grades": [],
+        "excluded": false,
+        "note": "Confirm the UNC transcript conversion before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. Repeat Impact is disabled because UNC counts all attempts in cumulative GPA.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL 105",
+        "units": "3",
+        "grade": "A",
+        "special": "UNC course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 231",
+        "units": "3",
+        "grade": "B-",
+        "special": "UNC course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 101",
+        "units": "3",
+        "grade": "F",
+        "special": "UNC course, standard undergraduate grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 127",
+        "units": "3",
+        "grade": "A-",
+        "special": "UNC course, standard undergraduate grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "71399b15dbc3"
+}

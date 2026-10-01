@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "rutgers",
+  "universityName": "Rutgers University-New Brunswick",
+  "pageTitle": "Calculate Your Rutgers GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values, GPA formula, prefixes, Pass/No Credit",
+      "url": "https://www.sasundergrad.rutgers.edu/resources/policies/rutgers-university-guideline/computation-of-grade-point-average"
+    },
+    {
+      "label": "SAS repeated courses",
+      "url": "https://sasundergrad.rutgers.edu/component/content/article/repeating-courses?Itemid=1902&catid=257%3Asas-guidelines"
+    },
+    {
+      "label": "External transfer grades",
+      "url": "https://sebs.rutgers.edu/academics/incoming/transfer"
+    },
+    {
+      "label": "Rutgers Business School repeat-policy exception",
+      "url": "https://myrbs.business.rutgers.edu/undergraduate-new-brunswick/policies-procedures"
+    },
+    {
+      "label": "SAS degree and honors GPA thresholds",
+      "url": "https://sasundergrad.rutgers.edu/majors-and-core-curriculum/degree-requirements"
+    },
+    {
+      "label": "SAS academic standing and Dean’s List",
+      "url": "https://sasundergrad.rutgers.edu/resources/academic-review"
+    }
+  ],
+  "helpIntro": "Rutgers-New Brunswick uses a 4.0 scale with B+=3.5 and C+=2.5. Enter Rutgers credits and final grades to estimate your current or projected GPA.",
+  "helpNote": "This profile is for Rutgers-New Brunswick School of Arts and Sciences undergraduate GPA planning. Transfer grades are excluded. The repeat estimate applies only to eligible SAS D/F repeats; other Rutgers schools may use different rules.",
+  "helpExample": "A 3-credit A earns 12 grade points; a 4-credit B+ earns 14. Together, 26 ÷ 7 = 3.714.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B+": 3.5,
+      "B": 3,
+      "C+": 2.5,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "P": null,
+      "NC": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 points per credit.",
+      "B+": "B+ = 3.5 points per credit.",
+      "B": "B = 3.0 points per credit.",
+      "C+": "C+ = 2.5 points per credit.",
+      "C": "C = 2.0 points per credit.",
+      "D": "D = 1.0 point per credit; an eligible SAS repeat may later receive an E prefix.",
+      "F": "F = 0 points and its credits count in GPA unless an eligible SAS repeat is E-prefixed.",
+      "P": "Pass earns degree credit but is excluded from GPA.",
+      "NC": "No Credit earns no degree credit and is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Rutgers-New Brunswick graded course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for finalized Rutgers-New Brunswick grades on the standard A/B+/B/C+/C/D/F scale."
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "External transfer grades do not enter the Rutgers cumulative GPA."
+      },
+      {
+        "name": "E-prefixed Rutgers course",
+        "grades": null,
+        "excluded": true,
+        "note": "An E prefix means no degree credit and the grade is excluded from the cumulative GPA."
+      },
+      {
+        "name": "Rutgers course under another school/program policy",
+        "grades": [],
+        "excluded": false,
+        "note": "Business, graduate, professional, and other school-specific policies can differ; confirm the transcript treatment before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible SAS D/F repeat taken at Rutgers-New Brunswick, the original can be E-prefixed and removed from the cumulative GPA while the repeated grade counts. Limits and exceptions still require SAS review.",
+      "originalGrades": [
+        "D",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "B+",
+        "B",
+        "C+",
+        "C",
+        "D",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "School of Arts and Sciences undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "WRITING",
+        "units": "3",
+        "grade": "A",
+        "special": "Rutgers-New Brunswick graded course",
+        "planned": false
+      },
+      {
+        "name": "ECON",
+        "units": "4",
+        "grade": "B+",
+        "special": "Rutgers-New Brunswick graded course",
+        "planned": false
+      },
+      {
+        "name": "MATH",
+        "units": "3",
+        "grade": "F",
+        "special": "Rutgers-New Brunswick graded course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HISTORY",
+        "units": "3",
+        "grade": "C+",
+        "special": "Rutgers-New Brunswick graded course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "c0a38901a327"
+}

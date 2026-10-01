@@ -204,6 +204,11 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 
 ## Changelog
 
+### 2026-10-01: /gpa-scale/ Rank Math titles and descriptions (live)
+- After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-meta.sql.gz`), the 31 pages got the titles and descriptions
+  in `content/gpa-scale-meta.md` (focus keywords unchanged). Every page's `<title>` and meta description checked live.
+- Draft chart images for all 31 pages are in `content/gpa-scale-images/` (not uploaded yet).
+
 ### 2026-10-01: /gpa-scale/ scale table and heading cleanup (live)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-table.sql.gz`), each page's chart image in the content
   became a core Table block (class `gpa-scale-table`): the hub page's standard scale plus the page's own GPA row.

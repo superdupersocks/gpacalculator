@@ -21,7 +21,7 @@ REPO = Path(__file__).resolve().parent.parent
 LOCK = REPO / "shortcodes.lock"
 MANIFEST = REPO / "plugin" / "gpacalculator-manager" / "includes" / "calculators.php"
 ADD = re.compile(r"add_shortcode\s*\(\s*['\"]([^'\"]+)['\"]")
-LEGACY = {"calcs-plugin"}
+LEGACY = {"calcs-plugin", "CollegeDB.disabled"}
 # Plugins whose shortcodes the engine serves wholesale through an adapter (it reads the plugin's
 # own saved shortcode list), so every tag they registered counts as served.
 ADAPTERS = {"calcs-plugin": REPO / "plugin" / "gpacalculator-manager" / "includes" / "legacy-calcs-plugin.php"}

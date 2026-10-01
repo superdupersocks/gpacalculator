@@ -1,5 +1,7 @@
 # Shortcodes used on gpacalculator.net, with the code that registered them.
 # Never remove a line. See tests/check_shortcodes.py.
+CollegeDB                     # CollegeDB.disabled
+CollegeDB_full                # CollegeDB.disabled
 college-gpa-calculator        # calcs-plugin
 final-grade-calculator        # calcs-plugin
 gpa-calculator                # calcs-plugin

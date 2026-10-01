@@ -1,0 +1,114 @@
+{
+  "published": 3586,
+  "trashed_not_exported": 189,
+  "acf_field_keys": {
+    "acceptance_rate": [
+      "field_college_acceptance_rate"
+    ],
+    "act_composite_25": [
+      "field_college_act_composite_25"
+    ],
+    "act_composite_75": [
+      "field_college_act_composite_75"
+    ],
+    "act_math_25": [
+      "field_college_act_math_25"
+    ],
+    "act_math_75": [
+      "field_college_act_math_75"
+    ],
+    "act_range": [
+      "field_college_act_range"
+    ],
+    "act_reading_25": [
+      "field_college_act_reading_25"
+    ],
+    "act_reading_75": [
+      "field_college_act_reading_75"
+    ],
+    "admission_requirements_completion_of_college_preparatory_program": [
+      "field_college_adm_req_college_prep"
+    ],
+    "admission_requirements_demonstration_of_competencies": [
+      "field_college_adm_req_competencies"
+    ],
+    "admission_requirements_high_school_class_rank": [
+      "field_college_adm_req_hs_class_rank"
+    ],
+    "admission_requirements_high_school_gpa": [
+      "field_college_adm_req_hs_gpa"
+    ],
+    "admission_requirements_recommendations": [
+      "field_college_adm_req_recommendations"
+    ],
+    "admission_requirements_test_scores": [
+      "field_college_adm_req_test_scores"
+    ],
+    "admission_standards": [
+      "field_college_admission_standards"
+    ],
+    "ap_credit": [
+      "field_college_ap_credit"
+    ],
+    "applicant_competition": [
+      "field_college_applicant_competition"
+    ],
+    "applicant_submitting_act": [
+      "field_college_applicant_submitting_act"
+    ],
+    "applicants_submitting_sat": [
+      "field_college_applicants_submitting_sat"
+    ],
+    "average_act_score": [
+      "field_college_average_act_score"
+    ],
+    "average_gpa": [
+      "field_college_average_gpa"
+    ],
+    "average_sat_score": [
+      "field_college_average_sat_score"
+    ],
+    "credit_for_life_experiences": [
+      "field_college_credit_life_experiences"
+    ],
+    "dual_credit": [
+      "field_college_dual_credit"
+    ],
+    "enrollment": [
+      "field_college_enrollment"
+    ],
+    "img_url": [
+      "field_college_img_url"
+    ],
+    "location": [
+      "field_college_location"
+    ],
+    "net_price": [
+      "field_college_net_price"
+    ],
+    "owning": [
+      "field_college_owning"
+    ],
+    "sat_composite_25": [
+      "field_college_sat_composite_25"
+    ],
+    "sat_composite_75": [
+      "field_college_sat_composite_75"
+    ],
+    "sat_math_25": [
+      "field_college_sat_math_25"
+    ],
+    "sat_math_75": [
+      "field_college_sat_math_75"
+    ],
+    "sat_range": [
+      "field_college_sat_range"
+    ],
+    "sat_reading_25": [
+      "field_college_sat_reading_25"
+    ],
+    "sat_reading_75": [
+      "field_college_sat_reading_75"
+    ]
+  }
+}

@@ -3,7 +3,7 @@
 #   gpacalculator-manager-<ver>.zip   the one calculator plugin ("Grade + GPA"), engine included
 #   generatepress-child-<ver>.zip     the child theme (site design + gpa-design-tokens.css)
 # Both are built from the imported live source, and only when every shortcode in
-# shortcodes.lock is still served. legacy/ (the Calculators plugin) is never shipped.
+# shortcodes.lock is still served. legacy/ (old plugins kept for reference) is never shipped.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 REPO=$(pwd)

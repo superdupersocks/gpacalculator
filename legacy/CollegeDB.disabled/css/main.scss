@@ -1,0 +1,274 @@
+@mixin transition($delay) {
+  transition: all $delay linear;
+  -o-transition: all $delay linear;
+  -ms-transition: all $delay linear;
+  -moz-transition: all $delay linear;
+  -webkit-transition: all $delay linear;
+}
+
+#college_db_full {
+  h4 {
+    background-color: #41485b;
+    background-image: url("../images/search-icon2.png");
+    background-position: 5px center;
+    background-repeat: no-repeat;
+    color: white;
+    font-size: 16px;
+    margin: 0;
+    padding: 10px;
+    text-align: right;
+    text-transform: uppercase;
+  }
+  .table_wrapper {
+    border: 1px solid #ccc;
+  }
+  table {
+    margin: 0;
+    font-size: 15px;
+    td {
+      padding: 10px;
+      border-right: 1px solid #ccc;
+      position: relative;
+      &:last-child {
+        border-right: none;
+      }
+    }
+    thead {
+      background-color: #41485b;
+      color: white;
+      td {
+        border-right-color: #676C7C;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 12px;
+      }
+    }
+    tr:nth-child(2n) {
+      background-color: #eeeeee;
+    }
+    tbody td:nth-child(n+3) {
+      text-align: right;
+    }
+  }
+  .cdb_edit_button {
+    display: block;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    font-size: 12px;
+  }
+  #dialog-form {
+    font-size: 13px;
+    display: none;
+  }
+  .form {
+    float: left;
+    margin-right: 20px;
+    width: 25%;
+    border-right: 1px solid #ccc;
+    .form-group {
+      padding: 20px 20px 20px 0;
+      border-bottom: 1px solid #ccc;
+      label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: bold;
+      }
+      p {
+        margin: 0;
+      }
+      .form-control {
+        width: 100%;
+        padding: 5px;
+        font-weight: bold;
+      }
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    .slider-sub {
+      color: #666;
+      font-size: 13px;
+      &.min{
+        float: left;
+      }
+      &.max{
+        float: right;
+      }
+    }
+    mark{
+      background-color: #13AFDF;
+      color: white;
+      font-weight: bold;
+      padding: 1px 4px;
+    }
+    .ui-slider-handle {
+      background: url("../images/progress-bar-dot.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+      border: 0 none;
+      height: 25px;
+      width: 24px;
+    }
+    .ui-slider-range-min {
+      background-image: none;
+      background-color: #676c7c;
+    }
+    #cdb_search {
+      width: 75%;
+      margin-left: 12.5%;
+    }
+  }
+  &.pre-filtered-table {
+    .form {
+      margin-right: 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      .form-group {
+        padding: 20px;
+        border-bottom: 1px solid #ccc;
+      }
+    }
+    #cdb_table_wrapper {
+      width: 100%;
+    }
+  }
+  #cdb_table_wrapper {
+    float: left;
+    width: 70%;
+    position: relative;
+  }
+
+
+  #cdb_pagination {
+    margin: 20px 0;
+    div {
+      margin: 0 5px 0 0;
+      display: inline-block;
+    }
+    .button {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #2e2f33;
+      border: medium none;
+      border-radius: 3px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      line-height: 1;
+      text-align: center;
+      text-transform: uppercase;
+      width: auto;
+      &:hover{
+        background-color: #13AFDF;
+      }
+      &.current_page {
+        background-color: #ccc;
+      }
+    }
+  }
+  #cdb_overlay {
+    background-color: rgba(0,0,0,0.7);
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 9000;
+
+    &.ng-hide-add.ng-hide-add-active,
+    &.ng-hide-remove.ng-hide-remove-active {
+      @include transition(0.5s);
+    }
+    &.ng-hide {
+      opacity: 0;
+    }
+  }
+}
+
+#dialog-form {
+  label {
+    width: 15%;
+    display: block;
+    float: left;
+    margin: 0 0 20px 0;
+  }
+  .cdb_name_field {
+    width: 85%;
+    float: left;
+    display: block;
+    margin: 0 0 20px 0;
+  }
+  .cdb_url_field {
+    width: 85%;
+    float: left;
+    display: block;
+    margin: 0 0 20px 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #college_db_full {
+    .form {
+      margin-right: 0;
+      width: 100%;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      .form-group {
+        padding: 20px;
+        border-bottom: 1px solid #ccc;
+      }
+    }
+    #cdb_table_wrapper {
+      width: 100%;
+    }
+    table {
+      thead {
+        display: none;
+      }
+      tr {
+        position: relative;
+      }
+      td {
+        float: left;
+        padding: 10px 10px 10px 50%;
+        width: 100%;
+        &:before {
+          position: absolute;
+          left: 10px;
+          text-transform: uppercase;
+        }
+        &:nth-of-type(1):before {
+          content: "School";
+        }
+        &:nth-of-type(2):before {
+          content: "State";
+        }
+        &:nth-of-type(3):before {
+          content: "SAT 25";
+        }
+        &:nth-of-type(4):before {
+          content: "SAT 75";
+        }
+        &:nth-of-type(5):before {
+          content: "ACT 25";
+        }
+        &:nth-of-type(6):before {
+          content: "ACT 75";
+        }
+        &:nth-of-type(7):before {
+          content: "Average GPA";
+        }
+        &:nth-of-type(8):before {
+          content: "Acceptance Rate";
+        }
+      }
+    }
+  }
+}
+
+div.entry-content {
+  max-width: 1004px;
+}
+
+.clear{
+  clear: both;
+}

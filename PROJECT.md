@@ -155,16 +155,25 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | semester-grade-calculator (`[semester-grade-calculator]` and `[semester-gpa-calculator]`) | grade | Yes | No | To write |
 | weighted-grade-calculator | grade | Yes | No | To write |
 | `[gpa-scale]`, `[gpa_conversion]` (external JS) | grade-conversion | Yes, original URLs | No | To write |
-| `[gpcm_calculator]`, `[country_grade]`, `[country_grade_scale]` | university-gpa / grade-conversion | Native Grade + GPA | No | To write |
+| `[gpcm_calculator id="…"]`: 87 university profiles (`tests/fixtures/gpcm-university-profiles.tsv`) | university-gpa | Native Grade + GPA | No | Per-profile QA on the site; `gpcm_profiles_test.php` checks each id renders |
+| `[country_grade]`, `[country_grade_scale]` | grade-conversion | Native Grade + GPA | No | To write |
 | Starter template | — | Yes | Yes | `core_qa.py` |
 
 ## Open items
+
+- University profile rules (and any uploaded shared JS/CSS) live only in the site database
+  (`gpcm_university_profiles`, `gpcm_shared_assets`; country: `gpcm_international_*`). Plugin updates
+  keep them, but the repo has no copy except Stanford. Get the source JSON files or a WP-CLI export.
 
 - Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
 - `calc-assets/formidable-pro-6.35.zip` sits in the public theme folder on the live server (licensed plugin); delete it there. It is excluded from the repo.
 - Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
 
 ## Changelog
+
+### 2026-10-01: university profiles locked
+- Recorded the 87 live `[gpcm_calculator]` profile ids; `gpcm_profiles_test.php` runs Grade + GPA's own
+  shortcode with the engine loaded and checks every id renders and the engine never takes the tag.
 
 ### 2026-10-01: Calculators shortcodes locked
 - Locked the 12 shortcodes from the Calculators plugin's Export Settings (20 locked in total).

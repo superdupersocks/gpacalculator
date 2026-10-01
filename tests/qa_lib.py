@@ -21,7 +21,9 @@ from playwright.sync_api import sync_playwright
 
 REPO = Path(__file__).resolve().parent.parent
 THEME = REPO / "child-theme" / "generatepress-child"
-CALC_ASSETS = THEME / "calc-assets"
+PLUGIN = REPO / "plugin" / "gpacalculator-manager"
+CALC_ASSETS = PLUGIN / "assets" / "calc-assets"   # calculators live in the plugin
+THEME_CALC_ASSETS = THEME / "calc-assets"         # legacy location, kept until each move is verified
 ARTIFACTS = REPO / "tests" / ".artifacts"
 FONT_DIR = REPO / "node_modules" / "@fontsource" / "inter" / "files"
 
@@ -84,17 +86,25 @@ def route_fonts(context):
     context.route("**/fonts.gstatic.com/**", lambda r: r.fulfill(status=204, body=""))
 
 
-def live_route(context, files):
-    """Route live calc-assets URLs to repo files: files = {'grade-calculator.js': Path, ...}."""
+def live_route(context, files=None):
+    """Route live calc-assets URLs (theme or plugin) to repo files, plugin copy first.
+
+    files = {'grade-calculator.js': Path} overrides individual files.
+    """
+    files = files or {}
+
     def handler(route):
         name = route.request.url.split("?")[0].rsplit("/calc-assets/", 1)[-1]
-        p = files.get(name) or (CALC_ASSETS / name)
-        if p.exists():
+        p = files.get(name)
+        if p is None:
+            p = next((c for c in (CALC_ASSETS / name, THEME_CALC_ASSETS / name) if c.exists()), None)
+        if p is not None and p.exists():
             ctype = "text/javascript" if p.suffix == ".js" else "text/css" if p.suffix == ".css" else None
             route.fulfill(status=200, body=p.read_bytes(), content_type=ctype)
         else:
             route.continue_()
     context.route("**/generatepress-child/calc-assets/**", handler)
+    context.route("**/gpacalculator-manager/assets/calc-assets/**", handler)
 
 
 # ---------- browser ----------

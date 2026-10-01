@@ -1,4 +1,4 @@
-/* gpacalculator.net course catalog, core v1.0.0
+/* gpacalculator.net course catalog, core v1.1.0
  * Course levels with weighting bonuses and a list of common US high school courses
  * for autocomplete (<datalist>) and level guessing. Shared by the GPA calculators.
  *

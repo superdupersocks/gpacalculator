@@ -22,8 +22,17 @@
   window.dataLayer = [];
   window.gtag = function (cmd, name, params) { if (cmd === 'event') window.__events.push(name); };
 </script>
-<link rel="stylesheet" href="/child-theme/generatepress-child/calc-assets/_starter/starter.css">
-<script type="module" src="/child-theme/generatepress-child/calc-assets/_starter/starter.js"></script>
+<link rel="stylesheet" id="tokens" href="/child-theme/generatepress-child/brand-tokens.css">
+<script>
+  // ?tokens=off drops the theme's brand tokens (fallback test); ?brand=<color> overrides one.
+  (function () {
+    var q = new URLSearchParams(location.search);
+    if (q.get('tokens') === 'off') document.getElementById('tokens').remove();
+    if (q.get('brand')) document.documentElement.style.setProperty('--gpa-brand-1', q.get('brand'));
+  })();
+</script>
+<link rel="stylesheet" href="/plugin/gpacalculator-manager/assets/calc-assets/_starter/starter.css">
+<script type="module" src="/plugin/gpacalculator-manager/assets/calc-assets/_starter/starter.js"></script>
 </head>
 <body class="page-template-template-calculator page-id-9999">
   <header class="hero"><small>MOCK OF YOUR PAGE HEADER — NOT PART OF THE CALCULATOR</small><h1>Grade Calculator</h1></header>

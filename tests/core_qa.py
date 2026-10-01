@@ -9,8 +9,8 @@ import sys
 
 from qa_lib import ARTIFACTS, Results, Session, fmt_pct, round_half_up
 
-CORE = "/child-theme/generatepress-child/calc-assets/core/calc-core.js"
-CATALOG = "/child-theme/generatepress-child/calc-assets/core/course-catalog.js"
+CORE = "/plugin/gpacalculator-manager/assets/calc-assets/core/calc-core.js"
+CATALOG = "/plugin/gpacalculator-manager/assets/calc-assets/core/course-catalog.js"
 PAGE = "/tests/fixtures/starter.html"
 
 # Standard scale used across the site: (min %, letter, points)
@@ -282,6 +282,28 @@ def ui_tests(s, R):
     ctx.close()
 
 
+def token_tests(s, R):
+    """Calculators read the theme's brand tokens, with built-in fallbacks when they're missing."""
+    probe = """() => { const b = document.querySelector('#root .calc-btn-text');
+        const c = document.querySelector('#root .calc');
+        return { color: getComputedStyle(b).color, font: getComputedStyle(c).fontFamily.split(',')[0].trim(),
+                 radius: getComputedStyle(document.querySelector('#root .calc-card')).borderTopLeftRadius }; }"""
+    want = {"color": "rgb(124, 58, 237)", "font": "Inter", "radius": "24px"}
+    for label, qs in [("theme tokens", ""), ("no theme tokens (fallbacks)", "?tokens=off")]:
+        ctx = s.context()
+        page = s.page(ctx, PAGE.replace(".html", f".html{qs}"))
+        page.wait_for_selector("#root .calc")
+        R.check(label, page.evaluate(probe), want)
+        theme_var = page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--gpa-brand-1').trim()")
+        R.check(f"{label}: --gpa-brand-1 present", bool(theme_var), not qs)
+        ctx.close()
+    ctx = s.context()
+    page = s.page(ctx, f"{PAGE}?brand=%23dc2626")
+    page.wait_for_selector("#root .calc")
+    R.check("brand token override restyles calculator", page.evaluate(probe)["color"], "rgb(220, 38, 38)")
+    ctx.close()
+
+
 def visual_tests(s, R):
     ARTIFACTS.mkdir(parents=True, exist_ok=True)
     for name, kw in [("desktop", dict(width=1440, height=900)), ("mobile", dict(width=390, height=844, mobile=True))]:
@@ -314,6 +336,7 @@ def main():
     with Session() as s:
         unit_tests(s, R)
         ui_tests(s, R)
+        token_tests(s, R)
         visual_tests(s, R)
         R.check("page errors", s.errors, [])
     sys.exit(0 if R.report() else 1)

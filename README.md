@@ -1,7 +1,8 @@
 # gpacalculator
 
-Source for gpacalculator.net: the GeneratePress child theme (`child-theme/`), the
-gpacalculator-manager plugin (`plugin/`), the shared calculator core and the Playwright QA suite.
+Source for gpacalculator.net: the gpacalculator-manager plugin (`plugin/`, home of every
+calculator and the shared core), the GeneratePress child theme (`child-theme/`, site design and
+brand tokens) and the QA suite.
 
 ```
 npm install

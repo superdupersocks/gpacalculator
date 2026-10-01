@@ -1,8 +1,57 @@
-/* gpacalculator.net shared calculator layout, core v1.0.0
- * Every rule is scoped under #root .calc. A calculator adds its own prefix class
- * (e.g. <div class="calc gcx">) for anything specific to it.
- * Load from a calculator stylesheet with: @import url('core/calc-core.css'); */
-@import url('tokens.css');
+/* gpacalculator.net shared calculator layout, core v1.1.0
+ * Lives in the gpacalculator-manager plugin. Every rule is scoped under #root .calc.
+ * A calculator adds its own prefix class (e.g. <div class="calc gcx">) for anything specific to it.
+ * Load from a calculator stylesheet with: @import url('core/calc-core.css');
+ *
+ * Brand tokens come from the theme (brand-tokens.css, --gpa-*). Each one is read below with a
+ * built-in fallback, so calculators look right even when the theme file isn't loaded. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+#root .calc {
+  /* Brand, from the theme with fallbacks */
+  --calc-brand-1: var(--gpa-brand-1, #7c3aed);
+  --calc-brand-2: var(--gpa-brand-2, #4f46e5);
+  --calc-brand-grad: linear-gradient(135deg, var(--calc-brand-1), var(--calc-brand-2));
+  --calc-tint: var(--gpa-tint, #f5f3ff);
+  --calc-focus: var(--gpa-focus, rgba(124, 58, 237, 0.28));
+  --calc-ink: var(--gpa-ink, #1e1b4b);
+  --calc-text: var(--gpa-text, #374151);
+  --calc-muted: var(--gpa-muted, #6b7280);
+  --calc-faint: var(--gpa-faint, #9ca3af);
+  --calc-line: var(--gpa-line, #e5e7eb);
+  --calc-line-strong: var(--gpa-line-strong, #d1d5db);
+  --calc-surface: var(--gpa-surface, #ffffff);
+  --calc-surface-2: var(--gpa-surface-2, #f9fafb);
+  --calc-font: var(--gpa-font, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
+  --calc-radius-card: var(--gpa-radius-card, 24px);
+  --calc-radius: var(--gpa-radius, 12px);
+  --calc-radius-pill: var(--gpa-radius-pill, 999px);
+  --calc-shadow: var(--gpa-shadow, 0 10px 40px -12px rgba(79, 70, 229, 0.25), 0 2px 6px rgba(30, 27, 75, 0.06));
+  --calc-shadow-pop: var(--gpa-shadow-pop, 0 12px 32px -8px rgba(30, 27, 75, 0.3));
+
+  /* Calculator-only tokens: letter grade colors (A green, B blue, C amber, D orange, F red) */
+  --calc-a: #16a34a;
+  --calc-a-bg: #dcfce7;
+  --calc-b: #2563eb;
+  --calc-b-bg: #dbeafe;
+  --calc-c: #d97706;
+  --calc-c-bg: #fef3c7;
+  --calc-d: #ea580c;
+  --calc-d-bg: #ffedd5;
+  --calc-f: #dc2626;
+  --calc-f-bg: #fee2e2;
+
+  /* Sizing and motion */
+  --calc-max: 800px;
+  --calc-control-h: 46px;
+  --calc-gap: 12px;
+  --calc-pad: 28px;
+  --calc-pad-mobile: 18px;
+  --calc-score-size: 64px;
+  --calc-score-size-mobile: 52px;
+  --calc-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --calc-fast: 150ms;
+}
 
 /* Page-level: results never reserve empty space (overrides the theme's #root min-height) */
 #root.calc-mounted { min-height: 0 !important; }

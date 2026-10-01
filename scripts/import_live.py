@@ -4,8 +4,13 @@ Usage:
   python3 scripts/import_live.py <generatepress-child.zip|dir> [<gpacalculator-manager.zip|dir>]
 
 Copies the live files over child-theme/generatepress-child and plugin/gpacalculator-manager,
-keeping repo-owned files (calc-assets/core, calc-assets/_starter) unless the live copy has
-its own version. Then records every registered shortcode in shortcodes.lock.
+keeping repo-owned files (plugin calc-assets/core + _starter + loader, theme brand tokens)
+unless the live copy has its own version. Then records every registered shortcode in
+shortcodes.lock.
+
+The theme's calc-assets/ folder is imported as-is: calculators move into the plugin one at a
+time (copy into plugin/.../assets/calc-assets, register in includes/calculator-assets.php),
+and the theme copy stays as the fallback until the move is verified on the live page.
 """
 import shutil
 import subprocess
@@ -19,7 +24,10 @@ TARGETS = {
     "theme": REPO / "child-theme" / "generatepress-child",
     "plugin": REPO / "plugin" / "gpacalculator-manager",
 }
-REPO_OWNED = ["calc-assets/core", "calc-assets/_starter", "README.md"]
+REPO_OWNED = {
+    "theme": ["brand-tokens.css", "inc/brand-tokens.php", "README.md"],
+    "plugin": ["assets/calc-assets/core", "assets/calc-assets/_starter", "includes/calculator-assets.php", "README.md"],
+}
 
 
 def unpack(src, tmp):
@@ -43,9 +51,9 @@ def find_root(path, kind):
     return min(cands, key=lambda p: len(p.parts))
 
 
-def copy(src, dst):
+def copy(src, dst, kind):
     keep = {}
-    for rel in REPO_OWNED:
+    for rel in REPO_OWNED[kind]:
         p = dst / rel
         if p.exists() and not (src / rel).exists():
             keep[rel] = p
@@ -67,7 +75,7 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         for kind, arg in zip(("theme", "plugin"), sys.argv[1:3]):
             root = find_root(unpack(arg, tmp), kind)
-            copy(root, TARGETS[kind])
+            copy(root, TARGETS[kind], kind)
             n = sum(1 for _ in TARGETS[kind].rglob("*") if _.is_file())
             print(f"{kind}: imported {n} files from {root}")
     subprocess.run([sys.executable, str(REPO / "tests" / "check_shortcodes.py"), "--update"], check=True)

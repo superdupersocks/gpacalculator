@@ -390,6 +390,8 @@ body.home .entry-content > .wp-block-group {
 	body.page-template-template-calculator .entry-content,
 	body.page-template-template-content .entry-content,
 	body.gpa-template-content .entry-content,
+	body.page-template-gpa-content-page .entry-content,
+	body.single-post .entry-content,
 	body.home .site-content,
 	body.single-colleges .db-container,
 	body.post-type-archive-colleges .db-container {

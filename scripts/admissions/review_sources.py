@@ -113,10 +113,13 @@ def sheets(data, name):
                 for s in book.sheets()]
     import openpyxl
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
-    return [(f"{name} [{ws.title}]",
-             [["" if v is None else (v.strftime("%m/%d/%Y") if hasattr(v, "strftime") else str(v)) for v in row]
-              for row in ws.iter_rows(values_only=True)])
-            for ws in wb.worksheets]
+    out = []
+    for ws in wb.worksheets:
+        ws.reset_dimensions()  # read-only mode stops at the size the file records, and FSA's records 10 rows
+        out.append((f"{name} [{ws.title}]",
+                    [["" if v is None else (v.strftime("%m/%d/%Y") if hasattr(v, "strftime") else str(v)) for v in row]
+                     for row in ws.iter_rows(values_only=True)]))
+    return out
 
 
 def fsa_table(data, name):

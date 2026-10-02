@@ -27,6 +27,7 @@ import match  # noqa: E402
 import phase2_e_import  # noqa: E402
 import phase2_r_review  # noqa: E402
 import phase2_s_pages  # noqa: E402
+import review_sources  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
 fails = []
@@ -681,6 +682,32 @@ eq("R: two pages confirmed as one college both wait; a manual hold stays; a coll
    ([(r["slug"], r["outcome"], r["target"]) for r in _rrows], _rimp),
    ([("a-college", "hold", ""), ("a-college-too", "hold", ""), ("ats-institute-of-technology", "hold", ""),
      ("b-college", "301", "https://gpacalculator.net/admissions/has-page/")], {}))
+
+# FSA's closed-school download: a zip holding a workbook whose recorded size is wrong
+_wb = openpyxl.Workbook()
+_ws = _wb.active
+_ws.title = "CLOSED SCHOOL SEARCH PAGE"
+_ws.append(["Weekly closed school search file"])
+_ws.append(["OPE ID", "School Name", "Address", "City", "State", "Zip", "Country", "Close Date"])
+for _k in range(40):
+    _ws.append([f"{_k:06d}00", f"School {_k}", "", "Erdenheim", "PA", "", "", "08/31/2017"])
+_buf = io.BytesIO()
+_wb.save(_buf)
+_xlsx, _zbuf = zipfile.ZipFile(io.BytesIO(_buf.getvalue())), io.BytesIO()
+with zipfile.ZipFile(_zbuf, "w") as _zout:
+    for _item in _xlsx.infolist():
+        _d = _xlsx.read(_item.filename)
+        if _item.filename.startswith("xl/worksheets/sheet"):
+            _d = __import__("re").sub(rb'<dimension ref="[^"]+"', b'<dimension ref="A1:H10"', _d)
+        _zout.writestr(_item, _d)
+_outer = io.BytesIO()
+with zipfile.ZipFile(_outer, "w") as _zout:
+    _zout.writestr("WKCL.20260927.001.xlsx", _zbuf.getvalue())
+    _zout.writestr("notes.csv", "OPEID,Close Date\n00123400,01/02/2003\n")
+_label, _frows = review_sources.fsa_table(_outer.getvalue(), "WEEKLY_CLOSED_REPORT.zip")
+eq("FSA download: every table in the zip is read past the workbook's recorded size, and the biggest is kept",
+   (_label, len(_frows), _frows[-1]["opeid"], _frows[-1]["close_date"]),
+   ("WKCL.20260927.001.xlsx [CLOSED SCHOOL SEARCH PAGE]", 40, "00003900", "08/31/2017"))
 
 # FSA's closed-school file settles the colleges that left IPEDS, that IPEDS never listed, or that E held
 eq("R/FSA: names compare without case, punctuation, 'the' or 'Inc', with St. as Saint; dates read as YYYY-MM-DD",

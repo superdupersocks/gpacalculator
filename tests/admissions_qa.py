@@ -18,6 +18,7 @@ import openpyxl
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts" / "admissions"))
+import audit  # noqa: E402
 import build  # noqa: E402
 import cds  # noqa: E402
 import fetch  # noqa: E402
@@ -415,6 +416,53 @@ with tempfile.TemporaryDirectory() as tmp:
     eq("provisional measure source marked", src["grad_rate"]["source"],
        "IPEDS DRVGR 2024 provisional release (else Scorecard)")
     eq("complete-file source unmarked", src["name"]["source"], "IPEDS HD2024")
+
+# Phase 2 audit: a closure needs a closing date or a federal flag; older directories identify a post only by its
+# exact name, city and state; a college still listed counts as merged only if its current record says so.
+
+
+def _hd(uid, name, city, st, **kw):
+    return {"UNITID": uid, "INSTNM": name, "IALIAS": "", "CITY": city, "STABBR": st, "CLOSEDAT": "-2",
+            "NEWID": "-2", "DEATHYR": "-2", "CYACTIVE": "1", **kw}
+
+
+_hist = {"100": {2015: _hd("100", "Old Tech Institute", "Akron", "OH"),
+                 2016: _hd("100", "Old Tech Institute", "Akron", "OH", CLOSEDAT="12/31/2016", DEATHYR="2017")},
+         "200": {2018: _hd("200", "Gone College", "Erie", "PA", NEWID="300")},
+         "300": {2018: _hd("300", "Big University", "Erie", "PA")},
+         "400": {2019: _hd("400", "Quiet School", "Boise", "ID")},
+         "500": {2012: _hd("500", "Still Here College", "Mesa", "AZ", NEWID="999")}}
+_cur = {"300": {"unitid": "300", "name": "Big University", "city": "Erie", "merged_into": ""},
+        "500": {"unitid": "500", "name": "Still Here College", "city": "Mesa", "merged_into": "", "active": "Yes",
+                "operating": "Yes"},
+        "600": {"unitid": "600", "name": "Shut College", "city": "Troy", "merged_into": "",
+                "closed_date": "05/11/2024", "active": "No"},
+        "700": {"unitid": "700", "name": "Absorbed College", "city": "Erie", "merged_into": "300", "active": "No"}}
+_rows = [("old-tech", "Old Tech Institute", "Akron", "OH", "none", ""),
+         ("gone", "Gone College", "Erie", "PA", "none", ""),
+         ("quiet", "Quiet School", "Boise", "ID", "review", ""),
+         ("big-u", "Big University", "Erie", "PA", "exact", "300"),
+         ("still", "Still Here College", "Mesa", "AZ", "exact", "500"),
+         ("still-2", "Still Here College Mesa", "Mesa", "AZ", "fuzzy", "500"),
+         ("shut", "Shut College", "Troy", "NY", "exact", "600"),
+         ("absorbed", "Absorbed College", "Erie", "PA", "exact", "700")]
+_posts = [{"slug": s, "title": t, "url": f"https://gpacalculator.net/admissions/{s}/", "city": c, "state": st,
+           "fields": {"location": f"{c}, {st}", "enrollment": "100" if s == "still" else ""}}
+          for s, t, c, st, _, _ in _rows]
+_matches = [{"slug": s, "title": t, "location": f"{c}, {st}", "method": m, "unitid": u, "candidates": ""}
+            for s, t, c, st, m, u in _rows]
+_closed, _merged, _unmatched, _dups = audit.classify(_posts, _matches, _cur, _hist)
+eq("audit: closed posts, from an older directory's closing date and from the current flags",
+   [(r["slug"], r["closed_on"]) for r in _closed], [("old-tech", "12/31/2016"), ("shut", "05/11/2024")])
+eq("audit: merged posts point to the successor's page",
+   [(r["slug"], r["successor_unitid"], r["treatment"]) for r in _merged],
+   [("gone", "300", "301 to https://gpacalculator.net/admissions/big-u/"),
+    ("absorbed", "300", "301 to https://gpacalculator.net/admissions/big-u/")])
+eq("audit: a college that only left IPEDS stays unconfirmed",
+   [(r["slug"], r["finding"].split(":")[0], r["treatment"]) for r in _unmatched],
+   [("quiet", "left IPEDS", "leave unchanged pending identity review")])
+eq("audit: an old NEWID on a college still listed is ignored; its two posts are duplicates",
+   [(r["slug"], r["filled_fields"]) for r in _dups], [("still", 2), ("still-2", 1)])
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

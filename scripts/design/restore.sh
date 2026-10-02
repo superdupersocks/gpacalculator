@@ -38,7 +38,14 @@ for part in $PARTS; do
     simplecss)
       [ -d wp-content/uploads/so-css ] && cp -a wp-content/uploads/so-css "$UNDO/so-css"
       [ -d "$B/so-css" ] && { rm -rf wp-content/uploads/so-css; cp -a "$B/so-css" wp-content/uploads/so-css; echo "restored so-css folder"; }
-      setopt so_css_css; setopt so_css_custom_selectors ;;
+      setopt so_css_css; setopt so_css_custom_selectors
+      # The plugin keeps the CSS in siteorigin_custom_css[<theme>] and regenerates the file from it on save.
+      for f in "$B"/so-css/so-css-*.css; do
+        [ -f "$f" ] || continue
+        t="$(basename "$f" .css)"; t="${t#so-css-}"
+        wp option get "siteorigin_custom_css[$t]" > "$UNDO/options/siteorigin_custom_css-$t.css" 2>/dev/null || true
+        wp option update "siteorigin_custom_css[$t]" < "$f" >/dev/null && echo "restored option siteorigin_custom_css[$t]"
+      done ;;
     customizer)
       for o in theme_mods_generatepress-child theme_mods_generatepress generate_settings site_icon rank-math-options-general rank-math-options-titles; do setopt "$o"; done
       wp post list --post_type=custom_css --post_status=any --fields=ID,post_name,post_content --format=json > "$UNDO/custom_css.json"

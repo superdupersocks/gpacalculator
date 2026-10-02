@@ -88,12 +88,12 @@
 
 .page-template-template-calculator .entry-content {
   --rx-fs-label: 12px;
-  --rx-fs-small: var(--gpa-small-size, 14px);
-  --rx-fs-body: var(--gpa-body-size, 16px);
-    --rx-fs-title:  var(--gpa-h3-size, 24px);
+  --rx-fs-small: var(--gpa-small-size);
+  --rx-fs-body: var(--gpa-body-size);
+  --rx-fs-title: var(--gpa-h3-size);
   --rx-fs-lg: var(--gpa-h3-size, 20px);
   --rx-fs-xl: var(--gpa-h2-size-m, 24px);
-    --rx-fs-h2:     var(--gpa-h2-size, 36px);
+  --rx-fs-h2: var(--gpa-h2-size);
   --rx-fs-num: var(--gpa-h1-size-m, 36px);
 
   --rx-lh-body: var(--gpa-body-line, 1.7);
@@ -762,7 +762,7 @@
     font-size: var(--gpa-h2-size-m, 24px) !important;
   }
   .page-template-template-calculator .entry-content .rx-about h2 {
-    font-size: var(--gpa-h3-size-m, 18px) !important;
+    font-size: var(--gpa-h2-size-m) !important;
   }
 }
 
@@ -850,8 +850,6 @@
   z-index: 0;
   pointer-events: none;
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 80' preserveAspectRatio='none'%3E%3Cpath d='M0 80V40C240 10 480 10 720 30C960 50 1200 50 1440 30V80H0Z' fill='%23ffffff'/%3E%3C/svg%3E")
-      bottom center / 100% 88px no-repeat,
     var(--gpa-gradient-brand);
 }
  
@@ -986,30 +984,12 @@
 }
 
 
-/* ---------- 20. rx-* mobile type scale (design guide) ---------- */
+/* ---------- 20. rx-* mobile type scale ----------
+   Heading and body sizes come from the tokens, which switch to phone values
+   at 768px. Only the small table labels need their own phone size. */
 @media (max-width: 781px) {
-    .page-template-template-calculator .entry-content .rx-h2,
-    .page-template-template-calculator .entry-content .rx-about h2 {
-        font-size: 30px !important;
-    }
-    .page-template-template-calculator .entry-content .rx-card-t,
-    .page-template-template-calculator .entry-content .rx-relcard h3 {
-        font-size: 22px !important;
-    }
-    .page-template-template-calculator.page-template-template-calculator p.rx-card-b,
-    .page-template-template-calculator.page-template-template-calculator p.rx-sub,
-    .page-template-template-calculator.page-template-template-calculator p.rx-mdesc,
-    .page-template-template-calculator.page-template-template-calculator p.rx-def-b,
-    .page-template-template-calculator.page-template-template-calculator .rx-relsub,
-    .page-template-template-calculator.page-template-template-calculator .rx-faq p {
-        font-size: 16px !important;
-    }
     .page-template-template-calculator .entry-content .rx-table thead th {
         font-size: 12px !important;
-    }
-    .page-template-template-calculator .entry-content .rx-table td,
-    .page-template-template-calculator .entry-content .rx-rellist li {
-        font-size: 16px !important;
     }
 }
 
@@ -1019,7 +999,7 @@
    body copy underneath stays left aligned and the cap icon is hidden.
    ------------------------------------------------------------------ */
 .page-template-template-calculator .entry-content .rx-about h2 {
-  justify-content: center;
+  justify-content: flex-start;
   padding-left: 0;
 }
 
@@ -1141,7 +1121,6 @@ body.page-id-77 #root .min-h-screen { min-height: 0 !important; }
 /* Section headings on calculator pages: pill, title and subtitle type and spacing */
 #primary #main .entry-content .rx-sec { margin-bottom: 64px !important; }
 #primary #main .entry-content .rx-sec + .rx-sec { margin-top: 64px !important; }
-#primary #main .entry-content p.rx-eyebrow { font-size: 14px !important; font-weight: 600 !important; line-height: 1.45 !important; color: var(--gpa-accent) !important; margin-bottom: 12px !important; }
+#primary #main .entry-content p.rx-eyebrow { font-size: 14px !important; font-weight: 600 !important; line-height: 1.45 !important; color: var(--gpa-accent) !important; }
 #primary #main .entry-content p.rx-eyebrow + h2.rx-h2 { margin-top: 0 !important; }
-#primary #main .entry-content h2.rx-h2 { margin-bottom: 12px !important; }
-#primary #main .entry-content p.rx-sub { font-size: 18px !important; line-height: 1.6 !important; color: var(--gpa-text-muted) !important; max-width: 700px !important; margin-left: auto !important; margin-right: auto !important; margin-bottom: 24px !important; }
+#primary #main .entry-content p.rx-sub { font-size: var(--gpa-body-size) !important; line-height: var(--gpa-body-line) !important; color: var(--gpa-text-muted) !important; }

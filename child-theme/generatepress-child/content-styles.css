@@ -69,7 +69,7 @@ body:has(.gpa-hero) > #page .entry-header {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-h1-size) !important;
     font-weight: var(--gpa-h1-weight) !important;
-    color: var(--gpa-text-heading) !important;
+    color: var(--gpa-h1-color) !important;
     line-height: var(--gpa-h1-line) !important;
     margin-bottom: 24px !important;
 }
@@ -78,7 +78,7 @@ body:has(.gpa-hero) > #page .entry-header {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-h2-size) !important;
     font-weight: var(--gpa-h2-weight) !important;
-    color: var(--gpa-text-heading) !important;
+    color: var(--gpa-h2-color) !important;
     line-height: var(--gpa-h2-line) !important;
     margin-bottom: 16px !important;
     margin-top: 48px !important;
@@ -88,7 +88,7 @@ body:has(.gpa-hero) > #page .entry-header {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-h3-size) !important;
     font-weight: var(--gpa-h3-weight) !important;
-    color: var(--gpa-text-heading) !important;
+    color: var(--gpa-h3-color) !important;
     margin-bottom: 12px !important;
     margin-top: 32px !important;
 }
@@ -97,7 +97,7 @@ body:has(.gpa-hero) > #page .entry-header {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-h4-size) !important;
     font-weight: var(--gpa-h4-weight) !important;
-    color: var(--gpa-text-heading) !important;
+    color: var(--gpa-h4-color) !important;
     margin-bottom: 8px !important;
     margin-top: 24px !important;
 }
@@ -696,8 +696,6 @@ body.gpa-hero-band .entry-header::after {
   z-index: 0;
   pointer-events: none;
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 80' preserveAspectRatio='none'%3E%3Cpath d='M0 80V40C240 10 480 10 720 30C960 50 1200 50 1440 30V80H0Z' fill='%23ffffff'/%3E%3C/svg%3E")
-      bottom center / 100% 88px no-repeat,
     var(--gpa-gradient-brand);
 }
 
@@ -794,11 +792,7 @@ body.gpa-hero-band .entry-content {
    FAQ     card per question, restyled but still always visible
    ============================================================ */
 .content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
-    font-size: 36px !important;
-    line-height: 1.111 !important;
-    font-weight: 800 !important;
-    color: var(--gpa-heading) !important;
-    letter-spacing: -0.02em !important;
+    letter-spacing: var(--gpa-h2-tracking) !important;
 }
 
 /* Bulleted list as cards */
@@ -808,8 +802,8 @@ body.gpa-hero-band .entry-content {
   margin-bottom: 24px;
 }
 .content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
-  margin-bottom: 12px !important;
-  font-size: 18px !important;
+  margin-bottom: var(--gpa-li-gap) !important;
+  font-size: var(--gpa-body-size) !important;
   display: list-item;
   padding-left: 0;
 }
@@ -884,8 +878,8 @@ body.gpa-hero-band .entry-content {
 }
 .content-page .entry-content .rank-math-answer,
 .content-page .entry-content .rank-math-answer p {
-    font-size: 18px !important;
-    line-height: 1.556 !important;
+    font-size: var(--gpa-body-size) !important;
+    line-height: var(--gpa-body-line) !important;
     color: var(--gpa-text) !important;
 }
 .content-page .entry-content .rank-math-answer {
@@ -899,11 +893,7 @@ body.gpa-hero-band .entry-content {
 }
 
 @media (max-width: 768px) {
-    .content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
-        font-size: 30px !important;
-    }
     .content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
-  font-size: 16px !important;
   display: list-item;
   padding-left: 0;
 }
@@ -1160,8 +1150,7 @@ body.gpa-template-content #page.grid-container {
 /* NATIVE LIST SEMANTICS - custom checkmark boxes and number badges removed */
 /* Content pages (guides, GPA scale, etc.): same heading rhythm as the calculator pages */
 body.gpa-hero-band .entry-header { padding-top: 48px !important; }
-body.gpa-hero-band #primary #main .entry-content h2 { margin-bottom: 12px !important; }
-body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: 18px !important; line-height: 1.6 !important; color: var(--gpa-text-muted) !important; max-width: 700px !important; margin-left: auto !important; margin-right: auto !important; margin-bottom: 24px !important; }
+body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: var(--gpa-body-size) !important; line-height: var(--gpa-body-line) !important; color: var(--gpa-text-muted) !important; }
 
 /* Phones: let wide tables scroll inside themselves instead of pushing the whole page sideways */
 @media (max-width: 767px) { body.gpa-hero-band .entry-content table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } }

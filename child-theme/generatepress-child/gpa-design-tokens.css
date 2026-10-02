@@ -216,31 +216,54 @@
     --gpa-font: "Lexend", "Lexend Fallback", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --gpa-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-    /* ---- Type scale (desktop) ---- */
-    --gpa-h1-size: 48px;
+    /* ---- Type scale (one scale for every template; phones redefine below) ---- */
+    --gpa-h1-size: 44px;
     --gpa-h1-weight: 700;
-    --gpa-h1-line: 1.2;
-    --gpa-h2-size: 28px;
-    --gpa-h2-weight: 700;
+    --gpa-h1-line: 1.15;
+    --gpa-h1-tracking: -0.01em;
+    --gpa-h1-color: var(--gpa-hero-title);
+    --gpa-h2-size: 30px;
+    --gpa-h2-weight: 800;
     --gpa-h2-line: 1.3;
-    --gpa-h3-size: 20px;
-    --gpa-h3-weight: 600;
-    --gpa-h3-line: 1.4;
-    --gpa-h4-size: 17px;
+    --gpa-h2-tracking: -0.02em;
+    --gpa-h2-color: var(--gpa-heading);
+    --gpa-h3-size: 22px;
+    --gpa-h3-weight: 700;
+    --gpa-h3-line: 1.35;
+    --gpa-h3-color: var(--gpa-text-strong);
+    --gpa-h4-size: 18px;
     --gpa-h4-weight: 700;
     --gpa-h4-line: 1.4;
+    --gpa-h4-color: var(--gpa-text-strong);
 
-    /* ---- Type scale (mobile ≤768px) ---- */
-    --gpa-h1-size-m: 36px;
-    --gpa-h2-size-m: 24px;
-    --gpa-h3-size-m: 18px;
+    /* Fixed phone values, for files that switch at their own breakpoint */
+    --gpa-h1-size-m: 32px;
+    --gpa-h2-size-m: 25px;
+    --gpa-h3-size-m: 20px;
 
     /* ---- Body text ---- */
-    --gpa-body-size: 16px;
+    --gpa-body-size: 18px;           /* article text: p, li */
     --gpa-body-lg-size: 18px;
-    --gpa-small-size: 14px;
+    --gpa-ui-size: 16px;             /* nav, forms, buttons, anything that isn't article text */
+    --gpa-small-size: 14px;          /* breadcrumb, table notes, sources meta */
+    --gpa-small-line: 1.5;
     --gpa-body-weight: 400;
     --gpa-body-line: 1.7;
+    --gpa-result-size: 40px;         /* GPA result number */
+
+    /* ---- Text block rhythm ---- */
+    --gpa-p-gap: 20px;
+    --gpa-li-gap: 10px;
+    --gpa-h3-above: 32px;
+    --gpa-h3-below: 12px;
+    --gpa-h4-above: 24px;
+    --gpa-h4-below: 8px;
+
+    /* ---- Section rhythm (layout.css) ---- */
+    --gpa-hdr-above: 64px;           /* above a section header */
+    --gpa-hdr-sub-gap: 12px;         /* H2 → subtitle */
+    --gpa-hdr-below: 32px;           /* header → first content */
+    --gpa-block-gap: 80px;           /* between major blocks */
 
     /* ---- Spacing ---- */
     --gpa-section-py: 80px;
@@ -254,7 +277,9 @@
     /* ---- Layout ---- */
     --gpa-container-max: 1140px;     /* content area (all templates) */
     --gpa-container-wide: 1280px;    /* header / footer (full bleed band) */
-    --gpa-content-max: 900px;        /* article body (content pages) */
+    --gpa-content-max: 900px;        /* white content column: tables, calculator, images */
+    --gpa-text-max: 800px;           /* text blocks inside the column */
+    --gpa-column-radius: 16px;
 
     /* ---- Radii ---- */
     --gpa-radius-sm: 8px;
@@ -283,6 +308,22 @@
     --gpa-calc-radius-card: 16px;
     --gpa-calc-shadow-pop: 0 12px 32px -8px rgba(30,58,138,0.3);
 }
+@media (max-width: 768px) {
+    :root {
+        --gpa-h1-size: var(--gpa-h1-size-m);
+        --gpa-h2-size: var(--gpa-h2-size-m);
+        --gpa-h3-size: var(--gpa-h3-size-m);
+        --gpa-body-size: 17px;
+        --gpa-small-size: 13px;
+        --gpa-result-size: 36px;
+        --gpa-hdr-above: 48px;
+        --gpa-hdr-below: 24px;
+        --gpa-block-gap: 56px;
+    }
+}
+@media (max-width: 480px) {
+    :root { --gpa-h1-size: 28px; }
+}
 
 /* ============================================
    BASE: apply tokens to the whole site
@@ -300,7 +341,7 @@ select:not(#root *, .gpacalc-mount *),
 textarea:not(#root *, .gpacalc-mount *) {
     font-family: var(--gpa-font) !important;
     font-weight: var(--gpa-body-weight) !important;
-    font-size: var(--gpa-body-size) !important;
+    font-size: var(--gpa-ui-size) !important;
     -webkit-font-smoothing: antialiased !important;
 }
 body {
@@ -308,9 +349,10 @@ body {
     color: var(--gpa-text-body) !important;
 }
 
+/* "html hN" outranks the bare hN rules GeneratePress prints inline from the Customizer */
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--gpa-font) !important;
-    color: var(--gpa-text-heading);
+    color: var(--gpa-text-strong);
 }
 
 /* ============================================
@@ -323,30 +365,36 @@ body .site-content {
     margin-left: auto !important;
     margin-right: auto !important;
 }
-h1 {
+html h1 {
     font-size: var(--gpa-h1-size);
     font-weight: var(--gpa-h1-weight);
     line-height: var(--gpa-h1-line);
+    letter-spacing: var(--gpa-h1-tracking);
+    color: var(--gpa-h1-color);
 }
-h2 {
+html h2 {
     font-size: var(--gpa-h2-size);
     font-weight: var(--gpa-h2-weight);
     line-height: var(--gpa-h2-line);
+    letter-spacing: var(--gpa-h2-tracking);
+    color: var(--gpa-h2-color);
 }
-h3 {
+html h3 {
     font-size: var(--gpa-h3-size);
     font-weight: var(--gpa-h3-weight);
     line-height: var(--gpa-h3-line);
+    color: var(--gpa-h3-color);
 }
-h4 {
+html h4 {
     font-size: var(--gpa-h4-size);
     font-weight: var(--gpa-h4-weight);
     line-height: var(--gpa-h4-line);
+    color: var(--gpa-h4-color);
 }
-@media (max-width: 768px) {
-    h1 { font-size: var(--gpa-h1-size-m); }
-    h2 { font-size: var(--gpa-h2-size-m); }
-    h3 { font-size: var(--gpa-h3-size-m); }
+small, figcaption, .wp-element-caption {
+    font-size: var(--gpa-small-size);
+    line-height: var(--gpa-small-line);
+    color: var(--gpa-text-muted);
 }
 
 /* ============================================

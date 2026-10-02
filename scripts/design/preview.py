@@ -40,10 +40,23 @@ def font_file(url, cache):
         return f.read()
 
 
-def transform(html, theme):
-    """Mirror the enqueue changes in functions.php for pages saved before they were deployed."""
+GP_TYPOGRAPHY = [r"body, button, input, select, textarea\{[^}]*\}", r"body\{line-height:[^}]*\}",
+                 r"h1\{font-family[^}]*\}", r"h2\{font-family[^}]*\}", r"h3\{font-family[^}]*\}"]
+
+
+def transform(html, theme, settings=False):
+    """Mirror the enqueue changes in functions.php for pages saved before they were deployed. With settings=True,
+    also mirror the phase 3 site settings: Simple CSS emptied, GeneratePress Customizer typography reset."""
     if not theme:
         return html
+    if settings:
+        html = re.sub(r"<link[^>]+so-css-generatepress\.css[^>]*>", "", html)
+        m = re.search(r"(<style id=.generate-style-inline-css.>)(.*?)(</style>)", html, re.S)
+        if m:
+            css = m.group(2)
+            for rx in GP_TYPOGRAPHY:
+                css = re.sub(rx, "", css)
+            html = html[:m.start(2)] + css + html[m.end(2):]
     links = "".join(theme_link(n, theme) for n in NEW_AFTER_TOKENS
                     if os.path.exists(os.path.join(theme, n)) and f"{THEME_PATH}{n}" not in html)
     if links:
@@ -61,6 +74,8 @@ def main():
     ap.add_argument("snapshot"); ap.add_argument("out")
     ap.add_argument("--theme"); ap.add_argument("--pages"); ap.add_argument("--sizes", default=SIZES)
     ap.add_argument("--full", action="store_true", help="full-page screenshots instead of the first screen")
+    ap.add_argument("--settings", action="store_true",
+                    help="also preview the phase 3 settings changes (Simple CSS emptied, Customizer typography reset)")
     a = ap.parse_args()
     pages_dir = os.path.join(a.snapshot, "pages")
     slugs = a.pages.split(",") if a.pages else sorted(f[:-5] for f in os.listdir(pages_dir) if f.endswith(".html"))
@@ -79,7 +94,7 @@ def main():
         path = urllib.parse.unquote(u.path)
         if route.request.resource_type == "document":
             with open(os.path.join(pages_dir, slug + ".html"), encoding="utf-8") as f:
-                return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=transform(f.read(), a.theme))
+                return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=transform(f.read(), a.theme, a.settings))
         local = None
         if a.theme and path.startswith(THEME_PATH):
             cand = os.path.join(a.theme, path[len(THEME_PATH):])

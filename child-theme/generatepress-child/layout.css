@@ -6,3 +6,130 @@
    Colors and sizes come only from var(--gpa-*) tokens.
    Phase 1 (2026-10-02): file created and enqueued; rules arrive in phases 3–4.
    ============================================================ */
+
+/* Templates that use the article column: calculator pages, content pages
+   (registered template, the older unregistered one, and the body class the
+   theme adds). Blog posts and college pages join in phase 4. */
+
+/* ---------- 1. Page background and the white content column ---------- */
+body {
+    background-color: var(--gpa-page-bg) !important;
+}
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) :is(.site-content, .site-main, .inside-article) {
+    background-color: transparent !important;
+}
+/* On calculator pages the card rises --rx-card-overlap into the hero, so the
+   column's white starts where the hero ends. */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content {
+    max-width: var(--gpa-content-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    background: linear-gradient(to bottom, transparent var(--rx-card-overlap, 0px), var(--gpa-surface) var(--rx-card-overlap, 0px)) !important;
+    border-radius: 0 0 var(--gpa-column-radius) var(--gpa-column-radius);
+    padding-bottom: var(--gpa-hdr-above);
+}
+@media (max-width: 940px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content {
+        border-radius: 0;
+    }
+}
+
+/* Calculator, tables, media, charts: full column width */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *, .gpacalc-mount *) {
+    max-width: 100%;
+}
+
+/* Text blocks: 800px, centred inside the column (ad slots are not text, so they keep the full width) */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, .gpa-callout, .gpa-takeaways):not(#root *, .gpacalc-mount *) {
+    max-width: var(--gpa-text-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* ---------- 2. Article text ---------- */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
+    font-size: var(--gpa-body-size) !important;
+    line-height: var(--gpa-body-line) !important;
+}
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content p:not(#root *, .gpacalc-mount *) {
+    margin-top: 0 !important;
+    margin-bottom: var(--gpa-p-gap) !important;
+}
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content li:not(#root *, .gpacalc-mount *) {
+    margin-bottom: var(--gpa-li-gap) !important;
+}
+#primary #main .entry-content h3:not(#root *, .gpacalc-mount *) {
+    margin-top: var(--gpa-h3-above) !important;
+    margin-bottom: var(--gpa-h3-below) !important;
+}
+#primary #main .entry-content h4:not(#root *, .gpacalc-mount *) {
+    margin-top: var(--gpa-h4-above) !important;
+    margin-bottom: var(--gpa-h4-below) !important;
+}
+#primary #main .entry-content :is(.rx-card, .rx-relcard, .rank-math-list-item, .wp-block-column) > :is(h3, h4):first-child {
+    margin-top: 0 !important;
+}
+
+/* ---------- 3. Section rhythm ---------- */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
+    margin-bottom: var(--gpa-block-gap) !important;
+}
+
+/* ---------- 4. Section headers ----------
+   Moved from the Simple CSS box (2026-10-02), same system, values from tokens.
+   Header = [pill] + H2 [+ subtitle]. The pill is optional and goes away in phase 6.
+   Spacer blocks touching a header are ignored, so the editor can't break the rhythm. */
+
+/* Space ABOVE the header: on the pill if there is one, otherwise on the H2 */
+#primary #main .entry-content :is(p.rx-eyebrow, h2:not(p.rx-eyebrow + h2, p.rx-eyebrow + .wp-block-spacer + h2)):not(:first-child):not(#root *) { margin-top: var(--gpa-hdr-above) !important; }
+/* ...a header that only has a spacer above it still starts its block */
+#primary #main .entry-content .wp-block-spacer:first-child + :is(p.rx-eyebrow, h2) { margin-top: 0 !important; }
+/* ...old React calculators carry their own bottom padding */
+#primary #main .entry-content #root:has(.min-h-screen) + :is(p.rx-eyebrow, h2),
+#primary #main .entry-content #root:has(.min-h-screen) + .wp-block-spacer + :is(p.rx-eyebrow, h2) { margin-top: 0 !important; }
+
+/* Tight pill → H2 */
+#primary #main .entry-content p.rx-eyebrow { margin-bottom: 0 !important; }
+#primary #main .entry-content p.rx-eyebrow + h2:not(#root *),
+#primary #main .entry-content p.rx-eyebrow + .wp-block-spacer + h2:not(#root *) { margin-top: 8px !important; }
+
+/* H2 → subtitle, and header → content */
+#primary #main .entry-content h2:not(#root *) { margin-bottom: 0 !important; }
+#primary #main .entry-content p.rx-sub { margin-bottom: 0 !important; }
+#primary #main .entry-content h2:not(#root *) + p.rx-sub,
+#primary #main .entry-content h2:not(#root *) + .wp-block-spacer + p.rx-sub { margin-top: var(--gpa-hdr-sub-gap) !important; }
+#primary #main .entry-content h2:not(#root *) + :not(p.rx-sub):not(.wp-block-spacer),
+#primary #main .entry-content h2:not(#root *) + .wp-block-spacer + :not(p.rx-sub),
+#primary #main .entry-content p.rx-sub + :not(.wp-block-spacer),
+#primary #main .entry-content p.rx-sub + .wp-block-spacer + * { margin-top: var(--gpa-hdr-below) !important; }
+
+/* Spacer blocks right before or after a header part do nothing */
+#primary #main .entry-content .wp-block-spacer:has(+ :is(p.rx-eyebrow, h2, p.rx-sub)),
+#primary #main .entry-content :is(p.rx-eyebrow, h2, p.rx-sub) + .wp-block-spacer { height: 0 !important; margin: 0 !important; }
+
+/* A header that is the first thing in its card/section gets no top margin */
+#primary #main .entry-content :is(.rx-sec, .rx-card) > :is(p.rx-eyebrow, h2):first-child { margin-top: 0 !important; }
+/* The section right after the calculator sits the standard header distance below it */
+#primary #main .entry-content > #root + .rx-sec { margin-top: var(--gpa-hdr-above) !important; }
+#primary #main .entry-content > #root + .rx-sec > .rx-card:first-child { padding-top: 0 !important; }
+
+/* Headers are left-aligned on content templates (the hero stays centred).
+   Overrides the block editor's has-text-align-center class; no content edits. */
+#primary #main .entry-content :is(h2, h2.rx-h2, p.rx-sub, p.rx-eyebrow):not(#root *, .gpacalc-mount *) {
+    text-align: left !important;
+}
+/* Pills sit on the text column's left edge, like the heading under them */
+#primary #main .entry-content p.rx-eyebrow { margin-left: max(0px, calc((100% - var(--gpa-text-max)) / 2)) !important; margin-right: auto !important; }
+
+/* ---------- 5. Odds and ends moved from Simple CSS ---------- */
+.university-gpa-intro { margin-bottom: 40px; }
+@media (max-width: 768px) {
+    .university-gpa-intro { margin-bottom: 28px; }
+}
+/* Homepage hero on phones (replaced by the shared hero in phase 4) */
+@media (max-width: 767px) {
+    .gpa-hero { padding: 28px 16px !important; }
+    .gpa-hero-title { margin-bottom: 12px !important; }
+    .gpa-hero-sub { font-size: 15px; line-height: 1.4 !important; margin: 6px 0 14px !important; }
+    .gpa-hero-title, .gpa-hero-sub { padding-left: 16px !important; padding-right: 16px !important; }
+}

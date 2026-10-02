@@ -700,61 +700,8 @@ html body div.gpa-rail {
 	max-width: 336px !important;
 }
 
-/* 9/24/2026 */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content {
-	max-width: 900px !important;
-	margin-left: auto !important;
-	margin-right: auto !important;
-}
- 
-/* Calculator, tables, media, charts: full 900px */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *, .gpacalc-mount *) {
-	max-width: 100%;
-}
- 
-/* Article text: 800px, centred (ad slots are not text, so they keep 900px) */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):not(#root *, .gpacalc-mount *) {
-	max-width: 800px !important;
-	margin-left: auto !important;
-	margin-right: auto !important;
-}
- 
-/* Homepage body typography */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
-	font-size: 20px !important;
-	line-height: 34px !important;
-}
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content p:not(#root *, .gpacalc-mount *) {
-	margin-top: 0 !important;
-	margin-bottom: 24px !important;
-}
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content li:not(#root *, .gpacalc-mount *) {
-	margin-bottom: 10px !important;
-}
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *, .gpacalc-mount *) {
-	margin-top: 64px !important;
-	margin-bottom: 16px !important;
-}
- 
-/* Section rhythm */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
-	margin-bottom: 80px !important;
-}
- 
-/* Mobile */
-@media (max-width: 767px) {
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
-		font-size: 18px !important;
-		line-height: 30px !important;
-	}
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *, .gpacalc-mount *) {
-		margin-top: 48px !important;
-	}
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
-		margin-bottom: 56px !important;
-	}
-}
- 
+/* Article column, text width, type and section rhythm: layout.css */
+
  /* Give rail slots their size before the ad loads */
 .gpa-rail [id^="gpacalculator-net_siderail"] { min-width: 300px; }
 

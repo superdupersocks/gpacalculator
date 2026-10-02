@@ -10,6 +10,10 @@
  * Updated: descriptive H1, missing data is hidden instead of shown as "N/A",
  * GPA shown with the same precision as the page title, acceptance rates stored
  * as fractions (0.81) are displayed correctly, FAQs only appear when there is data.
+ *
+ * Pages with the federal data imported by Admissions Phase 2, checkpoint E ($fresh, see college-data.php) show
+ * each figure with its year, the 50th percentiles, IPEDS's admission factors and a Sources section; the FAQ comes
+ * from gpa_college_faqs(), which also feeds the page's FAQPage JSON-LD.
  */
 
 get_header();
@@ -17,6 +21,8 @@ get_header();
 // Get all ACF fields
 $college_name = get_the_title();
 $post_id      = get_the_ID();
+// Federal data from the checkpoint E import, or null on pages it hasn't reached
+$fresh        = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
 
 /**
  * True when a field holds real data (not blank, "N/A", "-", "Not Reported", etc.).
@@ -39,6 +45,10 @@ $act_range             = get_field('act_range');
 $admission_standards   = get_field('admission_standards');
 $net_price_raw         = get_field('net_price');
 $applicant_competition = get_field('applicant_competition');
+if ( $fresh ) {
+    // Third-party labels and GPAs with no primary source (checkpoint B): never shown next to the federal data
+    $average_gpa = $admission_standards = $applicant_competition = '';
+}
 
 // Clean net price for display
 $net_price_clean   = str_replace(array('$', ','), '', (string) $net_price_raw);
@@ -113,8 +123,8 @@ $act_range_display = $has( $act_range ) ? str_replace( '-', '–', $act_range ) 
 $enrollment_clean = str_replace(',', '', (string) $enrollment);
 $enrollment_num   = is_numeric($enrollment_clean) ? number_format((int) $enrollment_clean) : ( $has( $enrollment ) ? $enrollment : '' );
 
-// Image URL (from CSV import via ACF)
-$img_url = get_field('img_url');
+// Image URL (from CSV import via ACF); hotlinked third-party photos are gone from pages with the federal data
+$img_url = $fresh ? '' : get_field('img_url');
 
 // Hero background: prefer featured image, fall back to ACF img_url from CSV import
 $hero_bg = '';
@@ -134,22 +144,53 @@ if ( $cds_gpa ) {
 } elseif ( '' !== $gpa_fmt ) {
     $highlight_cards[] = array( 'class' => 'db-stat-card--blue', 'value' => $gpa_fmt, 'label' => 'Average GPA', 'icon' => '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>' );
 }
-if ( '' !== $sat_range_display ) {
-    $highlight_cards[] = array( 'class' => 'db-stat-card--purple', 'value' => $sat_range_display, 'label' => 'SAT Range', 'icon' => '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>' );
-}
-if ( '' !== $act_range_display ) {
-    $highlight_cards[] = array( 'class' => 'db-stat-card--green', 'value' => $act_range_display, 'label' => 'ACT Range', 'icon' => '<path d="M9 11H15M9 15H13M8 2H16C17.1046 2 18 2.89543 18 4V20C18 21.1046 17.1046 22 16 22H8C6.89543 22 6 21.1046 6 20V4C6 2.89543 6.89543 2 8 2Z"></path><path d="M9 7H15"></path>' );
+$icon_sat_card = '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline>';
+$icon_act_card = '<path d="M9 11H15M9 15H13M8 2H16C17.1046 2 18 2.89543 18 4V20C18 21.1046 17.1046 22 16 22H8C6.89543 22 6 21.1046 6 20V4C6 2.89543 6.89543 2 8 2Z"></path><path d="M9 7H15"></path>';
+if ( $fresh ) {
+    // Section ranges only: IPEDS has no SAT composite, and adding section percentiles doesn't make one
+    $sat_ranges = array();
+    foreach ( $fresh['sat'] as $section => $p ) {
+        if ( '' !== gpa_college_range( $p ) ) {
+            $sat_ranges[ strtolower( $section ) ] = gpa_college_range( $p );
+        }
+    }
+    $score_note = 'Middle 50%, ' . $fresh['fall'] . ' first-year students';
+    if ( $sat_ranges ) {
+        $highlight_cards[] = array( 'class' => 'db-stat-card--purple', 'value' => implode( ' / ', $sat_ranges ), 'value_class' => count( $sat_ranges ) > 1 ? 'db-stat-card__value--pair' : '', 'label' => 'SAT ' . implode( ' / ', array_keys( $sat_ranges ) ), 'note' => $score_note, 'icon' => $icon_sat_card );
+    }
+    if ( isset( $fresh['act']['Composite'] ) && '' !== gpa_college_range( $fresh['act']['Composite'] ) ) {
+        $highlight_cards[] = array( 'class' => 'db-stat-card--green', 'value' => gpa_college_range( $fresh['act']['Composite'] ), 'label' => 'ACT composite', 'note' => $score_note, 'icon' => $icon_act_card );
+    }
+} else {
+    if ( '' !== $sat_range_display ) {
+        $highlight_cards[] = array( 'class' => 'db-stat-card--purple', 'value' => $sat_range_display, 'label' => 'SAT Range', 'icon' => $icon_sat_card );
+    }
+    if ( '' !== $act_range_display ) {
+        $highlight_cards[] = array( 'class' => 'db-stat-card--green', 'value' => $act_range_display, 'label' => 'ACT Range', 'icon' => $icon_act_card );
+    }
 }
 $has_highlight_badges = $has( $admission_standards ) || '' !== $net_price_display || $has( $applicant_competition );
 
+// The H1's second line names what the page has
+if ( $cds_gpa ) {
+    $h1_sub = 'Average GPA & Admissions';
+} elseif ( '' !== $gpa_fmt ) {
+    $h1_sub = 'GPA Requirements & Admissions';
+} elseif ( $fresh && ! $has_acceptance ) {
+    $h1_sub = $fresh['open'] ? 'Admission Requirements' : 'Admissions';
+} else {
+    $h1_sub = 'Admissions & Acceptance Rate';
+}
+
 // SAT / ACT table rows that actually have data
-$score_row = function ( $label, $low, $high, $icon, $highlight = false ) use ( $has ) {
+$score_row = function ( $label, $low, $high, $icon, $highlight = false, $mid = null ) use ( $has ) {
     if ( ! $has( $low ) && ! $has( $high ) ) {
         return null;
     }
     return array(
         'label'     => $label,
         'low'       => $has( $low ) ? $low : '—',
+        'mid'       => $has( $mid ) ? $mid : null,
         'high'      => $has( $high ) ? $high : '—',
         'icon'      => $icon,
         'highlight' => $highlight,
@@ -159,16 +200,29 @@ $icon_reading   = '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><pa
 $icon_math      = '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>';
 $icon_composite = '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>';
 
-$sat_rows = array_values( array_filter( array(
-    $score_row( 'Reading', $sat_reading_25, $sat_reading_75, $icon_reading ),
-    $score_row( 'Math', $sat_math_25, $sat_math_75, $icon_math ),
-    $score_row( 'Composite', $sat_composite_25, $sat_composite_75, $icon_composite, true ),
-) ) );
-$act_rows = array_values( array_filter( array(
-    $score_row( 'Reading', $act_reading_25, $act_reading_75, $icon_reading ),
-    $score_row( 'Math', $act_math_25, $act_math_75, $icon_math ),
-    $score_row( 'Composite', $act_composite_25, $act_composite_75, $icon_composite, true ),
-) ) );
+if ( $fresh ) {
+    $fresh_rows = function ( $test ) use ( $fresh, $score_row, $icon_reading, $icon_math, $icon_composite ) {
+        $icons = array( 'Reading and Writing' => $icon_reading, 'English' => $icon_reading, 'Math' => $icon_math, 'Composite' => $icon_composite );
+        $rows  = array();
+        foreach ( $fresh[ $test ] as $section => $p ) {
+            $rows[] = $score_row( $section, $p[0], $p[2], $icons[ $section ], 'Composite' === $section, $p[1] );
+        }
+        return array_values( array_filter( $rows ) );
+    };
+    $sat_rows = $fresh_rows( 'sat' );
+    $act_rows = $fresh_rows( 'act' );
+} else {
+    $sat_rows = array_values( array_filter( array(
+        $score_row( 'Reading', $sat_reading_25, $sat_reading_75, $icon_reading ),
+        $score_row( 'Math', $sat_math_25, $sat_math_75, $icon_math ),
+        $score_row( 'Composite', $sat_composite_25, $sat_composite_75, $icon_composite, true ),
+    ) ) );
+    $act_rows = array_values( array_filter( array(
+        $score_row( 'Reading', $act_reading_25, $act_reading_75, $icon_reading ),
+        $score_row( 'Math', $act_math_25, $act_math_75, $icon_math ),
+        $score_row( 'Composite', $act_composite_25, $act_composite_75, $icon_composite, true ),
+    ) ) );
+}
 $has_sat = ! empty( $sat_rows ) || $has( $average_sat_score );
 $has_act = ! empty( $act_rows ) || $has( $average_act_score );
 ?>
@@ -177,6 +231,10 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
     .db-hero__title-sub { display: block; font-size: 0.5em; font-weight: 600; opacity: 0.9; margin-top: 0.35em; line-height: 1.25; }
     .db-scores__empty { padding: 16px 20px; color: #64748b; font-size: 0.95em; margin: 0; }
     .db-stat-card__note { font-size: 0.75em; color: #64748b; margin-top: 4px; line-height: 1.3; }
+    .db-stat-card__value.db-stat-card__value--pair { font-size: 22px !important; }
+    .db-scores__note { padding: 0 20px 16px; color: #64748b; font-size: 0.85em; margin: 0; }
+    .db-sources__list { margin: 0; padding: 16px 20px 20px 40px; color: #475569; font-size: 0.9em; line-height: 1.5; }
+    .db-sources__list li + li { margin-top: 8px; }
 </style>
 
 <div class="db-college-profile">
@@ -189,7 +247,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
     <section class="db-hero" style="<?php echo esc_attr( $hero_style ); ?>">
         <div class="db-hero__overlay"></div>
         <div class="db-hero__content">
-               <h1 class="db-hero__title"><?php echo esc_html($college_name); ?> <span class="db-hero__title-sub"><?php echo '' !== $gpa_fmt ? 'GPA Requirements &amp; Admissions' : 'Admissions &amp; Acceptance Rate'; ?></span></h1>
+               <h1 class="db-hero__title"><?php echo esc_html($college_name); ?> <span class="db-hero__title-sub"><?php echo esc_html( $h1_sub ); ?></span></h1>
             <?php if ( $has( $location ) ) : ?>
                 <div class="db-hero__location">
                     <svg class="db-hero__location-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -219,6 +277,14 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                         </svg>
                         Acceptance Rate: <?php echo esc_html( $acceptance_display ); ?>
                     </span>
+                <?php elseif ( $fresh && $fresh['open'] ) : ?>
+                    <span class="db-badge db-badge--green">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Open Admission
+                    </span>
                 <?php endif; ?>
 
                 <?php if ( '' !== $enrollment_num ) : ?>
@@ -229,7 +295,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        Enrollment: <?php echo esc_html($enrollment_num); ?>
+                        <?php echo $fresh ? 'Undergraduates' : 'Enrollment'; ?>: <?php echo esc_html($enrollment_num); ?>
                     </span>
                 <?php endif; ?>
             </div>
@@ -259,7 +325,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                         <div class="db-stat-card__icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><?php echo $card['icon']; ?></svg>
                         </div>
-                        <div class="db-stat-card__value"><?php echo esc_html( $card['value'] ); ?></div>
+                        <div class="db-stat-card__value<?php echo ! empty( $card['value_class'] ) ? ' ' . esc_attr( $card['value_class'] ) : ''; ?>"><?php echo esc_html( $card['value'] ); ?></div>
                         <div class="db-stat-card__label"><?php echo esc_html( $card['label'] ); ?></div>
                         <?php if ( ! empty( $card['note'] ) ) : ?>
                         <div class="db-stat-card__note"><?php echo esc_html( $card['note'] ); ?></div>
@@ -292,7 +358,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                         </svg>
                         <div class="db-highlight-badge__text">
-                            <span class="db-highlight-badge__label">Net Price</span>
+                            <span class="db-highlight-badge__label"><?php echo $fresh && '' !== $fresh['net_price_year'] ? 'Average Net Price, ' . esc_html( $fresh['net_price_year'] ) : 'Net Price'; ?></span>
                             <span class="db-highlight-badge__value"><?php echo esc_html($net_price_display); ?></span>
                         </div>
                     </div>
@@ -331,7 +397,13 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
             </div>
 
             <?php if ( ! $has_sat && ! $has_act ) : ?>
+                <?php if ( $fresh && $fresh['open'] && '' === $fresh['fall'] ) : ?>
+                <p class="db-scores__empty"><?php echo esc_html( $college_name ); ?> has an open admission policy, so it doesn't report admission test scores.</p>
+                <?php elseif ( $fresh ) : ?>
+                <p class="db-scores__empty"><?php echo esc_html( $college_name ); ?> didn't report SAT or ACT scores for its first-year students to the U.S. Department of Education<?php echo '' !== $fresh['fall'] ? ' for ' . esc_html( $fresh['fall'] ) : ''; ?>.</p>
+                <?php else : ?>
                 <p class="db-scores__empty"><?php echo esc_html( $college_name ); ?> does not report SAT or ACT scores for admitted students. Check the admission requirements below, or the school's admissions office, to see whether test scores are required.</p>
+                <?php endif; ?>
             <?php else : ?>
             <div class="db-scores__grid">
                 <?php
@@ -346,24 +418,31 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                         <h3 class="db-scores__column-title"><?php echo esc_html( $col['name'] ); ?> Scores</h3>
                         <?php if ( $has( $col['avg'] ) ) : ?>
                             <div class="db-scores__average">
-                                <span class="db-scores__average-label">Average <?php echo esc_html( $col['name'] ); ?> Score</span>
+                                <span class="db-scores__average-label"><?php echo $fresh ? 'Average ' . esc_html( $col['name'] ) . ' (College Scorecard estimate)' : 'Average ' . esc_html( $col['name'] ) . ' Score'; ?></span>
                                 <span class="db-scores__average-value"><?php echo esc_html( $col['avg'] ); ?></span>
                             </div>
                         <?php endif; ?>
                         <?php if ( $has( $col['submit'] ) ) : ?>
                             <div class="db-scores__submitting">
+                                <?php if ( $fresh ) : ?>
+                                <?php echo esc_html( gpa_fmt_pct( $col['submit'] ) ); ?> of <?php echo esc_html( $fresh['fall'] ); ?> first-year students submitted <?php echo esc_html( $col['name'] ); ?> scores
+                                <?php else : ?>
                                 <?php echo esc_html( gpa_fmt_pct( $col['submit'] ) ); ?> of applicants submit <?php echo esc_html( $col['name'] ); ?> scores
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
 
                     <div class="db-scores__body">
-                        <?php if ( ! empty( $col['rows'] ) ) : ?>
+                        <?php if ( ! empty( $col['rows'] ) ) :
+                            $show_mid = (bool) array_filter( array_column( $col['rows'], 'mid' ), function ( $v ) { return null !== $v; } );
+                        ?>
                         <table class="db-scores__table" aria-label="<?php echo esc_attr( $col['name'] . ' score percentiles for ' . $college_name ); ?>">
                             <thead>
                                 <tr>
                                     <th scope="col">Section</th>
                                     <th scope="col">25th percentile</th>
+                                    <?php if ( $show_mid ) : ?><th scope="col">50th percentile</th><?php endif; ?>
                                     <th scope="col">75th percentile</th>
                                 </tr>
                             </thead>
@@ -375,6 +454,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                                         <?php echo esc_html( $row['label'] ); ?>
                                     </th>
                                     <td><?php echo esc_html( $row['low'] ); ?></td>
+                                    <?php if ( $show_mid ) : ?><td><?php echo esc_html( null !== $row['mid'] ? $row['mid'] : '—' ); ?></td><?php endif; ?>
                                     <td><?php echo esc_html( $row['high'] ); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -387,6 +467,9 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                 </div>
                 <?php endforeach; ?>
             </div>
+            <?php if ( $fresh && '' !== $fresh['fall'] ) : ?>
+            <p class="db-scores__note">Scores of first-year students who entered in <?php echo esc_html( $fresh['fall'] ); ?> and submitted them, as <?php echo esc_html( $college_name ); ?> reported to the U.S. Department of Education. The middle 50% scored between the 25th and 75th percentiles.</p>
+            <?php endif; ?>
             <?php endif; ?>
         </section>
 
@@ -445,9 +528,34 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
         $requirements = array_values( array_filter( $requirements, function ( $req ) {
             return ! in_array( strtolower( trim( (string) $req['value'] ) ), array( '', 'not applicable', 'do not know', 'not reported' ), true );
         } ) );
+        if ( $fresh ) {
+            // IPEDS's admission factors, in its own terms, with the icons above where the factor had one
+            $icons = array();
+            foreach ( $requirements as $req ) {
+                $icons[ $req['label'] ] = $req['icon'];
+            }
+            $requirements = array();
+            foreach ( gpa_college_requirement_items() as $field => $item ) {
+                if ( ! isset( $fresh['requirements'][ $field ] ) ) {
+                    continue;
+                }
+                list( $status, $used ) = gpa_college_requirement_status( $fresh['requirements'][ $field ] );
+                if ( '' === $status ) {
+                    continue;
+                }
+                $requirements[] = array(
+                    'label'       => $item[0],
+                    'value'       => $fresh['requirements'][ $field ],
+                    'status'      => $status,
+                    'required'    => $used,
+                    'description' => $item[1],
+                    'icon'        => isset( $icons[ $item[0] ] ) ? $icons[ $item[0] ] : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>',
+                );
+            }
+        }
         ?>
 
-        <?php if ( $requirements ) : ?>
+        <?php if ( $requirements || ( $fresh && $fresh['open'] ) ) : ?>
         <section class="db-card db-requirements">
             <div class="db-card__header">
                 <h2 class="db-card__title">
@@ -459,13 +567,19 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                 </h2>
             </div>
 
+            <?php if ( ! $requirements ) : ?>
+            <p class="db-scores__empty"><?php echo esc_html( $college_name ); ?> has an open admission policy: it accepts any student who applies<?php echo '' !== $fresh['open_year'] ? ', as it reported to the U.S. Department of Education for ' . esc_html( $fresh['open_year'] ) : ''; ?>.</p>
+            <?php endif; ?>
             <div class="db-requirements__grid">
                 <?php foreach ($requirements as $req) :
                     $is_required = false;
                     $status_text = 'Not Required';
                     $value_lower = strtolower(trim($req['value'] ?? ''));
 
-                    if (
+                    if ( isset( $req['status'] ) ) {
+                        $is_required = $req['required'];
+                        $status_text = $req['status'];
+                    } elseif (
                         $value_lower === 'required' ||
                         $value_lower === 'yes' ||
                         $value_lower === 'recommended' ||
@@ -520,7 +634,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                     <line x1="12" y1="16" x2="12" y2="12"></line>
                     <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
-                <p>Admission requirements may vary by program and applicant type. Always check the official <?php echo esc_html($college_name); ?> admissions page for the most current requirements and deadlines.</p>
+                <p><?php if ( $requirements && $fresh && '' !== $fresh['fall'] ) : ?>As <?php echo esc_html( $college_name ); ?> reported to the U.S. Department of Education in its <?php echo esc_html( $fresh['fall'] ); ?> admissions data. <?php endif; ?>Admission requirements may vary by program and applicant type. Always check the official <?php echo esc_html($college_name); ?> admissions page for the most current requirements and deadlines.</p>
             </div>
         </section>
         <?php endif; ?>
@@ -602,7 +716,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                     <line x1="12" y1="9" x2="12" y2="13"></line>
                     <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
-                <p>Credit policies and limits vary by department. Contact the <?php echo esc_html($college_name); ?> admissions office or registrar for specific credit transfer policies and maximum credit allowances.</p>
+                <p><?php if ( $fresh && '' !== $fresh['credits_year'] ) : ?>As <?php echo esc_html( $college_name ); ?> reported to the U.S. Department of Education for <?php echo esc_html( $fresh['credits_year'] ); ?>. <?php endif; ?>Credit policies and limits vary by department. Contact the <?php echo esc_html($college_name); ?> admissions office or registrar for specific credit transfer policies and maximum credit allowances.</p>
             </div>
         </section>
         <?php endif; ?>
@@ -611,46 +725,8 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
              SECTION 6: FAQ (only questions we can answer with data)
              ============================================ -->
         <?php
-        $sat_answer_value   = $has( $average_sat_score ) ? $average_sat_score : $sat_range_display;
-        $sat_submit_display = $has( $applicants_submitting_sat ) ? gpa_fmt_pct( $applicants_submitting_sat ) : '';
-
-        $faqs = array();
-
-        if ( $cds_gpa ) {
-            $faqs[] = array(
-                'question' => 'What is the average high school GPA at ' . $college_name . '?',
-                'answer'   => esc_html( gpa_college_cds_gpa_answer( $college_name, $cds_gpa ) ) . ' Source: <a href="' . esc_url( $cds_gpa['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $college_name . ' Common Data Set ' . $cds_gpa['year'] ) . '</a>.',
-            );
-        } elseif ( '' !== $gpa_fmt ) {
-            $faqs[] = array(
-                'question' => 'What GPA do I need to get into ' . $college_name . '?',
-                'answer'   => 'The average GPA of admitted students at ' . $college_name . ' is <strong>' . esc_html($gpa_fmt) . '</strong>. While this is the average, ' . $college_name . ' considers your entire application holistically. A strong GPA combined with extracurricular activities, essays, and recommendations can strengthen your application. We recommend aiming for a GPA at or above the average to be competitive.',
-            );
-        }
-        if ( '' !== $sat_answer_value ) {
-            $faqs[] = array(
-                'question' => 'What SAT score is required for ' . $college_name . '?',
-                'answer'   => ( $has( $average_sat_score ) ? 'The average SAT score for admitted students at ' : 'The middle 50% SAT range for admitted students at ' ) . $college_name . ' is <strong>' . esc_html($sat_answer_value) . '</strong>. ' . ($sat_submit_display ? esc_html($sat_submit_display) . ' of applicants submit SAT scores. ' : '') . 'Keep in mind that admissions decisions are based on multiple factors beyond test scores. Check the admission requirements section above to see if test scores are required or optional for your application.',
-            );
-        }
-        if ( $has_acceptance ) {
-            $faqs[] = array(
-                'question' => 'What is the acceptance rate at ' . $college_name . '?',
-                'answer'   => $college_name . ' has an acceptance rate of <strong>' . esc_html($acceptance_display) . '</strong>. ' . ($acceptance_rate_num < 20 ? 'This makes it a highly selective institution. Applicants should ensure every component of their application is as strong as possible.' : ($acceptance_rate_num < 50 ? 'This indicates a moderately selective admissions process. A solid academic record and well-rounded application will improve your chances.' : 'This means the school accepts a relatively high proportion of applicants. Focus on meeting the basic requirements and submitting a complete application.')) . ( '' !== $enrollment_num ? ' With an enrollment of ' . esc_html($enrollment_num) . ' students, competition can vary by program.' : '' ),
-            );
-        }
-        if ( '' !== $net_price_display ) {
-            $faqs[] = array(
-                'question' => 'How much does it cost to attend ' . $college_name . '?',
-                'answer'   => 'The estimated net price to attend ' . $college_name . ' is <strong>' . esc_html($net_price_display) . '</strong> per year. Net price represents the average cost after financial aid and scholarships are applied. Actual costs may vary based on your financial situation, residency status, and the financial aid package you receive. Contact the financial aid office for a personalized estimate.',
-            );
-        }
-        if ( $has( $admission_standards ) ) {
-            $faqs[] = array(
-                'question' => 'How competitive is admission to ' . $college_name . '?',
-                'answer'   => $college_name . ' has <strong>' . esc_html($admission_standards) . '</strong> admission standards' . ( $has( $applicant_competition ) ? ' with a <strong>' . esc_html($applicant_competition) . '</strong> level of applicant competition' : '') . '. ' . ('' !== $gpa_fmt ? 'The average admitted student has a GPA of ' . esc_html($gpa_fmt) . '. ' : '') . 'To improve your chances, focus on maintaining strong grades, preparing well for standardized tests, and building a well-rounded application with meaningful extracurricular activities.',
-            );
-        }
+        // One list for this section and the page's FAQPage JSON-LD (college-data.php)
+        $faqs = function_exists( 'gpa_college_faqs' ) ? gpa_college_faqs( $post_id ) : array();
         ?>
 
         <?php if ( ! empty( $faqs ) ) : ?>
@@ -683,6 +759,29 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                     </div>
                 <?php endforeach; ?>
             </div>
+        </section>
+        <?php endif; ?>
+
+        <?php
+        // Where the federal figures come from (the GPA cites the college's own file in its FAQ answer)
+        $sources = function_exists( 'gpa_college_sources' ) ? gpa_college_sources( $post_id ) : array();
+        ?>
+        <?php if ( $sources ) : ?>
+        <section class="db-card db-sources">
+            <div class="db-card__header">
+                <h2 class="db-card__title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    Sources
+                </h2>
+            </div>
+            <ul class="db-sources__list">
+                <?php foreach ( $sources as $source ) : ?>
+                <li><?php echo esc_html( $source['what'] ); ?> <a href="<?php echo esc_url( $source['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $source['link'] ); ?></a></li>
+                <?php endforeach; ?>
+            </ul>
         </section>
         <?php endif; ?>
 

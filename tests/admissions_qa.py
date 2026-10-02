@@ -23,6 +23,7 @@ import build  # noqa: E402
 import cds  # noqa: E402
 import fetch  # noqa: E402
 import match  # noqa: E402
+import phase2_e_import  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
 fails = []
@@ -39,6 +40,7 @@ with tempfile.TemporaryDirectory() as tmp:
     tmp = Path(tmp)
     build.main(["--raw", str(FIX / "raw"), "--out", str(tmp)])
     rows = {r["unitid"]: r for r in csv.DictReader(open(tmp / "institutions.csv"))}
+    full_rows = rows  # with the Scorecard file; the checkpoint E checks below use these
     src = json.loads((tmp / "field_sources.json").read_text())
     report = (tmp / "qa_report.md").read_text()
 
@@ -525,6 +527,42 @@ eq("audit: Phase 1 matches that IPEDS names contradict are reassigned",
    [("capital-college", "840", "830", "no longer listed: now in unmatched.csv"),
     ("plains-atc", "860", "850", "matched to this college instead"),
     ("brand-college", "870", "880", "matched to this college instead")])
+
+# Checkpoint E: the fields an imported page gets, and which confident matches wait
+_e = phase2_e_import
+_years = {"enrollment": "2024", "net_price": "2022–23", "credits": "2024–25", "ipeds_release": "2024–25 provisional",
+          "scorecard_release": "June 10, 2026"}
+_h = _e.row_for({"slug": "harvard", "title": "Harvard University"}, full_rows["166027"], _years)
+eq("E: Harvard's identity, place and type", (_h["ipeds_unitid"], _h["location"], _h["owning"]),
+   ("166027", "Cambridge, Massachusetts", "Private nonprofit, 4-year"))
+eq("E: Harvard's acceptance rate keeps a decimal under 10%, with its counts and year",
+   (_h["acceptance_rate"], _h["adm_admits"], _h["adm_applicants"], _h["adm_year"]), ("3.6%", "1966", "54008", "2024"))
+eq("E: Harvard's medians and requirement wording come straight from IPEDS",
+   (_h["sat_reading_50"], _h["admission_requirements_high_school_gpa"]), ("760", "Considered but not required"))
+eq("E: enrollment and net price carry their years; private colleges have no in-state scope",
+   (_h["enrollment"], _h["enrollment_year"], _h["net_price"], _h["net_price_year"], _h["net_price_scope"]),
+   ("7,240", "2024", "$13,900", "2022–23", ""))
+eq("E: the average SAT is labeled College Scorecard's", (_h["average_sat_score"], _h["average_sat_score_source"]),
+   ("1540", "College Scorecard"))
+eq("E: fields with no fresh source are emptied", {k: _h[k] for k in _e.EMPTIED}, {k: "" for k in _e.EMPTIED})
+eq("E: a public college's net price is the in-state one",
+   _e.row_for({"slug": "alabama", "title": "Alabama"}, full_rows["100751"], _years)["net_price_scope"], "in-state")
+_none = _e.row_for({"slug": "few", "title": "Few"}, dict(full_rows["166027"], admits="0", admit_rate="0.0"), _years)
+eq("E: no acceptance rate when a college admitted none of its applicants", (_none["acceptance_rate"],
+   _none["adm_admits"]), ("", "0"))
+_sc = _e.row_for({"slug": "sc", "title": "Scorecard Only"}, full_rows["888001"], _years)
+eq("E: College Scorecard admissions, enrollment and net price (year not stated) are left out",
+   (_sc["acceptance_rate"], _sc["adm_year"], _sc["enrollment"], _sc["net_price"], _sc["average_sat_score"]),
+   ("", "", "", "", "1050"))
+eq("E: pct_text rounding", [_e.pct_text(v) for v in ("0.0364", "0.43", "0.0996", "0.05")],
+   ["3.6%", "43%", "10%", "5%"])
+_m = {"slug": "x", "unitid": "1"}
+eq("E: hold reasons, in order",
+   [_e.hold_reason(_m, i, c, set(), set()).split(" (")[0].split(":")[0] for i, c in (
+       (full_rows["166027"], {}), (full_rows["999001"], {}), (full_rows["999003"], {}), (full_rows["888001"], {}),
+       (full_rows["166027"], {"x": {"outcome": "matched to this college instead", "unitid": "2"}}), (None, {}))],
+   ["", "IPEDS lists a closing date", "open in IPEDS 2024 but missing from College Scorecard's June 2026 release",
+    "no IPEDS 2024 record of its own", "the audit corrected this match", "UNITID 1 isn't in institutions.csv"])
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

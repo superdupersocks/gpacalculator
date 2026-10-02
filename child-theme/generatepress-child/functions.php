@@ -652,6 +652,12 @@ function gpa_calc_remove_article_meta() {
     }
 }
 
+// College profile data from the federal import (Admissions Phase 2, checkpoint E) and the shared FAQ. Loaded only
+// when present, and every caller below checks for its functions, so deploying functions.php alone can't break the site.
+if ( is_readable( get_stylesheet_directory() . '/college-data.php' ) ) {
+    require_once get_stylesheet_directory() . '/college-data.php';
+}
+
 add_filter('rank_math/json_ld', 'gpa_college_page_schema', 99, 2);
 function gpa_college_page_schema($data, $jsonld) {
     if ( ! is_singular('colleges') ) {
@@ -668,6 +674,11 @@ function gpa_college_page_schema($data, $jsonld) {
     $sat_range  = get_field('sat_range', $post_id);
     $act_range  = get_field('act_range', $post_id);
     $acceptance = get_field('acceptance_rate', $post_id);
+    // Pages with the federal import describe themselves from it; no unsourced GPA or estimated SAT average
+    $fresh      = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+    if ( $fresh ) {
+        $avg_gpa = $avg_sat = '';
+    }
 
     foreach ($data as $key => $value) {
         if ( is_array($value) && isset($value['@type']) ) {
@@ -734,7 +745,16 @@ function gpa_college_page_schema($data, $jsonld) {
     }
 
     $loc_clean = trim( (string) $location );
-    if ( $loc_clean !== '' && strcasecmp($loc_clean, 'N/A') !== 0 ) {
+    if ( $fresh && $loc_clean !== '' ) {
+        $type        = gpa_college_type_phrase( $post_id );
+        $description = $college . ' is ' . ( preg_match( '/^[aeiou]/i', $type ) ? 'an ' : 'a ' ) . $type . ' in ' . $loc_clean . '.';
+        if ( null !== $fresh['rate'] && '' !== $fresh['fall'] ) {
+            $description .= ' Its acceptance rate for ' . $fresh['fall'] . ' was ' . gpa_college_pct_txt( $fresh['rate'] ) . '.';
+        } elseif ( $fresh['open'] ) {
+            $description .= ' It has an open admission policy.';
+        }
+        $college_schema['description'] = $description;
+    } elseif ( $loc_clean !== '' && strcasecmp($loc_clean, 'N/A') !== 0 ) {
         $description = $college . ' is located in ' . $loc_clean . '.';
 
         $acc_clean = trim( (string) $acceptance );
@@ -760,14 +780,14 @@ function gpa_college_page_schema($data, $jsonld) {
 
     if ( has_post_thumbnail($post_id) ) {
         $college_schema['image'] = get_the_post_thumbnail_url($post_id, 'full');
-    } else {
+    } elseif ( ! $fresh ) {
         $img_url = get_field('img_url', $post_id);
         if ( ! empty($img_url) ) {
             $college_schema['image'] = $img_url;
         }
     }
 
-    $enrollment = get_field('enrollment', $post_id);
+    $enrollment = $fresh ? '' : get_field('enrollment', $post_id); // the import holds undergraduates only, not every student
     if ( $enrollment ) {
         $enrollment_clean = (int) preg_replace('/[^0-9]/', '', (string) $enrollment);
         if ( $enrollment_clean > 0 ) {
@@ -811,71 +831,15 @@ function gpa_college_page_schema($data, $jsonld) {
 
     $data['EducationalOccupationalProgram'] = $program_schema;
 
+    // The same questions and answers as the page's FAQ section (college-data.php), as plain text
     $faq_items = array();
-
-    $cds_gpa = gpa_college_cds_gpa( $post_id );
-    if ( $cds_gpa ) {
+    foreach ( ( function_exists( 'gpa_college_faqs' ) ? gpa_college_faqs( $post_id ) : array() ) as $faq ) {
         $faq_items[] = array(
             '@type' => 'Question',
-            'name'  => 'What is the average high school GPA at ' . $college . '?',
+            'name'  => $faq['question'],
             'acceptedAnswer' => array(
                 '@type' => 'Answer',
-                'text'  => gpa_college_cds_gpa_answer( $college, $cds_gpa ),
-            ),
-        );
-    }
-
-    if ( $avg_gpa ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'What GPA do you need to get into ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The average GPA of admitted students at ' . $college . ' is ' . $avg_gpa . '.',
-            ),
-        );
-    }
-
-    if ( preg_match( '/\d/', (string) $acceptance ) ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'What is the acceptance rate at ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The acceptance rate at ' . $college . ' is ' . $acceptance . '.',
-            ),
-        );
-    }
-
-       if ( $sat_range && ! in_array( strtolower( trim( $sat_range ) ), array( '-', '–', 'n/a', 'not reported' ), true ) ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'What SAT score do you need for ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The SAT range for admitted students at ' . $college . ' is ' . $sat_range . '.',
-            ),
-        );
-    }
-
-        if ( $act_range && ! in_array( strtolower( trim( $act_range ) ), array( '-', '–', 'n/a', 'not reported' ), true ) ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'What ACT score do you need for ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The ACT range for admitted students at ' . $college . ' is ' . $act_range . '.',
-            ),
-        );
-    }
-
-    if ( preg_match( '/\d/', (string) $net_price ) ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'How much does it cost to attend ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The average net price at ' . $college . ' is ' . $net_price . ' per year.',
+                'text'  => gpa_college_faq_text( $faq['answer'] ),
             ),
         );
     }
@@ -1058,14 +1022,18 @@ function gpa_admission_filter_force_canonical() {
 }
 
 if ( ! function_exists( 'gpa_college_acc_pct' ) ) {
-    // Acceptance rate as a whole-number string ("5%"), or '' when missing, 0 or 100% (open admission / not reported).
+    // Acceptance rate as text ("43%", "3.6%": one decimal under 10%), or '' when missing, 0 or 100% (open admission /
+    // not reported).
     function gpa_college_acc_pct( $post_id ) {
         $raw = trim( (string) get_field( 'acceptance_rate', $post_id ) );
         $acc = (float) preg_replace( '/[^0-9.]/', '', $raw );
         if ( $acc > 0 && $acc <= 1 && false === strpos( $raw, '%' ) ) {
             $acc *= 100; // stored as a fraction, e.g. 0.81
         }
-        return ( $acc > 0 && $acc < 100 ) ? round( $acc ) . '%' : '';
+        if ( ! ( $acc > 0 && $acc < 100 ) ) {
+            return '';
+        }
+        return function_exists( 'gpa_college_pct_txt' ) ? gpa_college_pct_txt( $acc ) : round( $acc ) . '%';
     }
 }
 if ( ! function_exists( 'gpa_college_gpa_txt' ) ) {
@@ -1128,8 +1096,21 @@ if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
         $name    = get_the_title( $post_id );
         $gpa     = gpa_college_gpa_txt( $post_id );
         $acc     = gpa_college_acc_pct( $post_id );
+        $cds     = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
+        $fresh   = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+        $tests   = $fresh ? implode( '/', array_keys( array_filter( array( 'SAT' => $fresh['sat'], 'ACT' => $fresh['act'] ) ) ) ) : '';
 
-        if ( '' !== $gpa && '' !== $acc ) {
+        if ( $cds ) {
+            // The college's own Common Data Set GPA: the page gives it with its year and source; the title names it only
+            $options = '' !== $acc ? array(
+                $name . ' Average GPA & Acceptance Rate (' . $acc . ')',
+                $name . ': Average GPA & ' . $acc . ' Acceptance Rate',
+                $name . ': Average GPA & ' . $acc . ' Acceptance',
+            ) : array(
+                $name . ' Average GPA' . ( '' !== $tests ? ' & ' . $tests . ' Scores' : ' & Admissions' ),
+                $name . ' Average GPA & Admissions',
+            );
+        } elseif ( '' !== $gpa && '' !== $acc ) {
             $options = array(
                 $name . ' GPA Requirements (' . $gpa . ' Avg) & ' . $acc . ' Acceptance Rate',
                 $name . ' GPA Requirements: ' . $gpa . ' Avg, ' . $acc . ' Acceptance',
@@ -1147,6 +1128,14 @@ if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
                 $name . ' Acceptance Rate (' . $acc . ') & Admissions',
                 $name . ' Acceptance Rate: ' . $acc,
             );
+            if ( '' !== $tests ) {
+                array_unshift( $options, $name . ' Acceptance Rate (' . $acc . ') & ' . $tests . ' Scores' );
+            }
+        } elseif ( $fresh && $fresh['open'] ) {
+            $options = array(
+                $name . ' Admission Requirements & Open Admission',
+                $name . ' Admission Requirements',
+            );
         } else {
             $options = array(
                 $name . ' Admission Requirements & Acceptance Rate',
@@ -1156,6 +1145,7 @@ if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
         }
 		        // Very long college names: fall back to shorter formats so the title still fits
         if ( '' !== $gpa ) { $options[] = $name . ': ' . $gpa . ' GPA'; }
+        if ( $cds ) { $options[] = $name . ' Average GPA'; }
         if ( '' !== $acc ) { $options[] = $name . ': ' . $acc . ' Acceptance'; }
         $options[] = $name . ' Admissions';
         $len = function_exists( 'mb_strlen' ) ? 'mb_strlen' : 'strlen';
@@ -1176,14 +1166,32 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
         $subject   = $needs_the ? 'The ' . $name : $name; // start of a sentence
         $object    = $needs_the ? 'the ' . $name : $name; // middle of a sentence
         $gpa     = gpa_college_gpa_txt( $post_id );
-        $acc     = (int) gpa_college_acc_pct( $post_id ); // e.g. 43, or 0 when missing / 100%
+        $acc_txt = gpa_college_acc_pct( $post_id ); // e.g. "43%" or "3.6%", or '' when missing / 100%
+        $acc     = (float) $acc_txt;
+        $fresh   = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+        $cds     = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
         $sat     = gpa_college_range_txt( get_field( 'sat_range', $post_id ) );
         $act     = gpa_college_range_txt( get_field( 'act_range', $post_id ) );
         $test    = '' !== $sat ? $sat . ' on the SAT' : ( '' !== $act ? $act . ' on the ACT' : '' );
+        $tests   = array(); // pages with the federal import: what the middle 50% of entrants scored, most-used test first
+        if ( $fresh && '' !== $fresh['fall'] ) {
+            $erw  = isset( $fresh['sat']['Reading and Writing'] ) ? gpa_college_range( $fresh['sat']['Reading and Writing'] ) : '';
+            $math = isset( $fresh['sat']['Math'] ) ? gpa_college_range( $fresh['sat']['Math'] ) : '';
+            $comp = isset( $fresh['act']['Composite'] ) ? gpa_college_range( $fresh['act']['Composite'] ) : '';
+            if ( '' !== $erw && '' !== $math ) {
+                $tests['sat'] = 'Middle 50% SAT: ' . $erw . ' reading and writing, ' . $math . ' math.';
+            }
+            if ( '' !== $comp ) {
+                $tests['act'] = 'The middle 50% of first-year students scored ' . $comp . ' on the ACT.';
+            }
+            if ( (float) $fresh['act_submit'] > (float) $fresh['sat_submit'] ) {
+                $tests = array_reverse( $tests );
+            }
+            $test = $tests ? 'x' : ''; // counts as admissions data below
+        }
 
         // School facts
-        $own     = trim( (string) get_field( 'owning', $post_id ) );
-        $type    = preg_match( '/(Public|Private)\s*(\d)\s*Year/i', $own, $m ) ? strtolower( $m[1] ) . ' ' . $m[2] . '-year college' : 'college';
+        $type    = function_exists( 'gpa_college_type_phrase' ) ? gpa_college_type_phrase( $post_id ) : 'college';
         $article = in_array( $type[0], array( 'a', 'e', 'i', 'o', 'u' ), true ) ? 'an' : 'a';
         $loc     = trim( (string) get_field( 'location', $post_id ) );
         $loc     = ( '' !== $loc && 'n/a' !== strtolower( $loc ) ) ? $loc : '';
@@ -1192,31 +1200,50 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
 
         // Every description ends with a call to action. Reserve room for the shortest one, and
         // trim the least important detail first if the sentences would otherwise leave no room.
+        // Pages with a college-published GPA always keep the GPA call to action: most searches are about GPA.
+        $len            = function_exists( 'mb_strlen' ) ? 'mb_strlen' : 'strlen'; // ranges use en dashes
         $has_admissions = ( $acc > 0 || '' !== $gpa || '' !== $test );
-        $short_cta      = $has_admissions ? 'See the requirements.' : 'See admission requirements.';
-        $limit          = 160 - strlen( $short_cta ) - 1;
+        $short_cta      = $cds ? 'See its average GPA.' : ( $has_admissions ? 'See the requirements.' : 'See admission requirements.' );
+        $limit          = 160 - $len( $short_cta ) - 1;
 
         $sentences = array();
 
         // How selective the school is
-        if ( $acc > 0 ) {
+        if ( $acc > 0 && $fresh && '' !== $fresh['fall'] ) {
+            $for = ' for ' . $fresh['fall'];
             if ( $acc < 10 ) {
-                $sentences[] = $subject . ' admits just ' . $acc . '% of applicants.';
+                $sentences[] = $subject . ' admitted just ' . $acc_txt . ' of applicants' . $for . '.';
             } elseif ( $acc < 25 ) {
-                $sentences[] = $subject . ' is highly selective, admitting ' . $acc . '% of applicants.';
+                $sentences[] = $subject . ' is highly selective: it admitted ' . $acc_txt . ' of applicants' . $for . '.';
             } elseif ( $acc < 50 ) {
-                $sentences[] = $subject . ' accepts ' . $acc . '% of applicants.';
+                $sentences[] = $subject . ' admitted ' . $acc_txt . ' of applicants' . $for . '.';
             } elseif ( $acc < 75 ) {
-                $sentences[] = $subject . ' accepts more than half of applicants (' . $acc . '%).';
+                $sentences[] = $subject . ' admitted more than half of applicants' . $for . ' (' . $acc_txt . ').';
             } else {
-                $sentences[] = $subject . ' accepts most applicants (' . $acc . '%).';
+                $sentences[] = $subject . ' admitted most applicants' . $for . ' (' . $acc_txt . ').';
             }
+        } elseif ( $acc > 0 ) {
+            if ( $acc < 10 ) {
+                $sentences[] = $subject . ' admits just ' . $acc_txt . ' of applicants.';
+            } elseif ( $acc < 25 ) {
+                $sentences[] = $subject . ' is highly selective, admitting ' . $acc_txt . ' of applicants.';
+            } elseif ( $acc < 50 ) {
+                $sentences[] = $subject . ' accepts ' . $acc_txt . ' of applicants.';
+            } elseif ( $acc < 75 ) {
+                $sentences[] = $subject . ' accepts more than half of applicants (' . $acc_txt . ').';
+            } else {
+                $sentences[] = $subject . ' accepts most applicants (' . $acc_txt . ').';
+            }
+        } elseif ( $fresh && $fresh['open'] ) {
+            $sentences[] = $subject . ' has an open admission policy.';
         }
 
         // What admitted students look like (drop the test-score clause if space is tight)
         $who    = $acc > 0 ? 'Admitted students' : 'Admitted students at ' . $object;
         $s2     = array();
-        if ( '' !== $gpa ) {
+        if ( $tests ) {
+            $s2 = array_values( $tests );
+        } elseif ( '' !== $gpa ) {
             if ( '' !== $test ) {
                 $s2[] = $who . ' average a ' . $gpa . ' GPA and typically score ' . $test . '.';
             }
@@ -1226,60 +1253,68 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
         }
         if ( $s2 ) {
             $head = implode( ' ', $sentences );
-            $pick = end( $s2 );
+            $pick = $tests ? '' : end( $s2 ); // the imported test sentences are left out when none fits
             foreach ( $s2 as $candidate ) {
-                if ( strlen( trim( $head . ' ' . $candidate ) ) <= $limit ) {
+                if ( $len( trim( $head . ' ' . $candidate ) ) <= $limit ) {
                     $pick = $candidate;
                     break;
                 }
             }
-            $sentences[] = $pick;
+            if ( '' !== $pick ) {
+                $sentences[] = $pick;
+            }
         }
 
         // Fill in with school facts when admissions data is thin. Try the fullest wording first and
         // drop the least important detail (net price, enrollment, location) until it fits.
         if ( count( $sentences ) < 2 ) {
+            $students   = $fresh ? ' undergraduates' : ' students'; // the federal import counts undergraduates
             $where      = $loc ? ' in ' . $loc : '';
             $candidates = array();
             if ( $sentences ) {
                 if ( $enr > 0 ) {
-                    $candidates[] = "It's " . $article . ' ' . $type . $where . ( $loc ? ', with ' : ' with ' ) . number_format( $enr ) . ' students.';
+                    $candidates[] = "It's " . $article . ' ' . $type . $where . ( $loc ? ', with ' : ' with ' ) . number_format( $enr ) . $students . '.';
                 }
                 $candidates[] = "It's " . $article . ' ' . $type . $where . '.';
                 $candidates[] = "It's " . $article . ' ' . $type . '.';
             } else {
                 $base = $subject . ' is ' . $article . ' ' . $type . $where;
                 if ( $enr > 0 && $price > 0 ) {
-                    $candidates[] = $base . ', with ' . number_format( $enr ) . ' students and an average net price of $' . number_format( $price ) . '.';
+                    $candidates[] = $base . ', with ' . number_format( $enr ) . $students . ' and an average net price of $' . number_format( $price ) . '.';
                 }
                 if ( $enr > 0 ) {
-                    $candidates[] = $base . ', with ' . number_format( $enr ) . ' students.';
+                    $candidates[] = $base . ', with ' . number_format( $enr ) . $students . '.';
                 } elseif ( $price > 0 ) {
                     $candidates[] = $base . ', with an average net price of $' . number_format( $price ) . '.';
                 }
                 $candidates[] = $base . '.';
             }
             $head = implode( ' ', $sentences );
-            $pick = end( $candidates );
+            $pick = ( $fresh && $sentences ) ? '' : end( $candidates ); // a second sentence only when it fits
             foreach ( $candidates as $candidate ) {
-                if ( strlen( trim( $head . ' ' . $candidate ) ) <= $limit ) {
+                if ( $len( trim( $head . ' ' . $candidate ) ) <= $limit ) {
                     $pick = $candidate;
                     break;
                 }
             }
-            $sentences[] = $pick;
+            if ( '' !== $pick ) {
+                $sentences[] = $pick;
+            }
         }
 
         // Call to action: rotate the wording across pages, using the first version that fits
         $ctas = $has_admissions
             ? array( 'See what it takes to get in.', 'See the full admission requirements.', "Here's what it takes to get in." )
             : array( 'See admission requirements and credit options.', 'See its admission requirements and credit options.' );
+        if ( $cds ) {
+            $ctas = array( 'See its average GPA and what it takes to get in.', 'See its average GPA and full requirements.' );
+        }
         $body = implode( ' ', $sentences );
         $cta  = $short_cta;
         $n    = count( $ctas );
         for ( $i = 0; $i < $n; $i++ ) {
             $option = $ctas[ ( $post_id + $i ) % $n ];
-            if ( strlen( $body . ' ' . $option ) <= 160 ) {
+            if ( $len( $body . ' ' . $option ) <= 160 ) {
                 $cta = $option;
                 break;
             }
@@ -1908,6 +1943,16 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
         $act_composite_25  = get_field( 'act_composite_25', $post_id );
         $act_composite_75  = get_field( 'act_composite_75', $post_id );
 
+        // Pages with the federal import: no unsourced GPA, standards label or hotlinked photo; ACT English instead of
+        // Reading; the SAT average is College Scorecard's estimate
+        $fresh = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+        $act_english_25 = $act_english_75 = '';
+        if ( $fresh ) {
+            $average_gpa = $admission_standards = $img_url = '';
+            $act_english_25 = get_post_meta( $post_id, 'act_english_25', true );
+            $act_english_75 = get_post_meta( $post_id, 'act_english_75', true );
+        }
+
         $state_abbr = '';
         if ( $location ) {
             $parts = array_map( 'trim', explode( ',', $location ) );
@@ -2001,14 +2046,14 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
                 </div>
                 <?php if ( $average_sat_score ) : ?>
                     <div class="db-college-card__test-avg">
-                        <span class="db-college-card__test-avg-label">Average</span>
+                        <span class="db-college-card__test-avg-label"><?php echo $fresh ? 'Est. average' : 'Average'; ?></span>
                         <span class="db-college-card__test-avg-value"><?php echo esc_html( $average_sat_score ); ?></span>
                     </div>
                 <?php endif; ?>
                 <div class="db-college-card__test-breakdown">
                     <?php if ( $sat_reading_25 || $sat_reading_75 ) : ?>
                         <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Reading</span>
+                            <span class="db-college-card__test-row-label">Reading &amp; Writing</span>
                             <span class="db-college-card__test-row-value"><?php echo esc_html( $sat_reading_25 ); ?> - <?php echo esc_html( $sat_reading_75 ); ?></span>
                         </div>
                     <?php endif; ?>
@@ -2045,6 +2090,12 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
                         <div class="db-college-card__test-row">
                             <span class="db-college-card__test-row-label">Reading</span>
                             <span class="db-college-card__test-row-value"><?php echo esc_html( $act_reading_25 ); ?> - <?php echo esc_html( $act_reading_75 ); ?></span>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ( $act_english_25 || $act_english_75 ) : ?>
+                        <div class="db-college-card__test-row">
+                            <span class="db-college-card__test-row-label">English</span>
+                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_english_25 ); ?> - <?php echo esc_html( $act_english_75 ); ?></span>
                         </div>
                     <?php endif; ?>
                     <?php if ( $act_math_25 || $act_math_75 ) : ?>
@@ -2121,7 +2172,11 @@ function gpa_ajax_filter_colleges() {
             $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 50, 'compare' => '<', 'type' => 'DECIMAL(5,2)' );
             break;
         case 'over_50':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 50, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array(
+                'relation' => 'OR',
+                array( 'key' => 'acceptance_rate', 'value' => 50, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' ),
+                array( 'key' => 'adm_open_admission', 'value' => 'Yes' ), // open admission: no rate, admits everyone
+            );
             break;
     }
 
@@ -2153,13 +2208,24 @@ function gpa_ajax_filter_colleges() {
     }
 
     if ( $quick_filter === 'high_acceptance' ) {
-        $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 70, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' );
+        $meta_query[] = array(
+            'relation' => 'OR',
+            array( 'key' => 'acceptance_rate', 'value' => 70, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' ),
+            array( 'key' => 'adm_open_admission', 'value' => 'Yes' ),
+        );
     } elseif ( $quick_filter === 'ivy_league' ) {
         $ivy_slugs = array(
             'harvard', 'yale-university', 'princeton-university', 'columbia-university',
             'brown-university', 'dartmouth-college', 'university-of-pennsylvania', 'cornell-university',
         );
         $args['post_name__in'] = $ivy_slugs;
+    }
+
+    // Lowest-first sorts would list colleges with no figure (open admission, not reported) as if it were 0
+    if ( 'acceptance_asc' === $sort ) {
+        $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 0, 'compare' => '>', 'type' => 'DECIMAL(5,2)' );
+    } elseif ( 'sat_asc' === $sort ) {
+        $meta_query[] = array( 'key' => 'average_sat_score', 'value' => 0, 'compare' => '>', 'type' => 'NUMERIC' );
     }
 
     if ( count( $meta_query ) > 1 ) {

@@ -584,17 +584,35 @@ function gpa_calc_page_schema($data, $jsonld) {
         }
     }
 
+    // A Rank Math FAQ block's FAQPage can arrive nested under subjectOf: lift it to a top-level node (one per page)
+    // rather than dropping it, so pages with a Rank Math FAQ block keep their FAQ rich result.
+    $gpa_faq_top = false;
+    foreach ($data as $gpa_node) {
+        if (is_array($gpa_node) && isset($gpa_node['@type']) && $gpa_node['@type'] === 'FAQPage') {
+            $gpa_faq_top = true;
+            break;
+        }
+    }
     foreach ($data as $key => &$value) {
         if (is_array($value) && isset($value['subjectOf'])) {
             if (is_array($value['subjectOf'])) {
                 $subjects = $value['subjectOf'];
                 if (isset($subjects['@type'])) {
                     if ($subjects['@type'] === 'FAQPage') {
+                        if (!$gpa_faq_top && !empty($subjects['mainEntity'])) {
+                            $data['FAQPage'] = $subjects;
+                            $gpa_faq_top     = true;
+                        }
                         unset($value['subjectOf']);
                     }
                 } else {
-                    $filtered = array_filter($subjects, function($s) {
-                        return !(is_array($s) && isset($s['@type']) && $s['@type'] === 'FAQPage');
+                    $filtered = array_filter($subjects, function($s) use (&$data, &$gpa_faq_top) {
+                        $is_faq = is_array($s) && isset($s['@type']) && $s['@type'] === 'FAQPage';
+                        if ($is_faq && !$gpa_faq_top && !empty($s['mainEntity'])) {
+                            $data['FAQPage'] = $s;
+                            $gpa_faq_top     = true;
+                        }
+                        return !$is_faq;
                     });
                     if (empty($filtered)) {
                         unset($value['subjectOf']);

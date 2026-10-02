@@ -288,15 +288,15 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 197869,factor_demonstrated_interest,C.718,Important,yes,form fields,Important,Important,Important,
 197869,sat_submit_pct,C.901,8.77,yes,form fields,8.77,8.77,8.77,9.0
 197869,act_submit_pct,C.902,22.81,yes,form fields,22.81,22.81,22.81,23.0
-197869,sat_comp_p25,C.905,1140,yes,form fields,1140,1140,1140,
-197869,sat_comp_p50,C.906,1200,yes,form fields,1200,1200,1200,
-197869,sat_comp_p75,C.907,1270,yes,form fields,1270,1270,1270,
-197869,sat_erw_p25,C.908,570,yes,form fields,570,570,570,570
-197869,sat_erw_p50,C.909,610,yes,form fields,610,610,610,610
-197869,sat_erw_p75,C.910,660,yes,form fields,660,660,660,660
-197869,sat_math_p25,C.911,354,yes,form fields,354,354,354,550
-197869,sat_math_p50,C.912,550,yes,form fields,550,550,550,590
-197869,sat_math_p75,C.913,620,yes,form fields,620,620,620,620
+197869,sat_comp_p25,C.905,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,1140,1140,1140,
+197869,sat_comp_p50,C.906,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,1200,1200,1200,
+197869,sat_comp_p75,C.907,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,1270,1270,1270,
+197869,sat_erw_p25,C.908,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,570,570,570,570
+197869,sat_erw_p50,C.909,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,610,610,610,610
+197869,sat_erw_p75,C.910,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,660,660,660,660
+197869,sat_math_p25,C.911,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,354,354,354,550
+197869,sat_math_p50,C.912,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,550,550,550,590
+197869,sat_math_p75,C.913,,no,failed check: SAT composite 25th percentile 1140 is far from its sections' 570 + 354,620,620,620,620
 197869,act_comp_p25,C.914,21,yes,form fields,21,21,21,21
 197869,act_comp_p50,C.915,25,yes,form fields,25,25,25,25
 197869,act_comp_p75,C.916,27,yes,form fields,27,27,27,27
@@ -990,7 +990,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 189097,applicants,C.116,10426,yes,form fields (lines by sex added up),10426,10426,,
 189097,admits,C.117,1048,yes,form fields (lines by sex added up),1048,1048,,
 189097,enrolled,C.118,702,yes,form fields (lines by sex added up),702,702,,
-189097,waitlist_policy,C.201,No,yes,form fields,No,,No,
+189097,waitlist_policy,C.201,,no,"failed check: no wait-list policy, but wait-list counts",No,,No,
 189097,waitlist_offered,C.202,2173,yes,form fields,2173,2173,2173,
 189097,waitlist_accepted,C.203,1644,yes,form fields,1644,1644,1644,
 189097,waitlist_admitted,C.204,150,yes,form fields,150,150,150,
@@ -4032,15 +4032,15 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 219082,factor_demonstrated_interest,C.718,,no,,,Not Considered,Very Important,
 219082,sat_submit_pct,C.901,16.6,yes,file text + collegedata.fyi,,16.6,16.6,
 219082,act_submit_pct,C.902,63.3,yes,file text + collegedata.fyi,,63.3,63.3,
-219082,sat_comp_p25,C.905,880,yes,file text + collegedata.fyi,,880,880,
-219082,sat_comp_p50,C.906,930,yes,file text + collegedata.fyi,,930,930,
-219082,sat_comp_p75,C.907,940,yes,file text + collegedata.fyi,,940,940,
-219082,sat_erw_p25,C.908,550,yes,file text + collegedata.fyi,,550,550,
-219082,sat_erw_p50,C.909,630,yes,file text + collegedata.fyi,,630,630,
-219082,sat_erw_p75,C.910,680,yes,file text + collegedata.fyi,,680,680,
-219082,sat_math_p25,C.911,560,yes,file text + collegedata.fyi,,560,560,
-219082,sat_math_p50,C.912,700,yes,file text + collegedata.fyi,,700,700,
-219082,sat_math_p75,C.913,770,yes,file text + collegedata.fyi,,770,770,
+219082,sat_comp_p25,C.905,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,880,880,
+219082,sat_comp_p50,C.906,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,930,930,
+219082,sat_comp_p75,C.907,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,940,940,
+219082,sat_erw_p25,C.908,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,550,550,
+219082,sat_erw_p50,C.909,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,630,630,
+219082,sat_erw_p75,C.910,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,680,680,
+219082,sat_math_p25,C.911,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,560,560,
+219082,sat_math_p50,C.912,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,700,700,
+219082,sat_math_p75,C.913,,no,failed check: SAT composite 25th percentile 880 is far from its sections' 550 + 560,,770,770,
 219082,act_comp_p25,C.914,20,yes,file text + collegedata.fyi,,20,20,
 219082,act_comp_p50,C.915,23,yes,file text + collegedata.fyi,,23,23,
 219082,act_comp_p75,C.916,26,yes,file text + collegedata.fyi,,26,26,
@@ -10383,15 +10383,15 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 157447,factor_demonstrated_interest,C.718,,no,,,Not Considered,Very Important,
 157447,sat_submit_pct,C.901,2.9,yes,file text + collegedata.fyi,,2.9,2.9,
 157447,act_submit_pct,C.902,39.9,yes,file text + collegedata.fyi,,39.9,39.9,
-157447,sat_comp_p25,C.905,810,yes,file text + collegedata.fyi,,810,810,
-157447,sat_comp_p50,C.906,970,yes,file text + collegedata.fyi,,970,970,
-157447,sat_comp_p75,C.907,1090,yes,file text + collegedata.fyi,,1090,1090,
-157447,sat_erw_p25,C.908,500,yes,file text + collegedata.fyi,,500,500,
-157447,sat_erw_p50,C.909,550,yes,file text + collegedata.fyi,,550,550,
-157447,sat_erw_p75,C.910,605,yes,file text + collegedata.fyi,,605,605,
-157447,sat_math_p25,C.911,440,yes,file text + collegedata.fyi,,440,440,
-157447,sat_math_p50,C.912,510,yes,file text + collegedata.fyi,,510,510,
-157447,sat_math_p75,C.913,560,yes,file text + collegedata.fyi,,560,560,
+157447,sat_comp_p25,C.905,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,810,810,
+157447,sat_comp_p50,C.906,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,970,970,
+157447,sat_comp_p75,C.907,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,1090,1090,
+157447,sat_erw_p25,C.908,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,500,500,
+157447,sat_erw_p50,C.909,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,550,550,
+157447,sat_erw_p75,C.910,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,605,605,
+157447,sat_math_p25,C.911,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,440,440,
+157447,sat_math_p50,C.912,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,510,510,
+157447,sat_math_p75,C.913,,no,failed check: SAT composite 25th percentile 810 is far from its sections' 500 + 440,,560,560,
 157447,act_comp_p25,C.914,19,yes,file text + collegedata.fyi,,19,19,
 157447,act_comp_p50,C.915,22,yes,file text + collegedata.fyi,,22,22,
 157447,act_comp_p75,C.916,25,yes,file text + collegedata.fyi,,25,25,
@@ -11160,9 +11160,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 194578,admits,C.117,,no,,,6547,1375,
 194578,enrolled,C.118,,no,,,847,183,
 194578,waitlist_policy,C.201,,no,,,,Yes,
-194578,waitlist_offered,C.202,1001,yes,file text + collegedata.fyi,,1001,1001,
-194578,waitlist_accepted,C.203,139,yes,file text + collegedata.fyi,,139,139,
-194578,waitlist_admitted,C.204,925,yes,file text + collegedata.fyi,,925,925,
+194578,waitlist_offered,C.202,,no,"failed check: wait list: 1001 offered, 139 accepted, 925 admitted",,1001,1001,
+194578,waitlist_accepted,C.203,,no,"failed check: wait list: 1001 offered, 139 accepted, 925 admitted",,139,139,
+194578,waitlist_admitted,C.204,,no,"failed check: wait list: 1001 offered, 139 accepted, 925 admitted",,925,925,
 194578,factor_rigor,C.701,,no,,,Important,,
 194578,factor_class_rank,C.702,,no,,,Not Considered,,
 194578,factor_gpa,C.703,,no,,,Very Important,,
@@ -17242,15 +17242,15 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 182281,factor_demonstrated_interest,C.718,Not Considered,yes,file text + collegedata.fyi,,Not Considered,Not Considered,
 182281,sat_submit_pct,C.901,9.0,yes,file text + IPEDS same fall,,9.0,,9.0
 182281,act_submit_pct,C.902,65.0,yes,file text + IPEDS same fall,,65.0,,65.0
-182281,sat_comp_p25,C.905,750,yes,file text + collegedata.fyi,,750,750,
-182281,sat_comp_p50,C.906,1010,yes,file text + collegedata.fyi,,1010,1010,
-182281,sat_comp_p75,C.907,1020,yes,file text + collegedata.fyi,,1020,1020,
-182281,sat_erw_p25,C.908,510,yes,file text + collegedata.fyi,,510,510,510
-182281,sat_erw_p50,C.909,570,yes,file text + collegedata.fyi,,570,570,570
-182281,sat_erw_p75,C.910,630,yes,file text + collegedata.fyi,,630,630,630
-182281,sat_math_p25,C.911,500,yes,file text + collegedata.fyi,,500,500,500
-182281,sat_math_p50,C.912,550,yes,file text + collegedata.fyi,,550,550,550
-182281,sat_math_p75,C.913,610,yes,file text + collegedata.fyi,,610,610,610
+182281,sat_comp_p25,C.905,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,750,750,
+182281,sat_comp_p50,C.906,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,1010,1010,
+182281,sat_comp_p75,C.907,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,1020,1020,
+182281,sat_erw_p25,C.908,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,510,510,510
+182281,sat_erw_p50,C.909,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,570,570,570
+182281,sat_erw_p75,C.910,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,630,630,630
+182281,sat_math_p25,C.911,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,500,500,500
+182281,sat_math_p50,C.912,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,550,550,550
+182281,sat_math_p75,C.913,,no,failed check: SAT composite 25th percentile 750 is far from its sections' 510 + 500,,610,610,610
 182281,act_comp_p25,C.914,18,yes,file text + collegedata.fyi,,18,18,18
 182281,act_comp_p50,C.915,21,yes,file text + collegedata.fyi,,21,21,21
 182281,act_comp_p75,C.916,25,yes,file text + collegedata.fyi,,25,25,25

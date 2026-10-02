@@ -1,0 +1,56 @@
+.university-gpa-intro {
+    margin-bottom: 40px;
+}
+
+@media (max-width: 768px) {
+    .university-gpa-intro {
+        margin-bottom: 28px;
+    }
+}
+@media (max-width: 767px) {
+  .gpa-hero-sub { font-size: 15px; line-height: 1.4 !important; margin: 6px 0 14px !important; }
+}
+@media (max-width: 767px) {
+  .gpa-hero { padding: 28px 16px !important; }
+  .gpa-hero-title { margin-bottom: 12px !important; }
+}
+@media (max-width: 767px) {
+  .gpa-hero-title, .gpa-hero-sub { padding-left: 16px !important; padding-right: 16px !important; }
+}
+/* ===== Section header spacing — one system for every template =====
+   Header = [pill] + H2 [+ subtitle]. Pill is optional.
+   Spacer blocks touching a header are ignored, so the editor can't break the rhythm. */
+#primary #main .entry-content { --hdr-above: 64px; --hdr-pill-gap: 8px; --hdr-sub-gap: 12px; --hdr-below: 32px; }
+
+/* 1. Space ABOVE the header: on the pill if there is one, otherwise on the H2 */
+#primary #main .entry-content :is(p.rx-eyebrow, h2:not(p.rx-eyebrow + h2, p.rx-eyebrow + .wp-block-spacer + h2)):not(:first-child):not(#root *) { margin-top: var(--hdr-above) !important; }
+/* ...a header that only has a spacer above it still starts its block */
+#primary #main .entry-content .wp-block-spacer:first-child + :is(p.rx-eyebrow, h2) { margin-top: 0 !important; }
+/* ...old React calculators carry their own bottom padding */
+#primary #main .entry-content #root:has(.min-h-screen) + :is(p.rx-eyebrow, h2),
+#primary #main .entry-content #root:has(.min-h-screen) + .wp-block-spacer + :is(p.rx-eyebrow, h2) { margin-top: 0 !important; }
+
+/* 2. TIGHT pill → H2 */
+#primary #main .entry-content p.rx-eyebrow { margin-bottom: 0 !important; }
+#primary #main .entry-content p.rx-eyebrow + h2:not(#root *),
+#primary #main .entry-content p.rx-eyebrow + .wp-block-spacer + h2:not(#root *) { margin-top: var(--hdr-pill-gap) !important; }
+
+/* 3. H2 → subtitle, and header → content */
+#primary #main .entry-content h2:not(#root *) { margin-bottom: 0 !important; }
+#primary #main .entry-content p.rx-sub { margin-bottom: 0 !important; }
+#primary #main .entry-content h2:not(#root *) + p.rx-sub,
+#primary #main .entry-content h2:not(#root *) + .wp-block-spacer + p.rx-sub { margin-top: var(--hdr-sub-gap) !important; }
+#primary #main .entry-content h2:not(#root *) + :not(p.rx-sub):not(.wp-block-spacer),
+#primary #main .entry-content h2:not(#root *) + .wp-block-spacer + :not(p.rx-sub),
+#primary #main .entry-content p.rx-sub + :not(.wp-block-spacer),
+#primary #main .entry-content p.rx-sub + .wp-block-spacer + * { margin-top: var(--hdr-below) !important; }
+
+/* 4. Spacer blocks right before or after a header part do nothing */
+#primary #main .entry-content .wp-block-spacer:has(+ :is(p.rx-eyebrow, h2, p.rx-sub)),
+#primary #main .entry-content :is(p.rx-eyebrow, h2, p.rx-sub) + .wp-block-spacer { height: 0 !important; margin: 0 !important; }
+
+/* 5. A header that is the first thing in its card/section gets no top margin — the container already provides the space */
+#primary #main .entry-content :is(.rx-sec, .rx-card) > :is(p.rx-eyebrow, h2):first-child { margin-top: 0 !important; }
+/* 6. The section right after the calculator sits the standard header distance below it */
+#primary #main .entry-content > #root + .rx-sec { margin-top: var(--hdr-above) !important; }
+#primary #main .entry-content > #root + .rx-sec > .rx-card:first-child { padding-top: 0 !important; }

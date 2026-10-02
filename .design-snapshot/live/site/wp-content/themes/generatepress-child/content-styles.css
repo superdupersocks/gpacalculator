@@ -1,0 +1,1358 @@
+/* GPA_CALC_ISOLATION
+ * These site typography rules carried !important and were repainting
+ * text inside the React calculator (#root) — the Target GPA Planner's
+ * result card rendered dark-on-blue. Excluding #root descendants lets
+ * the calculator keep its own styles.
+ */
+/* ============================================
+   GPA Content Styles - Global Reusable CSS
+   Version: 2.1.0 (aligned to gpa-design-tokens.css)
+   Source of truth: gpa-homepage.css
+
+   Two layers:
+   1. BASE STYLES — auto-apply to standard HTML
+      tags inside .entry-content on content pages
+   2. CLASS STYLES — optional fine-tuning via
+      custom CSS classes on Gutenberg blocks
+   ============================================ */
+
+/* ============================================
+   GLOBAL: Entry title consistency (client fix Apr 2026)
+   Homepage uses .gpa-hero block as source of truth. On pages
+   WITHOUT a gpa-hero, the default .entry-title should still be
+   a clean prominent heading. On pages WITH gpa-hero (which has
+   its own title), hide the duplicate .entry-title.
+   ============================================ */
+
+body:not(.home):not(.single-colleges) .entry-header > .entry-title,
+body:not(.home):not(.single-colleges) h1.entry-title {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h1-size) !important;
+    font-weight: var(--gpa-h1-weight) !important;
+    line-height: var(--gpa-h1-line) !important;
+    color: var(--gpa-text-heading) !important;
+    margin: 0 0 24px !important;
+    padding: 0 !important;
+    letter-spacing: normal !important;
+}
+@media (max-width: 768px) {
+    body:not(.home):not(.single-colleges) .entry-header > .entry-title,
+    body:not(.home):not(.single-colleges) h1.entry-title {
+        font-size: var(--gpa-h1-size-m) !important;
+    }
+}
+/* Hide .entry-title when .gpa-hero block is present on the same page */
+body:has(.gpa-hero) .entry-header .entry-title,
+body:has(.gpa-hero) > #page .entry-header {
+    display: none !important;
+}
+
+/* ============================================
+   BASE: TYPOGRAPHY
+   ============================================ */
+.content-page .entry-content {
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.content-page .entry-content p:not(#root *) {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-body-size) !important;
+    color: var(--gpa-text-body) !important;
+    line-height: var(--gpa-body-line) !important;
+    font-weight: var(--gpa-body-weight) !important;
+    margin-bottom: 20px !important;
+}
+
+.content-page .entry-content h1 {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h1-size) !important;
+    font-weight: var(--gpa-h1-weight) !important;
+    color: var(--gpa-text-heading) !important;
+    line-height: var(--gpa-h1-line) !important;
+    margin-bottom: 24px !important;
+}
+
+.content-page .entry-content h2:not(#root *) {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h2-size) !important;
+    font-weight: var(--gpa-h2-weight) !important;
+    color: var(--gpa-text-heading) !important;
+    line-height: var(--gpa-h2-line) !important;
+    margin-bottom: 16px !important;
+    margin-top: 48px !important;
+}
+
+.content-page .entry-content h3:not(#root *) {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h3-size) !important;
+    font-weight: var(--gpa-h3-weight) !important;
+    color: var(--gpa-text-heading) !important;
+    margin-bottom: 12px !important;
+    margin-top: 32px !important;
+}
+
+.content-page .entry-content h4 {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h4-size) !important;
+    font-weight: var(--gpa-h4-weight) !important;
+    color: var(--gpa-text-heading) !important;
+    margin-bottom: 8px !important;
+    margin-top: 24px !important;
+}
+
+.content-page .entry-content strong {
+    font-weight: 700 !important;
+    color: var(--gpa-text-heading) !important;
+}
+
+.content-page .entry-content a:not(#root *) {
+    color: var(--gpa-primary) !important;
+    font-weight: 500 !important;
+    text-decoration: underline !important;
+}
+.content-page .entry-content a:not(#root *):hover {
+    color: var(--gpa-primary-dark) !important;
+}
+
+/* ============================================
+   BASE: BULLET LIST (<ul>)
+   Blue checkmark style
+   ============================================ */
+.content-page .entry-content ul {
+  list-style: disc outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-page .entry-content ul li {
+  font-family: var(--gpa-font) !important;
+  font-size: var(--gpa-body-size) !important;
+  margin-bottom: 12px !important;
+  display: list-item;
+  padding-left: 0;
+}
+.content-page .entry-content ul li::before {
+  content: none;
+}
+
+/* ============================================
+   BASE: NUMBERED LIST (<ol>)
+   Blue numbered badges
+   ============================================ */
+.content-page .entry-content ol {
+  list-style: decimal outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-page .entry-content ol li {
+  font-family: var(--gpa-font) !important;
+  font-size: var(--gpa-body-size) !important;
+  margin-bottom: 16px !important;
+  display: list-item;
+  padding-left: 0;
+}
+.content-page .entry-content ol li::before {
+  content: none;
+}
+
+/* ============================================
+   BASE: TABLE (<table>)
+   Blue header + hover rows
+   ============================================ */
+.content-page .entry-content table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    background: #fff !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    border: 1px solid #E5E7EB !important;
+    margin-bottom: 32px !important;
+}
+.content-page .entry-content figure.wp-block-table {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 32px !important;
+    /* 2026-08-30: was `overflow: hidden`, which clipped wide tables on phones
+       instead of letting them scroll — the 5-column sample table (474px) lost
+       its Grade Points and Quality Points columns inside a 292px container,
+       with no way to reach them. overflow-y stays hidden so the rounded
+       corners are still clipped. */
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+.content-page .entry-content thead {
+    background: #2563EB !important;
+}
+.content-page .entry-content thead th {
+    color: #fff !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 16px 24px !important;
+    text-align: center !important;
+    border: none !important;
+}
+.content-page .entry-content tbody td {
+    font-size: 16px !important;
+    padding: 16px 24px !important;
+    text-align: center !important;
+    color: #1F2937 !important;
+    border-bottom: 1px solid #E5E7EB !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+.content-page .entry-content tbody tr:hover {
+    background: #F9FAFB !important;
+}
+
+/* ============================================
+   BASE: BLOCKQUOTE → Definition Block
+   ============================================ */
+.content-page .entry-content blockquote {
+    background: #EFF6FF !important;
+    border-radius: 8px !important;
+    padding: 24px !important;
+    border: none !important;
+    border-left: 4px solid #2563EB !important;
+    margin: 0 0 32px 0 !important;
+    font-style: normal !important;
+}
+.content-page .entry-content blockquote p {
+    font-size: 16px !important;
+    color: #374151 !important;
+    line-height: 1.7 !important;
+    margin-bottom: 0 !important;
+}
+.content-page .entry-content blockquote cite,
+.content-page .entry-content blockquote footer {
+    font-size: 14px !important;
+    color: #1E3A8A !important;
+    font-weight: 600 !important;
+    font-style: normal !important;
+}
+
+/* ============================================
+   BASE: IMAGE + CAPTION
+   ============================================ */
+.content-page .entry-content .wp-block-image {
+    margin-bottom: 32px !important;
+}
+.content-page .entry-content .wp-block-image img {
+    border-radius: 8px !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+.content-page .entry-content .wp-block-image figcaption,
+.content-page .entry-content figcaption {
+    font-size: 16px !important;
+    color: #4B5563 !important;
+    font-style: italic !important;
+    text-align: center !important;
+    margin-top: 12px !important;
+}
+
+/* ============================================
+   BASE: RANK MATH FAQ
+   ============================================ */
+.content-page .entry-content .rank-math-faq-item,
+.content-page .entry-content .rank-math-list-item,
+.content-page .entry-content .wp-block-rank-math-faq-block .rank-math-faq-item {
+    background: #fff !important;
+    border-radius: 8px !important;
+    padding: 32px !important;
+    border: 1px solid #E5E7EB !important;
+    margin-bottom: 24px !important;
+}
+.content-page .entry-content .rank-math-question {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h4-size) !important;
+    font-weight: var(--gpa-h4-weight) !important;
+    color: var(--gpa-text-heading) !important;
+    margin-bottom: 12px !important;
+}
+.content-page .entry-content .rank-math-answer,
+.content-page .entry-content .rank-math-answer p {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-body-size) !important;
+    color: var(--gpa-text-muted) !important;
+    line-height: 1.6 !important;
+}
+
+/* ============================================
+   CLASS: CUSTOM CONTENT BLOCKS
+   (for Gutenberg patterns - optional fine-tuning)
+   ============================================ */
+
+/* Container override */
+.content-wrap {
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 0 16px !important;
+}
+
+/* Section Labels */
+.content-label {
+    display: inline-block !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 24px !important;
+}
+.content-label-blue { background: #DBEAFE !important; color: #1E40AF !important; }
+.content-label-green { background: #D1FAE5 !important; color: #065F46 !important; }
+.content-label-amber { background: #FEF3C7 !important; color: #92400E !important; }
+.content-label-pink { background: #FCE7F3 !important; color: #9D174D !important; }
+.content-label-teal { background: #CCFBF1 !important; color: #115E59 !important; }
+.content-label-slate { background: #E2E8F0 !important; color: #1E293B !important; }
+
+/* Explicit class versions of text */
+.content-text {
+    font-size: 18px !important;
+    color: #374151 !important;
+    line-height: 1.7 !important;
+}
+
+/* Explicit class versions of lists */
+.content-bullets {
+  list-style: disc outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-numbered {
+  list-style: decimal outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+
+/* Explicit class versions of tables */
+.content-table table { width: 100% !important; border-collapse: collapse !important; background: #fff !important; border-radius: 8px !important; overflow: hidden !important; border: 1px solid #E5E7EB !important; }
+.content-table thead { background: #2563EB !important; }
+.content-table thead th { color: #fff !important; font-size: 16px !important; font-weight: 600 !important; padding: 16px 24px !important; text-align: center !important; border: none !important; }
+.content-table tbody td { font-size: 16px !important; padding: 16px 24px !important; text-align: center !important; color: #1F2937 !important; border-bottom: 1px solid #E5E7EB !important; }
+.content-table tbody tr:hover { background: #F9FAFB !important; }
+.content-table-gray thead { background: #F3F4F6 !important; }
+.content-table-gray thead th { color: #1F2937 !important; }
+
+/* Definition Block */
+.content-card-definition {
+    background: #EFF6FF !important;
+    border-radius: 8px !important;
+    padding: 24px !important;
+    border-left: 4px solid #2563EB !important;
+    margin-bottom: 32px !important;
+}
+.content-card-definition .content-card-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #1E3A8A !important;
+    margin-bottom: 8px !important;
+}
+.content-card-definition .content-card-body {
+    font-size: 16px !important;
+    color: #374151 !important;
+    line-height: 1.7 !important;
+}
+
+/* Important Note Block */
+.content-card-note {
+    background: #FFFBEB !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    border: 2px solid #FBBF24 !important;
+    margin-bottom: 32px !important;
+}
+.content-card-note .content-card-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #78350F !important;
+    margin-bottom: 8px !important;
+}
+.content-card-note .content-card-body {
+    font-size: 16px !important;
+    color: #92400E !important;
+    line-height: 1.7 !important;
+}
+
+/* Tip Block */
+.content-card-tip {
+    background: #F0FDF4 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    border: 2px solid #4ADE80 !important;
+    margin-bottom: 32px !important;
+}
+.content-card-tip .content-card-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #14532D !important;
+    margin-bottom: 8px !important;
+}
+.content-card-tip .content-card-body {
+    font-size: 16px !important;
+    color: #166534 !important;
+    line-height: 1.7 !important;
+}
+
+/* Formula Block */
+.content-formula {
+    background: #EFF6FF !important;
+    border-radius: 12px !important;
+    padding: 32px !important;
+    border: 1px solid #BFDBFE !important;
+    text-align: center !important;
+    margin-bottom: 32px !important;
+}
+.content-formula p {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    color: #1D4ED8 !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+}
+@media (min-width: 768px) {
+    .content-formula p { font-size: 30px !important; }
+}
+
+/* Result Block */
+.content-result {
+    background: linear-gradient(to right, #F0FDF4, #EFF6FF) !important;
+    border-radius: 8px !important;
+    padding: 24px !important;
+    border: 2px solid #22C55E !important;
+    text-align: center !important;
+    margin-bottom: 32px !important;
+}
+.content-result p {
+    font-size: 20px !important;
+    color: #374151 !important;
+    margin: 0 !important;
+}
+.content-result-big {
+    font-size: 36px !important;
+    font-weight: 700 !important;
+    color: #15803D !important;
+}
+@media (min-width: 768px) {
+    .content-result-big { font-size: 48px !important; }
+}
+
+/* Image with Caption */
+.content-image {
+    background: #F3F4F6 !important;
+    border-radius: 8px !important;
+    padding: 32px !important;
+    border: 1px solid #D1D5DB !important;
+    text-align: center !important;
+    margin-bottom: 32px !important;
+}
+
+/* Related Links Cards */
+.content-related-grid { gap: 24px !important; margin-bottom: 24px !important; }
+.content-rel-card {
+    background: #fff !important;
+    border-radius: 8px !important;
+    padding: 32px !important;
+    border: 1px solid #E5E7EB !important;
+    transition: all 0.3s ease !important;
+}
+.content-rel-card:hover { border-color: #2563EB !important; }
+.content-rel-icon {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 16px !important;
+    font-size: 24px !important;
+}
+.content-rel-icon-blue { background: #2563EB !important; }
+.content-rel-icon-green { background: #16A34A !important; }
+.content-rel-icon-amber { background: #D97706 !important; }
+.content-rel-icon-purple { background: #7C3AED !important; }
+.content-rel-title { font-size: 20px !important; font-weight: 700 !important; color: #111827 !important; margin-bottom: 12px !important; }
+.content-rel-desc { font-size: 18px !important; color: #374151 !important; margin-bottom: 16px !important; }
+.content-rel-cta a { font-size: 18px !important; font-weight: 600 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; transition: transform 0.2s ease !important; }
+.content-rel-cta a:hover { transform: translateX(4px) !important; }
+.content-rel-cta-blue a { color: #2563EB !important; }
+.content-rel-cta-green a { color: #16A34A !important; }
+.content-rel-cta-amber a { color: #D97706 !important; }
+.content-rel-cta-purple a { color: #7C3AED !important; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .content-page .entry-content h1 { font-size: var(--gpa-h1-size-m) !important; }
+    .content-page .entry-content h2:not(#root *) { font-size: var(--gpa-h2-size-m) !important; }
+    .content-page .entry-content h3:not(#root *) { font-size: var(--gpa-h3-size-m) !important; }
+    .content-page .entry-content p:not(#root *) { font-size: var(--gpa-body-size) !important; }
+    .content-page .entry-content ul li,
+    .content-page .entry-content ol li {
+  font-size: var(--gpa-body-size) !important;
+  display: list-item;
+  padding-left: 0;
+}
+    .content-page .entry-content thead th { padding: 12px !important; font-size: 14px !important; }
+    .content-page .entry-content tbody td { padding: 12px !important; font-size: 14px !important; }
+    .content-page .entry-content blockquote { padding: 20px !important; }
+    .content-card-definition,
+    .content-card-note,
+    .content-card-tip { padding: 20px !important; }
+    .content-formula { padding: 24px !important; }
+    .content-result { padding: 20px !important; }
+    .content-rel-card { padding: 24px !important; }
+}
+
+/* ============================================
+   JUMP-TO ANCHOR MENU (T2.5)
+   Auto-injected on /gpa-scale/ from H2 headings.
+   ============================================ */
+.gpa-jumpto {
+    max-width: 900px;
+    margin: 32px auto 48px;
+    padding: 20px 24px;
+    background: var(--gpa-bg-gray-50);
+    border: 1px solid var(--gpa-border);
+    border-radius: 12px;
+    font-family: var(--gpa-font);
+}
+.gpa-jumpto-label {
+    margin: 0 0 12px !important;
+    font-size: var(--gpa-small-size);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--gpa-text-muted);
+}
+.gpa-jumpto-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+}
+.gpa-jumpto-item {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.gpa-jumpto-item::before {
+    content: none !important;
+}
+.gpa-jumpto-link {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--gpa-bg-white);
+    border: 1px solid var(--gpa-border);
+    color: var(--gpa-primary);
+    font-size: var(--gpa-small-size);
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.gpa-jumpto-link:hover,
+.gpa-jumpto-link:focus-visible {
+    background: var(--gpa-primary);
+    border-color: var(--gpa-primary);
+    color: var(--gpa-bg-white);
+}
+.content-page .entry-content h2:not(#root *) {
+    scroll-margin-top: 80px;
+}
+@media (max-width: 768px) {
+    .gpa-jumpto {
+        margin: 24px auto 32px;
+        padding: 16px 18px;
+    }
+    .gpa-jumpto-list {
+        gap: 6px 8px;
+    }
+    .gpa-jumpto-link {
+        padding: 5px 12px;
+        font-size: 13px;
+    }
+}
+
+/* CONTENT STYLE GUIDE ALIGNMENT
+   Component blocks already matched the guide exactly, so only the type
+   scale changes here. Scoped to the content template body class, not
+   :root, because calculator pages also carry .content-page. */
+body.gpa-template-content .entry-content,
+body.gpa-calc-tool .entry-content {
+    --gpa-body-size: 18px;
+    --gpa-body-line: 1.625;
+    --gpa-h2-size: 36px;
+    --gpa-h2-line: 1.1111;
+    --gpa-h2-weight: 800;
+    --gpa-h3-size: 24px;
+    --gpa-h3-weight: 700;
+    --gpa-h3-line: 1.3333;
+    --gpa-h4-size: 20px;
+    --gpa-h4-line: 1.4;
+    --gpa-h2-size-m: 30px;
+    --gpa-h3-size-m: 22px;
+}
+body.gpa-template-content .entry-content h3,
+body.gpa-calc-tool .entry-content h3 {
+    line-height: var(--gpa-h3-line) !important;
+}
+body.gpa-template-content .entry-content h4,
+body.gpa-calc-tool .entry-content h4 {
+    line-height: var(--gpa-h4-line) !important;
+}
+
+/* COMPONENT SPECIFICITY FIX
+   The element defaults above are .content-page .entry-content <el> with
+   !important (specificity 0,2,1). The component helpers were written as
+   bare .content-* selectors (0,1,x), so the defaults were beating them:
+   the formula text rendered at body size instead of 30px blue, the result
+   line at 18px instead of 20px, and the grey table header came out blue.
+   Restating them under the same prefix puts them back in front. */
+.content-page .entry-content .content-text {
+    font-size: 18px !important;
+    color: #374151 !important;
+    line-height: 1.7 !important;
+}
+.content-page .entry-content ul.content-bullets {
+  list-style: disc outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-page .entry-content ol.content-numbered {
+  list-style: decimal outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-page .entry-content .content-table thead {
+    background: #2563EB !important;
+}
+.content-page .entry-content .content-table thead th {
+    color: #fff !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 16px 24px !important;
+    text-align: center !important;
+    border: none !important;
+}
+.content-page .entry-content .content-table tbody td {
+    font-size: 16px !important;
+    padding: 16px 24px !important;
+    text-align: center !important;
+    color: #1F2937 !important;
+    border-bottom: 1px solid #E5E7EB !important;
+}
+.content-page .entry-content .content-table-gray thead {
+    background: #F3F4F6 !important;
+}
+.content-page .entry-content .content-table-gray thead th {
+    color: #1F2937 !important;
+}
+.content-page .entry-content .content-formula p {
+    font-size: 30px !important;
+    font-weight: 700 !important;
+    color: #1D4ED8 !important;
+    line-height: 1.3 !important;
+    margin: 0 !important;
+}
+.content-page .entry-content .content-result p {
+    font-size: 20px !important;
+    color: #374151 !important;
+    margin: 0 !important;
+}
+@media (max-width: 767px) {
+    .content-page .entry-content .content-formula p {
+        font-size: 24px !important;
+    }
+}
+
+/* CONTENT TEMPLATE HERO BAND */
+body.gpa-hero-band .site-main article .inside-article .entry-header h1.entry-title{
+	text-align:center !important;
+	color:#fff !important;
+}
+
+body.gpa-hero-band .entry-header {
+  position: relative;
+  z-index: 0;
+  padding: 80px 20px 0;          /* sm:pt-20 */
+  margin-bottom: 0;
+}
+
+body.gpa-hero-band .entry-header::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: calc(100% + var(--rx-hero-tail));
+  z-index: 0;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 80' preserveAspectRatio='none'%3E%3Cpath d='M0 80V40C240 10 480 10 720 30C960 50 1200 50 1440 30V80H0Z' fill='%23ffffff'/%3E%3C/svg%3E")
+      bottom center / 100% 88px no-repeat,
+    linear-gradient(to bottom right, #7c3aed 0%, #9333ea 50%, #4338ca 100%);
+}
+
+body.gpa-hero-band .inside-article h1.entry-title {
+  position: relative;
+  z-index: 1;
+  color: #fff !important;
+  margin-bottom: 20px !important;
+}
+
+body.gpa-hero-band .entry-header .rx-hero-intro {
+    position: relative;
+    z-index: 1;
+    max-width: 56rem;
+    margin: 16px auto 0;
+    text-align: center;
+}
+
+body.gpa-hero-band .entry-header .rx-hero-intro p {
+    margin: 0 !important;
+    color: #EDE9FE !important;
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+}
+
+body.gpa-hero-band .entry-header .rx-hero-intro a {
+    color: #ffffff !important;
+    text-decoration: underline !important;
+}
+
+body.gpa-hero-band .entry-header .rx-hero-intro strong {
+    color: #ffffff !important;
+}
+
+@media (max-width: 768px) {
+  body.gpa-hero-band .entry-header {
+    padding-top: 56px;           /* pt-14 */
+  }
+    body.gpa-hero-band .entry-header .rx-hero-intro {
+        margin-top: 12px;
+    }
+    body.gpa-hero-band .entry-header .rx-hero-intro p {
+        font-size: 16px !important;
+    }
+}
+
+/* HERO BAND TOKENS
+   --rx-hero-tail and --rx-card-overlap are declared in
+   calculator-page.css, which does not load on content pages, so the
+   band computed to zero height here. Same values, declared locally. */
+body.gpa-hero-band {
+    --rx-hero-tail: 104px;
+    --rx-card-overlap: 64px;
+}
+@media (max-width: 768px) {
+    body.gpa-hero-band {
+        --rx-hero-tail: 72px;
+        --rx-card-overlap: 0px;
+    }
+}
+
+/* HERO BAND LAYOUT
+   The band runs --rx-hero-tail past the header. On a calculator page
+   the card is pulled up into that tail on purpose. A content page has
+   no card, so the first section would sit on the purple. Push the
+   content down by the tail so it starts exactly at the band edge.
+
+   overflow-x on the body is for the band itself: it is 100vw wide and
+   centred with a transform, and 100vw counts the scrollbar, which was
+   adding 8px of sideways scroll. */
+body.gpa-hero-band {
+    overflow-x: hidden;
+}
+body.gpa-hero-band .entry-content {
+    margin-top: var(--rx-hero-tail) !important;
+}
+:is(.page-template-template-content,.page-template-gpa-content-page) .inside-article,
+:is(.page-template-template-content,.page-template-gpa-content-page) .site-main{
+	padding-top:0 !important;
+	margin-top:0 !important;
+}
+
+/* ============================================================
+   DESIGN GUIDE REFRESH
+   ------------------------------------------------------------
+   Second pass of the content style guide. Applies to content and
+   calculator pages (both carry .content-page). Database pages keep
+   their own system and are untouched.
+
+   H2      36px 800 in #1E3A8A, slight negative tracking
+   Bullets each item is a white card with a blue icon tile
+   Tables  no blue header, small uppercase grey labels, rows
+           divided and highlighted on hover, rounded outer shell
+   FAQ     card per question, restyled but still always visible
+   ============================================================ */
+.content-page .entry-content h2:not(#root *) {
+    font-size: 36px !important;
+    line-height: 1.111 !important;
+    font-weight: 800 !important;
+    color: #1E3A8A !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Bulleted list as cards */
+.content-page .entry-content ul:is(.wp-block-list, .content-bullets) {
+  list-style: disc outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
+  margin-bottom: 12px !important;
+  font-size: 18px !important;
+  display: list-item;
+  padding-left: 0;
+}
+.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li:hover {
+}
+.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li::before {
+  content: none;
+}
+
+/* Tables */
+.content-page .entry-content figure.wp-block-table {
+    background: #ffffff !important;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 16px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    margin-bottom: 32px !important;
+}
+.content-page .entry-content table {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+.content-page .entry-content thead {
+    background: transparent !important;
+}
+.content-page .entry-content thead th {
+    background: transparent !important;
+    color: #6B7280 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.7px !important;
+    padding: 16px 24px !important;
+    text-align: center !important;
+    border: none !important;
+}
+.content-page .entry-content tbody td {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    padding: 16px 24px !important;
+    text-align: center !important;
+    border: none !important;
+    border-top: 1px solid #F3F4F6 !important;
+}
+.content-page .entry-content tbody tr:hover {
+    background: rgba(240, 253, 244, .6) !important;
+}
+
+/* FAQ cards, still static */
+.content-page .entry-content .rank-math-faq-item,
+.content-page .entry-content .rank-math-list-item,
+.content-page .entry-content .wp-block-rank-math-faq-block .rank-math-faq-item {
+    background: #ffffff !important;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin-bottom: 16px !important;
+}
+.content-page .entry-content .rank-math-question {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    padding: 20px 32px !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 88px !important;
+}
+.content-page .entry-content .rank-math-answer,
+.content-page .entry-content .rank-math-answer p {
+    font-size: 18px !important;
+    line-height: 1.556 !important;
+    color: #374151 !important;
+}
+.content-page .entry-content .rank-math-answer {
+    padding: 20px 32px 28px !important;
+    border-top: 1px solid #F3F4F6 !important;
+    margin: 0 !important;
+}
+.content-page .entry-content .rank-math-answer p {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+@media (max-width: 768px) {
+    .content-page .entry-content h2:not(#root *) {
+        font-size: 30px !important;
+    }
+    .content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
+  font-size: 16px !important;
+  display: list-item;
+  padding-left: 0;
+}
+    .content-page .entry-content ul:is(.wp-block-list, .content-bullets) li::before {
+  content: none;
+}
+    .content-page .entry-content thead th,
+    .content-page .entry-content tbody td {
+        padding: 12px 16px !important;
+    }
+    .content-page .entry-content tbody td {
+        font-size: 16px !important;
+    }
+    .content-page .entry-content .rank-math-question {
+        padding: 16px 20px !important;
+        min-height: 0 !important;
+    }
+    .content-page .entry-content .rank-math-answer {
+        padding: 16px 20px 20px !important;
+    }
+}
+
+/* TABLE DENSITY
+   The guide's sample table has three columns, so 18px cells with 24px
+   padding fit. Real pages run six or more and the last column was
+   breaking mid word. Tighter horizontal padding, and never break
+   inside a word: a table that still does not fit scrolls in its own
+   box instead. */
+.content-page .entry-content thead th,
+.content-page .entry-content tbody td {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    hyphens: none !important;
+}
+
+/* GUIDE REFRESH ADJUSTMENTS
+   1 Table cells are normal weight again. The VA bolds a cell when it
+     needs emphasis rather than every cell arriving bold.
+   2 The header rule keeps its 3px thickness but drops to the same
+     light grey as the row dividers.
+   3 Content pages capped .site-content at 1140px while calculator
+     pages run full width, so the grey page colour showed as bands
+     down both sides. Matching the calculator behaviour.
+   4 Outline removed from the checklist and numbered list. The icon
+     and the spacing carry the list on their own. */
+.content-page .entry-content tbody td {
+    font-weight: 400 !important;
+}
+.content-page .entry-content thead {
+    border-bottom: 3px solid #F3F4F6 !important;
+}
+body.gpa-template-content .site-content {
+    max-width: 100% !important;
+}
+.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
+  display: list-item;
+  padding-left: 0;
+}
+.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li:hover {
+}
+
+/* GLOBAL TABLE HEADER RULE
+   The 3px near black line comes from .wp-block-table thead in the
+   inline global styles, which matches every core table block on the
+   site. The earlier override only reached .content-page, so this
+   repeats it at the same breadth to cover every template. */
+.wp-block-table thead {
+    border-bottom: 3px solid #F3F4F6 !important;
+}
+
+
+/* ==========================================================================
+   MOBILE + EMBED CONSISTENCY FIXES
+   1. Homepage "Example GPA Calculation" stays a real table on small screens
+   2. The React calculator keeps its own type scale on every template
+   ========================================================================== */
+
+/* 1. EXAMPLE GPA CALCULATION - RESPONSIVE TABLE ---------------------------- */
+@media (max-width: 781px) {
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns {
+		flex-wrap: nowrap !important;
+		gap: 6px !important;
+	}
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns > .wp-block-column {
+		flex-basis: 0 !important;
+		flex-grow: 1;
+		min-width: 0;
+		word-break: normal;
+		overflow-wrap: break-word;
+		hyphens: none;
+	}
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns > .wp-block-column:first-child {
+		flex-grow: 2;
+	}
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns > .wp-block-column:last-child {
+		flex-grow: 1.5;
+	}
+	.example_gpa_calculation .gpa-table-row p,
+	.example_gpa_calculation .gpa-totals p {
+		font-size: 12px !important;
+		line-height: 1.35 !important;
+	}
+	.example_gpa_calculation .gpa-thead p {
+		font-size: 10px !important;
+		line-height: 1.3 !important;
+		letter-spacing: 0 !important;
+	}
+	.example_gpa_calculation .gpa-card-xl {
+		padding-left: 14px !important;
+		padding-right: 14px !important;
+	}
+}
+
+/* 2. CALCULATOR EMBED - KEEP THE APP TYPE SCALE ---------------------------- */
+#root,
+.gpa-embed {
+	--gpa-body-size: 16px;
+	--gpa-body-line: 1.5;
+}
+.gpa-embed .text-sm {
+	font-size: 0.875rem !important;
+	line-height: 1.25rem !important;
+}
+.gpa-embed select.text-sm {
+	padding-left: 2px !important;
+}
+.gpa-embed .bg-gray-100 button {
+	padding-left: 0.5rem !important;
+	padding-right: 0.5rem !important;
+	font-size: 14px !important;
+}
+.gpa-embed input,
+.gpa-embed select {
+	font-size: 12px !important;
+}
+.gpa-embed .max-w-4xl {
+	padding: 0 !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+.gpa-embed button:hover :is(span, svg),
+.gpa-embed button:focus :is(span, svg),
+.gpa-embed button:focus-visible :is(span, svg),
+.gpa-embed button:active :is(span, svg) {
+	color: #ffffff !important;
+}
+
+
+/* ==========================================================================
+   FOLLOW UP FIXES - 2026-09-10
+   ========================================================================== */
+
+/* 1. Content Template page container runs full width, so the grey body
+   colour no longer shows as bands beside the article. The Calculator
+   Template already has #page at 100%, this brings the two in line.
+   The reading column stays 900px and centred. */
+body.gpa-template-content #page.grid-container {
+	max-width: 100% !important;
+}
+
+/* 2. College GPA Calculator: the About card is plain content now,
+   no outline or shadow, and its paragraphs use the standard 20px gap. */
+.page-template-template-calculator .entry-content .rx-about {
+	border: none !important;
+	box-shadow: none !important;
+	background: transparent !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+.page-template-template-calculator .entry-content .rx-about .rx-card-b + .rx-card-b,
+.page-template-template-calculator .entry-content .rx-about p + p {
+	margin-top: 20px !important;
+}
+
+
+/* ==========================================================================
+   RELATED TOOLS LIST - 2026-09-11
+   Every row keeps the same height whether or not the name is a link.
+   The anchor carried 13px of vertical padding on top of the row's own
+   16px, which made linked rows 26px taller than plain ones.
+   Link colours are scoped to this list, not to links site wide.
+   ========================================================================== */
+.page-template-template-calculator .entry-content .rx-rellist li a {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.page-template-template-calculator .entry-content .rx-rellist li a:hover,
+.page-template-template-calculator .entry-content .rx-rellist li a:focus-visible {
+  color: #1d4ed8;
+}
+
+/* ------------------------------------------------------------------
+   Default prose hyperlink style - site wide, all templates
+   Applies to unstyled inline links in body copy, lists and tables.
+   Navigation, footer, buttons, gpa-cta card links and the accent
+   rx-eyebrow / rx-rellist links keep their own treatment.
+   ------------------------------------------------------------------ */
+.entry-content p:not(.gpa-cta):not(.rx-eyebrow) > a:not([class]),
+.entry-content li:not(.gpa-cta) > a:not([class]),
+.entry-content td > a:not([class]),
+.entry-content dd > a:not([class]) {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.entry-content p:not(.gpa-cta):not(.rx-eyebrow) > a:not([class]):hover,
+.entry-content li:not(.gpa-cta) > a:not([class]):hover,
+.entry-content td > a:not([class]):hover,
+.entry-content dd > a:not([class]):hover {
+  color: #1d4ed8;
+}
+
+/* ------------------------------------------------------------------
+   Calculator selects - hide the graduation-cap icon
+   The Course Level select renders a lucide graduation-cap svg pinned
+   to its left edge, which overlaps the option text. Hidden globally.
+   ------------------------------------------------------------------ */
+#root svg.lucide-graduation-cap {
+  display: none;
+}
+
+/* ------------------------------------------------------------------
+   Heading and body alignment policy - site wide, all templates
+   H2 section titles are always centred, whatever alignment is set on
+   the heading block in the editor. Paragraph and list blocks are not
+   forced here, so their alignment keeps following the editor setting.
+   ------------------------------------------------------------------ */
+.entry-content h2.wp-block-heading {
+  text-align: center;
+  justify-content: center;
+}
+
+.entry-content p.has-text-align-left,
+.entry-content li.has-text-align-left {
+  text-align: left;
+}
+
+.entry-content p.has-text-align-center,
+.entry-content li.has-text-align-center {
+  text-align: center;
+}
+
+.entry-content p.has-text-align-right,
+.entry-content li.has-text-align-right {
+  text-align: right;
+}
+
+/* NATIVE LIST SEMANTICS - custom checkmark boxes and number badges removed */
+/* Content pages (guides, GPA scale, etc.): same heading rhythm as the calculator pages */
+body.gpa-hero-band .entry-header { padding-top: 48px !important; }
+body.gpa-hero-band #primary #main .entry-content h2 { margin-bottom: 12px !important; }
+body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: 18px !important; line-height: 1.6 !important; color: #6B7280 !important; max-width: 700px !important; margin-left: auto !important; margin-right: auto !important; margin-bottom: 24px !important; }
+
+/* Phones: let wide tables scroll inside themselves instead of pushing the whole page sideways */
+@media (max-width: 767px) { body.gpa-hero-band .entry-content table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } }
+
+.content-page .entry-content table th {
+  background: transparent !important;
+  color: #6B7280 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .7px !important;
+  padding: 16px 24px !important;
+  text-align: center !important;
+  border: none !important;
+}
+
+/* ==========================================================================
+   GPA SCALE TABLE (/gpa-scale/<x-x>-gpa/ pages)
+   Core Table block with class gpa-scale-table: GPA | Percentage | Letter grade.
+   Rows get is-band-a … is-band-f and the page's own GPA gets is-current-gpa
+   from gpa_scale_table_mark_rows() in functions.php.
+   ========================================================================== */
+.content-page .entry-content figure.wp-block-table.gpa-scale-table {
+    max-width: 560px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, .04), 0 8px 24px rgba(17, 24, 39, .06);
+}
+.content-page .entry-content .gpa-scale-table table { table-layout: fixed; }
+.content-page .entry-content .gpa-scale-table thead th {
+    background: var(--gpa-bg-gray-50, #F9FAFB) !important;
+    padding: 14px 16px !important;
+    font-size: 13px !important;
+}
+.content-page .entry-content .gpa-scale-table tbody td {
+    padding: 11px 16px !important;
+    font-size: 16px !important;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--gpa-border, #E5E7EB) !important;
+    transition: background-color .15s ease;
+}
+.content-page .entry-content .gpa-scale-table tbody tr:last-child td { border-bottom: none !important; }
+.content-page .entry-content .gpa-scale-table tbody td:first-child { font-weight: 600 !important; color: var(--gpa-text-heading, #111827) !important; }
+.content-page .entry-content .gpa-scale-table tbody td:last-child { font-weight: 700 !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-a td { background: var(--gpa-band-a-bg, #F0FDF4); }
+.content-page .entry-content .gpa-scale-table tr.is-band-b td { background: var(--gpa-band-b-bg, #EFF6FF); }
+.content-page .entry-content .gpa-scale-table tr.is-band-c td { background: var(--gpa-band-c-bg, #FFFBEB); }
+.content-page .entry-content .gpa-scale-table tr.is-band-d td { background: var(--gpa-band-d-bg, #FFF7ED); }
+.content-page .entry-content .gpa-scale-table tr.is-band-f td { background: var(--gpa-band-f-bg, #FEF2F2); }
+.content-page .entry-content .gpa-scale-table tr.is-band-a td:last-child { color: var(--gpa-band-a, #15803D) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-b td:last-child { color: var(--gpa-band-b, #1D4ED8) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-c td:last-child { color: var(--gpa-band-c, #B45309) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-d td:last-child { color: var(--gpa-band-d, #C2410C) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-f td:last-child { color: var(--gpa-band-f, #B91C1C) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td,
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child,
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:last-child {
+    background: var(--gpa-primary, #2563EB) !important;
+    color: #fff !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+    border-bottom-color: var(--gpa-primary, #2563EB) !important;
+}
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after {
+    content: "Your GPA";
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: var(--gpa-radius-pill, 999px);
+    background: #fff;
+    color: var(--gpa-primary, #2563EB);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    vertical-align: 2px;
+}
+.content-page .entry-content .gpa-scale-table figcaption {
+    margin: 0 !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+    color: var(--gpa-text-muted, #6B7280) !important;
+    text-align: center;
+    border-top: 1px solid var(--gpa-border, #E5E7EB);
+    background: var(--gpa-bg-white, #fff);
+}
+@media (max-width: 480px) {
+    .content-page .entry-content .gpa-scale-table thead th,
+    .content-page .entry-content .gpa-scale-table tbody td { padding-left: 10px !important; padding-right: 10px !important; }
+    .content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after { display: block; width: max-content; margin: 4px auto 0; }
+}
+
+/* /gpa-scale/<x-x>-gpa/ pages: "Updated" date in the hero and prev / next / hub links (functions.php) */
+body.gpa-hero-band .entry-header .gpa-updated {
+    position: relative;
+    z-index: 1;
+    margin: 12px auto 0 !important;
+    font-size: 14px !important;
+    color: #DDD6FE !important;
+    text-align: center;
+}
+.content-page .entry-content .gpa-scale-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin: 40px 0 8px;
+    padding: 16px 20px;
+    border: 1px solid var(--gpa-border, #E5E7EB);
+    border-radius: var(--gpa-radius-lg, 16px);
+    background: var(--gpa-bg-gray-50, #F9FAFB);
+    font-weight: 600;
+}
+.content-page .entry-content .gpa-scale-nav a { text-decoration: none !important; color: var(--gpa-primary, #2563EB) !important; }
+.content-page .entry-content .gpa-scale-nav a:hover { text-decoration: underline !important; }
+.content-page .entry-content .gpa-scale-nav__prev { justify-self: start; grid-column: 1; }
+.content-page .entry-content .gpa-scale-nav__hub { justify-self: center; grid-column: 2; font-weight: 500; color: var(--gpa-text-muted, #6B7280) !important; }
+.content-page .entry-content .gpa-scale-nav__next { justify-self: end; grid-column: 3; }
+@media (max-width: 480px) {
+    .content-page .entry-content .gpa-scale-nav { grid-template-columns: 1fr 1fr; }
+    .content-page .entry-content .gpa-scale-nav__hub { grid-column: 1 / -1; grid-row: 2; }
+    .content-page .entry-content .gpa-scale-nav__next { grid-column: 2; }
+}
+
+/* ==========================================================================
+   FAQ (Rank Math FAQ block): cards with a "Q" marker and a blue accent; answers stay in the HTML.
+   Overrides the older "FAQ cards, still static" rules above (same selectors + #rank-math-faq).
+   ========================================================================== */
+.content-page .entry-content #rank-math-faq .rank-math-list {
+    display: grid;
+    gap: 14px;
+    margin: 8px 0 32px !important;
+    padding: 0 !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-list-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--gpa-bg-white, #fff) !important;
+    border: 1px solid var(--gpa-border, #E5E7EB) !important;
+    border-left: 4px solid var(--gpa-primary, #2563EB) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, .04);
+    transition: box-shadow .15s ease;
+}
+.content-page .entry-content #rank-math-faq .rank-math-list-item:hover {
+    box-shadow: 0 8px 22px rgba(37, 99, 235, .09);
+}
+.content-page .entry-content #rank-math-faq .rank-math-question {
+    position: relative;
+    display: block !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 18px 24px 8px 62px !important;
+    font-size: 19px !important;
+    line-height: 1.4 !important;
+    color: var(--gpa-text-heading, #111827) !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-question::before {
+    content: "Q";
+    position: absolute;
+    left: 20px;
+    top: 16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gpa-band-b-bg, #EFF6FF);
+    color: var(--gpa-primary, #2563EB);
+    font-size: 15px;
+    font-weight: 700;
+}
+.content-page .entry-content #rank-math-faq .rank-math-answer {
+    margin: 0 !important;
+    padding: 0 24px 20px 62px !important;
+    border-top: none !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-answer,
+.content-page .entry-content #rank-math-faq .rank-math-answer p {
+    font-size: 16px !important;
+    line-height: 1.7 !important;
+    color: var(--gpa-text-body, #374151) !important;
+}
+.content-page .entry-content #rank-math-faq .rank-math-answer p { margin: 0 !important; padding: 0 !important; }
+.content-page .entry-content #rank-math-faq .rank-math-answer p + p { margin-top: 10px !important; }
+@media (max-width: 768px) {
+    .content-page .entry-content #rank-math-faq .rank-math-question { padding: 16px 16px 6px 54px !important; font-size: 17px !important; }
+    .content-page .entry-content #rank-math-faq .rank-math-question::before { left: 14px; top: 14px; width: 28px; height: 28px; }
+    .content-page .entry-content #rank-math-faq .rank-math-answer { padding: 0 16px 16px 54px !important; }
+}

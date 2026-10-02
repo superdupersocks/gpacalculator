@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "admissions"))
 import audit  # noqa: E402
 import build  # noqa: E402
 import cds  # noqa: E402
+import cds_pages  # noqa: E402
 import fetch  # noqa: E402
 import match  # noqa: E402
 import phase2_e_import  # noqa: E402
@@ -587,6 +588,46 @@ eq("CDS: a file on another college's website is not used; its own site, a subdom
        ("219718", "https://ir.bethelu.edu/cds.pdf"), ("190512", "https://drive.usercontent.google.com/x"),
        ("190512", "https://www.hunter.cuny.edu/cds.pdf"))],
    [["Bethel University"], [], [], [], ["CUNY Hunter College"]])
+
+# A CDS file off the college's website counts once a page on that website links it
+_drive = {"unitid": "1", "source_url": "https://drive.usercontent.google.com/download?id=1cb-7QPm2EL_CSJP4lw1RN1qLEKfHiQiF&export=download",
+          "archive_url": "https://x/sources/a/2025-26/" + "ab" * 32 + ".pdf", "cds_year": "2024-25"}
+_cdn = {"unitid": "2", "source_url": "https://live-csu-northridge.pantheonsite.io/sites/default/files/2025-02/CDS%202024.xlsx",
+        "archive_url": "", "cds_year": "2024-25"}
+_box = {"unitid": "3", "source_url": "https://public.boxcloud.com/d/1/b1!abc", "archive_url": "", "cds_year": "2025-26"}
+eq("CDS pages: what names the file in a page",
+   [(t["google"], t["paths"], t["sha256"][:4]) for t in map(cds_pages.tokens, (_drive, _cdn, _box))],
+   [("1cb-7QPm2EL_CSJP4lw1RN1qLEKfHiQiF", [], "abab"),
+    ("", ["2025-02/CDS 2024.xlsx", "2025-02/CDS%202024.xlsx"], ""), ("", [], "")])
+_page = ('<p>Common Data Set: <a href="https://drive.google.com/file/d/1cb-7QPm2EL_CSJP4lw1RN1qLEKfHiQiF/view">'
+         '2024-2025</a> <a href="/sites/default/files/2025-02/CDS%202024.xlsx">CDS 2024-25 (Excel)</a>'
+         ' <a href="https://upenn.box.com/s/k3j2h1">Common Data Set 2025-2026</a> <a href="/ir/">IR</a></p>')
+_pl = cds_pages.links(_page, "https://www.csun.edu/ir/")
+eq("CDS pages: a Drive ID or the CDN path in the page finds its link; Box needs the year and a download",
+   [cds_pages.found_in(_page, _pl, cds_pages.tokens(s)) for s in (_drive, _cdn, _box)]
+   + [cds_pages.cds_links(_pl, "2025-26"), cds_pages.download_url("https://upenn.box.com/s/k3j2h1")],
+   [("https://drive.google.com/file/d/1cb-7QPm2EL_CSJP4lw1RN1qLEKfHiQiF/view", "Google file ID"),
+    ("https://www.csun.edu/sites/default/files/2025-02/CDS%202024.xlsx", "file path"), None,
+    ["https://upenn.box.com/s/k3j2h1"], "https://upenn.box.com/shared/static/k3j2h1"])
+eq("CDS pages: only files off the college's own site (and not commondataset.org) need a page",
+   [cds_pages.needs_page({"source_url": u}, w) for u, w in (
+       ("https://www.csun.edu/x.pdf", "www.csun.edu"), ("https://ir.csun.edu/x.pdf", "https://www.csun.edu/"),
+       ("https://drive.usercontent.google.com/download?id=x", "www.csun.edu"),
+       ("https://commondataset.org/x", "www.csun.edu"))],
+   [False, False, True, False])
+
+_site = {"https://www.example.edu/": '<a href="/about/">About</a> <a href="/offices/ir/">Institutional Research</a>',
+         "https://www.example.edu/offices/ir/": '<a href="cds/">Common Data Set</a> <a href="/news/">News</a>',
+         "https://www.example.edu/offices/ir/cds/": '<a href="https://drive.google.com/file/d/'
+                                                    '1cb-7QPm2EL_CSJP4lw1RN1qLEKfHiQiF/view">CDS 2024-2025</a>',
+         "https://www.example.edu/about/": "<p>About us</p>"}
+_crawl = cds_pages.Crawler(10)
+_crawl.robots = {h: __import__("urllib.robotparser").robotparser.RobotFileParser() for h in ("www.example.edu",)}
+_crawl.robots["www.example.edu"].parse([])
+_crawl.get = lambda url, check=True, limit=0: _site.get(url, "").encode() or None
+_row, _read = _crawl.find({**_drive, "name": "Example College"}, "www.example.edu")
+eq("CDS pages: the crawl follows institutional-research and CDS links to the page that links the file",
+   (_row["page_url"], _row["match"], _read), ("https://www.example.edu/offices/ir/cds/", "Google file ID", 3))
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

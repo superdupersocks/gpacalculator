@@ -1,6 +1,7 @@
 name: Admissions CDS
-# Reads each college's newest Common Data Set (scripts/admissions/cds_sources.py, cds.py) and commits
-# data/admissions/cds_*.csv back to the branch. Runs by hand, or on a push that changes the CDS scripts.
+# Reads each college's newest Common Data Set (scripts/admissions/cds_sources.py, cds.py), finds the college's own
+# page for files kept off its website (cds_pages.py) and commits data/admissions/cds_*.csv back to the branch.
+# Runs by hand, or on a push that changes the CDS scripts.
 on:
   workflow_dispatch:
   push:
@@ -27,6 +28,7 @@ jobs:
       - run: python tests/admissions_qa.py
       - run: python scripts/admissions/cds_sources.py
       - run: python scripts/admissions/cds.py
+      - run: python scripts/admissions/cds_pages.py  # the college's page that links a file kept elsewhere
       - name: Commit results
         run: |
           git config user.name "github-actions[bot]"

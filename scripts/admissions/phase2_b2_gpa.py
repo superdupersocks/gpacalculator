@@ -10,9 +10,9 @@ average high school GPA (CDS C12) its college reported when:
   audit/corrections.csv, and not unpublished by checkpoint C or D);
 - the value passed the Phase 1 checks (cds_provenance.csv: verified) and lies between 1 and 5;
 - the file is the college's own: it sits on the college's web domain (IPEDS website) or on one of the college's own
-  hosts in OWN_HOSTS. Files on Google Drive or Sheets, Box or a third-party CDN wait until we have the college's page
-  that links to them, which is what the page then cites (Digant's rule); a file on another college's domain is that
-  college's, not this one's.
+  hosts in OWN_HOSTS. Files on Google Drive or Sheets, Box or a third-party CDN count once cds_pages.py has found the
+  college's own page that links to them, and the GPA then cites that page (Digant's rule); until then they wait. A
+  file on another college's domain is that college's, not this one's.
 
 Writes data/admissions/audit/phase2_b2_gpa.csv (the rows scripts/admissions/phase2_b2_live.sh imports) and
 phase2_b2_gpa_pending.csv (the rest, with the reason). A GPA above 4.0 is marked weighted: an unweighted 4.0 scale
@@ -78,6 +78,7 @@ def main():
             colleges_by_site.setdefault(site(host(r["website"])), f"{r['name']} ({r['city']}, {r['state']})")
     cds = {r["unitid"]: r for r in read(DATA / "cds_values.csv") if r["gpa_avg"]}
     verified = {r["unitid"] for r in read(DATA / "cds_provenance.csv") if r["field"] == "gpa_avg" and r["verified"] == "yes"}
+    pages = {r["unitid"]: r for r in read(DATA / "cds_pages.csv")} if (DATA / "cds_pages.csv").exists() else {}
     corrected = {r["slug"] for r in read(AUDIT / "corrections.csv")}
     unpublished = {r["slug"] for r in read(AUDIT / "phase2_cd_actions.csv")}
 
@@ -93,8 +94,13 @@ def main():
         elif not 1.0 <= float(gpa) <= 5.0:
             pending.append([m["slug"], u, i["name"], gpa, c["cds_year"], c["source_url"], "outside 1.0-5.0"])
         elif not own_file(u, c["source_url"], i["website"]):
-            pending.append([m["slug"], u, i["name"], gpa, c["cds_year"], c["source_url"],
-                            why_not_own(c["source_url"], i["website"], colleges_by_site)])
+            page = pages.get(u)
+            if page and page["file_url"] == c["source_url"] and site(host(page["page_url"])) == site(host(i["website"])):
+                rows.append([m["slug"], u, i["name"], gpa, c["cds_year"], c["gpa_submit_pct"].strip(),
+                             "weighted" if float(gpa) > 4.0 else "", page["page_url"]])  # cite the college's page
+            else:
+                pending.append([m["slug"], u, i["name"], gpa, c["cds_year"], c["source_url"],
+                                why_not_own(c["source_url"], i["website"], colleges_by_site)])
         else:
             rows.append([m["slug"], u, i["name"], gpa, c["cds_year"], c["gpa_submit_pct"].strip(),
                          "weighted" if float(gpa) > 4.0 else "", c["source_url"]])

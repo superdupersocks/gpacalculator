@@ -74,6 +74,7 @@ dates, then clears Rank Math's sitemap cache. Only post_modified and post_modifi
 
 ## 4. Follow-up
 
-Search Console checks against the September baseline (`search-console-findings-2026-10` in project memory) on
-16 and 30 October, and 13 and 27 November 2026, reported in the admissions thread: clicks, impressions, position and
-CTR for /admissions/ and the old /admission/ addresses together, and the pages that dropped.
+Search Console checks against the September baseline (`search-console-findings-2026-10` in project memory), 2, 4, 6
+and 8 weeks after the refresh, are scheduled for 19 October, 2, 16 and 30 November 2026 and report in the admissions
+thread: clicks, impressions, position and CTR for /admissions/ and the old /admission/ addresses together, and the
+pages that dropped.

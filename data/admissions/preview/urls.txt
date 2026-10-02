@@ -1,0 +1,8 @@
+# Live pages saved by admissions-snapshot.yml (scripts/design/snapshot.py) for Phase 3 previews. Edit to take a new snapshot.
+# taken for: Phase 3 "before" screenshots and the page chrome around the local template renders (2026-10-02)
+https://gpacalculator.net/admissions/
+https://gpacalculator.net/admissions/harvard/
+https://gpacalculator.net/admissions/miami-university/
+https://gpacalculator.net/admissions/lone-star-college-system/
+https://gpacalculator.net/admissions/fairfax-university-of-america/
+https://gpacalculator.net/admissions/pitt/

@@ -926,31 +926,20 @@ body.page-id-26311 #root,
 body.page-id-26313 #root,
 body.page-id-28758 #root { max-width: none !important; min-height: 720px !important; }
 
-/* College calculator has 16px less built-in side padding: give it 16px less width to line up */
-body.page-id-22 #root { max-width: 734px !important; }
+/* College calculator: same card width as the high school calculator (800px on wider screens, 14px from the screen edge on phones) */
+body.page-id-22 #root .max-w-4xl.px-4 { max-width: none; padding-left: 0; padding-right: 0; }
+@media (min-width: 641px) {
+  body.page-id-22 #root { width: min(800px, calc(100vw - 32px)) !important; max-width: none !important; margin-left: calc((100% - min(800px, calc(100vw - 32px))) / 2) !important; margin-right: 0 !important; }
+}
+@media (max-width: 640px) {
+  body.page-id-22 #root { width: auto !important; max-width: none !important; margin-left: -16px !important; margin-right: -16px !important; }
+  body.page-id-22 #root .max-w-4xl.px-4 > .border { border-radius: 18px; }
+}
 
 /* High school calculator: 16px less side padding below 1024px wide, and no full-screen minimum height */
 @media (max-width: 1023px) { body.page-id-77 #root { max-width: 734px !important; } }
 body.page-id-77 #root .min-h-screen { min-height: 0 !important; }
 
-/* All calculator-template pages: same width as the homepage calculator, and no reserved blank space under it */
-body.gpa-calc-tool #root { max-width: 750px !important; margin-left: auto; margin-right: auto; min-height: 0 !important; }
-
-/* Grade-style calculators: full width, and keep the reserved height (they aren't prerendered, so the page would jump while they load) */
-body.page-id-296 #root,
-body.page-id-26308 #root,
-body.page-id-26311 #root,
-body.page-id-26313 #root,
-body.page-id-28758 #root { max-width: none !important; min-height: 720px !important; }
-
-/* College calculator has 16px less built-in side padding, so give it 16px less to land on the same width */
-body.page-id-22 #root { max-width: 734px !important; }
-
-/* High school calculator has 16px less side padding below 1024px wide, so give it 16px less there too */
-@media (max-width: 1023px) { body.page-id-77 #root { max-width: 734px !important; } }
-
-/* High school calculator: remove its built-in "at least a full screen tall" setting */
-body.page-id-77 #root .min-h-screen { min-height: 0 !important; }
 /* Section headings on calculator pages: pill, title and subtitle type and spacing */
 #primary #main .entry-content .rx-sec { margin-bottom: 64px !important; }
 #primary #main .entry-content .rx-sec + .rx-sec { margin-top: 64px !important; }

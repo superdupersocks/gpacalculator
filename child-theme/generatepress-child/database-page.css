@@ -57,8 +57,21 @@ body.single-colleges .separate-containers .inside-article {
 body.post-type-archive-colleges .site-header .grid-container,
 body.single-colleges .site-header .grid-container {
     max-width: 1280px !important;
-    padding-left: 40px !important;
-    padding-right: 40px !important;
+}
+/* Wide side padding on desktop only: on phones it pushed the menu button below the logo */
+@media (min-width: 769px) {
+    body.post-type-archive-colleges .site-header .grid-container,
+    body.single-colleges .site-header .grid-container {
+        padding-left: 40px !important;
+        padding-right: 40px !important;
+    }
+}
+@media (max-width: 768px) {
+    body.post-type-archive-colleges .site-header .grid-container,
+    body.single-colleges .site-header .grid-container {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
 }
 body.post-type-archive-colleges .inside-navigation.grid-container,
 body.single-colleges .inside-navigation.grid-container {

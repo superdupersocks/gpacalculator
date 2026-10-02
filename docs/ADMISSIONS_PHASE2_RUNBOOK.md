@@ -56,7 +56,7 @@ Undo: `bash scripts/admissions/phase2_b_live.sh revert <export name>` puts every
 ## B2: cited Common Data Set GPAs
 
 Digant's go for B includes "Replace GPA with verified, cited CDS values wherever available". Run this after B. Commit
-39e097c changes two theme files: a college with `cds_gpa` fields gets an "Average high school GPA" card noted "As
+a15c8a7 changes two theme files: a college with `cds_gpa` fields gets an "Average high school GPA" card noted "As
 reported by the college, <year>" (plus "weighted" when the average is above 4.0) and a FAQ, in the page and its
 JSON-LD, that states the value with its year and cites the college's own file. Titles and descriptions don't change.
 `data/admissions/audit/phase2_b2_gpa.csv` has the 243 pages whose college published the file on its own site;
@@ -71,7 +71,7 @@ links them; two files belong to other colleges). Don't write any CDS value into 
        && echo "same    $f" || echo "DIFFERS $f"
    done
    ```
-3. Theme: `bash scripts/deploy_theme.sh 39e097c --dry-run --only functions.php,single-colleges.php`. Only those two
+3. Theme: `bash scripts/deploy_theme.sh a15c8a7 --dry-run --only functions.php,single-colleges.php`. Only those two
    files may change. Then the same command without `--dry-run`; note the theme backup name.
 4. Data: `bash scripts/admissions/phase2_b2_live.sh plan` must end "243 rows ready" (report any `SKIP`), then
    `bash scripts/admissions/phase2_b2_live.sh apply`; note the log name.

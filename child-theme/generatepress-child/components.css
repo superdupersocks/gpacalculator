@@ -737,7 +737,7 @@
 #page #main .entry-content .rx-formula > p.rx-sub:not(#root *) {
     margin: 0 !important;
     font-size: 16px !important;
-    color: var(--gpa-gray-600) !important;
+    color: var(--gpa-text) !important;
     text-align: center !important;
 }
 #page #main .entry-content .rx-formula > p.rx-pill:not(#root *) {
@@ -816,3 +816,43 @@
     gap: 12px;
 }
 #page #main .entry-content .rx-relcard .rx-rellist > li > mark { flex: none; margin: 0 !important; }
+
+/* 11b. One text standard and section spacing (Digant 2026-10-02 20:10).
+   Every font is Lexend. Running text: 18px in the body color; text inside cards, boxes, tables and FAQ answers: 16px,
+   same color. Section intros (p.rx-sub) were a lighter gray than other paragraphs, which read as a different font.
+   Sections sit --gpa-sec-gap apart (48px desktop, 40px phones), down from 64px. */
+#page #main .entry-content p.rx-sub:not(#root *, .gpacalc-mount *) { color: var(--gpa-text) !important; }
+#page .entry-content .rank-math-block .rank-math-answer:not(#root *),
+#page .entry-content .rank-math-block .rank-math-answer :is(p, li):not(#root *) { font-size: 16px !important; }
+#page #main .entry-content > .rx-sec:not(#root *) { margin-top: 0 !important; margin-bottom: var(--gpa-sec-gap) !important; }
+#page #main .entry-content > :is(#root, .gpacalc-mount, .wp-block-rank-math-toc-block) + .rx-sec:not(#root *) { margin-top: var(--gpa-sec-gap) !important; }
+#page #main .entry-content > .rx-sec:not(:has(~ .rx-sec, ~ p, ~ h2)) { margin-bottom: 0 !important; }
+/* Formula box: left-aligned like the rest of the page, with room above its closing line */
+#page #main .entry-content .rx-formula > p:is(.rx-sub, .rx-pill):not(#root *) { text-align: left !important; }
+#page #main .entry-content .rx-formula > .wp-block-columns + p:not(#root *) { margin-top: 20px !important; }
+/* Calculators asked for Inter: they use Lexend like the rest of the page (Inter's download goes in phase 5) */
+body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { font-family: var(--gpa-font) !important; }
+
+/* 12. TRIAL (Digant 2026-10-02 20:28): the College GPA calculator page (id 22) with a 700px white column.
+   The calculator fills the column; text, boxes, tables, TOC and FAQ sit at 620px inside it.
+   Remove this block to go back to the 900/800 layout, or widen the selector to roll it out. */
+body.page-id-22 { --gpa-content-max: 700px; --gpa-text-max: 620px; }
+/* the calculator template hard-codes a 900px column (calculator-page.css section 14) */
+html body.page-id-22 #page #main article .inside-article .entry-content { max-width: var(--gpa-content-max) !important; }
+@media (min-width: 941px) {
+    body.page-id-22 #page #main .entry-content > :is(.rx-sec, .rx-about, .wp-block-group, figure, .wp-block-table, .wp-block-columns, .wp-block-rank-math-toc-block, .rank-math-block):not(#root *) {
+        max-width: min(620px, calc(100% - 80px)) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    body.page-id-22 #page #main .entry-content :is(.rx-sec, .rx-about) > :is(p, ul, ol, h2, h3, blockquote, .rx-formula, .rx-meaning, .rx-card, .wp-block-columns, figure, .wp-block-table, .rank-math-block, .wp-block-rank-math-faq-block, .rx-faqwrap, .rx-relcard):not(#root *) {
+        max-width: 100% !important;
+    }
+}
+@media (min-width: 641px) {
+    html body.page-id-22.gpa-calc-tool #page #root:not(.hs-root) {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+}

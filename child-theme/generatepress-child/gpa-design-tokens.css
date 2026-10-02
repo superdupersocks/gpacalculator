@@ -260,7 +260,8 @@
     --gpa-h4-below: 8px;
 
     /* ---- Section rhythm (layout.css) ---- */
-    --gpa-hdr-above: 64px;           /* above a section header */
+    --gpa-hdr-above: 64px;           /* hero and column bottom spacing */
+    --gpa-sec-gap: 48px;             /* above every section H2 */
     --gpa-hdr-sub-gap: 12px;         /* H2 → subtitle */
     --gpa-hdr-below: 32px;           /* header → first content */
     --gpa-block-gap: 80px;           /* between major blocks */
@@ -324,6 +325,7 @@
         --gpa-small-size: 13px;
         --gpa-result-size: 36px;
         --gpa-hdr-above: 48px;
+        --gpa-sec-gap: 40px;
         --gpa-hdr-below: 24px;
         --gpa-block-gap: 56px;
         --gpa-hero-pad-top: 18px;

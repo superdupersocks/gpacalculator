@@ -1,0 +1,22 @@
+# Pages read by scripts/page_check.py (admissions-pages.yml). Edit the stage line to run the check again.
+# stage: after the af793b4 theme deploy (2026-10-02 14:41 UTC), before B's data step
+/admissions/harvard/
+/admissions/abilene-christian-university/
+/admissions/clark-atlanta-university/
+/admissions/hardin-simmons-university/
+/admissions/westcliff-university/
+/admissions/a-t-still-university/
+/admissions/pitt/
+/admissions/unc/
+/admissions/alabama/
+/admissions/agnes-scott/
+/admissions/blue-cliff-college-metairie/
+/admissions/ivy-tech-community-college-kokomo/
+/admissions/stanford/
+/admissions/upenn/
+/admissions/csu-fullerton/
+/admissions/central-college/
+/admissions/chicago/
+/admissions/
+/high-school-gpa-calculator/
+/

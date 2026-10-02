@@ -134,3 +134,95 @@ body {
     html body .gpa-hero-sub { font-size: 15px; line-height: 1.4 !important; margin: 6px 0 14px !important; }
     html body :is(.gpa-hero-title, .gpa-hero-sub) { padding-left: 16px !important; padding-right: 16px !important; }
 }
+
+/* ---------- 6. Hero (calculator and content templates) ----------
+   One design: light glossy blue band, flat bottom, breadcrumb, navy title,
+   one subtitle line. The band is .entry-header::after, full viewport width,
+   running --rx-hero-tail past the header. On calculator pages the card rises
+   --rx-card-overlap into that tail. */
+body.page-template-template-calculator.page-template-template-calculator {
+    --rx-hero-tail: var(--gpa-hero-tail);
+    --rx-card-overlap: var(--gpa-hero-overlap);
+}
+body.gpa-hero-band.gpa-hero-band {
+    --rx-hero-tail: var(--gpa-hero-tail-plain);
+    --rx-card-overlap: 0px;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) {
+    overflow-x: clip;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) :is(.inside-article, .site-main) {
+    position: relative;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+/* html: beats calculator bundles' page-id header padding (high-school-gpa-calc.css) */
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header {
+    position: relative;
+    z-index: 0;
+    padding: var(--gpa-hero-pad-top) 20px 0 !important;
+    margin-bottom: 0;
+    text-align: center;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: calc(100% + var(--rx-hero-tail));
+    z-index: 0;
+    pointer-events: none;
+    background: var(--gpa-hero-bg);
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header > * {
+    position: relative;
+    z-index: 1;
+}
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article h1.entry-title {
+    color: var(--gpa-hero-title) !important;
+    text-align: center !important;
+    margin: 0 auto 12px !important;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+}
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro p {
+    margin: 0 !important;
+    color: var(--gpa-hero-text) !important;
+    font-size: var(--gpa-hero-sub-size) !important;
+    line-height: 1.5 !important;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro a {
+    color: var(--gpa-link) !important;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro strong {
+    color: var(--gpa-hero-title) !important;
+}
+/* Calculator card rises into the hero: the column starts --rx-card-overlap
+   above the band's end, and its white begins exactly there (section 2). */
+body.page-template-template-calculator.page-template-template-calculator .entry-content {
+    margin-top: calc(var(--rx-hero-tail) - var(--rx-card-overlap)) !important;
+}
+body.page-template-template-calculator.page-template-template-calculator #root {
+    position: relative;
+    z-index: 2;
+    margin-top: 0 !important;
+}
+/* Content pages, and calculator pages without a #root card (older plugin
+   calculators), start where the band ends, with room above the first block */
+body.page-template-template-calculator.page-template-template-calculator:not(:has(#root)) {
+    --rx-hero-tail: var(--gpa-hero-tail-plain);
+    --rx-card-overlap: 0px;
+}
+body.page-template-template-calculator.page-template-template-calculator:not(:has(#root)) .entry-content,
+body.gpa-hero-band.gpa-hero-band .entry-content {
+    margin-top: var(--rx-hero-tail) !important;
+    padding-top: var(--gpa-hero-tail-plain);
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) #primary #main .entry-content > :is(h2, p.rx-eyebrow):first-child {
+    margin-top: 0 !important;
+}

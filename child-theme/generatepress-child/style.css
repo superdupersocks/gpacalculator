@@ -713,27 +713,3 @@ html body div.gpa-rail {
 	justify-content: flex-start;
 }
 
-/* ============================================================
-   SHARED COMPACT HERO (desktop) â€” every calculator and content page
-   Same spacing as the High School GPA page: 28px top, 12px + 8px
-   title-to-subtitle gap, 16px subtitle. Phones keep the standard hero.
-   ============================================================ */
-@media (min-width: 641px) {
-  body.page-template-template-calculator.page-template-template-calculator .entry-header,
-  body.gpa-hero-band.gpa-hero-band .entry-header { padding-top: 28px !important; }
-
-  body.page-template-template-calculator.page-template-template-calculator .entry-header h1.entry-title,
-  body.gpa-hero-band.gpa-hero-band .entry-header h1.entry-title { margin-bottom: 12px !important; }
-
-  body.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro,
-  body.gpa-hero-band.gpa-hero-band .entry-header .rx-hero-intro { margin-top: 8px !important; }
-
-  body.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro p,
-  body.gpa-hero-band.gpa-hero-band .entry-header .rx-hero-intro p {
-    font-size: 16px !important;
-    line-height: 1.55 !important;
-    max-width: 760px;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}

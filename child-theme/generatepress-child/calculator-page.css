@@ -777,11 +777,6 @@
 	width:100% !important;
 }
 
-.page-template-template-calculator .site-main article .inside-article .entry-header h1.entry-title{
-	text-align:center !important;
-	color:var(--gpa-white) !important;
-}
-
 .page-template-template-calculator   .site-main{
 	margin:0 !important;
 }
@@ -798,109 +793,7 @@
 }
 
  
-/* ============================================================
-   14. HERO BAND
-   ------------------------------------------------------------
-   Tailwind source:
-     relative overflow-hidden bg-gradient-to-br
-     from-violet-600 via-purple-600 to-indigo-700
-     pb-28 pt-14 sm:pb-32 sm:pt-20
- 
-   The page's Tailwind classes are inert — no Tailwind build is
-   loaded — and the template deliberately neutralises the React
-   hero (.gpa-embed .gpa-chrome { display:none !important } and
-   .gpa-embed .gpa-hero-band { background-image:none !important }).
-   So the band is rebuilt here around the elements that are
-   actually visible: the theme's h1.entry-title and the first
-   centred paragraph of .entry-content.
- 
-   The badge is generated with .entry-header::before — no markup
-   change needed. Edit the `content` string to change its text.
- 
-   BAND HEIGHT
-     .entry-header::after is the band. Its height is
-       header height (badge + h1, auto — survives h1 wrapping)
-       + --rx-hero-tail  (subtitle height + the pb-28/32 padding)
-     Only the tail is a fixed number. If the subtitle is edited to
-     a very different length, adjust --rx-hero-tail.
-   ============================================================ */
- 
-.page-template-template-calculator.page-template-template-calculator .inside-article {
-  position: relative;
-  overflow: hidden;
-  padding-top: 0 !important;
-}
- 
-.page-template-template-calculator.page-template-template-calculator .entry-header {
-  position: relative;
-  z-index: 0;
-  padding: 80px 20px 0;          /* sm:pt-20 */
-  margin-bottom: 0;
-}
- 
-/* The gradient band + the white wave that closes it */
-.page-template-template-calculator.page-template-template-calculator .entry-header::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  height: calc(100% + var(--rx-hero-tail));
-  z-index: 0;
-  pointer-events: none;
-  background:
-    var(--gpa-gradient-brand);
-}
- 
-/* Badge above the heading */
-.page-template-template-calculator.page-template-template-calculator .entry-header::before {
- counter-reset: updated-year var(--updated-year, 2026);
-  content: "Updated for " counter(updated-year);
-  position: relative;
-  z-index: 1;
-  display: table;
-  margin: 0 auto 20px;
-  padding: 5px 18px 5px 42px;
-  border-radius: 9999px; 
-  background: color-mix(in srgb, var(--gpa-white) 16%, transparent)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21.42 10.92a1 1 0 0 0-.02-1.84L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.83l8.57 3.91a2 2 0 0 0 1.66 0z'/%3E%3Cpath d='M22 10v6'/%3E%3Cpath d='M6 12.5V16a6 3 0 0 0 12 0v-3.5'/%3E%3C/svg%3E")
-    no-repeat 18px center / 16px;
-  color: var(--gpa-white);
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 20px;
-  white-space: nowrap;
-}
- 
-/* Heading — beats body:not(.home):not(.single-colleges) h1.entry-title (0,3,2) */
-.page-template-template-calculator.page-template-template-calculator .inside-article h1.entry-title {
-  position: relative;
-  z-index: 1;
-  color: var(--gpa-white) !important;
-  margin-bottom: 20px !important;
-}
- 
-.page-template-template-calculator.page-template-template-calculator .entry-content {
-  position: relative;
-  z-index: 1;
-  margin-top: 0 !important;
-}
- 
-/* Sub-heading, and the 60px that lets the calculator card overlap the wave */
-.page-template-template-calculator.page-template-template-calculator .entry-content > p.has-text-align-center:first-child {
-  max-width: 640px;
-  margin: 0 auto 60px !important;
-  font-size: var(--gpa-body-lg-size, 18px) !important;
-  color: color-mix(in srgb, var(--gpa-white) 85%, transparent) !important;
-  line-height: 1.6 !important;
-}
- 
-@media (max-width: 768px) {
-  .page-template-template-calculator.page-template-template-calculator .entry-header {
-    padding-top: 56px;           /* pt-14 */
-  }
-}
+/* 14. Hero band: the shared hero lives in layout.css */
 .page-template-template-calculator.page-template-template-calculator article .inside-article .entry-content{
     max-width:900px !important;
     margin-left:auto !important;
@@ -926,63 +819,6 @@
 	margin-bottom:50px !important;
 	    max-width: 36rem;
 }
-
-.page-template-template-calculator.page-template-template-calculator #root{
-	margin-top: calc(var(--rx-hero-tail) - var(--rx-card-overlap));
-}
-
-/* ============================================================
-   HERO TOKENS AND THE CARD OVERLAP
-   ------------------------------------------------------------
-   --rx-hero-tail     how far the purple carries on below the hero
-                      content, measured from the bottom of the intro
-   --rx-card-overlap  how far the calculator card sits into that tail
-
-   Both live on the body so #root can read them as well. The intro
-   paragraph now renders inside .entry-header (see functions.php), so
-   the band is header height + tail and grows with the copy. The card
-   stays in normal flow and only ever overlaps the tail, never the
-   text above it. On phones the overlap is zero.
-   ============================================================ */
-.page-template-template-calculator.page-template-template-calculator {
-    --rx-hero-tail: 104px;
-    --rx-card-overlap: 64px;
-}
-
-.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro {
-    position: relative;
-    z-index: 1;
-    max-width: 56rem;
-    margin: 16px auto 0;
-    text-align: center;
-}
-.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro p {
-    margin: 0 !important;
-    color: var(--gpa-indigo-100) !important;
-    font-size: 18px !important;
-    line-height: 1.6 !important;
-}
-.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro a {
-    color: var(--gpa-white) !important;
-    text-decoration: underline !important;
-}
-.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro strong {
-    color: var(--gpa-white) !important;
-}
-
-@media (max-width: 768px) {
-    .page-template-template-calculator.page-template-template-calculator {
-        --rx-hero-tail: 72px;
-        --rx-card-overlap: 0px;
-    }
-    .page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro {
-        margin-top: 12px;
-    }
-    .page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro p {
-        font-size: 16px !important;
-    }
-}
-
 
 /* ---------- 20. rx-* mobile type scale ----------
    Heading and body sizes come from the tokens, which switch to phone values
@@ -1096,9 +932,6 @@ body.page-id-22 #root { max-width: 734px !important; }
 /* High school calculator: 16px less side padding below 1024px wide, and no full-screen minimum height */
 @media (max-width: 1023px) { body.page-id-77 #root { max-width: 734px !important; } }
 body.page-id-77 #root .min-h-screen { min-height: 0 !important; }
-
-/* Tighter space above the badge and title (leave this rule out if you haven't decided to tighten the hero) */
-body.gpa-calc-tool .entry-header { padding-top: 40px !important; }
 
 /* All calculator-template pages: same width as the homepage calculator, and no reserved blank space under it */
 body.gpa-calc-tool #root { max-width: 750px !important; margin-left: auto; margin-right: auto; min-height: 0 !important; }

@@ -30,10 +30,10 @@ body:not(.home):not(.single-colleges) h1.entry-title {
     font-size: var(--gpa-h1-size) !important;
     font-weight: var(--gpa-h1-weight) !important;
     line-height: var(--gpa-h1-line) !important;
-    color: var(--gpa-text-heading) !important;
+    color: var(--gpa-h1-color) !important;
     margin: 0 0 24px !important;
     padding: 0 !important;
-    letter-spacing: normal !important;
+    letter-spacing: var(--gpa-h1-tracking) !important;
 }
 @media (max-width: 768px) {
     body:not(.home):not(.single-colleges) .entry-header > .entry-title,
@@ -580,34 +580,6 @@ body:has(.gpa-hero) > #page .entry-header {
     }
 }
 
-/* CONTENT STYLE GUIDE ALIGNMENT
-   Component blocks already matched the guide exactly, so only the type
-   scale changes here. Scoped to the content template body class, not
-   :root, because calculator pages also carry .content-page. */
-body.gpa-template-content .entry-content,
-body.gpa-calc-tool .entry-content {
-    --gpa-body-size: 18px;
-    --gpa-body-line: 1.625;
-    --gpa-h2-size: 36px;
-    --gpa-h2-line: 1.1111;
-    --gpa-h2-weight: 800;
-    --gpa-h3-size: 24px;
-    --gpa-h3-weight: 700;
-    --gpa-h3-line: 1.3333;
-    --gpa-h4-size: 20px;
-    --gpa-h4-line: 1.4;
-    --gpa-h2-size-m: 30px;
-    --gpa-h3-size-m: 22px;
-}
-body.gpa-template-content .entry-content h3,
-body.gpa-calc-tool .entry-content h3 {
-    line-height: var(--gpa-h3-line) !important;
-}
-body.gpa-template-content .entry-content h4,
-body.gpa-calc-tool .entry-content h4 {
-    line-height: var(--gpa-h4-line) !important;
-}
-
 /* COMPONENT SPECIFICITY FIX
    The element defaults above are .content-page .entry-content <el> with
    !important (specificity 0,2,1). The component helpers were written as
@@ -672,111 +644,7 @@ body.gpa-calc-tool .entry-content h4 {
     }
 }
 
-/* CONTENT TEMPLATE HERO BAND */
-body.gpa-hero-band .site-main article .inside-article .entry-header h1.entry-title{
-	text-align:center !important;
-	color:var(--gpa-white) !important;
-}
-
-body.gpa-hero-band .entry-header {
-  position: relative;
-  z-index: 0;
-  padding: 80px 20px 0;          /* sm:pt-20 */
-  margin-bottom: 0;
-}
-
-body.gpa-hero-band .entry-header::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  height: calc(100% + var(--rx-hero-tail));
-  z-index: 0;
-  pointer-events: none;
-  background:
-    var(--gpa-gradient-brand);
-}
-
-body.gpa-hero-band .inside-article h1.entry-title {
-  position: relative;
-  z-index: 1;
-  color: var(--gpa-white) !important;
-  margin-bottom: 20px !important;
-}
-
-body.gpa-hero-band .entry-header .rx-hero-intro {
-    position: relative;
-    z-index: 1;
-    max-width: 56rem;
-    margin: 16px auto 0;
-    text-align: center;
-}
-
-body.gpa-hero-band .entry-header .rx-hero-intro p {
-    margin: 0 !important;
-    color: var(--gpa-indigo-100) !important;
-    font-size: 18px !important;
-    line-height: 1.6 !important;
-}
-
-body.gpa-hero-band .entry-header .rx-hero-intro a {
-    color: var(--gpa-white) !important;
-    text-decoration: underline !important;
-}
-
-body.gpa-hero-band .entry-header .rx-hero-intro strong {
-    color: var(--gpa-white) !important;
-}
-
-@media (max-width: 768px) {
-  body.gpa-hero-band .entry-header {
-    padding-top: 56px;           /* pt-14 */
-  }
-    body.gpa-hero-band .entry-header .rx-hero-intro {
-        margin-top: 12px;
-    }
-    body.gpa-hero-band .entry-header .rx-hero-intro p {
-        font-size: 16px !important;
-    }
-}
-
-/* HERO BAND TOKENS
-   --rx-hero-tail and --rx-card-overlap are declared in
-   calculator-page.css, which does not load on content pages, so the
-   band computed to zero height here. Same values, declared locally. */
-body.gpa-hero-band {
-    --rx-hero-tail: 104px;
-    --rx-card-overlap: 64px;
-}
-@media (max-width: 768px) {
-    body.gpa-hero-band {
-        --rx-hero-tail: 72px;
-        --rx-card-overlap: 0px;
-    }
-}
-
-/* HERO BAND LAYOUT
-   The band runs --rx-hero-tail past the header. On a calculator page
-   the card is pulled up into that tail on purpose. A content page has
-   no card, so the first section would sit on the purple. Push the
-   content down by the tail so it starts exactly at the band edge.
-
-   overflow-x on the body is for the band itself: it is 100vw wide and
-   centred with a transform, and 100vw counts the scrollbar, which was
-   adding 8px of sideways scroll. */
-body.gpa-hero-band {
-    overflow-x: hidden;
-}
-body.gpa-hero-band .entry-content {
-    margin-top: var(--rx-hero-tail) !important;
-}
-:is(.page-template-template-content,.page-template-gpa-content-page) .inside-article,
-:is(.page-template-template-content,.page-template-gpa-content-page) .site-main{
-	padding-top:0 !important;
-	margin-top:0 !important;
-}
+/* Content template hero band: the shared hero lives in layout.css */
 
 /* ============================================================
    DESIGN GUIDE REFRESH
@@ -1149,7 +1017,6 @@ body.gpa-template-content #page.grid-container {
 
 /* NATIVE LIST SEMANTICS - custom checkmark boxes and number badges removed */
 /* Content pages (guides, GPA scale, etc.): same heading rhythm as the calculator pages */
-body.gpa-hero-band .entry-header { padding-top: 48px !important; }
 body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: var(--gpa-body-size) !important; line-height: var(--gpa-body-line) !important; color: var(--gpa-text-muted) !important; }
 
 /* Phones: let wide tables scroll inside themselves instead of pushing the whole page sideways */
@@ -1250,8 +1117,8 @@ body.gpa-hero-band .entry-header .gpa-updated {
     position: relative;
     z-index: 1;
     margin: 12px auto 0 !important;
-    font-size: 14px !important;
-    color: var(--gpa-indigo-200) !important;
+    font-size: var(--gpa-small-size) !important;
+    color: var(--gpa-hero-text) !important;
     text-align: center;
 }
 .content-page .entry-content .gpa-scale-nav {

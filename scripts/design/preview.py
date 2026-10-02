@@ -76,6 +76,7 @@ def main():
     ap.add_argument("--full", action="store_true", help="full-page screenshots instead of the first screen")
     ap.add_argument("--settings", action="store_true",
                     help="also preview the phase 3 settings changes (Simple CSS emptied, Customizer typography reset)")
+    ap.add_argument("--eval", help="JavaScript expression to evaluate on each page; its result is printed")
     a = ap.parse_args()
     pages_dir = os.path.join(a.snapshot, "pages")
     slugs = a.pages.split(",") if a.pages else sorted(f[:-5] for f in os.listdir(pages_dir) if f.endswith(".html"))
@@ -137,6 +138,8 @@ def main():
                 page.screenshot(path=shot, full_page=a.full)
                 hscroll = page.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth")
                 print(f"{shot}{'  HORIZONTAL SCROLL' if hscroll else ''}")
+                if a.eval:
+                    print("  ", page.evaluate(a.eval))
                 ctx.close()
         browser.close()
 

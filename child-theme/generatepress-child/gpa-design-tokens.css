@@ -265,6 +265,13 @@
     --gpa-hdr-below: 32px;           /* header → first content */
     --gpa-block-gap: 80px;           /* between major blocks */
 
+    /* ---- Hero (layout.css) ---- */
+    --gpa-hero-pad-top: 56px;
+    --gpa-hero-tail: 128px;          /* hero space below the subtitle on calculator pages */
+    --gpa-hero-overlap: 88px;        /* how far the calculator card rises into it */
+    --gpa-hero-tail-plain: 48px;     /* pages without a calculator */
+    --gpa-hero-sub-size: 18px;
+
     /* ---- Spacing ---- */
     --gpa-section-py: 80px;
     --gpa-section-py-m: 50px;
@@ -319,6 +326,11 @@
         --gpa-hdr-above: 48px;
         --gpa-hdr-below: 24px;
         --gpa-block-gap: 56px;
+        --gpa-hero-pad-top: 18px;
+        --gpa-hero-tail: 76px;
+        --gpa-hero-overlap: 60px;
+        --gpa-hero-tail-plain: 32px;
+        --gpa-hero-sub-size: 15px;
     }
 }
 @media (max-width: 480px) {

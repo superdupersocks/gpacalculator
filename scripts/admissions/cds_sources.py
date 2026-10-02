@@ -74,7 +74,7 @@ def pick(docs, min_year):
     best = {}
     for d in docs:
         uid, year = str(d.get("ipeds_id") or "").strip(), d.get("canonical_year") or ""
-        if not uid or not d.get("source_url") or year < min_year:
+        if not uid or not d.get("source_url") or not re.fullmatch(r"\d{4}-\d{2}", year) or year < min_year:
             continue
         rank = (year, not d.get("sub_institutional"), d.get("last_verified_at") or "")
         if uid not in best or rank > best[uid][0]:

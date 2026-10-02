@@ -152,8 +152,21 @@ vals, prov, rev = cds.decide(src, {"admissions_year": "2023", "sat_math_p25": "7
 eq("CDS decide: form, text+collegedata, collegedata+IPEDS",
    {k: vals.get(k) for k in ("factor_gpa", "gpa_avg", "sat_math_p25", "applicants")},
    {"factor_gpa": "Important", "gpa_avg": 3.9, "sat_math_p25": 760, "applicants": 500})
+vals2, _, _ = cds.decide(src, None, {}, {}, {"C.701": "Very Important"}, "tier1_xlsx")
+eq("CDS decide: collegedata.fyi's exact XLSX read is trusted", vals2.get("factor_rigor"), "Very Important")
+vals2, _, _ = cds.decide(src, None, {}, {}, {"C.701": "Very Important"}, "tier4_docling")
+eq("CDS decide: a layout-model read alone is not", vals2.get("factor_rigor"), None)
 eq("CDS decide: disagreement and single readings go to review",
    sorted(r["field"] for r in rev), ["gpa_submit_pct", "sat_math_p50"])
+
+import io  # noqa: E402
+import zipfile  # noqa: E402
+_buf = io.BytesIO()
+with zipfile.ZipFile(_buf, "w") as _z:
+    _z.writestr("word/document.xml", "<w:document><w:body><w:tbl><w:tr><w:tc><w:p><w:t>Average high school GPA of "
+                "all degree-seeking, first-time, first-year students who submitted GPA:</w:t></w:p></w:tc><w:tc><w:p>"
+                "<w:t>3.87</w:t></w:p></w:tc></w:tr></w:tbl></w:body></w:document>")
+eq("CDS Word file read", cds.parse(cds.text_of(_buf.getvalue())).get("gpa_avg"), 3.87)
 
 # IPEDS provisional release: the newest Tablesdoc on the Access page, its titles and labels per table, and
 # sources marked as provisional.

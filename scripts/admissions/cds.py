@@ -134,6 +134,11 @@ def text_of(data, fmt=""):
     if data[:4] == b"%PDF":
         from pypdf import PdfReader
         return "\n".join(page.extract_text() or "" for page in PdfReader(io.BytesIO(data)).pages)
+    if data[:2] == b"PK" and b"word/document.xml" in data:
+        import zipfile
+        x = zipfile.ZipFile(io.BytesIO(data)).read("word/document.xml").decode("utf-8", "ignore")
+        x = re.sub(r"</w:p>\s*</w:tc>", " ", x).replace("</w:tr>", "\n").replace("</w:p>", "\n")
+        return html.unescape(re.sub(r"<[^>]+>", "", x))
     if fmt == "xlsx" or data[:2] == b"PK":
         import openpyxl
         wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
@@ -237,7 +242,10 @@ def check(vals):
     return problems
 
 
-def decide(src, ipeds, mine_form, mine_text, theirs):
+EXACT_PRODUCERS = {"tier1_xlsx", "tier2_acroform"}  # collegedata.fyi reads of the college's own form fields
+
+
+def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
     """(verified values, provenance rows, review rows) for one college."""
     year = src["cds_year"]
     same_fall = ipeds if ipeds and ipeds.get("admissions_year") == year[:4] else {}
@@ -253,6 +261,8 @@ def decide(src, ipeds, mine_form, mine_text, theirs):
             v, how = f, "form fields"
         elif agree(kind, t, c):
             v, how = t, "file text + collegedata.fyi"
+        elif t is None and c is not None and producer in EXACT_PRODUCERS:
+            v, how = c, f"collegedata.fyi exact read ({producer})"
         elif t is not None and c is None and col.startswith("gpa_"):
             v, how = t, "file text, checked"
         elif t is None and agree(kind, c, i):
@@ -288,23 +298,25 @@ def fetch(url):
 
 
 def read_one(src):
-    data, err = None, ""
+    """Downloads the college's file (else the archived copy) and reads it; a file that can't be read (an HTML
+    page instead of the workbook, say) falls through to the next copy."""
+    err = "no file"
     for url in (src.get("source_url"), src.get("archive_url")):
         if not url:
             continue
         try:
             data = fetch(url)
-            if data and len(data) > 500:
-                break
         except Exception as e:
             err = f"{url}: {e}"[:200]
-            data = None
-    if not data:
-        return src, None, None, err or "no file"
-    try:
-        return src, form_fields(data), parse(text_of(data, src.get("format", ""))), ""
-    except Exception as e:
-        return src, None, None, f"could not read file: {e}"[:200]
+            continue
+        if not data or len(data) <= 500:
+            err = f"{url}: empty file"
+            continue
+        try:
+            return src, form_fields(data), parse(text_of(data, src.get("format", ""))), ""
+        except Exception as e:
+            err = f"could not read file: {e}"[:200]
+    return src, None, None, err
 
 
 def main(argv=None):
@@ -327,7 +339,8 @@ def main(argv=None):
                                "file_url": src["source_url"], "field": "", "problem": err})
                 form, text = {}, {}
             values, p, r = decide(src, ipeds.get(src["unitid"]), from_form(form, src["cds_year"]), text,
-                                  (theirs.get(src["unitid"]) or {}).get("values", {}))
+                                  (theirs.get(src["unitid"]) or {}).get("values", {}),
+                                  (theirs.get(src["unitid"]) or {}).get("producer") or "")
             prov += p
             review += r
             if values:

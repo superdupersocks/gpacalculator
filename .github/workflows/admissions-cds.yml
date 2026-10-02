@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install openpyxl pypdf
+      - run: pip install openpyxl pypdf cryptography
       - run: python tests/admissions_qa.py
       - run: python scripts/admissions/cds_sources.py
       - run: python scripts/admissions/cds.py

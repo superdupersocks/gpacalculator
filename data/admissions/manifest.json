@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-02T00:53:50+00:00",
+  "fetched_at": "2026-10-02T00:57:06+00:00",
   "files": {
     "ipeds_hd": {
       "url": "https://nces.ed.gov/ipeds/datacenter/data/HD2024.zip",
@@ -113,6 +113,19 @@
       "sha256": "466b5e12ac11361c69783de01ecc741890a86096ae2e55203f4a0e729dc93c83",
       "year": 2023
     },
+    "ipeds_drvic": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/DRVIC2023.zip",
+      "bytes": 73481,
+      "sha256": "7fd4c8671bec2276ed3272f118c468316316e81d971fd5f9ba168446079b15db",
+      "year": 2023,
+      "member": "drvic2023.csv"
+    },
+    "ipeds_drvic_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/DRVIC2023_Dict.zip",
+      "bytes": 14738,
+      "sha256": "d43f2e4133a5f50698f3ccc1b846a30a7f46b854e0d8fadad6b5c3f0aec6b954",
+      "year": 2023
+    },
     "ipeds_tablesdoc": {
       "url": "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx",
       "bytes": 1290324,
@@ -128,7 +141,8 @@
     "drvef": 2024,
     "efd": 2024,
     "drvgr": 2024,
-    "sfa": 2023
+    "sfa": 2023,
+    "drvic": 2023
   },
   "ipeds_provisional": {
     "year": 2024,

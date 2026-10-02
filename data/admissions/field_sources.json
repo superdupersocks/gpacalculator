@@ -143,6 +143,54 @@
     "year": 2024,
     "meaning": "UNITID of the institution it merged into"
   },
+  "address": {
+    "source": "IPEDS HD2024",
+    "variable": "ADDR",
+    "year": 2024,
+    "meaning": ""
+  },
+  "sector": {
+    "source": "IPEDS HD2024",
+    "variable": "SECTOR",
+    "year": 2024,
+    "meaning": ""
+  },
+  "highest_offering": {
+    "source": "IPEDS HD2024",
+    "variable": "HLOFFER",
+    "year": 2024,
+    "meaning": ""
+  },
+  "size_category": {
+    "source": "IPEDS HD2024",
+    "variable": "INSTSIZE",
+    "year": 2024,
+    "meaning": ""
+  },
+  "admissions_url": {
+    "source": "IPEDS HD2024",
+    "variable": "ADMINURL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "application_url": {
+    "source": "IPEDS HD2024",
+    "variable": "APPLURL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "net_price_calculator_url": {
+    "source": "IPEDS HD2024",
+    "variable": "NPRICURL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "financial_aid_url": {
+    "source": "IPEDS HD2024",
+    "variable": "FAIDURL",
+    "year": 2024,
+    "meaning": ""
+  },
   "admissions_source": {
     "source": "",
     "variable": "",
@@ -418,5 +466,65 @@
     "variable": "MD_EARN_WNE_P10",
     "year": null,
     "meaning": "Median earnings 10 years after entry, USD"
+  },
+  "tuition_in_district": {
+    "source": "IPEDS IC_AY 2023",
+    "variable": "CHG1AY3",
+    "year": 2023,
+    "meaning": "Published in-district tuition and fees 2023-24"
+  },
+  "room_board_on_campus": {
+    "source": "IPEDS IC_AY 2023",
+    "variable": "",
+    "year": 2023,
+    "meaning": ""
+  },
+  "books_supplies": {
+    "source": "IPEDS IC_AY 2023",
+    "variable": "CHG4AY3",
+    "year": 2023,
+    "meaning": "Books and supplies 2023-24"
+  },
+  "cost_in_state_on_campus": {
+    "source": "IPEDS DRVIC 2023",
+    "variable": "CINSON",
+    "year": 2023,
+    "meaning": "Total price for in-state students living on campus 2023-24"
+  },
+  "cost_out_of_state_on_campus": {
+    "source": "IPEDS DRVIC 2023",
+    "variable": "COTSON",
+    "year": 2023,
+    "meaning": "Total price for out-of-state students living on campus 2023-24"
+  },
+  "net_price_0_30k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS412 / NPT412",
+    "year": 2023,
+    "meaning": "Average net price (income 0-30,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_30_48k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS422 / NPT422",
+    "year": 2023,
+    "meaning": "Average net price (income 30,001-48,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_48_75k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS432 / NPT432",
+    "year": 2023,
+    "meaning": "Average net price (income 48,001-75,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_75_110k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS442 / NPT442",
+    "year": 2023,
+    "meaning": "Average net price (income 75,001-110,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_110k_plus": {
+    "source": "IPEDS SFA 2023",
+    "variable": "",
+    "year": 2023,
+    "meaning": ""
   }
 }

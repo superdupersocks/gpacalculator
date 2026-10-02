@@ -1,6 +1,6 @@
 # Admissions data QA report
 
-IPEDS years: {'hd': 2024, 'adm': 2024, 'ic': 2024, 'ic_ay': 2023, 'drvef': 2024, 'efd': 2024, 'drvgr': 2024, 'sfa': 2023}. Scorecard file: None
+IPEDS years: {'hd': 2024, 'adm': 2024, 'ic': 2024, 'ic_ay': 2023, 'drvef': 2024, 'efd': 2024, 'drvgr': 2024, 'sfa': 2023, 'drvic': 2023}. Scorecard file: None
 
 6,001 institutions; 2,796 four-year.
 
@@ -34,6 +34,14 @@ Admissions block source: none 4,045, IPEDS ADM 1,956
 | active | 6,001 (100%) | 2,796 (100%) |
 | closed_date | 68 (1%) | 24 (1%) |
 | merged_into | 26 (0%) | 0 (0%) |
+| address | 5,990 (100%) | 2,785 (100%) |
+| sector | 6,001 (100%) | 2,796 (100%) |
+| highest_offering | 5,978 (100%) | 2,796 (100%) |
+| size_category | 5,888 (98%) | 2,766 (99%) |
+| admissions_url | 5,218 (87%) | 2,602 (93%) |
+| application_url | 4,765 (79%) | 2,496 (89%) |
+| net_price_calculator_url | 5,830 (97%) | 2,694 (96%) |
+| financial_aid_url | 5,215 (87%) | 2,599 (93%) |
 | admissions_source | 1,956 (33%) | 1,745 (62%) |
 | admissions_year | 1,956 (33%) | 1,745 (62%) |
 | open_admission | 5,498 (92%) | 2,404 (86%) |
@@ -80,10 +88,22 @@ Admissions block source: none 4,045, IPEDS ADM 1,956
 | grad_rate | 5,217 (87%) | 2,284 (82%) |
 | retention_rate | 4,947 (82%) | 2,073 (74%) |
 | median_earnings_10yr | 0 (0%) | 0 (0%) |
+| tuition_in_district | 3,410 (57%) | 2,343 (84%) |
+| room_board_on_campus | 0 (0%) | 0 (0%) |
+| books_supplies | 3,329 (55%) | 2,282 (82%) |
+| cost_in_state_on_campus | 1,959 (33%) | 1,727 (62%) |
+| cost_out_of_state_on_campus | 1,959 (33%) | 1,727 (62%) |
+| net_price_0_30k | 5,088 (85%) | 2,214 (79%) |
+| net_price_30_48k | 4,492 (75%) | 2,137 (76%) |
+| net_price_48_75k | 4,260 (71%) | 2,108 (75%) |
+| net_price_75_110k | 3,685 (61%) | 2,006 (72%) |
+| net_price_110k_plus | 0 (0%) | 0 (0%) |
 
 ## Imputed IPEDS values left out
 
+- sfa.NPT412: 5
 - sfa.NPGRN2: 4
+- sfa.NPT442: 1
 
 ## Values dropped by checks (0)
 

@@ -78,27 +78,62 @@ def key(h):
     return re.sub(r"[^a-z0-9]", "", (h or "").lower())
 
 
-def table(data, name):
-    """Rows (lists of text) from an xlsx, xls, csv or a zip holding one of them."""
+def text_rows(data):
+    """Rows of a CSV or delimited text file (comma, tab or pipe, whichever the first line uses most)."""
+    text = data.decode("utf-8-sig", errors="replace")
+    first = text.split("\n", 1)[0]
+    delim = max(",\t|", key=first.count)
+    return list(csv.reader(io.StringIO(text), delimiter=delim))
+
+
+def sheets(data, name):
+    """(label, rows) for every table in a file: each worksheet of an xlsx or xls, a CSV or text file, or each of
+    those inside a zip. Rows are lists of text; dates read MM/DD/YYYY."""
     low = name.lower().split("?")[0]
     if data[:2] == b"PK" and not low.endswith(".xlsx"):
+        out = []
         with zipfile.ZipFile(io.BytesIO(data)) as zf:
-            inner = [n for n in zf.namelist() if re.search(r"\.(xlsx|xls|csv)$", n, flags=re.I)]
-            if inner:
-                return table(zf.read(inner[0]), inner[0])
-    if low.endswith(".csv"):
-        text = data.decode("utf-8-sig", errors="replace")
-        return [r for r in csv.reader(io.StringIO(text))]
+            print("  zip holds: " + "; ".join(f"{i.filename} ({i.file_size:,} bytes)" for i in zf.infolist()))
+            for n in zf.namelist():
+                if re.search(r"\.(xlsx|xls|csv|txt)$", n, flags=re.I):
+                    out += sheets(zf.read(n), n)
+        return out
+    if re.search(r"\.(csv|txt)$", low):
+        return [(name, text_rows(data))]
     if low.endswith(".xls"):
         import xlrd
         book = xlrd.open_workbook(file_contents=data)
-        sheet = book.sheet_by_index(0)
-        return [[str(sheet.cell_value(i, j)) for j in range(sheet.ncols)] for i in range(sheet.nrows)]
+
+        def cell(s, i, j):
+            c = s.cell(i, j)
+            if c.ctype == xlrd.XL_CELL_DATE:
+                return xlrd.xldate_as_datetime(c.value, book.datemode).strftime("%m/%d/%Y")
+            return str(c.value)
+        return [(f"{name} [{s.name}]", [[cell(s, i, j) for j in range(s.ncols)] for i in range(s.nrows)])
+                for s in book.sheets()]
     import openpyxl
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
-    ws = wb.worksheets[0]
-    return [["" if v is None else (v.strftime("%m/%d/%Y") if hasattr(v, "strftime") else str(v)) for v in row]
-            for row in ws.iter_rows(values_only=True)]
+    return [(f"{name} [{ws.title}]",
+             [["" if v is None else (v.strftime("%m/%d/%Y") if hasattr(v, "strftime") else str(v)) for v in row]
+              for row in ws.iter_rows(values_only=True)])
+            for ws in wb.worksheets]
+
+
+def fsa_table(data, name):
+    """(label, FSA_COLUMNS rows) of the biggest table in a file or zip that has FSA's header."""
+    best, errors = None, []
+    for label, rows in sheets(data, name):
+        try:
+            parsed = fsa_rows(rows)
+        except SystemExit as e:
+            errors.append(f"{label}: {e}")
+            continue
+        print(f"  {label}: {len(parsed):,} rows")
+        if best is None or len(parsed) > len(best[1]):
+            best = (label, parsed)
+    if best is None:
+        raise SystemExit("; ".join(errors) or f"no table in {name}")
+    return best
 
 
 def fsa_rows(rows):
@@ -144,7 +179,7 @@ def json_records(obj):
 
 
 def records_table(records):
-    """JSON records as table() rows: a header of their fields, then their values."""
+    """JSON records as rows: a header of their fields, then their values."""
     fields = list(records[0])
     return [fields] + [["" if r.get(f) is None else str(r.get(f)) for f in fields] for r in records]
 
@@ -182,7 +217,8 @@ def fsa_rendered():
         for url in links(html, FSA_PAGE):
             try:
                 data = get(url)
-                return url, data, fsa_rows(table(data, url))
+                label, rows = fsa_table(data, url)
+                return f"{url} ({label})", data, rows
             except (Exception, SystemExit) as e:  # noqa: BLE001 - try the next link
                 tried.append(f"{url}: {e}")
         controls = page.locator("a, button, [role=button], [role=tab], [role=link]")
@@ -196,7 +232,8 @@ def fsa_rendered():
                     controls.nth(i).click()
                 dl = info.value
                 data = Path(dl.path()).read_bytes()
-                return f"{FSA_PAGE} ({text!r}: {dl.suggested_filename})", data, fsa_rows(table(data, dl.suggested_filename))
+                label, rows = fsa_table(data, dl.suggested_filename)
+                return f"{FSA_PAGE} ({text!r}: {label})", data, rows
             except (Exception, SystemExit) as e:  # noqa: BLE001 - try the next control
                 tried.append(f"control {text!r}: {e}")
         browser.close()
@@ -217,7 +254,8 @@ def fsa():
     for url in candidates + [FSA_OLD]:
         try:
             data = get(url)
-            rows = fsa_rows(table(data, url))
+            label, rows = fsa_table(data, url)
+            url = f"{url} ({label})"
         except (Exception, SystemExit) as e:  # noqa: BLE001 - try the next link
             tried.append(f"{url}: {e}")
             continue

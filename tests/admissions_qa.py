@@ -54,6 +54,8 @@ with tempfile.TemporaryDirectory() as tmp:
     eq("Harvard tuition from the latest IC_AY year", (h["tuition_in_state"], h["tuition_out_of_state"]),
        ("59320", "59320"))
     eq("Harvard net price from the private variable", h["net_price"], "13900")
+    eq("Harvard net price by income from SFA titles", h["net_price_0_30k"], "1000")
+    eq("optional DRVIC absent leaves cost of attendance empty", h["cost_in_state_on_campus"], "")
     eq("Harvard grad and retention rates as 0-1", (h["grad_rate"], h["retention_rate"]), ("0.97", "0.98"))
     eq("Harvard religious affiliation not applicable -> empty", h["religious_affiliation"], "")
     eq("Harvard not-applicable dates empty", (h["closed_date"], h["merged_into"]), ("", ""))

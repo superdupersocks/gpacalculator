@@ -54,7 +54,9 @@ IPEDS_FILES = {
     "hd": lambda y: f"HD{y}", "adm": lambda y: f"ADM{y}", "ic": lambda y: f"IC{y}", "ic_ay": lambda y: f"IC{y}_AY",
     "drvef": lambda y: f"DRVEF{y}", "efd": lambda y: f"EF{y}D", "drvgr": lambda y: f"DRVGR{y}",
     "sfa": lambda y: f"SFA{str(y - 1)[2:]}{str(y)[2:]}",
+    "drvic": lambda y: f"DRVIC{y}",  # optional: total price (cost of attendance)
 }
+OPTIONAL = {"drvic"}
 
 
 def get(url, tries=4, opener=None):
@@ -239,11 +241,11 @@ def provisional(manifest, years):
     wanted = {}
     for key, name_for in IPEDS_FILES.items():
         table = name_for(year).upper()
-        if year <= years[key] or table not in tables:
+        if year <= years.get(key, 0) or table not in tables:
             continue
         lacking = usable(key, tables[table])
         if lacking:  # e.g. SFA2324 moved net price into split tables
-            print(f"IPEDS provisional {table} lacks {lacking}; keeping {name_for(years[key])}")
+            print(f"IPEDS provisional {table} lacks {lacking}; keeping {name_for(years.get(key, 0))}")
             continue
         wanted[key] = table
     got = {}  # key -> (csv bytes, url, member)
@@ -271,7 +273,7 @@ def provisional(manifest, years):
     done = set()
     for key, table in wanted.items():
         if key not in got:
-            print(f"WARNING: IPEDS provisional {table} not available; keeping {IPEDS_FILES[key](years[key])}")
+            print(f"WARNING: IPEDS provisional {table} not available; keeping {IPEDS_FILES[key](years.get(key, 0))}")
             continue
         csv_bytes, url, member, data = got[key]
         (RAW / "ipeds" / f"{key}.csv").write_bytes(csv_bytes)
@@ -295,6 +297,9 @@ def fetch_ipeds(manifest):
     for key, name_for in IPEDS_FILES.items():
         year = next((y for y in years if exists(f"{IPEDS}{name_for(y)}.zip")
                      and exists(f"{IPEDS}{name_for(y)}_Dict.zip")), None)
+        if year is None and key in OPTIONAL:
+            print(f"IPEDS {name_for(this_year)}: none published with a dictionary; its columns stay empty")
+            continue
         if year is None:
             raise SystemExit(f"no published IPEDS {name_for(this_year)} file with a dictionary (tried {years})")
         name = name_for(year)

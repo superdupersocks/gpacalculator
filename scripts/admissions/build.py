@@ -43,7 +43,13 @@ TEST_NAMES = {"SATVR": "sat_erw", "SATMT": "sat_math", "ACTCM": "act_comp", "ACT
 
 IDENTITY = ["unitid", "opeid", "name", "alias", "website", "city", "state", "zip", "lat", "lon", "control",
             "level", "locale", "carnegie", "religious_affiliation", "hbcu", "predominant_degree",
-            "highest_degree", "accreditor", "main_campus", "operating", "active", "closed_date", "merged_into"]
+            "highest_degree", "accreditor", "main_campus", "operating", "active", "closed_date", "merged_into",
+            "address", "sector", "highest_offering", "size_category", "admissions_url", "application_url",
+            "net_price_calculator_url", "financial_aid_url"]
+# HD columns -> variable; *_url and address are text, the rest decoded labels.
+HD_EXTRA = {"address": "ADDR", "sector": "SECTOR", "highest_offering": "HLOFFER", "size_category": "INSTSIZE",
+            "admissions_url": "ADMINURL", "application_url": "APPLURL", "net_price_calculator_url": "NPRICURL",
+            "financial_aid_url": "FAIDURL"}
 ADMISSIONS = ["admissions_source", "admissions_year", "open_admission", "applicants", "admits", "enrolled",
               "admit_rate", "yield_rate", "sat_submit_pct", "act_submit_pct"]
 TESTS = [f"{TEST_NAMES[p]}_p{q}" for p in TEST_PARTS for q in (25, 50, 75)] + ["sat_avg"]
@@ -51,7 +57,8 @@ COST = ["undergrad_enrollment", "tuition_in_state", "tuition_out_of_state", "net
         "retention_rate", "median_earnings_10yr"]
 
 
-IPEDS_KEYS = ("hd", "adm", "ic", "ic_ay", "drvef", "efd", "drvgr", "sfa")
+IPEDS_KEYS = ("hd", "adm", "ic", "ic_ay", "drvef", "efd", "drvgr", "sfa", "drvic")
+OPTIONAL_KEYS = {"drvic"}  # files whose absence only empties their columns
 # IPEDS measures found by dictionary title: column -> (file, title phrase, phrases to exclude).
 MEASURES = {
     "undergrad_enrollment": ("drvef", "undergraduate enrollment", ("percent", "full-time", "part-time")),
@@ -62,6 +69,20 @@ MEASURES = {
     "retention_rate": ("efd", "full-time retention rate", ()),
 }
 
+# Optional measures: empty (not an error) when a release lacks them. Published prices only, never computed.
+INCOME = [("0_30k", "0-30,000"), ("30_48k", "30,001-48,000"), ("48_75k", "48,001-75,000"),
+          ("75_110k", "75,001-110,000"), ("110k_plus", "110,001 and more")]
+EXTRA_MEASURES = {
+    "tuition_in_district": ("ic_ay", "in-district tuition and fees", ("out-of-state", "in-state")),
+    "room_board_on_campus": ("ic_ay", "on campus, room and board", ()),
+    "books_supplies": ("ic_ay", "books and supplies", ()),
+    "cost_in_state_on_campus": ("drvic", "total price for in-state students living on campus", ()),
+    "cost_out_of_state_on_campus": ("drvic", "total price for out-of-state students living on campus", ()),
+    **{f"net_price_{k}": ("sfa", f"average net price (income {band})-students awarded title iv", ())
+       for k, band in INCOME},
+}
+COST += list(EXTRA_MEASURES)
+
 
 class Data:
     def __init__(self, raw):
@@ -69,6 +90,9 @@ class Data:
         self.ipeds = {}
         self.dicts = {}
         for f in IPEDS_KEYS:
+            if f in OPTIONAL_KEYS and not (raw / "ipeds" / f"{f}.csv").exists():
+                self.ipeds[f], self.dicts[f] = {}, {"vars": {}, "codes": {}, "header": set()}
+                continue
             rows = read_csv(raw / "ipeds" / f"{f}.csv")
             self.ipeds[f] = {r["UNITID"]: r for r in rows}
             self.dicts[f] = json.loads((raw / "ipeds" / f"{f}_dict.json").read_text())
@@ -81,7 +105,8 @@ class Data:
         self.manifest = json.loads(manifest.read_text()) if manifest.exists() else {}
         self.years = self.manifest.get("ipeds_years", {})  # {"hd": 2024, "adm": 2024, "ic": 2024}
         self.year = self.years.get("adm")
-        self.measures = {col: (f, self.titled(f, phrase, exclude)) for col, (f, phrase, exclude) in MEASURES.items()}
+        self.measures = {col: (f, self.titled(f, phrase, exclude))
+                         for col, (f, phrase, exclude) in {**MEASURES, **EXTRA_MEASURES}.items()}
         self.imputed = Counter()
         self.dropped = []  # (unitid, column, value, reason)
 
@@ -102,7 +127,7 @@ class Data:
         if self.sc:
             missing += [f"scorecard: {v}" for v in sc_need if v not in self.sc_header]
         for col, (f, var) in self.measures.items():
-            if var is None:
+            if var is None and col in MEASURES:
                 missing.append(f"{f}: no variable titled like {MEASURES[col][1]}")
         if missing:
             raise SystemExit("columns missing from the source files (renamed in this release?):\n  "
@@ -217,6 +242,9 @@ def build_row(d, uid, admcon, credits):
     row["active"] = yes_no(d.label("hd", uid, "CYACTIVE")) if hd else None
     row["closed_date"] = d.iv("hd", uid, "CLOSEDAT")
     row["merged_into"] = d.iv("hd", uid, "NEWID")
+    for col, var in HD_EXTRA.items():
+        if var in d.dicts["hd"]["header"]:
+            row[col] = d.iv("hd", uid, var) if col == "address" or col.endswith("_url") else d.label("hd", uid, var)
 
     row["open_admission"] = yes_no(d.label("ic", uid, "OPENADMP"))
     if row["open_admission"] is None and d.sv(uid, "OPENADMP") is not None:
@@ -268,6 +296,8 @@ def build_row(d, uid, admcon, credits):
     row["grad_rate"] = gr if gr is not None else num(d.sv(uid, "C150_4") or d.sv(uid, "C150_L4"))
     row["retention_rate"] = ret if ret is not None else num(d.sv(uid, "RET_FT4") or d.sv(uid, "RET_FTL4"))
     row["median_earnings_10yr"] = num(d.sv(uid, "MD_EARN_WNE_P10"), "int")
+    for col in EXTRA_MEASURES:
+        row[col] = measure(col)
     check(d, row)
     return row
 
@@ -332,10 +362,12 @@ def sources(d, admcon, credits):
         "sat_submit_pct": (f"IPEDS ADM{y}", "SATPCT", y, "% of enrollees who submitted SAT"),
         "act_submit_pct": (f"IPEDS ADM{y}", "ACTPCT", y, "% of enrollees who submitted ACT"),
         "sat_avg": (sc, "SAT_AVG", None, "Scorecard's SAT-equivalent average of admitted students (derived)"),
-        **{col: (f"IPEDS {d.measures[col][0].upper()} {d.years.get(d.measures[col][0])} (else Scorecard)",
+        **{col: (f"IPEDS {d.measures[col][0].upper()} {d.years.get(d.measures[col][0])}"
+                 + (" (else Scorecard)" if col in MEASURES else ""),
                  " / ".join(d.measures[col][1] or ()), d.years.get(d.measures[col][0]),
                  d.dicts[d.measures[col][0]]["vars"].get((d.measures[col][1] or ("",))[0], {}).get("title", ""))
-           for col in MEASURES},
+           for col in {**MEASURES, **EXTRA_MEASURES}},
+        **{col: (f"IPEDS HD{yh}", var, yh, "") for col, var in HD_EXTRA.items()},
         "median_earnings_10yr": (sc, "MD_EARN_WNE_P10", None, "Median earnings 10 years after entry, USD"),
     }
     for part in TEST_PARTS:

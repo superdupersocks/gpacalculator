@@ -1,0 +1,52 @@
+name: Admissions data
+
+# Downloads College Scorecard and IPEDS files, rebuilds data/admissions/ and commits the result to the branch
+# it ran on, so every refresh is a reviewable diff. Runs by hand (Actions > Admissions data > Run workflow)
+# and whenever the admissions scripts change on an admissions branch. Touches nothing on the live site.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ipeds_year:
+        description: IPEDS year (blank = newest published)
+        required: false
+      scorecard_zip_url:
+        description: Scorecard "Most Recent Institution-Level Data" zip URL (blank = read from collegescorecard.ed.gov/data/)
+        required: false
+  push:
+    branches: ['claude/admissions-**']
+    paths: ['scripts/admissions/**', '.github/workflows/admissions-data.yml']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: admissions-data-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install openpyxl
+      - run: python tests/admissions_qa.py
+      - name: Download sources
+        env:
+          IPEDS_YEAR: ${{ inputs.ipeds_year }}
+          SCORECARD_ZIP_URL: ${{ inputs.scorecard_zip_url }}
+        run: python scripts/admissions/fetch.py
+      - run: python scripts/admissions/build.py
+      - run: python scripts/admissions/match.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "Refresh admissions data from College Scorecard and IPEDS"
+          git push

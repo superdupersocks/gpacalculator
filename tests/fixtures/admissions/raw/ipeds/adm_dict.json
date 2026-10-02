@@ -1,0 +1,150 @@
+{
+ "vars": {
+  "ADMCON1": {
+   "title": "Secondary school GPA",
+   "type": "N"
+  },
+  "ADMCON2": {
+   "title": "Secondary school rank",
+   "type": "N"
+  },
+  "ADMCON3": {
+   "title": "Secondary school record",
+   "type": "N"
+  },
+  "ADMCON4": {
+   "title": "Completion of college-preparatory program",
+   "type": "N"
+  },
+  "ADMCON5": {
+   "title": "Recommendations",
+   "type": "N"
+  },
+  "ADMCON6": {
+   "title": "Formal demonstration of competencies",
+   "type": "N"
+  },
+  "ADMCON7": {
+   "title": "Admission test scores",
+   "type": "N"
+  },
+  "ADMCON8": {
+   "title": "English Proficiency Test (TOEFL)",
+   "type": "N"
+  },
+  "ADMCON9": {
+   "title": "Other Test (Wonderlic, WISC-III, etc.)",
+   "type": "N"
+  },
+  "ADMCON10": {
+   "title": "Work experience",
+   "type": "N"
+  },
+  "ADMCON11": {
+   "title": "Personal statement or essay",
+   "type": "N"
+  },
+  "ADMCON12": {
+   "title": "Legacy status",
+   "type": "N"
+  },
+  "UNITID": {
+   "title": "UNITID",
+   "type": "N"
+  },
+  "APPLCN": {
+   "title": "APPLCN",
+   "type": "N"
+  },
+  "ADMSSN": {
+   "title": "ADMSSN",
+   "type": "N"
+  },
+  "ENRLT": {
+   "title": "ENRLT",
+   "type": "N"
+  },
+  "SATPCT": {
+   "title": "SATPCT",
+   "type": "N"
+  },
+  "ACTPCT": {
+   "title": "ACTPCT",
+   "type": "N"
+  }
+ },
+ "codes": {
+  "ADMCON1": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON2": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON3": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON4": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON5": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON6": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON7": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON8": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON9": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON10": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON11": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  },
+  "ADMCON12": {
+   "1": "Required",
+   "2": "Recommended",
+   "3": "Neither required nor recommended",
+   "5": "Considered but not required"
+  }
+ }
+}

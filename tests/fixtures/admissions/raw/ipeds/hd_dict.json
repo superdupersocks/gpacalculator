@@ -1,0 +1,64 @@
+{
+ "vars": {
+  "UNITID": {
+   "title": "UNITID",
+   "type": "N"
+  },
+  "INSTNM": {
+   "title": "INSTNM",
+   "type": "N"
+  },
+  "CONTROL": {
+   "title": "CONTROL",
+   "type": "N"
+  },
+  "ICLEVEL": {
+   "title": "ICLEVEL",
+   "type": "N"
+  },
+  "LOCALE": {
+   "title": "LOCALE",
+   "type": "N"
+  },
+  "HBCU": {
+   "title": "HBCU",
+   "type": "N"
+  },
+  "CYACTIVE": {
+   "title": "CYACTIVE",
+   "type": "N"
+  },
+  "C21BASIC": {
+   "title": "C21BASIC",
+   "type": "N"
+  }
+ },
+ "codes": {
+  "CONTROL": {
+   "1": "Public",
+   "2": "Private not-for-profit",
+   "3": "Private for-profit"
+  },
+  "ICLEVEL": {
+   "1": "Four or more years",
+   "2": "At least 2 but less than 4 years",
+   "-3": "{Item not available}"
+  },
+  "LOCALE": {
+   "12": "City: Midsize",
+   "13": "City: Small"
+  },
+  "HBCU": {
+   "1": "Yes",
+   "2": "No"
+  },
+  "CYACTIVE": {
+   "1": "Yes",
+   "2": "No, closed"
+  },
+  "C21BASIC": {
+   "15": "Doctoral Universities: Very High Research Activity",
+   "21": "Baccalaureate Colleges: Arts & Sciences Focus"
+  }
+ }
+}

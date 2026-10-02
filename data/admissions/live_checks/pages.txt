@@ -1,5 +1,6 @@
 # Pages read by scripts/page_check.py (admissions-pages.yml). Edit the stage line to run the check again.
-# stage: after E's import (2026-10-02 14:49 UTC), before the hub filter fix and B2's second list
+# stage: after S, M, P and N (17:30-17:37 UTC), the old-address fix (17:14) and the design overhaul's theme deploy
+# (17:38, with the hub filter fix and the sitemap tie-break); before B2's second list and R
 /admissions/harvard/
 /admissions/abilene-christian-university/
 /admissions/clark-atlanta-university/
@@ -20,3 +21,17 @@
 /admissions/
 /high-school-gpa-calculator/
 /
+/admissions/baker-college/
+/admissions/university-of-phoenix/
+/admissions/ivy-tech-community-college/
+/admissions/fortis-institute/
+/admissions/pennsylvania-western-university/
+/admissions/connecticut-state-community-college/
+/admissions/purdue-university-global/
+/admissions/long-island-university/
+/admissions/clarion-university-of-pennsylvania/
+/admissions/kaplan-university-lincoln-campus/
+/admissions/georgia-military-college-augusta-campus/
+/admissions/university-of-phoenix-las-vegas-campus/
+/admissions/auburn-university/
+sitemap /sitemap_index.xml colleges

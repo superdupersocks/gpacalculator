@@ -11,9 +11,11 @@ surviving pages before its four 301s. C retires the verified closures and redire
 pages in `data/admissions/audit/phase2_c_held.csv` and everything still under review stay unchanged. Individual pages
 within that scope need no further approval; report counts and exceptions.
 
-Still to run (2026-10-02 17:30 UTC), one checkpoint at a time, each after its own backup: S, M, P and N (Digant's "go S,
-M, P and N" at 17:28; P after S); "B2, second list" and R (within the 05:58 go); and the theme deploy in "Hub filters
-and sitemap order" (Digant runs it from Terminal and types "deployed"; then its checks). None waits for another.
+Done: S, M, P and N (17:30-17:37 UTC, Digant's "go S, M, P and N"). The design overhaul's theme deploy (17:38 UTC,
+56c8f98 on `claude/design-system-overhaul-xkzbf0`) shipped functions.php with the hub filter fixes and the sitemap
+tie-break, so "Hub filters and sitemap order" needs only its checks, no deploy. Still to run, each after its own
+backup: "B2, second list", then R (both within the 05:58 go). Any later admissions theme change must be built on the
+design branch (or a branch that merges it), or its deploy reverts the design.
 
 `SSH` below means `ssh -i ~/.ssh/gpacalculator_cloudways -o IdentitiesOnly=yes master_rfzfmbbwze@67.205.161.226`, and
 `WP` is `applications/xwnzegvpyy/public_html` on the server.
@@ -173,11 +175,15 @@ design changes. `scripts/admissions/deploy_hub_filters.sh` deploys c5061f1's fun
 af793b4's or 5b5018f's, says "nothing to do" when c5061f1's (or a later version with both filter fixes and the
 tie-break) is live, and stops without changing anything when a later version lacks the tie-break.
 
+Shipped at 17:38 UTC by the design overhaul's deploy (56c8f98), whose functions.php has both filter fixes and the
+tie-break: don't run step 1 (the script would say "nothing to do"), run step 2's checks, and skip step 3 (the design
+deploy has its own changelog row and undo).
+
 1. Digant runs `git pull && bash scripts/admissions/deploy_hub_filters.sh` and types "deployed".
-2. Check: the live functions.php is c5061f1's
-   (`SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show c5061f1:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`).
-   DIFFERS is right only when the script said a later deploy already shipped both fixes (check that `docs/LIVE_CHANGELOG.md`
-   on that branch lists the deploy); then skip the changelog row in step 3.
+2. Check: the live functions.php is c5061f1's, or 56c8f98's after the design deploy
+   (`for c in c5061f1 56c8f98; do SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show $c:child-theme/generatepress-child/functions.php) && echo "same as $c"; done`).
+   No output is right only when a still later deploy shipped both fixes (check that `docs/LIVE_CHANGELOG.md` on that
+   branch lists it); then skip the changelog row in step 3.
    On /admissions/, "Under 10%" lists only colleges with a rate under 10% (about 30), "Under 1200" only colleges with
    an SAT figure under 1200, and the other filters, the sorts and Load More work as before; a profile and a calculator
    page load with Freestar tags. Rebuild Rank Math's sitemap cache, then the college sitemap pages together list every
@@ -202,10 +208,11 @@ script never removes a value). 72 GPAs still wait in `phase2_b2_gpa_pending.csv`
 found linking the file.
 
 1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-b2-second.sql.gz`).
-2. No theme change. The live functions.php must be af793b4's (from B step 4 or E step 2), or c5061f1's (or 5b5018f's)
-   once the deploy above has run; stop and report otherwise:
-   `for c in af793b4 5b5018f c5061f1; do SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show $c:child-theme/generatepress-child/functions.php) && echo "same as $c"; done`
-   (no output means it differs from both)
+2. No theme change. The live functions.php must be af793b4's (from B step 4 or E step 2), c5061f1's or 5b5018f's (the
+   deploy above), or 56c8f98's (the design overhaul's deploy of 17:38, which keeps B2's GPA card and FAQ); stop and
+   report otherwise:
+   `for c in af793b4 5b5018f c5061f1 56c8f98; do SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show $c:child-theme/generatepress-child/functions.php) && echo "same as $c"; done`
+   (no output means it differs from all four)
 3. Data: `bash scripts/admissions/phase2_b2_live.sh plan` must end "25 rows would change, 242 already match, 0
    skipped" (report any `SKIP`), then `bash scripts/admissions/phase2_b2_live.sh apply`; it ends "applied 25, already
    matched 242, skipped 0" and names the log. It writes only fields that change.

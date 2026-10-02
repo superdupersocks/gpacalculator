@@ -8,8 +8,10 @@ the report gives the HTTP status and where redirects ended, the <title>, meta de
 structured data (whether each JSON-LD block parses, its types, its FAQPage questions and whether each question is on
 the page), the average-GPA and acceptance-rate cards as shown, and flags for what the admissions cleanup removes
 (collegesimply images, "GPA Requirements", "Admission Standards", "Applicant Competition", "What GPA do I need") and
-for what must stay (Freestar ad tags). Read-only GETs; runs on GitHub (admissions-pages.yml) because the cloud
-sessions can't reach the site. Changes nothing on the site.
+for what must stay (Freestar ad tags). A line "sitemap <index path> <post type>" (for example
+"sitemap /sitemap_index.xml colleges") instead reads every page of that post type's sitemap and reports how many
+addresses each page lists, the total, and any address listed more than once. Read-only GETs; runs on GitHub
+(admissions-pages.yml) because the cloud sessions can't reach the site. Changes nothing on the site.
 """
 import html
 import json
@@ -18,6 +20,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from collections import Counter
 from html.parser import HTMLParser
 
 SITE = "https://gpacalculator.net"
@@ -160,12 +163,34 @@ def check(path):
     return "\n".join(out) + "\n"
 
 
+LOC = re.compile(r"<loc>\s*([^<\s]+)\s*</loc>")
+
+
+def sitemap(spec):
+    """Every address one post type's sitemap pages list, from the sitemap index: per page, in all, and repeats."""
+    _, index, kind = spec.split()
+    status, _, body = fetch(SITE + index)
+    pages = [u for u in LOC.findall(body) if re.search(rf"/{re.escape(kind)}-sitemap\d*\.xml$", u)]
+    out = [f"## {spec}", "", f"- index status {status}: {len(pages)} {kind} sitemap pages"]
+    urls = []
+    for u in pages:
+        st, _, b = fetch(u)
+        found = LOC.findall(b)
+        urls += found
+        out.append(f"  - {u.rsplit('/', 1)[-1]}: status {st}, {len(found)} addresses")
+        time.sleep(1)
+    repeats = sorted(u for u, n in Counter(urls).items() if n > 1)
+    out.append(f"- {len(urls)} addresses, {len(set(urls))} different; listed more than once: {len(repeats)}")
+    out += [f"  - {u}" for u in repeats[:20]]
+    return "\n".join(out) + "\n"
+
+
 def main(src, dest):
     paths = [ln.strip() for ln in open(src, encoding="utf-8") if ln.strip() and not ln.startswith("#")]
     stamp = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())
     parts = [f"# Live page check, {stamp}\n\nFrom `{src}`, read-only GETs by scripts/page_check.py.\n"]
     for path in paths:
-        parts.append(check(path))
+        parts.append(sitemap(path) if path.startswith("sitemap ") else check(path))
         time.sleep(1)
     with open(dest, "w", encoding="utf-8") as f:
         f.write("\n".join(parts))

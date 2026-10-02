@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-02T00:33:09+00:00",
+  "fetched_at": "2026-10-02T00:46:05+00:00",
   "files": {
     "ipeds_hd": {
       "url": "https://nces.ed.gov/ipeds/datacenter/data/HD2024.zip",
@@ -104,6 +104,12 @@
       "bytes": 79497,
       "sha256": "466b5e12ac11361c69783de01ecc741890a86096ae2e55203f4a0e729dc93c83",
       "year": 2023
+    },
+    "ipeds_tablesdoc": {
+      "url": "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx",
+      "bytes": 1290324,
+      "sha256": "e5c2197f55fb3f8853b866cde05d6d0be167c37480f9d0825ff4b7d60aaf5f6e",
+      "year": 2024
     }
   },
   "ipeds_years": {
@@ -115,6 +121,10 @@
     "efd": 2023,
     "drvgr": 2023,
     "sfa": 2023
+  },
+  "ipeds_provisional": {
+    "year": 2024,
+    "tablesdoc": "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx"
   },
   "scorecard_missing": "HTTP Error 403: Forbidden"
 }

@@ -6,7 +6,7 @@ its go in the admissions thread, one checkpoint at a time. Log every live change
 undo, push, and report in the thread.
 
 Digant's go (2026-10-02 05:58 UTC): B, D and C, with these limits. B removes the unsupported claims and the competitor
-images; the cited CDS GPAs replace them in step B2 once it has its steps below. D copies useful details into the
+images; the cited CDS GPAs replace them in step B2, right after B. D copies useful details into the
 surviving pages before its four 301s. C retires the verified closures and redirects the confirmed mergers; the merged
 pages in `data/admissions/audit/phase2_c_held.csv` and everything still under review stay unchanged. Individual pages
 within that scope need no further approval; report counts and exceptions.
@@ -55,10 +55,36 @@ Undo: `bash scripts/admissions/phase2_b_live.sh revert <export name>` puts every
 
 ## B2: cited Common Data Set GPAs
 
-Digant's go for B includes "Replace GPA with verified, cited CDS values wherever available". Commit 9a803a3 can't show
-a GPA with the label, year, weighted or unweighted basis and source link that Digant's rules require, so this step adds
-that to the template and imports the values into their own fields. Its steps land here when the theme change and the
-import script are pushed. Until then, don't write any CDS value into `average_gpa` or any other field.
+Digant's go for B includes "Replace GPA with verified, cited CDS values wherever available". Run this after B. Commit
+39e097c changes two theme files: a college with `cds_gpa` fields gets an "Average high school GPA" card noted "As
+reported by the college, <year>" (plus "weighted" when the average is above 4.0) and a FAQ, in the page and its
+JSON-LD, that states the value with its year and cites the college's own file. Titles and descriptions don't change.
+`data/admissions/audit/phase2_b2_gpa.csv` has the 243 pages whose college published the file on its own site;
+`phase2_b2_gpa_pending.csv` has the 99 that wait (files on Google Drive, Box or other hosts need the college's page that
+links them; two files belong to other colleges). Don't write any CDS value into `average_gpa`.
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-b2.sql.gz`).
+2. The live copies of the two files must be B's (9a803a3). Stop and report if either differs:
+   ```
+   for f in functions.php single-colleges.php; do
+     SSH "cat WP/wp-content/themes/generatepress-child/$f" | cmp -s - <(git show 9a803a3:child-theme/generatepress-child/$f) \
+       && echo "same    $f" || echo "DIFFERS $f"
+   done
+   ```
+3. Theme: `bash scripts/deploy_theme.sh 39e097c --dry-run --only functions.php,single-colleges.php`. Only those two
+   files may change. Then the same command without `--dry-run`; note the theme backup name.
+4. Data: `bash scripts/admissions/phase2_b2_live.sh plan` must end "243 rows ready" (report any `SKIP`), then
+   `bash scripts/admissions/phase2_b2_live.sh apply`; note the log name.
+5. Check /admissions/pitt/ (4.06, weighted), /admissions/unc/ (4.47, weighted), /admissions/alabama/ (3.85) and
+   /admissions/agnes-scott/ (3.63): the card shows the GPA with "As reported by the college, 2025–26"; the FAQ "What
+   is the average high school GPA at ...?" gives the same value and links to the college's Common Data Set file; the
+   JSON-LD parses and its FAQPage has that question; `<title>` and the meta description carry no GPA. /admissions/harvard/
+   (pending) shows no GPA. Freestar tags are on the page. If anything breaks:
+   `bash scripts/admissions/phase2_b2_live.sh revert <log name>` and `bash scripts/deploy_theme.sh --revert <theme backup>`.
+6. Changelog: one row for the two theme files and one for the 243 pages' fields, each with its undo command.
+
+Undo: `bash scripts/admissions/phase2_b2_live.sh revert <log name>` puts every field back;
+`bash scripts/deploy_theme.sh --revert <theme backup>` restores the two theme files.
 
 ## C and D: retire closed colleges, redirect merged ones and duplicates
 

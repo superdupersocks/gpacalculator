@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Admissions Phase 2, checkpoints C and D: unpublish the posts in data/admissions/audit/phase2_cd_actions.csv (closed
 # and merged colleges for C, duplicate pages for D) and redirect their addresses (410 Gone, or a 301 to the page named).
+# For D, the page that stays first takes the fields listed in data/admissions/audit/phase2_d_consolidate.csv.
 #
 #   bash scripts/admissions/phase2_cd_live.sh plan C|D      dry run on the server: what each row would do
-#   bash scripts/admissions/phase2_cd_live.sh apply C|D     unpublish (kept as drafts), add the redirects, print the log
+#   bash scripts/admissions/phase2_cd_live.sh apply C|D     copy D's fields, unpublish (kept as drafts), add redirects
 #   bash scripts/admissions/phase2_cd_live.sh check C|D     request both addresses of every row, compare with the list
-#   bash scripts/admissions/phase2_cd_live.sh revert <log>  publish the logged posts again, delete their redirects
+#   bash scripts/admissions/phase2_cd_live.sh revert <log>  undo the logged run: copied fields, posts and redirects
 #
 # The list comes from scripts/admissions/phase2_cd_actions.py. Each apply writes its log (post and redirect IDs) to
 # ~/backups/ on the server and ~/gpacalculator-backups/ on this Mac. Take a database backup first and log each run in
@@ -20,6 +21,7 @@ SCP=(scp -q -i "$KEY" -o IdentitiesOnly=yes)
 LOCAL="$HOME/gpacalculator-backups"
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 ACTIONS="$REPO/data/admissions/audit/phase2_cd_actions.csv"
+CONSOLIDATE="$REPO/data/admissions/audit/phase2_d_consolidate.csv"
 PHP="$REPO/scripts/admissions/phase2_cd_live.php"
 SITE="https://gpacalculator.net"
 
@@ -32,7 +34,8 @@ case "${1:-}" in
     CP="$(checkpoint "${2:-}")"
     NAME="admissions-$(echo "$CP" | tr 'CD' 'cd')-$(date -u +%Y%m%d-%H%M%S)"
     "${SCP[@]}" "$ACTIONS" "$HOST:backups/$NAME-actions.csv"
-    "${SSH[@]}" "cd $APP && wp eval-file - $1 $CP ~/backups/$NAME-actions.csv ~/backups/$NAME-log.tsv" < "$PHP"
+    "${SCP[@]}" "$CONSOLIDATE" "$HOST:backups/$NAME-consolidate.csv"
+    "${SSH[@]}" "cd $APP && wp eval-file - $1 $CP ~/backups/$NAME-actions.csv ~/backups/$NAME-log.tsv ~/backups/$NAME-consolidate.csv" < "$PHP"
     if [[ "$1" == apply ]]; then
       "${SSH[@]}" "cd $APP && wp cache flush && wp breeze purge --cache=all"
       mkdir -p "$LOCAL"
@@ -59,5 +62,5 @@ case "${1:-}" in
     "${SSH[@]}" "cd $APP && test -s ~/backups/$LOG && wp eval-file - revert ~/backups/$LOG" < "$PHP"
     "${SSH[@]}" "cd $APP && wp cache flush && wp breeze purge --cache=all" ;;
   *)
-    sed -n '2,12p' "$0"; exit 1 ;;
+    sed -n '2,13p' "$0"; exit 1 ;;
 esac

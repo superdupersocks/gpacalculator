@@ -1,8 +1,15 @@
 # Admissions Phase 2: server runbook
 
-Server steps for the /admissions/ overhaul, run from the repo clone on Digant's Mac (`git pull` first). Each
-checkpoint runs only after Digant types its go in the admissions thread ("go B", "go C", "go D"), one checkpoint at a
-time. Log every live change in `docs/LIVE_CHANGELOG.md` with its undo, push, and report in the thread.
+Server steps for the /admissions/ overhaul, run from the repo clone on Digant's Mac. Run `git pull` before each
+checkpoint, not just once: steps get fixed and added while the others run. Each checkpoint runs only after Digant types
+its go in the admissions thread, one checkpoint at a time. Log every live change in `docs/LIVE_CHANGELOG.md` with its
+undo, push, and report in the thread.
+
+Digant's go (2026-10-02 05:58 UTC): B, D and C, with these limits. B removes the unsupported claims and the competitor
+images; the cited CDS GPAs replace them in step B2 once it has its steps below. D copies useful details into the
+surviving pages before its four 301s. C retires the verified closures and redirects the confirmed mergers; the merged
+pages in `data/admissions/audit/phase2_c_held.csv` and everything still under review stay unchanged. Individual pages
+within that scope need no further approval; report counts and exceptions.
 
 `SSH` below means `ssh -i ~/.ssh/gpacalculator_cloudways -o IdentitiesOnly=yes master_rfzfmbbwze@67.205.161.226`, and
 `WP` is `applications/xwnzegvpyy/public_html` on the server.
@@ -46,26 +53,52 @@ isn't needed.
 Undo: `bash scripts/admissions/phase2_b_live.sh revert <export name>` puts every value back;
 `bash scripts/deploy_theme.sh --revert <theme backup>` restores the theme files.
 
+## B2: cited Common Data Set GPAs
+
+Digant's go for B includes "Replace GPA with verified, cited CDS values wherever available". Commit 9a803a3 can't show
+a GPA with the label, year, weighted or unweighted basis and source link that Digant's rules require, so this step adds
+that to the template and imports the values into their own fields. Its steps land here when the theme change and the
+import script are pushed. Until then, don't write any CDS value into `average_gpa` or any other field.
+
 ## C and D: retire closed colleges, redirect merged ones and duplicates
 
 The list is `data/admissions/audit/phase2_cd_actions.csv`, made by `scripts/admissions/phase2_cd_actions.py` from the
-audit lists: C has 312 pages to retire (410 Gone) and 40 to redirect (301), D has 4 to redirect. Each go covers only
-its own checkpoint's rows. Five C rows redirect to the pages D keeps; if Digant's go for D keeps other pages, change
-`D_KEEP` in `phase2_cd_actions.py`, rerun it, commit, and only then run C or D. `scripts/admissions/phase2_cd_live.sh`
-does the rest; each rule covers the page's /admissions/ address and its old /admission/ one.
+audit lists: C has 287 pages to retire (410 Gone: 257 closed colleges and 30 University of Phoenix campuses whose
+successor closed too or is no longer listed) and 40 to redirect (301 to the successor's page); D has 4 to redirect. The
+25 merged pages in `phase2_c_held.csv` have no row and stay as they are, each with a recommended treatment for Digant.
+Each go covers only its own checkpoint's rows; run D before C, since five C rows redirect to pages D keeps.
+`scripts/admissions/phase2_cd_live.sh` does the rest; each rule covers the page's /admissions/ address and its old
+/admission/ one.
 
-1. Database backup as in B, step 1 (`...-pre-admissions-c.sql.gz` or `-d`).
-2. Dry run: `bash scripts/admissions/phase2_cd_live.sh plan C` (or `D`). It changes nothing. Every row should read
-   `ok`. Report any `SKIP` row and any "active non-exact rule" line before going on. Compare the printed sample of
-   how an existing /admission/ rule stores its source with the new rules (`admission/<slug>`, no domain, no slashes);
-   stop and report if the existing ones look different.
-3. `bash scripts/admissions/phase2_cd_live.sh apply C` (or `D`). Note the log name it prints.
-4. Check: `bash scripts/admissions/phase2_cd_live.sh check C` (or `D`) must end in "0 wrong". Then /admissions/ and
+For D, the page that stays first takes the 26 fields listed in `phase2_d_consolidate.csv` (admission requirements,
+AP, dual and life-experience credit the duplicate had and the survivor lacks, checked against the Phase 1 IPEDS
+record; Georgia Military College's "credit for life experiences: Yes" isn't copied because IPEDS says No). Each value
+is logged before it is written and copied only while the survivor's field is empty or "-". Numbers that change every
+year (enrollment, net price, scores) come later from E's import, with their year. If D was applied before this list
+existed, run `plan D` and `apply D` again: the rows skip (already done) and only the fields are copied, under a new log.
+
+1. Database backup as in B, step 1 (`...-pre-admissions-d.sql.gz` or `-c`).
+2. Dry run: `bash scripts/admissions/phase2_cd_live.sh plan D` (or `C`). It changes nothing. Every row should read
+   `ok`, and D should list 26 "copy" lines. Report any `SKIP` row, any "not copied" warning and any "active non-exact
+   rule" line before going on. Compare the printed sample of how an existing /admission/ rule stores its source with
+   the new rules (`admission/<slug>`, no domain, no slashes); stop and report if the existing ones look different. If
+   the plan warns that a Rank Math method is missing, stop and report: apply would refuse.
+3. `bash scripts/admissions/phase2_cd_live.sh apply D` (or `C`). Note the log name it prints. It ends with
+   "applied N, skipped N, copied N fields".
+4. Check: `bash scripts/admissions/phase2_cd_live.sh check D` (or `C`) must end in "0 wrong". Then /admissions/ and
    the colleges sitemap no longer list those pages (the sitemap can take a few minutes), a page that receives a 301
-   (e.g. /admissions/south-louisiana-community-college/) loads, and ads show. If anything breaks:
-   `bash scripts/admissions/phase2_cd_live.sh revert <log name>`, then report.
-5. Changelog: one row per checkpoint with the number of pages unpublished, 410 and 301 rules, the log name and the
-   undo command.
+   (D: /admissions/georgia-military-college/; C: /admissions/south-louisiana-community-college/) loads, D's survivors
+   show the copied requirements, and ads show. If anything breaks: `bash scripts/admissions/phase2_cd_live.sh revert
+   <log name>`, then report.
+5. Changelog: one row per checkpoint with the number of pages unpublished, 410 and 301 rules, fields copied, the log
+   name and the undo command.
 
-Undo: `bash scripts/admissions/phase2_cd_live.sh revert <log name>` publishes the logged pages again and deletes their
-rules.
+Undo: `bash scripts/admissions/phase2_cd_live.sh revert <log name>` puts the copied fields back as they were,
+publishes the logged pages again and deletes their rules.
+
+## Old /admission/ addresses
+
+148 old /admission/ addresses that Search Console still shows have no redirect (90 end in a 404). Digant's go covers
+fixing them. The cloud session is building the map (old address -> the college's current page, or 410 for a college
+that is gone) from `data/admissions/redirects/` and the Phase 1 match, with a script like C's; its steps land here.
+Don't switch on Rank Math's inactive regex rule `^admission/(.+)/?$`: it would send renamed colleges to dead addresses.

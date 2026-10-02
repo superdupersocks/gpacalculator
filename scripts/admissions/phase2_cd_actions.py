@@ -11,14 +11,21 @@ D); change it if Digant picks the other page. scripts/admissions/phase2_cd_live.
 
 Merged posts that would retire only because their successor has no page here are held (Digant, 2026-10-02 05:58 UTC)
 and go to phase2_c_held.csv with a recommended treatment instead of the action list.
+
+phase2_d_consolidate.csv lists what each surviving page in D takes from its duplicate before the 301 (Digant:
+"Consolidate useful information into the surviving pages"): fields the survivor lacks, unless the Phase 1 record for
+the college contradicts the value. B's four fields stay out, and the numbers that change every year (enrollment, net
+price, scores) come from E's import with their year.
 """
 import csv
+import json
 import re
 import sys
 from collections import Counter
 from pathlib import Path
 
-AUDIT = Path(__file__).resolve().parents[2] / "data" / "admissions" / "audit"
+DATA = Path(__file__).resolve().parents[2] / "data"
+AUDIT = DATA / "admissions" / "audit"
 SITE = "https://gpacalculator.net/admissions/"
 D_KEEP = {  # IPEDS ID shared by two posts -> the post that stays; the other gets a 301 to it
     "177302": "pinnacle-career-institute-north-kansas-city",
@@ -30,6 +37,33 @@ COLS = ["checkpoint", "slug", "action", "target", "reason"]
 HELD_COLS = ["slug", "successor_unitid", "successor_name", "recommendation"]
 HELD_ADVICE = ("keep the page live and unchanged for now; when the fresh data import adds the successor's page, "
                "301 this one to it and move anything useful across")
+# The simplest useful treatment by successor, from its Phase 1 record (data/admissions/institutions.csv).
+UOP = "301 to one University of Phoenix page (IPEDS 484613, Phoenix AZ, 89,828 undergraduates) added with E's import"
+HELD_BY_SUCCESSOR = {
+    "168847": "add a page for Baker College (operating, 3,595 undergraduates) with E's import, then 301 this one to it",
+    "498562": "add a page for Commonwealth University of Pennsylvania (operating, 9,847 undergraduates) with E's "
+              "import, then 301 this one to it",
+    "484613": UOP,
+    "484631": UOP + "; University of Phoenix-California reports 24 undergraduates, too few for a page of its own",
+    "484756": UOP + "; University of Phoenix-Texas reports 5 undergraduates, too few for a page of its own",
+    "484710": "retire (410): University of Phoenix-Nevada closed 06/05/2023 (IPEDS HD2024 CLOSEDAT)",
+    "494436": "keep the page and match it to IPEDS 494436 in E: the same Cookeville campus under a new ID",
+    "133997": "retire (410): College Scorecard doesn't show Florida Career College-Miami as operating",
+}
+CONSOLIDATE_COLS = ["survivor", "field", "value", "from_slug", "check"]
+# Page field -> the Phase 1 column that confirms or contradicts it (None: not in the Phase 1 data). The six admission
+# requirements read "Not applicable" at open-admission colleges.
+CONSOLIDATE = {
+    "admission_requirements_completion_of_college_preparatory_program": "req_prep_program",
+    "admission_requirements_demonstration_of_competencies": "req_competencies",
+    "admission_requirements_high_school_class_rank": "req_class_rank",
+    "admission_requirements_high_school_gpa": "req_gpa",
+    "admission_requirements_recommendations": "req_recommendations",
+    "admission_requirements_test_scores": "req_test_scores",
+    "ap_credit": "ap_credit",
+    "credit_for_life_experiences": "life_experience_credit",
+    "dual_credit": None,
+}
 
 
 def read(name):
@@ -72,7 +106,8 @@ def build():
             if "is no longer listed either" in t:
                 rows.append(["C", r["slug"], "retire", "", why + "; the successor closed too"])
             else:
-                held.append([r["slug"], r["successor_unitid"], r["successor_name"], HELD_ADVICE])
+                held.append([r["slug"], r["successor_unitid"], r["successor_name"],
+                             HELD_BY_SUCCESSOR.get(r["successor_unitid"], HELD_ADVICE)])
         else:
             sys.exit(f"{r['slug']}: unknown treatment {t!r}")
     for u, slugs in sorted(pairs.items()):
@@ -89,14 +124,47 @@ def build():
     return rows, held
 
 
+def page_fields(slug):
+    with open(DATA / "colleges" / f"{slug}.json") as f:
+        return json.load(f)["fields"]
+
+
+def consolidate(rows):
+    with open(DATA / "admissions" / "institutions.csv", newline="") as f:
+        inst = {r["unitid"]: r for r in csv.DictReader(f)}
+    out = []
+    for _, dup, _, target, reason in (r for r in rows if r[0] == "D"):
+        keep = slug_of(target)
+        have, give = page_fields(keep), page_fields(dup)
+        rec = inst[re.search(r"\(IPEDS (\d+)\)", reason).group(1)]
+        for field, col in CONSOLIDATE.items():
+            value = give.get(field, "").strip()
+            if have.get(field, "").strip() not in ("", "-") or value in ("", "-"):
+                continue
+            known = rec.get(col, "") if col else ""
+            if value == "Not applicable":
+                ok, check = rec["open_admission"] == "Yes", "open admission in IPEDS"
+            elif known:
+                ok, check = value == known, f"IPEDS {col}: {known}"
+            else:
+                ok, check = True, "not in the Phase 1 data"
+            if ok:
+                out.append([keep, field, value, dup, check])
+            else:
+                print(f"not copied to {keep}: {field} = {value!r} ({check})")
+    return out
+
+
 def main():
     rows, held = build()
-    for name, cols, data in (("phase2_cd_actions.csv", COLS, rows), ("phase2_c_held.csv", HELD_COLS, held)):
+    copies = consolidate(rows)
+    for name, cols, data in (("phase2_cd_actions.csv", COLS, rows), ("phase2_c_held.csv", HELD_COLS, held),
+                             ("phase2_d_consolidate.csv", CONSOLIDATE_COLS, copies)):
         with open(AUDIT / name, "w", newline="") as f:
             w = csv.writer(f)
             w.writerow(cols)
             w.writerows(data)
-    print(f"held: {len(held)}")
+    print(f"held: {len(held)}; D fields to copy: {len(copies)}")
     for (cp, action), n in sorted(Counter((r[0], r[2]) for r in rows).items()):
         print(f"{cp} {action}: {n}")
 

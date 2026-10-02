@@ -2,7 +2,7 @@
 """Before/after screenshots of /admissions/ pages, without touching the live site.
 
     python3 scripts/admissions/preview/render.py OUTDIR [--pages harvard,miami-university] [--sizes 390x844,1440x900]
-        [--before] [--after] [--local http://localhost:8890] [--eval JS] [--fragment]
+        [--before] [--after] [--local http://localhost:8890] [--setup JS] [--eval JS] [--fragment]
 
 "Before" is the live page as saved by the snapshot workflow (data/admissions/preview/snapshot, from
 .github/workflows/admissions-snapshot.yml). "After" is the same saved page with its content area (and its title,
@@ -137,6 +137,8 @@ def main():
     ap.add_argument("--before", action="store_true")
     ap.add_argument("--after", action="store_true")
     ap.add_argument("--local", default="http://localhost:8890")
+    ap.add_argument("--setup", help="JavaScript to run on each page before its screenshot (a promise is awaited), "
+                                    "such as a search typed into the hub")
     ap.add_argument("--eval", help="JavaScript expression to evaluate on each page; its result is printed")
     ap.add_argument("--viewport", action="store_true", help="first screen only instead of the full page")
     a = ap.parse_args()
@@ -206,6 +208,9 @@ def main():
                     except Exception:  # noqa: BLE001
                         pass
                     page.wait_for_timeout(1200)
+                    if a.setup:
+                        page.evaluate(a.setup)
+                        page.wait_for_timeout(600)
                     shot = os.path.join(a.out, f"{name}-{kind}-{size}.png")
                     page.screenshot(path=shot, full_page=not a.viewport)
                     hscroll = page.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth")

@@ -7,8 +7,9 @@
    components.css: hero band, quick facts, numbered sections, FAQ,
    Sources. This file adds only what college data needs: the H1's second
    line, data tables with a label column, status labels, the acceptance
-   meter, the GPA bars (sections 1-6) and the hub's college finder
-   (section 7). Colors and sizes come only from var(--gpa-*) tokens.
+   meter, the GPA bars (sections 1-5) and the hub's college finder
+   (section 7). Colors and sizes come from var(--gpa-*) tokens, except
+   the hub's lime, which the palette lacks.
    ============================================================ */
 
 /* ---------- 1. Hero ----------
@@ -75,16 +76,17 @@ body.single-colleges .entry-header .gpa-college-h1-sub {
 .gpa-college-status--not { background: var(--gpa-gray-50); border-color: var(--gpa-border); color: var(--gpa-gray-600); }
 
 /* ---------- 4. Acceptance meter ----------
-   The share of applicants admitted, on the text column's width. */
+   The share of applicants admitted, as wide as the text: layout.css's
+   inset of 20px beside text on phones and 40px from 641px up. */
 #page .entry-content .gpa-college-meter {
-    max-width: var(--gpa-text-max);
+    max-width: min(var(--gpa-text-max), calc(100% - 40px));
     height: 10px;
     margin: 0 auto var(--gpa-p-gap);
     border-radius: var(--gpa-radius-pill);
     background: var(--gpa-gray-100);
     overflow: hidden;
 }
-@media (min-width: 941px) {
+@media (min-width: 641px) {
     #page .entry-content .gpa-college-meter { max-width: min(var(--gpa-text-max), calc(100% - 80px)); }
 }
 #page .entry-content .gpa-college-meter > span {
@@ -131,24 +133,17 @@ body.single-colleges .entry-header .gpa-college-h1-sub {
     .gpa-college-wide { display: none; }
 }
 
-/* ---------- 6. Column padding beside the rails ----------
-   layout.css keeps 40px of white beside text when the column narrows for
-   the side rails (760px at 1440px), for blocks inside .rx-sec sections.
-   College pages and the hub have no sections, so the same rule for their
-   blocks. */
-@media (min-width: 941px) {
-    body:is(.single-colleges, .post-type-archive-colleges) #page .entry-content > :is(p, ul, ol, blockquote, h2, h3, .gpa-callout, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources, .gpa-college-meter):not(#root *) {
-        max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
-    }
-}
-
-/* ---------- 7. Hub: the college finder ----------
+/* ---------- 6. Hub: the college finder ----------
    On /admissions/ the finder is a card that rises into the hero, as
    calculators do (layout.css section 6 with the calculator's tail and
-   overlap). One row per college: name, place and type, then the figures
-   in columns under a header row; on phones each figure shows its own
-   label instead. Scoped to .gpa-hub so the shortcode works anywhere.
-   The ids and db-* classes are the ones database-ajax.js uses. */
+   overlap). One card per college: name, place and type and a tag saying
+   how hard it is to get into, then the average GPA, SAT and ACT in
+   columns under a header row; on phones each figure shows its own label
+   instead. The card's left edge and its tag share the level's color
+   (red, very hard, to green, easy; teal, open admission), explained in
+   the legend over the list. Scoped to .gpa-hub so the shortcode works
+   anywhere. The ids and db-* classes are the ones database-ajax.js
+   uses. */
 body.post-type-archive-colleges.gpa-hero-band.gpa-hero-band {
     --rx-hero-tail: var(--gpa-hero-tail);
     --rx-card-overlap: var(--gpa-hero-overlap);
@@ -164,8 +159,13 @@ body.post-type-archive-colleges .gpa-hub {
     background: var(--gpa-surface);
 }
 .gpa-hub {
-    --gpa-hub-cols: minmax(0, 1fr) 120px 128px 72px;
-    padding: 40px 40px 8px;
+    --gpa-hub-cols: minmax(0, 1fr) 136px 116px 70px;
+    /* lime between amber and green (Tailwind lime 50/200/600/800) */
+    --gpa-hub-lime-50: #F7FEE7;
+    --gpa-hub-lime-200: #D9F99D;
+    --gpa-hub-lime-600: #65A30D;
+    --gpa-hub-lime-800: #3F6212;
+    padding: 36px 28px 8px;
     font-family: var(--gpa-font);
     color: var(--gpa-text);
 }
@@ -296,12 +296,98 @@ body.post-type-archive-colleges .gpa-hub {
 }
 .gpa-hub__panel .gpa-hub__reset { grid-column: 1 / -1; justify-self: start; }
 
-/* Count, header row and the list */
+/* Count, legend, header row and the list */
 .gpa-hub__count {
     margin: 20px 0 10px;
     font-size: var(--gpa-small-size);
     color: var(--gpa-text-muted);
 }
+
+/* The difficulty levels: color, tint, edge and ink, for the card's edge,
+   its tag and the legend */
+.gpa-hub :is(.gpa-hub-row, .gpa-hub-tag, .gpa-hub__key) {
+    --gpa-hub-accent: var(--gpa-gray-300);
+    --gpa-hub-tint: var(--gpa-gray-50);
+    --gpa-hub-edge: var(--gpa-gray-200);
+    --gpa-hub-ink: var(--gpa-text-secondary);
+}
+.gpa-hub :is(.gpa-hub-row--very-hard, .gpa-hub-tag--very-hard, .gpa-hub__key--very-hard) {
+    --gpa-hub-accent: var(--gpa-red-600);
+    --gpa-hub-tint: var(--gpa-red-50);
+    --gpa-hub-edge: var(--gpa-red-200);
+    --gpa-hub-ink: var(--gpa-red-800);
+}
+.gpa-hub :is(.gpa-hub-row--hard, .gpa-hub-tag--hard, .gpa-hub__key--hard) {
+    --gpa-hub-accent: var(--gpa-orange-600);
+    --gpa-hub-tint: var(--gpa-orange-50);
+    --gpa-hub-edge: var(--gpa-orange-200);
+    --gpa-hub-ink: var(--gpa-orange-800);
+}
+.gpa-hub :is(.gpa-hub-row--moderate, .gpa-hub-tag--moderate, .gpa-hub__key--moderate) {
+    --gpa-hub-accent: var(--gpa-amber-500);
+    --gpa-hub-tint: var(--gpa-amber-50);
+    --gpa-hub-edge: var(--gpa-amber-200);
+    --gpa-hub-ink: var(--gpa-amber-800);
+}
+.gpa-hub :is(.gpa-hub-row--fairly-easy, .gpa-hub-tag--fairly-easy, .gpa-hub__key--fairly-easy) {
+    --gpa-hub-accent: var(--gpa-hub-lime-600);
+    --gpa-hub-tint: var(--gpa-hub-lime-50);
+    --gpa-hub-edge: var(--gpa-hub-lime-200);
+    --gpa-hub-ink: var(--gpa-hub-lime-800);
+}
+.gpa-hub :is(.gpa-hub-row--easy, .gpa-hub-tag--easy, .gpa-hub__key--easy) {
+    --gpa-hub-accent: var(--gpa-green-600);
+    --gpa-hub-tint: var(--gpa-green-50);
+    --gpa-hub-edge: var(--gpa-green-200);
+    --gpa-hub-ink: var(--gpa-green-800);
+}
+.gpa-hub :is(.gpa-hub-row--open, .gpa-hub-tag--open, .gpa-hub__key--open) {
+    --gpa-hub-accent: var(--gpa-teal-600);
+    --gpa-hub-tint: color-mix(in srgb, var(--gpa-teal-100) 45%, var(--gpa-white));
+    --gpa-hub-edge: var(--gpa-teal-200);
+    --gpa-hub-ink: var(--gpa-teal-800);
+}
+
+.gpa-hub__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+    margin: 0 0 16px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.gpa-hub__legend-title {
+    font-weight: 700;
+    color: var(--gpa-text-strong);
+}
+.gpa-hub__keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+}
+.gpa-hub__key {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--gpa-hub-ink);
+}
+.gpa-hub__key::before {
+    content: "";
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gpa-hub-accent);
+}
+.gpa-hub__key > span {
+    font-weight: 500;
+    color: var(--gpa-text-muted);
+}
+.gpa-hub__legend:has(+ .gpa-hub__head + .gpa-hub__list[style*="none"]) { display: none; }
+
 .gpa-hub__head,
 .gpa-hub-row {
     display: grid;
@@ -310,11 +396,7 @@ body.post-type-archive-colleges .gpa-hub {
     align-items: center;
 }
 .gpa-hub__head {
-    padding: 10px 16px;
-    border: 1px solid var(--gpa-border);
-    border-bottom: 0;
-    border-radius: var(--gpa-radius-md) var(--gpa-radius-md) 0 0;
-    background: var(--gpa-surface-subtle);
+    padding: 0 18px 8px 22px;
     font-size: 13px;
     font-weight: 700;
     line-height: 1.3;
@@ -329,37 +411,44 @@ body.post-type-archive-colleges .gpa-hub {
 }
 .gpa-hub__head:has(+ .gpa-hub__list[style*="none"]) { display: none; }
 .gpa-hub__list {
-    border: 1px solid var(--gpa-border);
-    border-radius: 0 0 var(--gpa-radius-md) var(--gpa-radius-md);
-    overflow: hidden;
+    display: grid;
+    gap: 12px;
 }
+/* A card per college, its left edge in its level's color */
 .gpa-hub-row {
     position: relative;
-    padding: 14px 16px;
-    border-top: 1px solid var(--gpa-divider);
+    padding: 16px 18px 16px 22px;
+    border: 1px solid var(--gpa-border);
+    border-radius: var(--gpa-radius-md);
     background: var(--gpa-surface);
+    box-shadow: inset 5px 0 0 var(--gpa-hub-accent), var(--gpa-shadow-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.gpa-hub-row:first-child { border-top: 0; }
-.gpa-hub-row:hover { background: var(--gpa-surface-subtle); }
+.gpa-hub-row:hover {
+    border-color: var(--gpa-blue-200);
+    box-shadow: inset 5px 0 0 var(--gpa-hub-accent), var(--gpa-shadow-md);
+}
 .gpa-hub-row__college {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 2px;
     min-width: 0;
 }
 .gpa-hub .gpa-hub-row__name,
 .gpa-hub .gpa-hub-row__name:visited {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
     line-height: 1.35;
     color: var(--gpa-text-strong);
     text-decoration: none;
 }
-/* The whole row opens the college's page */
+/* The whole card opens the college's page */
 .gpa-hub-row__name::after {
     content: "";
     position: absolute;
     inset: 0;
+    border-radius: inherit;
 }
 .gpa-hub .gpa-hub-row:hover .gpa-hub-row__name {
     color: var(--gpa-link);
@@ -367,15 +456,14 @@ body.post-type-archive-colleges .gpa-hub {
     text-decoration-color: var(--gpa-link-underline);
     text-underline-offset: 3px;
 }
-/* Keyboard focus rings the whole row instead of the name (style.css gives
+/* Keyboard focus rings the whole card instead of the name (style.css gives
    every focused link an !important outline) */
 .gpa-hub .gpa-hub-row__name:focus-visible { outline: none !important; }
 .gpa-hub .gpa-hub-row__name:focus-visible::after {
     outline: 2px solid var(--gpa-focus-ring);
     outline-offset: -2px;
 }
-.gpa-hub-row__meta,
-.gpa-hub-row__gpa {
+.gpa-hub-row__meta {
     font-size: 13px;
     line-height: 1.45;
     color: var(--gpa-text-muted);
@@ -397,8 +485,36 @@ body.post-type-archive-colleges .gpa-hub {
     width: 14px;
     text-align: center;
 }
-.gpa-hub-row__gpa { color: var(--gpa-text-secondary); }
-.gpa-hub-row__gpa strong { color: var(--gpa-text-strong); }
+/* How hard to get into: "● Very hard · 3.6% admitted" */
+.gpa-hub-tag {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 6px;
+    margin-top: 6px;
+    padding: 3px 10px 3px 8px;
+    border: 1px solid var(--gpa-hub-edge);
+    border-radius: var(--gpa-radius-pill);
+    background: var(--gpa-hub-tint);
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--gpa-hub-ink);
+}
+.gpa-hub-tag::before {
+    content: "";
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gpa-hub-accent);
+}
+.gpa-hub-tag__rate { font-weight: 600; }
+.gpa-hub-tag__rate::before {
+    content: "·";
+    content: "·" / "";
+    margin-right: 6px;
+}
 .gpa-hub-row__fig {
     font-size: 15px;
     font-weight: 600;
@@ -415,15 +531,27 @@ body.post-type-archive-colleges .gpa-hub {
     clip: rect(0 0 0 0);
     white-space: nowrap;
 }
+/* The average GPA leads, with its label under it */
+.gpa-hub-row__gpa {
+    display: block;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--gpa-text-strong);
+}
+.gpa-hub-row__note {
+    display: block;
+    margin-top: 3px;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--gpa-text-muted);
+}
 .gpa-hub-row__line { display: block; white-space: nowrap; }
 .gpa-hub-row__line small {
     font-size: 12px;
     font-weight: 500;
     color: var(--gpa-text-muted);
-}
-.gpa-hub-row__open {
-    font-size: 13px;
-    color: var(--gpa-green-800);
 }
 .gpa-hub-row__none {
     font-weight: 500;
@@ -486,24 +614,19 @@ body.post-type-archive-colleges .gpa-hub {
 @media (max-width: 940px) {
     .gpa-hub { padding: 28px 24px 8px; }
 }
-/* Narrow screens: no header row; each figure shows its own label, and the
-   rows run edge to edge between dividers */
+/* Narrow screens: no header row; each figure shows its own label under
+   the college */
 @media (max-width: 767px) {
     .gpa-hub__head { display: none; }
-    .gpa-hub__list {
-        border-width: 1px 0;
-        border-color: var(--gpa-divider);
-        border-radius: 0;
-    }
-    .gpa-hub-row,
-    .gpa-hub-row:hover {
+    .gpa-hub__list { gap: 10px; }
+    .gpa-hub-row {
         grid-template-columns: minmax(108px, 1.1fr) minmax(100px, 1.3fr) minmax(46px, 0.6fr);
         align-items: start;
         column-gap: 12px;
-        row-gap: 10px;
-        padding: 14px 0;
-        background: none;
+        row-gap: 12px;
+        padding: 14px 14px 14px 18px;
     }
+    .gpa-hub-row__gpa { font-size: 20px; }
     .gpa-hub-row__college,
     .gpa-hub-row__review,
     .gpa-hub-skel--name { grid-column: 1 / -1; }
@@ -526,15 +649,13 @@ body.post-type-archive-colleges .gpa-hub {
     .gpa-hub { padding: 20px 16px 8px; }
     .gpa-hub__panel { grid-template-columns: minmax(0, 1fr); }
 }
-/* Small phones: "Open admission", an SAT line and an ACT range side by side
-   need about 260px */
+/* Small phones: a GPA with its label, an SAT line and an ACT range side
+   by side need about 260px */
 @media (max-width: 380px) {
     .gpa-hub { padding-right: 12px; padding-left: 12px; }
-    .gpa-hub-row,
-    .gpa-hub-row:hover { column-gap: 8px; }
+    .gpa-hub-row { column-gap: 8px; padding-right: 10px; padding-left: 14px; }
 }
 @media (max-width: 340px) {
-    .gpa-hub-row,
-    .gpa-hub-row:hover { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 0.6fr); }
+    .gpa-hub-row { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 0.6fr); }
     .gpa-hub-row__line { white-space: normal; }
 }

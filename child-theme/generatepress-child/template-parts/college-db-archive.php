@@ -3,8 +3,9 @@
  * Template part: the college finder (search, filters and the list of colleges), Admissions Phase 3.
  *
  * Printed by the /admissions/ hub (archive-colleges.php), where it rises into the hero like a calculator card, and by
- * the [gpa_college_archive] shortcode. Builds the first page of results itself, one gpa_render_college_card() row per
- * college (college-data.php), and gives database-ajax.js its settings; the ids are the ones that script looks for.
+ * the [gpa_college_archive] shortcode. Builds the first page of results itself, one gpa_render_college_card() card per
+ * college (college-data.php) under the legend of their difficulty colors, and gives database-ajax.js its settings; the
+ * ids are the ones that script looks for.
  * The caller enqueues database-ajax.js and admissions.css.
  *
  * @package GeneratePress Child
@@ -96,9 +97,18 @@ $stats          = gpa_college_hub_stats();
 		Showing <span id="db-showing-count"><?php echo esc_html( min( $per_page, $total_colleges ) ); ?></span> of <span id="db-total-count"><?php echo esc_html( number_format( $total_colleges ) ); ?></span> colleges
 	</div>
 
+	<div class="gpa-hub__legend">
+		<span class="gpa-hub__legend-title">How hard to get into<?php echo '' !== $stats['fall'] ? ', by ' . esc_html( $stats['fall'] ) . ' acceptance rate' : ''; ?>:</span>
+		<span class="gpa-hub__keys" role="list">
+			<?php foreach ( gpa_college_difficulty_legend() as $level ) : ?>
+			<span class="gpa-hub__key gpa-hub__key--<?php echo esc_attr( $level[0] ); ?>" role="listitem"><?php echo esc_html( $level[1] ); ?><?php echo '' !== $level[2] ? ' <span>' . esc_html( $level[2] ) . '</span>' : ''; ?></span>
+			<?php endforeach; ?>
+		</span>
+	</div>
+
 	<div class="gpa-hub__head" aria-hidden="true">
 		<span>College</span>
-		<span>Acceptance rate<?php echo '' !== $stats['fall'] ? '<small>' . esc_html( ucfirst( $stats['fall'] ) ) . '</small>' : ''; ?></span>
+		<span>Average GPA<small>High school</small></span>
 		<span>SAT<small>Middle 50%</small></span>
 		<span>ACT<small>Middle 50%</small></span>
 	</div>

@@ -2,9 +2,9 @@
 /**
  * The /admissions/ hub (archive of the colleges post type), Admissions Phase 3: the site's content-page design.
  *
- * Hero band with the breadcrumb, the H1, a one-paragraph intro with the live counts and where the figures come from;
- * the college finder (template-parts/college-db-archive.php), which rises into the hero like a calculator card; then
- * how to read the figures, where they come from, and Sources. Freestar's mid-article and bottom slots keep their
+ * Hero band with the breadcrumb, the H1 and a one-paragraph intro with the live counts; the college finder
+ * (template-parts/college-db-archive.php), which rises into the hero like a calculator card; then how to read the
+ * figures, where they come from, and Sources. Freestar's mid-article and bottom slots keep their
  * exact markup. Styles: layout.css, components.css, content-styles.css and admissions.css, loaded with the content
  * template's body classes by gpa_college_profile_styles() in college-data.php; search and filters: database-ajax.js.
  */
@@ -23,7 +23,6 @@ $fall  = '' !== $stats['fall'] ? $stats['fall'] : 'the latest year';
 					<?php gpa_render_breadcrumb(); ?>
 					<h1 class="entry-title">US College Admissions Database</h1>
 					<div class="rx-hero-intro"><p>Acceptance rates, SAT and ACT score ranges and admission requirements for <?php echo esc_html( number_format( $stats['colleges'] ) ); ?> US colleges and universities<?php if ( $stats['gpa'] ) : ?>, with the average high school GPA of <?php echo esc_html( number_format( $stats['gpa'] ) ); ?> of them as each college reported it<?php endif; ?>.</p></div>
-					<p class="gpa-updated gpa-college-data"><?php echo esc_html( ucfirst( $fall ) ); ?> admissions data from the U.S. Department of Education</p>
 				</header>
 
 				<div class="entry-content">
@@ -37,10 +36,20 @@ $fall  = '' !== $stats['fall'] ? $stats['fall'] : 'the latest year';
 </div>
 
 					<h2 id="reading-the-figures">How to read the figures</h2>
+					<?php
+					// "very hard under 10%, hard 10–24%, ... and easy 75% or more", from the levels the tags use
+					$levels = array();
+					foreach ( gpa_college_difficulty_legend() as $level ) {
+						if ( 'open' !== $level[0] ) {
+							$levels[] = strtolower( $level[1] ) . ' ' . $level[2];
+						}
+					}
+					$last = array_pop( $levels );
+					?>
 					<ul>
-						<li><strong>Acceptance rate:</strong> the share of first-year applicants a college admitted for <?php echo esc_html( $fall ); ?>, as it reported to the U.S. Department of Education. Colleges with open admission accept every applicant, so they don't have one.</li>
-						<li><strong>SAT and ACT:</strong> the middle 50% of scores of the first-year students who enrolled in <?php echo esc_html( $fall ); ?> and sent scores. A quarter of them scored below the range and a quarter above it. R&amp;W is the SAT's reading and writing section; ACT ranges are composite scores.</li>
 						<li><strong>Average GPA:</strong> shown only when a college publishes it in its own Common Data Set and we could check it, with the year and whether it's weighted. Colleges calculate GPA in different ways, so an average can't be compared directly with your own GPA.</li>
+						<li><strong>How hard to get into:</strong> each college's color and tag come from its acceptance rate, the share of first-year applicants it admitted for <?php echo esc_html( $fall ); ?>, as it reported to the U.S. Department of Education: <?php echo esc_html( implode( ', ', $levels ) . ' and ' . $last ); ?>. Colleges with open admission accept every applicant, so they don't have an acceptance rate.</li>
+						<li><strong>SAT and ACT:</strong> the middle 50% of scores of the first-year students who enrolled in <?php echo esc_html( $fall ); ?> and sent scores. A quarter of them scored below the range and a quarter above it. R&amp;W is the SAT's reading and writing section; ACT ranges are composite scores.</li>
 						<li><strong>Average SAT filter:</strong> the SAT filter and sort use the College Scorecard's estimate of the average SAT score of admitted students.</li>
 					</ul>
 

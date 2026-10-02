@@ -16,7 +16,6 @@ get_header();
 $post_id  = get_the_ID();
 $v        = gpa_college_view( $post_id );
 $intro    = gpa_college_intro( $v );
-$line     = gpa_college_data_line( $v );
 $facts    = gpa_college_quick_facts( $v );
 $sections = gpa_college_sections( $v );
 $faqs     = gpa_college_faqs( $post_id );
@@ -34,9 +33,6 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					<h1 class="entry-title"><?php echo esc_html( $v['name'] ); ?> <span class="gpa-college-h1-sub"><?php echo esc_html( gpa_college_h1_sub( $v ) ); ?></span></h1>
 					<?php if ( '' !== $intro ) : ?>
 					<div class="rx-hero-intro"><p><?php echo esc_html( $intro ); ?></p></div>
-					<?php endif; ?>
-					<?php if ( '' !== $line ) : ?>
-					<p class="gpa-updated gpa-college-data"><?php echo esc_html( $line ); ?></p>
 					<?php endif; ?>
 				</header>
 

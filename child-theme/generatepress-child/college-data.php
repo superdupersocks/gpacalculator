@@ -561,18 +561,6 @@ if ( ! function_exists( 'gpa_college_intro' ) ) {
     }
 }
 
-if ( ! function_exists( 'gpa_college_data_line' ) ) {
-    // The small line under the hero's intro: where the figures come from (their years are on each figure).
-    function gpa_college_data_line( array $v ) {
-        $f = $v['fresh'];
-        if ( ! $f ) {
-            return '';
-        }
-        $who = 'the U.S. Department of Education' . ( $v['cds'] ? ' and the college\'s Common Data Set' : '' );
-        return '' !== $f['fall'] ? ucfirst( $f['fall'] ) . ' admissions data from ' . $who : 'Data from ' . $who;
-    }
-}
-
 if ( ! function_exists( 'gpa_college_quick_facts' ) ) {
     // The quick facts box under the hero: [label, HTML], only for figures the page has.
     function gpa_college_quick_facts( array $v ) {
@@ -875,29 +863,91 @@ if ( ! function_exists( 'gpa_college_hub_search_sql' ) ) {
     }
 }
 
+if ( ! function_exists( 'gpa_college_difficulty_levels' ) ) {
+    // The hub's color code for how hard a college is to get into, by the acceptance rate its page shows:
+    // key => [label, the rate (%) it stays under, or null for the last]. Open admission is its own level.
+    function gpa_college_difficulty_levels() {
+        return array(
+            'very-hard'   => array( 'Very hard', 10 ),
+            'hard'        => array( 'Hard', 25 ),
+            'moderate'    => array( 'Moderate', 50 ),
+            'fairly-easy' => array( 'Fairly easy', 75 ),
+            'easy'        => array( 'Easy', null ),
+        );
+    }
+
+    /**
+     * A college's level: [ 'key', 'label', 'rate' ("4%", or '' for open admission) ], or null when its page shows
+     * neither an acceptance rate nor open admission. Uses the rate as the page rounds it, so a tag that says "25%"
+     * is never under "10-24%".
+     */
+    function gpa_college_difficulty( array $v ) {
+        if ( $v['open'] ) {
+            return array( 'key' => 'open', 'label' => 'Open admission', 'rate' => '' );
+        }
+        if ( ! $v['rate'] ) {
+            return null;
+        }
+        $shown = (float) $v['rate']; // "3.6%" -> 3.6
+        foreach ( gpa_college_difficulty_levels() as $key => $level ) {
+            if ( null === $level[1] || $shown < $level[1] ) {
+                return array( 'key' => $key, 'label' => $level[0], 'rate' => $v['rate'] );
+            }
+        }
+        return null;
+    }
+
+    // The legend over the hub's list: [ key, label, the rates it covers ], open admission (no rate) last.
+    function gpa_college_difficulty_legend() {
+        $out  = array();
+        $from = null;
+        foreach ( gpa_college_difficulty_levels() as $key => $level ) {
+            if ( null === $from ) {
+                $range = 'under ' . $level[1] . '%';
+            } elseif ( null === $level[1] ) {
+                $range = $from . '% or more';
+            } else {
+                $range = $from . '–' . ( $level[1] - 1 ) . '%';
+            }
+            $out[] = array( $key, $level[0], $range );
+            $from  = $level[1];
+        }
+        $out[] = array( 'open', 'Open admission', '' );
+        return $out;
+    }
+}
+
 if ( ! function_exists( 'gpa_render_college_card' ) ) {
     /**
-     * One college in the hub's list: its name, place and type, then the figures its page shows (acceptance rate or
-     * open admission, SAT and ACT middle 50%, and the average GPA with its label when the college published one we
-     * verified). Each figure cell carries its own label, shown on phones; desktop shows them once, in the list's
-     * header row. Pages still under review say so instead of showing figures. The class db-college-card is what
-     * database-ajax.js counts.
+     * One college in the hub's list, as a card: its name, place and type and a tag saying how hard it is to get
+     * into (color-coded, with the acceptance rate it comes from), then the average GPA when the college published
+     * one we verified (with its label), and the SAT and ACT middle 50%. Each figure cell carries its own label,
+     * shown on phones; desktop shows them once, in the list's header row. Pages still under review say so instead
+     * of showing figures. The class db-college-card is what database-ajax.js counts.
      */
     function gpa_render_college_card( $post_id ) {
-        $v    = gpa_college_view( $post_id );
-        $f    = $v['fresh'];
-        $own  = trim( (string) get_field( 'owning', $post_id ) );
-        $meta = array_filter( array( $v['location'], gpa_college_has( $own ) ? $own : '' ) );
-        $dash = '<span class="gpa-hub-row__none" title="Not reported">–</span>';
+        $v     = gpa_college_view( $post_id );
+        $f     = $v['fresh'];
+        $own   = trim( (string) get_field( 'owning', $post_id ) );
+        $meta  = array_filter( array( $v['location'], gpa_college_has( $own ) ? $own : '' ) );
+        $dash  = '<span class="gpa-hub-row__none" title="Not reported">–</span>';
+        $level = $f ? gpa_college_difficulty( $v ) : null;
+
+        $tag = '';
+        if ( $level ) {
+            $tag = '<span class="gpa-hub-tag gpa-hub-tag--' . esc_attr( $level['key'] ) . '">' . esc_html( $level['label'] )
+                . ( '' !== $level['rate'] ? '<span class="screen-reader-text"> to get into,</span><span class="gpa-hub-tag__rate">' . esc_html( $level['rate'] ) . ' admitted</span>' : '' )
+                . '</span>';
+        }
 
         $cells = '';
         if ( $f ) {
-            if ( $v['rate'] ) {
-                $rate = esc_html( $v['rate'] );
-            } elseif ( $v['open'] ) {
-                $rate = '<span class="gpa-hub-row__open">Open admission</span>';
+            if ( $v['cds'] ) {
+                $gpa = '<span class="gpa-hub-row__gpa">' . esc_html( $v['cds']['value'] ) . '</span>'
+                    . '<span class="gpa-hub-row__note">' . ( '' !== $v['cds']['basis'] ? esc_html( ucfirst( $v['cds']['basis'] ) ) . ', as' : 'As' )
+                    . ' reported by the college for ' . esc_html( $v['cds']['year'] ) . '</span>';
             } else {
-                $rate = $dash;
+                $gpa = '<span class="gpa-hub-row__none" title="Not published by the college">–</span>';
             }
             $sat = array();
             foreach ( $f['sat'] as $section => $p ) {
@@ -908,7 +958,7 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
             $act = isset( $f['act']['Composite'] ) ? gpa_college_range( $f['act']['Composite'] ) : '';
             // [label, short label shown on phones, value]
             foreach ( array(
-                array( 'Acceptance rate', 'Acceptance', $rate ),
+                array( 'Average GPA', 'GPA', $gpa ),
                 array( 'SAT, middle 50%', 'SAT', $sat ? implode( '', $sat ) : $dash ),
                 array( 'ACT, middle 50%', 'ACT', '' !== $act ? esc_html( $act ) : $dash ),
             ) as $cell ) {
@@ -918,17 +968,10 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
             $cells = '<div class="gpa-hub-row__review">Figures under review</div>';
         }
 
-        $gpa = '';
-        if ( $v['cds'] ) {
-            $gpa = '<span class="gpa-hub-row__gpa">Average GPA <strong>' . esc_html( $v['cds']['value'] ) . '</strong>'
-                . ( '' !== $v['cds']['basis'] ? ' (' . esc_html( $v['cds']['basis'] ) . ')' : '' )
-                . ', as reported by the college for ' . esc_html( $v['cds']['year'] ) . '</span>';
-        }
-
-        return '<div class="db-college-card gpa-hub-row" role="listitem" data-post-id="' . esc_attr( $post_id ) . '">'
+        return '<div class="db-college-card gpa-hub-row' . ( $level ? ' gpa-hub-row--' . esc_attr( $level['key'] ) : '' ) . '" role="listitem" data-post-id="' . esc_attr( $post_id ) . '">'
             . '<div class="gpa-hub-row__college"><a class="gpa-hub-row__name" href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html( $v['name'] ) . '</a>'
             . ( $meta ? '<span class="gpa-hub-row__meta"><span>' . implode( '</span> <span>', array_map( 'esc_html', $meta ) ) . '</span></span>' : '' )
-            . $gpa . '</div>'
+            . $tag . '</div>'
             . $cells
             . '</div>';
     }

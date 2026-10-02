@@ -101,21 +101,32 @@ def main(argv=None):
     narrow = "document_id,producer,schema_version,created_at," + ",".join(
         f'q{q.replace(".", "_")}:notes->values->"{q}"->>value' for q in QUESTIONS)
     wide = "document_id,producer,schema_version,created_at,vals:notes->values"
-    sel = narrow
-    for i in range(0, len(ids), 50):
-        params = {"document_id": f"in.({','.join(ids[i:i + 50])})", "kind": "eq.canonical", "order": "created_at.desc"}
+    mode = {"sel": narrow}
+
+    def artifacts(batch):
+        """Canonical artifacts for these documents; halves the batch when the API times out (HTTP 500)."""
+        params = {"document_id": f"in.({','.join(batch)})", "kind": "eq.canonical", "order": "created_at.desc",
+                  "select": mode["sel"]}
         try:
-            arts = rows(key, "cds_artifacts", {**params, "select": sel})
+            return rows(key, "cds_artifacts", params)
         except urllib.error.HTTPError as e:
-            if sel is wide:
+            if e.code not in (500, 502, 503, 504, 400):
                 raise
-            print(f"narrow select refused ({e}); reading whole value sets")
-            sel = wide
-            arts = rows(key, "cds_artifacts", {**params, "select": sel})
-        for art in arts:
+            if mode["sel"] is narrow:
+                print(f"narrow select refused ({e}); reading whole value sets")
+                mode["sel"] = wide
+                return artifacts(batch)
+            if len(batch) == 1:
+                print(f"no extraction readable for document {batch[0]} ({e})")
+                return []
+            half = len(batch) // 2
+            return artifacts(batch[:half]) + artifacts(batch[half:])
+
+    for i in range(0, len(ids), 20):
+        for art in artifacts(ids[i:i + 20]):
             if art["document_id"] in values:
                 continue  # newest canonical artifact first
-            if sel is wide:
+            if "vals" in art:
                 got = {q: (v or {}).get("value") for q, v in (art.get("vals") or {}).items() if q in QUESTIONS}
             else:
                 got = {q: art.get(f'q{q.replace(".", "_")}') for q in QUESTIONS}

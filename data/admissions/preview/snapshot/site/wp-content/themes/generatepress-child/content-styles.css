@@ -1,0 +1,631 @@
+/* GPA_CALC_ISOLATION
+ * These site typography rules carried !important and were repainting
+ * text inside the React calculator (#root) — the Target GPA Planner's
+ * result card rendered dark-on-blue. Excluding #root descendants lets
+ * the calculator keep its own styles.
+ */
+/* ============================================
+   GPA Content Styles - Global Reusable CSS
+   Version: 2.1.0 (aligned to gpa-design-tokens.css)
+   Source of truth: gpa-homepage.css
+
+   Two layers:
+   1. BASE STYLES — auto-apply to standard HTML
+      tags inside .entry-content on content pages
+   2. CLASS STYLES — optional fine-tuning via
+      custom CSS classes on Gutenberg blocks
+   ============================================ */
+
+/* ============================================
+   GLOBAL: Entry title consistency (client fix Apr 2026)
+   Homepage uses .gpa-hero block as source of truth. On pages
+   WITHOUT a gpa-hero, the default .entry-title should still be
+   a clean prominent heading. On pages WITH gpa-hero (which has
+   its own title), hide the duplicate .entry-title.
+   ============================================ */
+
+body:not(.home):not(.single-colleges) .entry-header > .entry-title,
+body:not(.home):not(.single-colleges) h1.entry-title {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h1-size) !important;
+    font-weight: var(--gpa-h1-weight) !important;
+    line-height: var(--gpa-h1-line) !important;
+    color: var(--gpa-h1-color) !important;
+    margin: 0 0 24px !important;
+    padding: 0 !important;
+    letter-spacing: var(--gpa-h1-tracking) !important;
+}
+@media (max-width: 768px) {
+    body:not(.home):not(.single-colleges) .entry-header > .entry-title,
+    body:not(.home):not(.single-colleges) h1.entry-title {
+        font-size: var(--gpa-h1-size-m) !important;
+    }
+}
+/* Hide .entry-title when .gpa-hero block is present on the same page */
+body:has(.gpa-hero) .entry-header .entry-title,
+body:has(.gpa-hero) > #page .entry-header {
+    display: none !important;
+}
+
+/* ============================================
+   BASE: TYPOGRAPHY
+   ============================================ */
+.content-page .entry-content {
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.content-page .entry-content p:not(#root *, .gpacalc-mount *) {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-body-size) !important;
+    color: var(--gpa-text-body) !important;
+    line-height: var(--gpa-body-line) !important;
+    font-weight: var(--gpa-body-weight) !important;
+    margin-bottom: 20px !important;
+}
+
+.content-page .entry-content h1 {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h1-size) !important;
+    font-weight: var(--gpa-h1-weight) !important;
+    color: var(--gpa-h1-color) !important;
+    line-height: var(--gpa-h1-line) !important;
+    margin-bottom: 24px !important;
+}
+
+.content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h2-size) !important;
+    font-weight: var(--gpa-h2-weight) !important;
+    color: var(--gpa-h2-color) !important;
+    line-height: var(--gpa-h2-line) !important;
+    margin-bottom: 16px !important;
+    margin-top: 48px !important;
+}
+
+.content-page .entry-content h3:not(#root *, .gpacalc-mount *) {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h3-size) !important;
+    font-weight: var(--gpa-h3-weight) !important;
+    color: var(--gpa-h3-color) !important;
+    margin-bottom: 12px !important;
+    margin-top: 32px !important;
+}
+
+.content-page .entry-content h4 {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h4-size) !important;
+    font-weight: var(--gpa-h4-weight) !important;
+    color: var(--gpa-h4-color) !important;
+    margin-bottom: 8px !important;
+    margin-top: 24px !important;
+}
+
+.content-page .entry-content strong {
+    font-weight: 700 !important;
+    color: var(--gpa-text-heading) !important;
+}
+
+/* Lists, tables, quotes, FAQ, formula and result blocks, in-text links: components.css */
+
+/* ============================================
+   BASE: IMAGE + CAPTION
+   ============================================ */
+.content-page .entry-content .wp-block-image {
+    margin-bottom: 32px !important;
+}
+.content-page .entry-content .wp-block-image img {
+    border-radius: 8px !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+.content-page .entry-content .wp-block-image figcaption,
+.content-page .entry-content figcaption {
+    font-size: 16px !important;
+    color: var(--gpa-text-secondary) !important;
+    font-style: italic !important;
+    text-align: center !important;
+    margin-top: 12px !important;
+}
+
+/* ============================================
+   CLASS: CUSTOM CONTENT BLOCKS
+   (for Gutenberg patterns - optional fine-tuning)
+   ============================================ */
+
+/* Container override */
+.content-wrap {
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 0 16px !important;
+}
+
+/* Section Labels */
+.content-label {
+    display: inline-block !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 24px !important;
+}
+.content-label-blue { background: var(--gpa-blue-100) !important; color: var(--gpa-blue-800) !important; }
+.content-label-green { background: var(--gpa-green-100) !important; color: var(--gpa-green-800) !important; }
+.content-label-amber { background: var(--gpa-amber-100) !important; color: var(--gpa-amber-800) !important; }
+.content-label-pink { background: var(--gpa-pink-100) !important; color: var(--gpa-pink-800) !important; }
+.content-label-teal { background: var(--gpa-teal-100) !important; color: var(--gpa-teal-800) !important; }
+.content-label-slate { background: var(--gpa-gray-200) !important; color: var(--gpa-text-strong) !important; }
+
+/* Explicit class versions of text */
+.content-text {
+    font-size: 18px !important;
+    color: var(--gpa-text) !important;
+    line-height: 1.7 !important;
+}
+
+/* Definition Block */
+.content-card-definition {
+    background: var(--gpa-tint-blue) !important;
+    border-radius: 8px !important;
+    padding: 24px !important;
+    border-left: 4px solid var(--gpa-primary) !important;
+    margin-bottom: 32px !important;
+}
+.content-card-definition .content-card-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: var(--gpa-heading) !important;
+    margin-bottom: 8px !important;
+}
+.content-card-definition .content-card-body {
+    font-size: 16px !important;
+    color: var(--gpa-text) !important;
+    line-height: 1.7 !important;
+}
+
+/* Important Note Block */
+.content-card-note {
+    background: var(--gpa-amber-50) !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    border: 2px solid var(--gpa-amber-400) !important;
+    margin-bottom: 32px !important;
+}
+.content-card-note .content-card-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: var(--gpa-amber-900) !important;
+    margin-bottom: 8px !important;
+}
+.content-card-note .content-card-body {
+    font-size: 16px !important;
+    color: var(--gpa-amber-800) !important;
+    line-height: 1.7 !important;
+}
+
+/* Tip Block */
+.content-card-tip {
+    background: var(--gpa-green-50) !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    border: 2px solid var(--gpa-green-400) !important;
+    margin-bottom: 32px !important;
+}
+.content-card-tip .content-card-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: var(--gpa-green-900) !important;
+    margin-bottom: 8px !important;
+}
+.content-card-tip .content-card-body {
+    font-size: 16px !important;
+    color: var(--gpa-green-800) !important;
+    line-height: 1.7 !important;
+}
+
+/* Image with Caption */
+.content-image {
+    background: var(--gpa-gray-100) !important;
+    border-radius: 8px !important;
+    padding: 32px !important;
+    border: 1px solid var(--gpa-border-strong) !important;
+    text-align: center !important;
+    margin-bottom: 32px !important;
+}
+
+/* Related Links Cards */
+.content-related-grid { gap: 24px !important; margin-bottom: 24px !important; }
+.content-rel-card {
+    background: var(--gpa-surface) !important;
+    border-radius: 8px !important;
+    padding: 32px !important;
+    border: 1px solid var(--gpa-border) !important;
+    transition: all 0.3s ease !important;
+}
+.content-rel-card:hover { border-color: var(--gpa-primary) !important; }
+.content-rel-icon {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 16px !important;
+    font-size: 24px !important;
+}
+.content-rel-icon-blue { background: var(--gpa-primary) !important; }
+.content-rel-icon-green { background: var(--gpa-green-600) !important; }
+.content-rel-icon-amber { background: var(--gpa-amber-600) !important; }
+.content-rel-icon-purple { background: var(--gpa-accent) !important; }
+.content-rel-title { font-size: 20px !important; font-weight: 700 !important; color: var(--gpa-text-strong) !important; margin-bottom: 12px !important; }
+.content-rel-desc { font-size: 18px !important; color: var(--gpa-text) !important; margin-bottom: 16px !important; }
+.content-rel-cta a { font-size: 18px !important; font-weight: 600 !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; transition: transform 0.2s ease !important; }
+.content-rel-cta a:hover { transform: translateX(4px) !important; }
+.content-rel-cta-blue a { color: var(--gpa-primary) !important; }
+.content-rel-cta-green a { color: var(--gpa-green-600) !important; }
+.content-rel-cta-amber a { color: var(--gpa-amber-600) !important; }
+.content-rel-cta-purple a { color: var(--gpa-accent) !important; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .content-page .entry-content h1 { font-size: var(--gpa-h1-size-m) !important; }
+    .content-page .entry-content h2:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-h2-size-m) !important; }
+    .content-page .entry-content h3:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-h3-size-m) !important; }
+    .content-page .entry-content p:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-body-size) !important; }
+    .content-card-definition,
+    .content-card-note,
+    .content-card-tip { padding: 20px !important; }
+    .content-rel-card { padding: 24px !important; }
+}
+
+/* ============================================
+   JUMP-TO ANCHOR MENU (T2.5)
+   Auto-injected on /gpa-scale/ from H2 headings.
+   ============================================ */
+.gpa-jumpto {
+    max-width: 900px;
+    margin: 32px auto 48px;
+    padding: 20px 24px;
+    background: var(--gpa-bg-gray-50);
+    border: 1px solid var(--gpa-border);
+    border-radius: 12px;
+    font-family: var(--gpa-font);
+}
+.gpa-jumpto-label {
+    margin: 0 0 12px !important;
+    font-size: var(--gpa-small-size);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--gpa-text-muted);
+}
+.gpa-jumpto-list {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+}
+.gpa-jumpto-item {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.gpa-jumpto-item::before {
+    content: none !important;
+}
+.gpa-jumpto-link {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--gpa-bg-white);
+    border: 1px solid var(--gpa-border);
+    color: var(--gpa-primary);
+    font-size: var(--gpa-small-size);
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.gpa-jumpto-link:hover,
+.gpa-jumpto-link:focus-visible {
+    background: var(--gpa-primary);
+    border-color: var(--gpa-primary);
+    color: var(--gpa-bg-white);
+}
+.content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
+    scroll-margin-top: 80px;
+}
+@media (max-width: 768px) {
+    .gpa-jumpto {
+        margin: 24px auto 32px;
+        padding: 16px 18px;
+    }
+    .gpa-jumpto-list {
+        gap: 6px 8px;
+    }
+    .gpa-jumpto-link {
+        padding: 5px 12px;
+        font-size: 13px;
+    }
+}
+
+/* COMPONENT SPECIFICITY FIX
+   The element defaults above are .content-page .entry-content <el> with
+   !important (specificity 0,2,1). The component helpers were written as
+   bare .content-* selectors (0,1,x), so the defaults were beating them:
+   the formula text rendered at body size instead of 30px blue, the result
+   line at 18px instead of 20px, and the grey table header came out blue.
+   Restating them under the same prefix puts them back in front. */
+.content-page .entry-content .content-text {
+    font-size: 18px !important;
+    color: var(--gpa-text) !important;
+    line-height: 1.7 !important;
+}
+/* Content template hero band: the shared hero lives in layout.css */
+
+/* ============================================================
+   DESIGN GUIDE REFRESH
+   ------------------------------------------------------------
+   Second pass of the content style guide. Applies to content and
+   calculator pages (both carry .content-page). Database pages keep
+   their own system and are untouched.
+
+   H2      36px 800 in #1E3A8A, slight negative tracking
+   Bullets each item is a white card with a blue icon tile
+   Tables  no blue header, small uppercase grey labels, rows
+           divided and highlighted on hover, rounded outer shell
+   FAQ     card per question, restyled but still always visible
+   ============================================================ */
+.content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
+    letter-spacing: var(--gpa-h2-tracking) !important;
+}
+
+/* ==========================================================================
+   MOBILE + EMBED CONSISTENCY FIXES
+   1. Homepage "Example GPA Calculation" stays a real table on small screens
+   2. The React calculator keeps its own type scale on every template
+   ========================================================================== */
+
+/* 1. EXAMPLE GPA CALCULATION - RESPONSIVE TABLE ---------------------------- */
+@media (max-width: 781px) {
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns {
+		flex-wrap: nowrap !important;
+		gap: 6px !important;
+	}
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns > .wp-block-column {
+		flex-basis: 0 !important;
+		flex-grow: 1;
+		min-width: 0;
+		word-break: normal;
+		overflow-wrap: break-word;
+		hyphens: none;
+	}
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns > .wp-block-column:first-child {
+		flex-grow: 2;
+	}
+	.example_gpa_calculation .gpa-card-xl .wp-block-columns > .wp-block-column:last-child {
+		flex-grow: 1.5;
+	}
+	.example_gpa_calculation .gpa-table-row p,
+	.example_gpa_calculation .gpa-totals p {
+		font-size: 12px !important;
+		line-height: 1.35 !important;
+	}
+	.example_gpa_calculation .gpa-thead p {
+		font-size: 10px !important;
+		line-height: 1.3 !important;
+		letter-spacing: 0 !important;
+	}
+	.example_gpa_calculation .gpa-card-xl {
+		padding-left: 14px !important;
+		padding-right: 14px !important;
+	}
+}
+
+/* 2. CALCULATOR EMBED - KEEP THE APP TYPE SCALE ---------------------------- */
+#root,
+.gpa-embed {
+	--gpa-body-size: 16px;
+	--gpa-body-line: 1.5;
+}
+.gpa-embed .text-sm {
+	font-size: 0.875rem !important;
+	line-height: 1.25rem !important;
+}
+.gpa-embed select.text-sm {
+	padding-left: 2px !important;
+}
+.gpa-embed .bg-gray-100 button {
+	padding-left: 0.5rem !important;
+	padding-right: 0.5rem !important;
+	font-size: 14px !important;
+}
+.gpa-embed input,
+.gpa-embed select {
+	font-size: 12px !important;
+}
+.gpa-embed .max-w-4xl {
+	padding: 0 !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+.gpa-embed button:hover :is(span, svg),
+.gpa-embed button:focus :is(span, svg),
+.gpa-embed button:focus-visible :is(span, svg),
+.gpa-embed button:active :is(span, svg) {
+	color: var(--gpa-white) !important;
+}
+
+
+/* ==========================================================================
+   FOLLOW UP FIXES - 2026-09-10
+   ========================================================================== */
+
+/* 1. Content Template page container runs full width, so the grey body
+   colour no longer shows as bands beside the article. The Calculator
+   Template already has #page at 100%, this brings the two in line.
+   The reading column stays 900px and centred. */
+body.gpa-template-content #page.grid-container {
+	max-width: 100% !important;
+}
+
+/* 2. College GPA Calculator: the About card is plain content now,
+   no outline or shadow, and its paragraphs use the standard 20px gap. */
+.page-template-template-calculator .entry-content .rx-about {
+	border: none !important;
+	box-shadow: none !important;
+	background: transparent !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+.page-template-template-calculator .entry-content .rx-about .rx-card-b + .rx-card-b,
+.page-template-template-calculator .entry-content .rx-about p + p {
+	margin-top: 20px !important;
+}
+
+
+/* ------------------------------------------------------------------
+   Calculator selects - hide the graduation-cap icon
+   The Course Level select renders a lucide graduation-cap svg pinned
+   to its left edge, which overlaps the option text. Hidden globally.
+   ------------------------------------------------------------------ */
+#root svg.lucide-graduation-cap {
+  display: none;
+}
+
+/* ------------------------------------------------------------------
+   Heading and body alignment policy - site wide, all templates
+   H2 section titles are always centred, whatever alignment is set on
+   the heading block in the editor. Paragraph and list blocks are not
+   forced here, so their alignment keeps following the editor setting.
+   ------------------------------------------------------------------ */
+.entry-content h2.wp-block-heading {
+  text-align: center;
+  justify-content: center;
+}
+
+.entry-content p.has-text-align-left,
+.entry-content li.has-text-align-left {
+  text-align: left;
+}
+
+.entry-content p.has-text-align-center,
+.entry-content li.has-text-align-center {
+  text-align: center;
+}
+
+.entry-content p.has-text-align-right,
+.entry-content li.has-text-align-right {
+  text-align: right;
+}
+
+/* NATIVE LIST SEMANTICS - custom checkmark boxes and number badges removed */
+/* Content pages (guides, GPA scale, etc.): same heading rhythm as the calculator pages */
+body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: var(--gpa-body-size) !important; line-height: var(--gpa-body-line) !important; color: var(--gpa-text-muted) !important; }
+
+/* ==========================================================================
+   GPA SCALE TABLE (/gpa-scale/<x-x>-gpa/ pages)
+   Core Table block with class gpa-scale-table: GPA | Percentage | Letter grade.
+   Rows get is-band-a … is-band-f and the page's own GPA gets is-current-gpa
+   from gpa_scale_table_mark_rows() in functions.php.
+   ========================================================================== */
+.content-page .entry-content figure.wp-block-table.gpa-scale-table {
+    max-width: 560px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+.content-page .entry-content .gpa-scale-table table { table-layout: fixed; }
+.content-page .entry-content .gpa-scale-table thead th {
+    background: var(--gpa-bg-gray-50, var(--gpa-surface-subtle)) !important;
+    padding: 14px 16px !important;
+    font-size: 13px !important;
+}
+.content-page .entry-content .gpa-scale-table tbody td {
+    padding: 11px 16px !important;
+    font-size: 16px !important;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid var(--gpa-border, var(--gpa-border)) !important;
+    transition: background-color .15s ease;
+}
+.content-page .entry-content .gpa-scale-table tbody tr:last-child td { border-bottom: none !important; }
+.content-page .entry-content .gpa-scale-table tbody td:first-child { font-weight: 600 !important; color: var(--gpa-text-heading, var(--gpa-text-strong)) !important; }
+.content-page .entry-content .gpa-scale-table tbody td:last-child { font-weight: 700 !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-a td { background: var(--gpa-band-a-bg, var(--gpa-green-50)); }
+.content-page .entry-content .gpa-scale-table tr.is-band-b td { background: var(--gpa-band-b-bg, var(--gpa-tint-blue)); }
+.content-page .entry-content .gpa-scale-table tr.is-band-c td { background: var(--gpa-band-c-bg, var(--gpa-amber-50)); }
+.content-page .entry-content .gpa-scale-table tr.is-band-d td { background: var(--gpa-band-d-bg, var(--gpa-orange-50)); }
+.content-page .entry-content .gpa-scale-table tr.is-band-f td { background: var(--gpa-band-f-bg, var(--gpa-red-50)); }
+.content-page .entry-content .gpa-scale-table tr.is-band-a td:last-child { color: var(--gpa-band-a, var(--gpa-green-700)) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-b td:last-child { color: var(--gpa-band-b, var(--gpa-primary-hover)) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-c td:last-child { color: var(--gpa-band-c, var(--gpa-amber-700)) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-d td:last-child { color: var(--gpa-band-d, var(--gpa-orange-700)) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-band-f td:last-child { color: var(--gpa-band-f, var(--gpa-red-700)) !important; }
+.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after {
+    content: "Your GPA";
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: var(--gpa-radius-pill, 999px);
+    background: var(--gpa-surface);
+    color: var(--gpa-primary, var(--gpa-primary));
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    vertical-align: 2px;
+}
+.content-page .entry-content .gpa-scale-table figcaption {
+    margin: 0 !important;
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+    color: var(--gpa-text-muted, var(--gpa-text-muted)) !important;
+    text-align: center;
+    border-top: 1px solid var(--gpa-border, var(--gpa-border));
+    background: var(--gpa-bg-white, var(--gpa-surface));
+}
+@media (max-width: 480px) {
+    .content-page .entry-content .gpa-scale-table thead th,
+    .content-page .entry-content .gpa-scale-table tbody td { padding-left: 10px !important; padding-right: 10px !important; }
+    .content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after { display: block; width: max-content; margin: 4px auto 0; }
+}
+
+/* /gpa-scale/<x-x>-gpa/ pages: "Updated" date in the hero and prev / next / hub links (functions.php) */
+body.gpa-hero-band .entry-header .gpa-updated {
+    position: relative;
+    z-index: 1;
+    margin: 12px auto 0 !important;
+    font-size: var(--gpa-small-size) !important;
+    color: var(--gpa-hero-text) !important;
+    text-align: center;
+}
+.content-page .entry-content .gpa-scale-nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin: 40px 0 8px;
+    padding: 16px 20px;
+    border: 1px solid var(--gpa-border, var(--gpa-border));
+    border-radius: var(--gpa-radius-lg, 16px);
+    background: var(--gpa-bg-gray-50, var(--gpa-surface-subtle));
+    font-weight: 600;
+}
+.content-page .entry-content .gpa-scale-nav a { text-decoration: none !important; color: var(--gpa-primary, var(--gpa-primary)) !important; }
+.content-page .entry-content .gpa-scale-nav a:hover { text-decoration: underline !important; }
+.content-page .entry-content .gpa-scale-nav__prev { justify-self: start; grid-column: 1; }
+.content-page .entry-content .gpa-scale-nav__hub { justify-self: center; grid-column: 2; font-weight: 500; color: var(--gpa-text-muted, var(--gpa-text-muted)) !important; }
+.content-page .entry-content .gpa-scale-nav__next { justify-self: end; grid-column: 3; }
+@media (max-width: 480px) {
+    .content-page .entry-content .gpa-scale-nav { grid-template-columns: 1fr 1fr; }
+    .content-page .entry-content .gpa-scale-nav__hub { grid-column: 1 / -1; grid-row: 2; }
+    .content-page .entry-content .gpa-scale-nav__next { grid-column: 2; }
+}
+

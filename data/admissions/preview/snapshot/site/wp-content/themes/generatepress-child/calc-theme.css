@@ -1,0 +1,10 @@
+/* ============================================================
+   calc-theme.css — calculator token layer (design system overhaul)
+   Loads after the calculator bundles in calc-assets/ (compiled Tailwind,
+   scoped to :is(#root, .gpa-calc-portal), colors baked in) and maps their
+   color utilities and font to the calculator tokens in gpa-design-tokens.css,
+   so re-coloring a calculator means editing tokens only.
+   Delete this file when the plugin merge moves these mappings into the
+   Tailwind config.
+   Phase 1 (2026-10-02): file created and enqueued; mappings arrive in phase 5.
+   ============================================================ */

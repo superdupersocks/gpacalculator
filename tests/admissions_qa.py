@@ -1012,5 +1012,26 @@ eq("CDS pages: an address that can't be read is skipped, and an error in one col
    (_got, cds_pages.find_safely(_boom, _drive, "www.example.edu")),
    (None, (None, 0, "ZeroDivisionError: division by zero")))
 
+# Checkpoint H (the committed list): the pages the identity review holds and E's corrected matches, every field E
+# manages but location and owning, all empty, and no page another checkpoint acts on.
+_audit = ROOT / "data" / "admissions" / "audit"
+_hrows = list(csv.reader(open(_audit / "phase2_h_blank.csv", encoding="utf-8")))
+_ehead = next(csv.reader(open(_audit / "phase2_e_import.csv", encoding="utf-8")))
+_hold = {r["slug"] for r in csv.DictReader(open(_audit / "phase2_r_review.csv", encoding="utf-8"))
+         if r["outcome"] == "hold"}
+_hold |= {r["slug"] for r in csv.DictReader(open(_audit / "phase2_e_held.csv", encoding="utf-8"))
+          if r["next_step"].startswith("confirm the corrected match")}
+_acted = set()
+for _f, _col in (("phase2_r_import.csv", "slug"), ("phase2_n_pages.csv", "slug"), ("phase2_s_pages.csv", "slug"),
+                 ("phase2_r_actions.csv", "slug"), ("phase2_s_actions.csv", "slug"), ("phase2_cd_actions.csv", "slug"),
+                 ("phase2_cd_actions.csv", "target"), ("phase2_r_actions.csv", "target")):
+    _acted |= {r[_col].strip("/").split("/")[-1] for r in csv.DictReader(open(_audit / _f, encoding="utf-8"))}
+eq("H: the header is E's minus location and owning",
+   _hrows[0], [c for c in _ehead if c not in ("location", "owning")])
+eq("H: the held pages and the corrected matches, each once, every field empty, none in another checkpoint",
+   (len(_hrows) - 1, {r[0] for r in _hrows[1:]} == _hold, all(not any(r[2:]) for r in _hrows[1:]),
+    sorted(_hold & _acted)),
+   (53, True, True, []))
+
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

@@ -17,6 +17,12 @@ Full DB restore: `gunzip -c ~/backups/<file>.sql.gz | wp db import -` then `wp b
 4. After every push: affected pages load, calculators work, ads show. If anything breaks, revert at once and report.
 5. Log every live change here.
 
+## 2026-10-02
+
+| Time (UTC) | URL(s) | What changed | Revert |
+| --- | --- | --- | --- |
+| 04:39 | none (database backup only) | Admissions Phase 2, checkpoint A: full DB backup before any Phase 2 change. `~/backups/gpacalculator-2026-10-02-pre-admissions-phase2.sql.gz` (20,448,258 bytes, `gunzip -t` OK, dump ends "-- Dump completed on 2026-10-02 4:39:25"), copied to `~/gpacalculator-backups/` on the Mac, SHA-256 `72a20765…cb076` matches. No site change. | Restore point for Phase 2: `gunzip -c ~/backups/gpacalculator-2026-10-02-pre-admissions-phase2.sql.gz \| wp db import -` then `wp breeze purge --cache=all` |
+
 ## 2026-10-01
 
 | Time (UTC) | URL(s) | What changed | Revert |

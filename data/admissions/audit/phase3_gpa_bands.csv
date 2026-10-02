@@ -1,6 +1,5 @@
 slug,unitid,college,cds_gpa,cds_gpa_year,cds_gpa_band_400,cds_gpa_band_375,cds_gpa_band_350,cds_gpa_band_325,cds_gpa_band_300,cds_gpa_band_250,cds_gpa_band_200,cds_gpa_band_100,cds_gpa_band_000,sum
 agnes-scott,138600,Agnes Scott College,3.63,2025-26,18.7,20.7,31.6,16.1,8.8,4.1,,,,100.0
-alabama,100751,The University of Alabama,3.85,2025-26,40.0,19.0,17.0,12.0,9.0,3.0,0.0,0.0,0.0,100.0
 albion-college,168546,Albion College,3.51,2025-26,21.29,17.1,15.8,15.48,14.84,12.26,3.23,0.0,0.0,100.0
 allegheny-college,210669,Allegheny College,3.59,2025-26,16.6,25.7,23.6,14.2,12.2,7.4,0.3,0.0,0.0,100.0
 aquinas-college-mi,168786,Aquinas College,3.48,2024-25,13.73,19.74,19.31,15.02,14.16,16.74,1.3,,,100.0
@@ -15,7 +14,6 @@ barton-college,197911,Barton College,3.28,2025-26,9.0,14.0,20.0,11.0,18.0,22.0,6
 beloit-college,238333,Beloit College,3.43,2025-26,7.0,18.9,19.3,25.4,13.2,15.4,0.9,,,100.1
 benedictine-university,145619,Benedictine University,3.21,2024-25,3.99,12.42,17.74,18.63,15.52,20.62,10.86,0.22,0.0,100.0
 bennington-college,230816,Bennington College,3.53,2024-25,1.3,32.9,34.2,10.5,9.3,7.9,2.6,1.3,0.0,100.0
-brandeis,165015,Brandeis University,3.84,2025-26,30.3,29.5,19.1,10.6,5.6,3.3,1.7,,,100.1
 bucknell-university,211291,Bucknell University,3.62,2024-25,7.47,30.37,30.68,20.38,9.08,2.02,,,,100.0
 byu,230038,Brigham Young University,3.89,2025-26,28.18,59.03,10.13,2.1,0.41,0.12,0.03,0.0,0.0,100.0
 california-lutheran-university,110413,California Lutheran University,3.74,2024-25,14.1,28.7,26.9,16.2,10.9,3.2,0.0,0.0,0.0,100.0
@@ -29,19 +27,16 @@ case-western,201645,Case Western Reserve University,3.78,2025-26,16.4,48.2,25.7,
 central-connecticut-state-university,128771,Central Connecticut State University,3.15,2025-26,6.3,7.9,14.1,16.9,17.0,27.7,9.6,0.4,0.0,99.9
 centre-college,156408,Centre College,3.8,2025-26,47.01,22.79,15.67,8.55,4.84,0.86,0.28,0.0,0.0,100.0
 chatham,211556,Chatham University,3.59,2024-25,26.2,21.9,13.3,16.4,12.1,9.4,0.8,,,100.1
-christopher-newport,231712,Christopher Newport University,3.8,2023-24,33.6,19.3,18.5,15.6,9.7,3.2,0.1,0.0,0.0,100.0
 clark-university,165334,Clark University,3.76,2024-25,38.0,21.0,22.0,11.0,6.0,2.0,0.0,0.0,0.0,100.0
 colgate,190099,Colgate University,3.85,2024-25,26.79,41.7,23.27,6.67,1.45,0.12,,,,100.0
 concord-university,237330,Concord University,3.37,2024-25,23.0,11.0,17.0,12.0,11.0,16.0,10.0,0.0,0.0,100.0
 csu-fullerton,110565,California State University-Fullerton,3.434,2024-25,1.4,16.6,23.0,24.8,20.1,13.5,0.6,0.0,0.0,100.0
 cuny-bernard-m-baruch-college,190512,CUNY Bernard M Baruch College,3.66,2024-25,0.26,30.59,57.55,9.61,1.86,,,0.0,0.13,100.0
-cuny-city-college,190567,CUNY City College,3.4,2024-25,0.75,19.31,36.33,39.1,4.46,0.05,,,,100.0
 cuny-john-jay-college-of-criminal-justice,190600,CUNY John Jay College of Criminal Justice,3.17,2023-24,0.0,14.0,13.0,16.0,20.0,32.0,6.0,0.0,0.0,101.0
 dakota-state-university,219082,Dakota State University,3.47,2025-26,8.0,28.0,23.0,13.0,10.0,12.0,5.0,1.0,0.0,100.0
 davidson,198385,Davidson College,3.85,2025-26,35.42,31.6,26.39,4.86,1.73,,,,,100.0
 delaware-state-university,130934,Delaware State University,3.16,2025-26,11.0,9.0,12.0,12.0,17.0,25.0,14.0,1.0,,101.0
 desales-university,210739,DeSales University,3.41,2024-25,5.4,28.0,19.9,16.9,10.7,12.3,5.4,1.4,0.0,100.0
-dominican-university,148496,Dominican University,3.75,2025-26,38.0,14.83,12.67,11.0,10.0,11.17,1.5,0.83,0.0,100.0
 dominican-university-of-california,113698,Dominican University of California,3.65,2024-25,26.0,24.0,20.0,12.0,9.0,9.0,,,,100.0
 drury,177214,Drury University,3.81,2023-24,36.0,24.0,14.0,13.0,7.0,6.0,0.0,0.0,,100.0
 duquesne,212106,Duquesne University,3.76,2025-26,30.4,24.04,20.0,12.35,9.39,3.54,0.29,0.0,0.0,100.01
@@ -51,33 +46,23 @@ eastern-michigan-university,169798,Eastern Michigan University,3.39,2025-26,14.7
 eastern-oregon-university,208646,Eastern Oregon University,3.46,2025-26,13.48,20.21,17.73,15.6,17.38,14.18,1.06,0.35,0.0,99.99
 eastern-washington-university,235097,Eastern Washington University,3.29,2025-26,3.1,19.2,17.3,16.1,15.7,21.6,6.8,0.2,0.0,100.0
 eckerd,133492,Eckerd College,3.64,2024-25,10.57,34.04,27.91,16.07,9.09,2.11,0.21,,,100.0
-elon-university,198516,Elon University,3.85,2024-25,56.46,9.42,11.73,9.67,6.74,5.8,0.18,,,100.0
 emory,139658,Emory University,3.84,2024-25,17.41,58.38,21.24,2.53,0.44,,,,,100.0
 farmingdale-state-college,196042,Farmingdale State College,3.27,2024-25,13.0,9.0,17.0,12.0,20.0,25.0,4.0,0.0,0.0,100.0
 fitchburg-state-university,165820,Fitchburg State University,3.28,2024-25,12.0,10.0,13.0,15.0,19.0,23.0,8.0,0.0,0.0,100.0
-florida-gulf-coast,433660,Florida Gulf Coast University,4.12,2024-25,56.0,15.0,14.0,9.0,4.0,2.0,0.0,0.0,0.0,100.0
-florida-international,133951,Florida International University,4.1,2024-25,68.0,16.0,13.0,3.0,0.0,0.0,0.0,0.0,0.0,100.0
-florida-polytechnic-university,482936,Florida Polytechnic University,4.2,2023-24,64.0,13.0,10.0,8.0,3.0,1.0,1.0,0.0,0.0,100.0
 george-mason-university,232186,George Mason University,3.69,2024-25,28.0,23.0,22.0,19.0,8.0,1.0,0.0,0.0,0.0,101.0
-georgia,139959,University of Georgia,4.15,2024-25,85.48,12.5,1.25,0.31,0.16,0.21,0.08,,,99.99
-georgia-tech,139755,Georgia Institute of Technology-Main Campus,4.17,2025-26,95.85,3.25,0.39,0.1,0.23,0.18,0.0,0.0,,100.0
 grand-valley-state-university,170082,Grand Valley State University,3.4,2025-26,11.9,13.54,15.33,13.85,13.69,24.46,7.18,0.05,,100.0
 gwynedd-mercy-college,212832,Gwynedd Mercy University,3.36,2024-25,3.65,19.18,22.83,15.98,13.24,25.12,0.0,0.0,0.0,100.0
-harvard,166027,Harvard University,4.22,2025-26,74.7,20.38,3.49,0.98,0.18,0.18,0.09,,,100.0
 hiram-college,203128,Hiram College,3.22,2025-26,14.04,10.96,12.73,12.38,11.5,19.89,16.31,2.19,,100.0
 hobart-william-smith-colleges,191630,Hobart William Smith Colleges,3.62,2024-25,25.7,15.0,25.7,15.2,9.9,7.2,1.3,,,100.0
 hollins,232308,Hollins University,3.63,2025-26,29.0,18.0,14.0,14.5,15.0,8.0,1.5,,,100.0
 howard-university,131520,Howard University,3.68,2025-26,7.0,43.0,30.0,13.0,6.0,1.0,0.0,0.0,0.0,100.0
 idaho-state-university,142276,Idaho State University,3.4,2023-24,9.9,25.6,18.0,13.8,11.1,12.5,8.1,1.0,,100.0
-iit,145725,Illinois Institute of Technology,4.2,2023-24,64.0,19.8,11.3,2.6,1.5,0.4,0.2,0.0,0.0,99.8
 illinois-state-university,145813,Illinois State University,3.62,2024-25,24.82,16.63,17.31,15.67,14.5,10.8,0.26,0.02,0.0,100.01
 immaculata-university,213011,Immaculata University,3.42,2025-26,22.5,13.7,14.9,10.1,15.2,19.0,3.8,0.8,0.0,100.0
 jacksonville-university,134945,Jacksonville University,3.73,2023-24,31.3,18.3,21.5,13.0,10.7,5.1,0.1,0.0,0.0,100.0
 johns-hopkins,162928,Johns Hopkins University,3.93,2025-26,66.09,25.36,5.53,2.04,0.76,0.23,,,,100.01
-kansas-state,155399,Kansas State University,3.86,2025-26,13.0,39.0,21.0,13.0,7.0,6.0,1.0,0.0,0.0,100.0
 keene-state-college,183062,Keene State College,3.16,2024-25,3.6,9.7,16.5,17.3,18.0,23.8,10.9,0.2,,100.0
 kennesaw-state-university,486840,Kennesaw State University,3.48,2024-25,6.61,20.3,25.18,23.63,15.4,8.8,0.08,0.0,0.0,100.0
-kenyon,203535,Kenyon College,3.9,2024-25,41.0,23.0,18.0,8.0,5.0,4.0,0.0,0.0,0.0,99.0
 kutztown-university-of-pennsylvania,213349,Kutztown University of Pennsylvania,3.36,2025-26,12.9,16.9,16.5,15.2,12.6,19.9,5.6,0.3,0.0,99.9
 lafayette-college,213385,Lafayette College,3.56,2025-26,12.46,24.64,26.38,16.81,12.46,6.81,0.43,0.0,0.0,99.99
 lawrence-technological-university,170675,Lawrence Technological University,3.45,2025-26,18.8,22.0,15.9,14.6,13.0,11.9,3.4,,0.0,99.6
@@ -87,7 +72,6 @@ lenoir-rhyne-university,198835,Lenoir-Rhyne University,3.73,2025-26,39.0,14.0,15
 lincoln-university-mo,177940,Lincoln University,2.9,2023-24,6.5,13.6,12.0,11.4,11.4,22.3,15.2,7.6,0.0,100.0
 lindenwood-university,177968,Lindenwood University,3.36,2024-25,3.79,21.97,19.7,16.86,16.67,15.53,5.11,0.38,0.0,100.01
 linfield-college-mcminnville-campus,209065,Linfield University,3.64,2024-25,22.0,24.86,18.77,15.87,12.43,5.29,0.78,,,100.0
-lipscomb-university,219976,Lipscomb University,3.86,2024-25,44.0,22.0,14.0,9.0,7.0,4.0,0.0,0.0,0.0,100.0
 loyola-university-chicago,146719,Loyola University Chicago,3.74,2025-26,42.6,19.7,16.3,11.5,6.6,3.3,0.0,0.0,0.0,100.0
 loyola-university-maryland,163046,Loyola University Maryland,3.65,2024-25,29.2,20.2,21.5,13.5,8.5,6.0,1.1,,,100.0
 lsu,159391,Louisiana State University and Agricultural & Mechanical College,3.81,2023-24,35.8,20.6,18.3,13.9,10.0,1.3,0.1,0.0,0.0,100.0
@@ -120,7 +104,6 @@ oklahoma-state-university-main-campus,207388,Oklahoma State University-Main Camp
 old-dominion-university,232982,Old Dominion University,3.43,2025-26,19.0,13.0,15.0,15.0,13.0,25.0,,,,100.0
 oregon-state-university,209542,Oregon State University,3.7,2025-26,13.0,37.0,25.0,16.0,7.0,2.0,0.0,0.0,0.0,100.0
 otis-college-of-art-and-design,120403,Otis College of Art and Design,3.28,2024-25,3.69,21.66,17.05,17.51,15.67,11.52,9.68,3.23,0.0,100.01
-pitt,215293,University of Pittsburgh-Pittsburgh Campus,4.06,2025-26,59.0,19.0,14.0,6.0,1.0,0.0,0.0,0.0,0.0,99.0
 plymouth-state-university,183080,Plymouth State University,3.21,2024-25,11.0,16.0,11.0,15.0,13.0,20.0,11.0,3.0,0.0,100.0
 presbyterian-college,218539,Presbyterian College,3.2,2023-24,9.6,15.2,15.7,17.0,18.7,20.8,3.0,0.0,0.0,100.0
 princeton,186131,Princeton University,3.96,2025-26,72.0,24.0,3.0,1.0,,,,,,100.0
@@ -136,20 +119,15 @@ saginaw-valley-state-university,172051,Saginaw Valley State University,3.55,2025
 saint-ambrose-university,154235,Saint Ambrose University,3.32,2025-26,8.0,19.0,16.0,15.0,15.0,21.0,6.0,0.0,0.0,100.0
 saint-john-fisher-college,195720,St. John Fisher University,3.52,2025-26,5.3,24.9,37.1,10.4,14.2,7.3,0.8,0.0,0.0,100.0
 saint-joseph-college,130314,University of Saint Joseph,3.41,2024-25,9.0,18.0,21.0,16.0,17.0,18.0,1.0,0.0,0.0,100.0
-salisbury-university,163851,Salisbury University,3.72,2025-26,36.3,15.4,13.4,11.9,10.4,11.0,1.5,0.0,0.1,100.0
-san-diego,122436,University of San Diego,4.02,2024-25,58.0,25.0,12.0,4.0,1.0,0.0,0.0,0.0,0.0,100.0
 san-diego-state,122409,San Diego State University,3.82,2025-26,34.0,31.0,21.0,10.0,3.0,1.0,,,,100.0
 shenandoah-university,233541,Shenandoah University,3.73,2024-25,35.75,18.7,14.07,11.67,8.7,8.33,2.59,0.19,,100.0
 southeast-missouri-state-university,179557,Southeast Missouri State University,3.53,2025-26,21.05,18.19,17.5,16.58,10.1,12.03,3.24,1.16,0.15,100.0
 southern-methodist-university,228246,Southern Methodist University,3.69,2025-26,24.3,30.2,22.2,12.0,7.1,4.0,0.2,,,100.0
-spelman,141060,Spelman College,3.96,2025-26,54.62,26.92,12.05,4.85,1.41,0.16,,,,100.01
 st-marys-college-of-maryland,163912,St. Mary's College of Maryland,3.49,2025-26,10.0,19.0,24.0,21.0,16.0,9.0,1.0,0.0,0.0,100.0
 st-petersburg-college,137078,St Petersburg College,2.95,2024-25,0.0,6.0,11.0,14.0,16.0,31.0,22.0,0.0,0.0,100.0
 stanford,243744,Stanford University,3.94,2025-26,72.97,16.17,7.89,2.89,0.08,,,,,100.0
-suny-college-of-environmental-science-and-forestry,196103,SUNY College of Environmental Science and Forestry,3.41,2025-26,12.0,31.0,30.0,16.0,9.0,2.0,0.0,0.0,0.0,100.0
 taylor,152530,Taylor University,3.8,2023-24,45.45,25.67,15.15,7.13,4.1,2.14,0.36,0.0,0.0,100.0
 texas-a-m-university-corpus-christi,224147,Texas A & M University-Corpus Christi,3.42,2025-26,3.0,25.0,23.0,19.0,14.0,13.0,3.0,0.0,0.0,100.0
-texas-a-m-university-kingsville,228705,Texas A&M University-Kingsville,3.43,2024-25,33.0,14.0,19.0,15.0,8.0,8.0,2.0,1.0,,100.0
 texas-womans-university,229179,Texas Woman's University,3.23,2024-25,4.42,17.82,16.86,13.78,13.33,21.15,12.56,0.06,0.0,99.98
 the-university-of-tennessee-at-chattanooga,221740,The University of Tennessee-Chattanooga,3.62,2025-26,25.4,23.0,18.5,16.4,9.1,7.0,0.6,0.0,0.0,100.0
 the-university-of-west-florida,138354,University of West Florida,3.64,2024-25,23.17,20.69,19.77,17.61,12.74,5.95,0.08,0.0,0.0,100.01
@@ -159,8 +137,6 @@ troy-university,102368,Troy University,3.42,2024-25,21.96,13.74,20.32,4.64,12.21
 uc-riverside,110671,University of California-Riverside,3.75,2025-26,29.0,22.2,23.0,16.2,9.2,0.4,,,,100.0
 uc-san-diego,110680,University of California-San Diego,3.88,2025-26,31.0,54.0,13.0,2.0,0.0,0.0,0.0,0.0,0.0,100.0
 ucla,110662,University of California-Los Angeles,3.94,2025-26,58.8,34.6,4.9,1.0,0.4,0.2,0.1,0.0,0.0,100.0
-umass-amherst,166629,University of Massachusetts-Amherst,4.05,2025-26,59.9,21.1,12.4,5.3,0.7,0.4,0.1,0.0,0.0,99.9
-unc,199120,University of North Carolina at Chapel Hill,4.47,2025-26,94.6,2.8,1.2,0.8,0.5,0.1,0.0,0.0,0.0,100.0
 university-of-akron-main-campus,200800,University of Akron Main Campus,3.47,2025-26,22.76,16.94,13.9,12.65,8.96,15.14,8.68,0.92,0.05,100.0
 university-of-alaska-fairbanks,102614,University of Alaska Fairbanks,3.37,2024-25,0.0,42.0,23.0,14.0,9.0,7.0,4.0,1.0,0.0,100.0
 university-of-cincinnati-main-campus,201885,University of Cincinnati-Main Campus,3.69,2024-25,27.33,20.81,17.79,14.85,10.45,8.21,0.41,0.13,0.02,100.0
@@ -187,7 +163,6 @@ university-of-rochester,195030,University of Rochester,3.72,2024-25,21.75,33.31,
 university-of-scranton,215929,University of Scranton,3.58,2025-26,19.0,23.91,26.53,11.35,10.48,8.3,0.44,0.0,0.0,100.01
 university-of-south-carolina-columbia,218663,University of South Carolina-Columbia,3.69,2024-25,16.0,34.0,28.0,15.0,6.0,1.0,0.0,,,100.0
 university-of-south-dakota,219471,University of South Dakota,3.51,2024-25,10.22,30.5,17.9,15.66,11.71,10.74,2.68,0.59,0.0,100.0
-university-of-south-florida-main-campus,137351,University of South Florida,4.06,2024-25,60.37,17.28,11.89,7.06,2.59,0.7,0.1,0.01,,100.0
 university-of-southern-indiana,151306,University of Southern Indiana,3.42,2024-25,6.09,24.28,20.02,16.51,13.09,15.45,4.41,0.15,0.0,100.0
 university-of-the-incarnate-word,225627,University of the Incarnate Word,3.54,2024-25,17.0,25.0,23.0,16.0,11.0,5.0,2.0,,0.0,99.0
 university-of-wisconsin-eau-claire,240268,University of Wisconsin-Eau Claire,3.64,2025-26,15.0,30.2,22.1,17.4,12.1,3.2,0.0,0.0,0.0,100.0
@@ -204,10 +179,8 @@ viterbo-university,240107,Viterbo University,3.57,2025-26,12.0,38.0,16.0,13.0,11
 wabash-college,152673,Wabash College,3.52,2025-26,2.9,26.1,24.9,27.8,13.3,5.0,,,,100.0
 walla-walla-university,236896,Walla Walla University,3.6,2023-24,13.79,34.8,17.87,11.91,11.91,9.09,0.63,0.0,0.0,100.0
 washington,236948,University of Washington-Seattle Campus,3.84,2025-26,18.12,58.07,18.08,4.42,1.0,0.24,0.07,0.0,0.0,100.0
-washington-college,164216,Washington College,3.87,2024-25,29.8,21.51,14.34,13.21,13.21,5.28,2.26,0.39,,100.0
 wayne-state-university,172644,Wayne State University,3.42,2025-26,14.67,19.51,15.96,14.02,14.12,20.26,1.43,0.03,,100.0
 wentworth-institute-of-technology,168227,Wentworth Institute of Technology,3.48,2025-26,23.05,12.98,21.23,13.34,13.25,14.34,1.72,0.09,0.0,100.0
-west-point,197036,United States Military Academy,4.1,2024-25,75.57,8.67,9.85,3.07,2.05,0.55,0.16,0.08,0.0,100.0
 western-carolina-university,200004,Western Carolina University,3.43,2024-25,5.0,22.0,21.0,19.0,15.0,17.0,0.0,0.0,0.0,99.0
 western-michigan-university,172699,Western Michigan University,3.55,2025-26,18.8,21.7,17.0,14.8,13.1,13.6,0.9,0.1,0.0,100.0
 western-new-england-university,168254,Western New England University,3.52,2025-26,24.1,12.1,17.1,15.2,15.4,11.9,4.1,0.1,0.0,100.0

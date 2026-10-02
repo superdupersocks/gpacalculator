@@ -661,9 +661,11 @@ if ( ! function_exists( 'gpa_college_sections' ) ) {
                 $html .= '<p>How their high school GPAs were spread:</p>'
                     . '<figure class="wp-block-table gpa-college-table gpa-college-bands"><table><thead><tr><th scope="col">High school GPA</th><th scope="col">Share of first-year students</th></tr></thead>'
                     . '<tbody>' . $rows . '</tbody></table>'
-                    . '<figcaption>First-year students who submitted a high school GPA, as ' . $name . ' reported in its ' . esc_html( $g['year'] ) . ' Common Data Set.' . esc_html( $none ) . '</figcaption></figure>';
+                    . '<figcaption>First-year students who submitted a high school GPA, as ' . $name . ' reported in its ' . esc_html( $g['year'] ) . ' Common Data Set.' . esc_html( $none )
+                    . ( '' === $g['basis'] ? ' The college doesn\'t say whether these GPAs are weighted or unweighted.' : ' Its average above is ' . esc_html( $g['basis'] ) . '; the college doesn\'t say whether these ranges are.' )
+                    . '</figcaption></figure>';
             }
-            $html .= '<div class="gpa-callout gpa-callout--note"><p><strong>An average, not a cutoff</strong>Colleges calculate GPA in different ways, so this figure can\'t be compared directly with your own GPA.</p></div>';
+            $html .= '<div class="gpa-callout gpa-callout--note"><p><strong>An average, not a cutoff</strong>Colleges calculate GPA in different ways, so ' . ( $v['bands'] ? 'these figures' : 'this figure' ) . ' can\'t be compared directly with your own GPA.</p></div>';
             $out[] = array( 'id' => 'average-gpa', 'title' => $v['plain'] . ' average GPA', 'html' => $html );
         } elseif ( isset( $f['requirements']['admission_requirements_high_school_gpa'] ) ) {
             list( $status ) = gpa_college_requirement_status( $f['requirements']['admission_requirements_high_school_gpa'] );

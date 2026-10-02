@@ -12,7 +12,10 @@ when:
 - every range value the file gives passed the Phase 1 checks (cds_provenance.csv: verified). A range the file leaves
   blank stays blank, never 0;
 - at least three ranges are given and they add up to 99-101% (the shares are of the students who submitted a GPA,
-  rounded by the college).
+  rounded by the college);
+- the ranges fit the average: it lies within what they allow, with every student at the bottom or the top of their
+  range and the 4.0 range counted as 4.0 (0.03 either side for rounding). A weighted average above 4.0, or one the
+  ranges can't reach, means the two may be on different bases (weighted or not), so the page keeps the average only.
 
 Writes data/admissions/audit/phase3_gpa_bands.csv (the rows an import would write as cds_gpa_band_* fields, citing
 the page's existing GPA source) and phase3_gpa_bands_pending.csv (the rest, with the reason). Changes nothing on the
@@ -27,6 +30,10 @@ AUDIT = DATA / "audit"
 BANDS = [("gpa_4_0", "400"), ("gpa_375_399", "375"), ("gpa_350_374", "350"), ("gpa_325_349", "325"),
          ("gpa_300_324", "300"), ("gpa_250_299", "250"), ("gpa_200_249", "200"), ("gpa_100_199", "100"),
          ("gpa_below_100", "000")]
+# The GPAs each range spans, for the check that the ranges fit the average
+SPAN = {"400": (4.0, 4.0), "375": (3.75, 3.99), "350": (3.5, 3.74), "325": (3.25, 3.49), "300": (3.0, 3.24),
+        "250": (2.5, 2.99), "200": (2.0, 2.49), "100": (1.0, 1.99), "000": (0.0, 0.99)}
+ROUNDING = 0.03
 COLS = ["slug", "unitid", "college", "cds_gpa", "cds_gpa_year"] + [f"cds_gpa_band_{k}" for _, k in BANDS] + ["sum"]
 PENDING_COLS = ["slug", "unitid", "college", "cds_gpa_year", "why"]
 
@@ -58,6 +65,14 @@ def main():
         total = round(sum(float(v) for v in given.values()), 2)
         if not 99 <= total <= 101:
             pending.append(base + [f"ranges add up to {total}%"])
+            continue
+        shares = [(float(given[f]), SPAN[k]) for f, k in BANDS if f in given]
+        low = sum(p * span[0] for p, span in shares) / total
+        high = sum(p * span[1] for p, span in shares) / total
+        avg = float(b2["cds_gpa"])
+        if not low - ROUNDING <= avg <= high + ROUNDING:
+            pending.append(base + [f"the ranges allow an average of {low:.2f}-{high:.2f}, the college reported {avg:.2f}: "
+                                   "the two may be on different bases (weighted or not)"])
             continue
         rows.append(base[:3] + [b2["cds_gpa"], b2["cds_gpa_year"]] + [given.get(f, "") for f, _ in BANDS] + [total])
 

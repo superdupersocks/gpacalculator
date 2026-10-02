@@ -2974,7 +2974,7 @@ function gpa_freestar_siderails() {
 	var footer = document.querySelector('.site-footer');
 	var heroes = ['.gpa-hero', '.db-hero', '.db-archive-hero'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
 	var cols = ['.db-container', '.entry-content', '#content'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
-	var afterExtra = null, state = '', raf = 0, t = 0, requested = {}, curTier = null, tierSent = false;
+	var afterExtra = null, state = '', raf = 0, t = 0, requested = {}, curTier = null, loadTier = null, tierSent = false;
 
 	function tierNow() {
 		for (var i = 0; i < TIERS.length; i++) { if (TIERS[i].mq.matches) { return TIERS[i].w; } }
@@ -3048,7 +3048,10 @@ function gpa_freestar_siderails() {
 		sendTier(w);
 		if (curTier !== null && w !== curTier) { sync([]); } // tier changed: drop every slot, re-request for the new tier
 		curTier = w;
-		var p = w ? measure(w) : null;
+		if (loadTier === null) { loadTier = w; }
+		// Freestar fixes a slot's sizes at page load (re-created slots keep the load-time size list), so after a resize
+		// only re-request when the new tier is at least as wide as the load tier; a narrower tier hides the rails until reload.
+		var p = w && loadTier && w >= loadTier ? measure(w) : null; // loaded with no rails: none until reload
 		var key = p ? [w, p.top, p.h, p.two, p.left, p.right].join() : 'off';
 		if (key === state) { return; }
 		state = key;

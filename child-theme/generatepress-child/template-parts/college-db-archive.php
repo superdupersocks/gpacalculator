@@ -3,8 +3,9 @@
  * Template part: the college finder (search, filters and the list of colleges), Admissions Phase 3.
  *
  * Printed by the /admissions/ hub (archive-colleges.php), where it rises into the hero like a calculator card, and by
- * the [gpa_college_archive] shortcode. Builds the first page of results itself, one gpa_render_college_card() card per
- * college (college-data.php) under the legend of their difficulty colors, and gives database-ajax.js its settings; the
+ * the [gpa_college_archive] shortcode. The search bar has its own Search button and three example searches; the
+ * list searches as you type too. Builds the first page of results itself, one gpa_render_college_card() card per
+ * college (college-data.php) under the legend of the difficulty levels, and gives database-ajax.js its settings; the
  * ids are the ones that script looks for.
  * The caller enqueues database-ajax.js and admissions.css.
  *
@@ -28,16 +29,20 @@ $stats          = gpa_college_hub_stats();
 ?>
 <div class="gpa-hub" id="college-finder">
 
-	<div class="gpa-hub__search db-archive-search">
-		<label class="screen-reader-text" for="db-search-input">Search colleges by name, city or state</label>
-		<svg class="gpa-hub__search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-			<circle cx="11" cy="11" r="8"></circle>
-			<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-		</svg>
-		<input type="search" id="db-search-input" class="gpa-hub__input" placeholder="College, city or state" autocomplete="off" enterkeyhint="search" />
-		<span class="gpa-hub__spinner" id="db-search-spinner" style="display:none;" aria-hidden="true">
-			<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
-		</span>
+	<div class="gpa-hub__search db-archive-search" role="search">
+		<label class="gpa-hub__search-label" for="db-search-input">Find a college</label>
+		<div class="gpa-hub__bar">
+			<svg class="gpa-hub__search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<circle cx="11" cy="11" r="8"></circle>
+				<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+			</svg>
+			<input type="search" id="db-search-input" class="gpa-hub__input" placeholder="College name, city or state" autocomplete="off" enterkeyhint="search" />
+			<span class="gpa-hub__spinner" id="db-search-spinner" style="display:none;" aria-hidden="true">
+				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+			</span>
+			<button class="gpa-hub__go" id="db-search-btn" type="button">Search</button>
+		</div>
+		<div class="gpa-hub__try" id="db-search-examples">Try <button class="gpa-hub__example" type="button" data-search="Harvard">Harvard</button>, <button class="gpa-hub__example" type="button" data-search="Boston">Boston</button> or <button class="gpa-hub__example" type="button" data-search="Texas">Texas</button></div>
 	</div>
 
 	<div class="gpa-hub__controls">
@@ -101,7 +106,7 @@ $stats          = gpa_college_hub_stats();
 		<span class="gpa-hub__legend-title">How hard to get into<?php echo '' !== $stats['fall'] ? ', by ' . esc_html( $stats['fall'] ) . ' acceptance rate' : ''; ?>:</span>
 		<span class="gpa-hub__keys" role="list">
 			<?php foreach ( gpa_college_difficulty_legend() as $level ) : ?>
-			<span class="gpa-hub__key gpa-hub__key--<?php echo esc_attr( $level[0] ); ?>" role="listitem"><?php echo esc_html( $level[1] ); ?><?php echo '' !== $level[2] ? ' <span>' . esc_html( $level[2] ) . '</span>' : ''; ?></span>
+			<span class="gpa-hub__key gpa-hub__key--<?php echo esc_attr( $level[0] ); ?>" role="listitem"><?php echo gpa_college_difficulty_meter( $level[0] ); // fixed markup ?><?php echo esc_html( $level[1] ); ?><?php echo '' !== $level[2] ? ' <span class="gpa-hub__range">' . esc_html( $level[2] ) . '</span>' : ''; ?></span>
 			<?php endforeach; ?>
 		</span>
 	</div>

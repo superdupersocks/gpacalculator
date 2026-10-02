@@ -33,6 +33,8 @@
     // ============================================
     var searchInput       = document.getElementById('db-search-input');
     var searchSpinner     = document.getElementById('db-search-spinner');
+    var searchButton      = document.getElementById('db-search-btn');
+    var searchExamples    = document.getElementById('db-search-examples');
     var quickPills        = document.getElementById('db-quick-pills');
     var filtersToggle     = document.getElementById('db-filters-toggle');
     var filtersPanel      = document.getElementById('db-filters-panel');
@@ -397,6 +399,8 @@
     // --- Search input with debounce ---
     if (searchInput) {
         searchInput.addEventListener('input', debounce(function () {
+            // Already searched (Enter, the Search button or an example)
+            if (searchInput.value.trim() === state.search) return;
             state.search = searchInput.value.trim();
             triggerFilter();
         }, 300));
@@ -408,6 +412,30 @@
                 state.search = searchInput.value.trim();
                 triggerFilter();
             }
+        });
+    }
+
+    // --- Search button: searches now; with nothing typed, puts the cursor in the box ---
+    if (searchInput && searchButton) {
+        searchButton.addEventListener('click', function () {
+            var value = searchInput.value.trim();
+            if (!value && !state.search) {
+                searchInput.focus();
+                return;
+            }
+            state.search = value;
+            triggerFilter();
+        });
+    }
+
+    // --- Example searches under the bar ---
+    if (searchInput && searchExamples) {
+        searchExamples.addEventListener('click', function (e) {
+            var example = e.target.closest('[data-search]');
+            if (!example) return;
+            searchInput.value = example.getAttribute('data-search');
+            state.search = searchInput.value;
+            triggerFilter();
         });
     }
 

@@ -48,7 +48,7 @@ $fall  = '' !== $stats['fall'] ? $stats['fall'] : 'the latest year';
 					?>
 					<ul>
 						<li><strong>Average GPA:</strong> shown only when a college publishes it in its own Common Data Set and we could check it, with the year and whether it's weighted. Colleges calculate GPA in different ways, so an average can't be compared directly with your own GPA.</li>
-						<li><strong>How hard to get into:</strong> each college's color and tag come from its acceptance rate, the share of first-year applicants it admitted for <?php echo esc_html( $fall ); ?>, as it reported to the U.S. Department of Education: <?php echo esc_html( implode( ', ', $levels ) . ' and ' . $last ); ?>. Colleges with open admission accept every applicant, so they don't have an acceptance rate.</li>
+						<li><strong>How hard to get into:</strong> each college's tag, with its color and meter, comes from its acceptance rate, the share of first-year applicants it admitted for <?php echo esc_html( $fall ); ?>, as it reported to the U.S. Department of Education: <?php echo esc_html( implode( ', ', $levels ) . ' and ' . $last ); ?>. Colleges with open admission accept every applicant, so they don't have an acceptance rate.</li>
 						<li><strong>SAT and ACT:</strong> the middle 50% of scores of the first-year students who enrolled in <?php echo esc_html( $fall ); ?> and sent scores. A quarter of them scored below the range and a quarter above it. R&amp;W is the SAT's reading and writing section; ACT ranges are composite scores.</li>
 						<li><strong>Average SAT filter:</strong> the SAT filter and sort use the College Scorecard's estimate of the average SAT score of admitted students.</li>
 					</ul>

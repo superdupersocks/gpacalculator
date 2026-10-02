@@ -897,6 +897,22 @@ if ( ! function_exists( 'gpa_college_difficulty_levels' ) ) {
         return null;
     }
 
+    /**
+     * The difficulty meter in a college's tag and in the legend: one bar per level, rising, with as many filled in the
+     * level's color as the level is hard (very hard all five, easy one, open admission none). Decorative: the label
+     * next to it says the same.
+     */
+    function gpa_college_difficulty_meter( $key ) {
+        $keys = array_keys( gpa_college_difficulty_levels() );
+        $at   = array_search( $key, $keys, true );
+        $on   = false === $at ? 0 : count( $keys ) - $at;
+        $out  = '<span class="gpa-hub-meter" aria-hidden="true">';
+        foreach ( $keys as $i => $unused ) {
+            $out .= $i < $on ? '<span class="gpa-hub-meter__on"></span>' : '<span></span>';
+        }
+        return $out . '</span>';
+    }
+
     // The legend over the hub's list: [ key, label, the rates it covers ], open admission (no rate) last.
     function gpa_college_difficulty_legend() {
         $out  = array();
@@ -920,10 +936,10 @@ if ( ! function_exists( 'gpa_college_difficulty_levels' ) ) {
 if ( ! function_exists( 'gpa_render_college_card' ) ) {
     /**
      * One college in the hub's list, as a card: its name, place and type and a tag saying how hard it is to get
-     * into (color-coded, with the acceptance rate it comes from), then the average GPA when the college published
-     * one we verified (with its label), and the SAT and ACT middle 50%. Each figure cell carries its own label,
-     * shown on phones; desktop shows them once, in the list's header row. Pages still under review say so instead
-     * of showing figures. The class db-college-card is what database-ajax.js counts.
+     * into (color-coded, with a difficulty meter and the acceptance rate it comes from), then the average GPA when the
+     * college published one we verified (with its label), and the SAT and ACT middle 50%. Each figure cell carries its
+     * own label, shown on phones; desktop shows them once, in the list's header row. Pages still under review say so
+     * instead of showing figures. The class db-college-card is what database-ajax.js counts.
      */
     function gpa_render_college_card( $post_id ) {
         $v     = gpa_college_view( $post_id );
@@ -935,7 +951,7 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
 
         $tag = '';
         if ( $level ) {
-            $tag = '<span class="gpa-hub-tag gpa-hub-tag--' . esc_attr( $level['key'] ) . '">' . esc_html( $level['label'] )
+            $tag = '<span class="gpa-hub-tag gpa-hub-tag--' . esc_attr( $level['key'] ) . '">' . gpa_college_difficulty_meter( $level['key'] ) . esc_html( $level['label'] )
                 . ( '' !== $level['rate'] ? '<span class="screen-reader-text"> to get into,</span><span class="gpa-hub-tag__rate">' . esc_html( $level['rate'] ) . ' admitted</span>' : '' )
                 . '</span>';
         }
@@ -968,7 +984,7 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
             $cells = '<div class="gpa-hub-row__review">Figures under review</div>';
         }
 
-        return '<div class="db-college-card gpa-hub-row' . ( $level ? ' gpa-hub-row--' . esc_attr( $level['key'] ) : '' ) . '" role="listitem" data-post-id="' . esc_attr( $post_id ) . '">'
+        return '<div class="db-college-card gpa-hub-row" role="listitem" data-post-id="' . esc_attr( $post_id ) . '">'
             . '<div class="gpa-hub-row__college"><a class="gpa-hub-row__name" href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html( $v['name'] ) . '</a>'
             . ( $meta ? '<span class="gpa-hub-row__meta"><span>' . implode( '</span> <span>', array_map( 'esc_html', $meta ) ) . '</span></span>' : '' )
             . $tag . '</div>'

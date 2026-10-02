@@ -518,53 +518,6 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 100858,gpa_submit_pct,C.1202,99.98,yes,"file text, checked",,99.98,,
 100858,ed_offered,C.2101,,no,,,No,,
 100858,ea_offered,C.2201,,no,,,Yes,,
-100830,applicants,C.117,2512,yes,form fields,2512,2692,2512,2694
-100830,admits,C.118,2471,yes,form fields,2471,2471,2471,2467
-100830,enrolled,C.119,,no,failed check: 162 in the CDS but 364 in IPEDS for the same fall,162,364,162,364
-100830,waitlist_policy,C.201,No,yes,form fields,No,No,,
-100830,factor_rigor,C.701,Very Important,yes,form fields,Very Important,Very Important,Very Important,
-100830,factor_class_rank,C.702,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_gpa,C.703,Very Important,yes,form fields,Very Important,Very Important,Very Important,
-100830,factor_test_scores,C.704,Very Important,yes,form fields,Very Important,Very Important,Very Important,
-100830,factor_essay,C.705,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_recommendations,C.706,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_interview,C.707,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_extracurriculars,C.708,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_talent,C.709,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_character,C.710,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_first_generation,C.711,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_legacy,C.712,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_geography,C.713,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_state_residency,C.714,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_religion,C.715,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_volunteer_work,C.716,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_work_experience,C.717,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,factor_demonstrated_interest,C.718,Not Considered,yes,form fields,Not Considered,Not Considered,Not Considered,
-100830,sat_submit_pct,C.901,4.0,yes,form fields,4.0,4.0,4.0,6.0
-100830,act_submit_pct,C.902,53.0,yes,form fields,53.0,53.0,53.0,65.0
-100830,sat_comp_p25,C.905,1028,yes,form fields,1028,1028,1028,
-100830,sat_comp_p50,C.906,1130,yes,form fields,1130,1130,1130,
-100830,sat_comp_p75,C.907,1195,yes,form fields,1195,1195,1195,
-100830,sat_erw_p25,C.908,533,yes,form fields,533,533,533,538
-100830,sat_erw_p50,C.909,570,yes,form fields,570,570,570,570
-100830,sat_erw_p75,C.910,628,yes,form fields,628,628,628,603
-100830,sat_math_p25,C.911,493,yes,form fields,493,493,493,498
-100830,sat_math_p50,C.912,560,yes,form fields,560,560,560,560
-100830,sat_math_p75,C.913,600,yes,form fields,600,600,600,600
-100830,act_comp_p25,C.914,18,yes,form fields,18,18,18,18
-100830,act_comp_p50,C.915,21,yes,form fields,21,21,21,21
-100830,act_comp_p75,C.916,24,yes,form fields,24,24,24,24
-100830,gpa_4_0,C.1121,7.0,yes,form fields,7.0,7.0,,
-100830,gpa_375_399,C.1122,18.0,yes,form fields,18.0,18.0,,
-100830,gpa_350_374,C.1123,22.0,yes,form fields,22.0,22.0,,
-100830,gpa_325_349,C.1124,23.0,yes,form fields,23.0,23.0,,
-100830,gpa_300_324,C.1125,19.0,yes,form fields,19.0,19.0,,
-100830,gpa_250_299,C.1126,7.0,yes,form fields,7.0,7.0,,
-100830,gpa_200_249,C.1127,3.0,yes,form fields,3.0,3.0,,
-100830,gpa_avg,C.1201,3.44,yes,form fields,3.44,3.44,3.44,
-100830,gpa_submit_pct,C.1202,96.0,yes,form fields,96.0,96.0,96.0,
-100830,ed_offered,C.2101,No,yes,form fields,No,No,,
-100830,ea_offered,C.2201,No,yes,form fields,No,No,,
 143084,applicants,C.116,7956,yes,file text + collegedata.fyi,,7956,7956,
 143084,admits,C.117,5273,yes,file text + collegedata.fyi,,5273,5273,
 143084,enrolled,C.118,671,yes,file text + collegedata.fyi,,671,671,
@@ -1441,7 +1394,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 219718,gpa_below_100,C.1129,,no,,,0.0,,
 219718,gpa_avg,C.1201,3.6,yes,"file text, checked",,3.6,,
 219718,gpa_submit_pct,C.1202,100.0,yes,"file text, checked",,100.0,,
-132602,applicants,C.117,10836,yes,form fields,10836,10994,10836,10994
+132602,applicants,C.117,10836,yes,form fields,10836,10836,10836,10994
 132602,admits,C.118,9701,yes,form fields,9701,9701,9701,9701
 132602,enrolled,C.119,1012,yes,form fields,1012,1012,1012,1012
 132602,waitlist_policy,C.201,No,yes,form fields,No,No,,
@@ -3084,7 +3037,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 111948,ed_applicants,C.2106,,no,,,282,,
 111948,ed_admits,C.2107,,no,,,145,,
 111948,ea_offered,C.2201,,no,,,Yes,,
-211556,applicants,C.117,3444,yes,form fields,3444,3445,3444,3446
+211556,applicants,C.117,3444,yes,form fields,3444,3444,3444,3446
 211556,admits,C.118,2135,yes,form fields,2135,2135,2135,2135
 211556,enrolled,C.119,272,yes,form fields,272,272,272,272
 211556,waitlist_policy,C.201,No,yes,form fields,No,No,,
@@ -4868,9 +4821,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 129215,gpa_avg,C.1201,,no,,,,3.3,
 129215,gpa_submit_pct,C.1202,,no,,,,95.3,
 129215,ea_offered,C.2201,,no,,,,No,
-232043,applicants,C.116,,no,,,1181,1171,
-232043,admits,C.117,,no,,,1180,1170,
-232043,enrolled,C.118,,no,,,205,201,
+232043,applicants,C.116,1171,yes,file text + collegedata.fyi,,1171,1171,
+232043,admits,C.117,1170,yes,file text + collegedata.fyi,,1170,1170,
+232043,enrolled,C.118,201,yes,file text + collegedata.fyi,,201,201,
 232043,waitlist_policy,C.201,,no,,,No,,
 232043,factor_rigor,C.701,,no,,,Considered,Very Important,
 232043,factor_class_rank,C.702,,no,,,Considered,Very Important,
@@ -5778,9 +5731,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 212577,ed_offered,C.2101,,no,,,,Yes,
 212577,ed_applicants,C.2106,961,yes,file text + collegedata.fyi,,961,961,
 212577,ed_admits,C.2107,270,yes,file text + collegedata.fyi,,270,270,
-127200,applicants,C.117,,no,,,6819,6506,
-127200,admits,C.118,,no,,,6819,6506,
-127200,enrolled,C.119,,no,,,2305,,
+127200,applicants,C.117,6506,yes,file text + collegedata.fyi,,6506,6506,
+127200,admits,C.118,6506,yes,file text + collegedata.fyi,,6506,6506,
+127200,enrolled,C.119,,no,,,2172,,
 127200,waitlist_policy,C.201,,no,,,No,,
 127200,factor_rigor,C.701,,no,,,,Very Important,
 127200,factor_gpa,C.703,,no,,,,Very Important,
@@ -6784,8 +6737,8 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 232308,ed_admits,C.2111,67,yes,form fields,67,67,67,
 232308,ea_offered,C.2201,Yes,yes,form fields,Yes,Yes,Yes,
 225399,applicants,C.116,,no,,,11765,4428,
-225399,admits,C.117,,no,,,10171,10174,
-225399,enrolled,C.118,1001,yes,file text + collegedata.fyi (lines by sex added up),,1001,1001,
+225399,admits,C.117,,no,,,8951,10174,
+225399,enrolled,C.118,,no,,,910,1001,
 225399,waitlist_policy,C.201,,no,,,No,,
 225399,factor_rigor,C.701,,no,,,Considered,Very Important,
 225399,factor_class_rank,C.702,,no,,,Important,Very Important,
@@ -8277,7 +8230,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 209065,gpa_submit_pct,C.1202,99.2,yes,form fields,99.2,99.2,99.2,
 209065,ed_offered,C.2101,No,yes,form fields,No,No,,
 209065,ea_offered,C.2201,Yes,yes,form fields,Yes,Yes,,
-219976,applicants,C.117,4257,yes,form fields,4257,4259,4257,4261
+219976,applicants,C.117,4257,yes,form fields,4257,4257,4257,4261
 219976,admits,C.118,2885,yes,form fields,2885,2885,2885,2886
 219976,enrolled,C.119,719,yes,form fields,719,719,719,719
 219976,waitlist_policy,C.201,No,yes,form fields,No,No,,
@@ -8399,8 +8352,8 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 159391,gpa_submit_pct,C.1202,,no,,,,98.0,
 159391,ed_offered,C.2101,,no,,,,Yes,
 159391,ea_offered,C.2201,,no,,,,Yes,
-159647,applicants,C.116,,no,,,11913,2343,
-159647,admits,C.117,,no,,,8528,1292,
+159647,applicants,C.116,,no,,,11805,2343,
+159647,admits,C.117,,no,,,8477,1292,
 159647,enrolled,C.118,,no,,,2410,84,
 159647,waitlist_policy,C.201,,no,,,No,,
 159647,factor_rigor,C.701,,no,,,Very Important,,
@@ -11405,7 +11358,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 243780,gpa_submit_pct,C.1202,92.76,yes,"file text, checked",,92.76,,
 148131,applicants,C.116,1873,yes,form fields,1873,1873,1873,
 148131,admits,C.117,1032,yes,form fields,1032,1032,1032,
-148131,enrolled,C.118,313,yes,form fields,313,317,313,
+148131,enrolled,C.118,313,yes,form fields,313,313,313,
 148131,waitlist_policy,C.201,Yes,yes,form fields,Yes,Yes,Yes,
 148131,waitlist_offered,C.202,0,yes,form fields,0,0,0,
 148131,waitlist_accepted,C.203,0,yes,form fields,0,0,0,
@@ -11814,51 +11767,6 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 227757,ed_applicants,C.2110,5748,yes,file text + collegedata.fyi,,5748,5748,
 227757,ed_admits,C.2111,647,yes,file text + collegedata.fyi,,647,647,
 227757,ea_offered,C.2201,,no,,,,No,
-195003,applicants,C.116,31527,yes,file text + collegedata.fyi (lines by sex added up),,31527,31527,
-195003,admits,C.117,22411,yes,file text + collegedata.fyi (lines by sex added up),,22411,22411,
-195003,enrolled,C.118,,no,,,2948,2959,
-195003,waitlist_policy,C.201,,no,,,Yes,,
-195003,waitlist_offered,C.202,,no,,,2155,,
-195003,waitlist_accepted,C.203,,no,,,657,,
-195003,waitlist_admitted,C.204,,no,,,164,,
-195003,factor_rigor,C.701,Very Important,yes,file text + collegedata.fyi,,Very Important,Very Important,
-195003,factor_class_rank,C.702,,no,,,Important,Very Important,
-195003,factor_gpa,C.703,Very Important,yes,file text + collegedata.fyi,,Very Important,Very Important,
-195003,factor_test_scores,C.704,,no,,,Important,Very Important,
-195003,factor_essay,C.705,,no,,,Important,Very Important,
-195003,factor_recommendations,C.706,,no,,,Important,Very Important,
-195003,factor_interview,C.707,,no,,,Considered,Very Important,
-195003,factor_extracurriculars,C.708,,no,,,Considered,Very Important,
-195003,factor_talent,C.709,,no,,,Considered,Very Important,
-195003,factor_character,C.710,,no,,,Important,Very Important,
-195003,factor_first_generation,C.711,,no,,,Considered,Very Important,
-195003,factor_legacy,C.712,,no,,,Not Considered,Very Important,
-195003,factor_geography,C.713,,no,,,Not Considered,Very Important,
-195003,factor_state_residency,C.714,,no,,,Not Considered,Very Important,
-195003,factor_religion,C.715,,no,,,Not Considered,Very Important,
-195003,factor_volunteer_work,C.716,,no,,,Considered,Very Important,
-195003,factor_work_experience,C.717,,no,,,Considered,Very Important,
-195003,factor_demonstrated_interest,C.718,Considered,yes,file text + collegedata.fyi,,Considered,Considered,
-195003,sat_submit_pct,C.901,,no,,,41.0,,
-195003,act_submit_pct,C.902,,no,,,8.0,,
-195003,sat_comp_p25,C.905,,no,,,,1310,
-195003,sat_comp_p50,C.906,,no,,,,1380,
-195003,sat_comp_p75,C.907,,no,,,,1440,
-195003,sat_erw_p25,C.908,,no,,,,650,
-195003,sat_erw_p50,C.909,,no,,,,650,
-195003,sat_erw_p75,C.910,,no,,,,690,
-195003,sat_math_p25,C.911,,no,,,,640,
-195003,sat_math_p50,C.912,,no,,,,690,
-195003,sat_math_p75,C.913,,no,,,,730,
-195003,act_comp_p25,C.914,,no,,,,30,
-195003,act_comp_p50,C.915,,no,,,,32,
-195003,act_comp_p75,C.916,,no,,,,34,
-195003,gpa_avg,C.1201,3.9,yes,"file text, checked",,3.9,,
-195003,gpa_submit_pct,C.1202,98.6,yes,"file text, checked",,98.6,,
-195003,ed_offered,C.2101,,no,,,Yes,,
-195003,ed_applicants,C.2110,,no,,,1405,,
-195003,ed_admits,C.2111,,no,,,1028,,
-195003,ea_offered,C.2201,,no,,,Yes,,
 180595,applicants,C.116,863,yes,file text + collegedata.fyi,,863,863,
 180595,admits,C.117,671,yes,file text + collegedata.fyi,,671,671,
 180595,enrolled,C.118,187,yes,file text + collegedata.fyi,,187,187,
@@ -13383,9 +13291,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 195720,ed_applicants,C.2110,124,yes,file text + collegedata.fyi,,124,124,
 195720,ed_admits,C.2111,77,yes,file text + collegedata.fyi,,77,77,
 195720,ea_offered,C.2201,,no,,,,No,
-163912,applicants,C.116,3504,yes,form fields,3504,3504,3504,
-163912,admits,C.117,2542,yes,form fields,2542,2542,2542,
-163912,enrolled,C.118,404,yes,form fields,404,404,404,
+163912,applicants,C.116,3504,yes,form fields,3504,2681,3504,
+163912,admits,C.117,2542,yes,form fields,2542,2014,2542,
+163912,enrolled,C.118,404,yes,form fields,404,352,404,
 163912,waitlist_policy,C.201,Yes,yes,form fields,Yes,Yes,Yes,
 163912,waitlist_offered,C.202,364,yes,form fields,364,364,364,
 163912,waitlist_accepted,C.203,28,yes,form fields,28,28,28,
@@ -13641,7 +13549,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 196097,ed_offered,C.2101,,no,,,,No,
 216278,applicants,C.116,5339,yes,file text + collegedata.fyi,,5339,5339,
 216278,admits,C.117,4222,yes,file text + collegedata.fyi,,4222,4222,
-216278,enrolled,C.118,,no,,,535,534,
+216278,enrolled,C.118,534,yes,file text + collegedata.fyi,,534,534,
 216278,waitlist_policy,C.201,,no,,,No,,
 216278,factor_rigor,C.701,Very Important,yes,file text + collegedata.fyi,,Very Important,Very Important,
 216278,factor_class_rank,C.702,Important,yes,file text + collegedata.fyi,,Important,Important,
@@ -14551,7 +14459,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 229027,gpa_submit_pct,C.1202,0.0,yes,"file text, checked",,0.0,,
 228802,applicants,C.116,5476,yes,file text + collegedata.fyi,,5476,5476,
 228802,admits,C.117,5194,yes,file text + collegedata.fyi,,5194,5194,
-228802,enrolled,C.118,,no,,,1542,1541,
+228802,enrolled,C.118,1541,yes,file text + collegedata.fyi,,1541,1541,
 228802,waitlist_policy,C.201,,no,,,No,,
 228802,factor_rigor,C.701,Very Important,yes,file text + collegedata.fyi,,Very Important,Very Important,
 228802,factor_class_rank,C.702,Very Important,yes,file text + collegedata.fyi,,Very Important,Very Important,
@@ -14681,8 +14589,8 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 216366,gpa_below_100,C.1129,0.0,yes,"file text, checked",,0.0,,
 216366,gpa_avg,C.1201,3.726,yes,"file text, checked",,3.726,,
 216366,gpa_submit_pct,C.1202,99.43,yes,"file text, checked",,99.43,,
-206048,applicants,C.117,,no,,,4782,4724,
-206048,admits,C.118,,no,,,3816,3783,
+206048,applicants,C.117,4724,yes,file text + collegedata.fyi,,4724,4724,
+206048,admits,C.118,3783,yes,file text + collegedata.fyi,,3783,3783,
 206048,enrolled,C.119,504,yes,file text + collegedata.fyi,,504,504,
 206048,waitlist_policy,C.201,,no,,,No,,
 206048,factor_rigor,C.701,Very Important,yes,file text + collegedata.fyi,,Very Important,Very Important,
@@ -14952,7 +14860,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 196866,gpa_submit_pct,C.1202,100.0,yes,file text + collegedata.fyi,,100.0,100.0,
 196866,ed_applicants,C.2106,,no,,,389,,
 196866,ed_admits,C.2107,,no,,,164,,
-197036,applicants,C.117,12316,yes,form fields,12316,12320,12316,12320
+197036,applicants,C.117,12316,yes,form fields,12316,12316,12316,12320
 197036,admits,C.118,1534,yes,form fields,1534,1534,1534,1534
 197036,enrolled,C.119,1195,yes,form fields,1195,1195,1195,1195
 197036,factor_rigor,C.701,Very Important,yes,form fields,Very Important,Very Important,Very Important,
@@ -15000,9 +14908,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 197036,gpa_submit_pct,C.1202,100.0,yes,form fields,100.0,100.0,100.0,
 197036,ed_offered,C.2101,No,yes,form fields,No,No,,
 197036,ea_offered,C.2201,No,yes,form fields,No,No,,
-196088,applicants,C.117,40856,yes,file text + IPEDS same fall (lines by sex added up),,40856,40855,40856
-196088,admits,C.118,30308,yes,file text + IPEDS same fall (lines by sex added up),,30308,30307,30308
-196088,enrolled,C.119,4265,yes,file text + IPEDS same fall (lines by sex added up),,4265,,4265
+196088,applicants,C.117,40855,yes,file text + collegedata.fyi,,40855,40855,40856
+196088,admits,C.118,30307,yes,file text + collegedata.fyi,,30307,30307,30308
+196088,enrolled,C.119,,no,,,4264,,4265
 196088,waitlist_policy,C.201,,no,,,Yes,,
 196088,waitlist_offered,C.202,4267,yes,file text + collegedata.fyi,,4267,4267,
 196088,waitlist_accepted,C.203,1785,yes,file text + collegedata.fyi,,1785,1785,
@@ -17689,7 +17597,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 482680,gpa_submit_pct,C.1202,98.29,yes,file text + collegedata.fyi,,98.29,98.29,
 482680,ed_offered,C.2101,Yes,yes,file text + collegedata.fyi,,Yes,Yes,
 482680,ea_offered,C.2201,Yes,yes,file text + collegedata.fyi,,Yes,Yes,
-227216,applicants,C.116,,no,,,41250,41247,
+227216,applicants,C.116,41247,yes,file text + collegedata.fyi,,41247,41247,
 227216,admits,C.117,29242,yes,file text + collegedata.fyi,,29242,29242,
 227216,enrolled,C.118,6388,yes,file text + collegedata.fyi,,6388,6388,
 227216,waitlist_policy,C.201,,no,,,No,,
@@ -19561,6 +19469,58 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 152600,gpa_submit_pct,C.1202,100.0,yes,form fields,100.0,100.0,100.0,
 152600,ed_offered,C.2101,No,yes,form fields,No,No,No,
 152600,ea_offered,C.2201,No,yes,form fields,No,No,No,
+221999,applicants,C.116,,no,,,48196,2885,
+221999,admits,C.117,,no,,,2593,301,
+221999,enrolled,C.118,,no,,,1635,234,
+221999,waitlist_policy,C.201,,no,,,,Yes,
+221999,waitlist_admitted,C.204,207,yes,file text + collegedata.fyi,,207,207,
+221999,factor_rigor,C.701,,no,,,Very Important,,
+221999,factor_class_rank,C.702,,no,,,Very Important,,
+221999,factor_gpa,C.703,,no,,,Very Important,,
+221999,factor_test_scores,C.704,,no,,,Important,,
+221999,factor_essay,C.705,,no,,,Very Important,,
+221999,factor_recommendations,C.706,,no,,,Important,,
+221999,factor_interview,C.707,,no,,,Considered,,
+221999,factor_extracurriculars,C.708,,no,,,Very Important,,
+221999,factor_talent,C.709,,no,,,Important,,
+221999,factor_character,C.710,,no,,,Very Important,,
+221999,factor_first_generation,C.711,,no,,,Considered,,
+221999,factor_legacy,C.712,,no,,,Considered,,
+221999,factor_geography,C.713,,no,,,Considered,,
+221999,factor_state_residency,C.714,,no,,,Considered,,
+221999,factor_religion,C.715,,no,,,Not Considered,,
+221999,factor_volunteer_work,C.716,,no,,,Considered,,
+221999,factor_work_experience,C.717,,no,,,Considered,,
+221999,factor_demonstrated_interest,C.718,,no,,,Not Considered,,
+221999,sat_submit_pct,C.901,24.0,yes,file text + collegedata.fyi,,24.0,24.0,
+221999,act_submit_pct,C.902,28.0,yes,file text + collegedata.fyi,,28.0,28.0,
+221999,sat_comp_p25,C.905,1510,yes,file text + collegedata.fyi,,1510,1510,
+221999,sat_comp_p50,C.906,1530,yes,file text + collegedata.fyi,,1530,1530,
+221999,sat_comp_p75,C.907,1560,yes,file text + collegedata.fyi,,1560,1560,
+221999,sat_erw_p25,C.908,740,yes,file text + collegedata.fyi,,740,740,
+221999,sat_erw_p50,C.909,750,yes,file text + collegedata.fyi,,750,750,
+221999,sat_erw_p75,C.910,770,yes,file text + collegedata.fyi,,770,770,
+221999,sat_math_p25,C.911,770,yes,file text + collegedata.fyi,,770,770,
+221999,sat_math_p50,C.912,780,yes,file text + collegedata.fyi,,780,780,
+221999,sat_math_p75,C.913,790,yes,file text + collegedata.fyi,,790,790,
+221999,act_comp_p25,C.914,34,yes,file text + collegedata.fyi,,34,34,
+221999,act_comp_p50,C.915,35,yes,file text + collegedata.fyi,,35,35,
+221999,act_comp_p75,C.916,35,yes,file text + collegedata.fyi,,35,35,
+221999,gpa_4_0,C.1121,31.6,yes,file text + collegedata.fyi,,31.6,31.6,
+221999,gpa_375_399,C.1122,56.6,yes,file text + collegedata.fyi,,56.6,56.6,
+221999,gpa_350_374,C.1123,9.1,yes,file text + collegedata.fyi,,9.1,9.1,
+221999,gpa_325_349,C.1124,1.4,yes,file text + collegedata.fyi,,1.4,1.4,
+221999,gpa_300_324,C.1125,0.6,yes,file text + collegedata.fyi,,0.6,0.6,
+221999,gpa_250_299,C.1126,0.6,yes,file text + collegedata.fyi,,0.6,0.6,
+221999,gpa_200_249,C.1127,0.1,yes,file text + collegedata.fyi,,0.1,0.1,
+221999,gpa_100_199,C.1128,0.0,yes,file text + collegedata.fyi,,0.0,0.0,
+221999,gpa_below_100,C.1129,0.0,yes,file text + collegedata.fyi,,0.0,0.0,
+221999,gpa_avg,C.1201,3.895,yes,file text + collegedata.fyi,,3.895,3.9,
+221999,gpa_submit_pct,C.1202,99.8,yes,file text + collegedata.fyi,,99.8,99.8,
+221999,ed_offered,C.2101,Yes,yes,file text + collegedata.fyi,,Yes,Yes,
+221999,ed_applicants,C.2110,6202,yes,file text + collegedata.fyi,,6202,6202,
+221999,ed_admits,C.2111,874,yes,file text + collegedata.fyi,,874,874,
+221999,ea_offered,C.2201,No,yes,file text + collegedata.fyi,,No,No,
 197133,applicants,C.117,12447,yes,form fields,12447,12447,12447,12447
 197133,admits,C.118,2311,yes,form fields,2311,2311,2311,2311
 197133,enrolled,C.119,665,yes,form fields,665,665,665,665
@@ -20223,7 +20183,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 168218,ed_admits,C.2111,301,yes,file text + collegedata.fyi,,301,301,
 168218,ea_offered,C.2201,,no,,,,No,
 168227,applicants,C.116,6692,yes,file text + collegedata.fyi,,6692,6692,
-168227,admits,C.117,,no,,,5877,5875,
+168227,admits,C.117,5875,yes,file text + collegedata.fyi,,5875,5875,
 168227,enrolled,C.118,1104,yes,file text + collegedata.fyi,,1104,1104,
 168227,waitlist_policy,C.201,,no,,,No,,
 168227,factor_rigor,C.701,,no,,,Important,Very Important,
@@ -20416,8 +20376,8 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 229814,ed_offered,C.2101,No,yes,file text + collegedata.fyi,,No,No,
 229814,ea_offered,C.2201,,no,,,,No,
 238032,applicants,C.117,20150,yes,file text + collegedata.fyi,,20150,20150,18729
-238032,admits,C.118,,no,,,17154,15570,16669
-238032,enrolled,C.119,4129,yes,file text + IPEDS same fall (lines by sex added up),,4129,,4129
+238032,admits,C.118,15570,yes,file text + collegedata.fyi,,15570,15570,16669
+238032,enrolled,C.119,,no,,,4126,,4129
 238032,waitlist_policy,C.201,,no,,,No,,
 238032,factor_rigor,C.701,,no,,,Not Considered,Very Important,
 238032,factor_class_rank,C.702,,no,,,Not Considered,Very Important,
@@ -20578,8 +20538,8 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 168254,gpa_avg,C.1201,3.52,yes,form fields,3.52,3.52,3.52,
 168254,gpa_submit_pct,C.1202,99.0,yes,form fields,99.0,99.0,99.0,
 168254,ea_offered,C.2201,Yes,yes,form fields,Yes,Yes,Yes,
-210429,applicants,C.117,3018,yes,form fields,3018,3043,3018,3060
-210429,admits,C.118,2960,yes,form fields,2960,2988,2960,3002
+210429,applicants,C.117,3018,yes,form fields,3018,3018,3018,3060
+210429,admits,C.118,2960,yes,form fields,2960,2960,2960,3002
 210429,enrolled,C.119,559,yes,form fields,559,559,559,559
 210429,waitlist_policy,C.201,No,yes,form fields,No,No,,
 210429,factor_rigor,C.701,Considered,yes,form fields,Considered,,Considered,

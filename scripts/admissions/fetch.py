@@ -4,10 +4,11 @@
     IPEDS_YEAR=2024 python3 scripts/admissions/fetch.py
 
 Sources (Department of Education, public, no key needed):
-- College Scorecard, Most Recent Institution-Level Data (https://collegescorecard.ed.gov/data/): the release
-  linked from that page when it can be read, else the pinned SCORECARD_ZIP; SCORECARD_ZIP_URL overrides both.
-- IPEDS complete data files HD, ADM and IC, each from its newest year that has a dictionary
-  (https://nces.ed.gov/ipeds/datacenter/data/<FILE><year>.zip and <FILE><year>_Dict.zip).
+- IPEDS complete data files (required): HD, ADM, IC, IC_AY, DRVEF, EF D, DRVGR and SFA, each from its newest
+  year that has a dictionary (https://nces.ed.gov/ipeds/datacenter/data/<FILE>.zip and <FILE>_Dict.zip).
+- College Scorecard, Most Recent Institution-Level Data (optional extras; https://collegescorecard.ed.gov/data/):
+  SCORECARD_ZIP_FILE (a downloaded copy), else SCORECARD_ZIP_URL, else the release linked from the data page,
+  else the pinned SCORECARD_ZIP.
 
 Writes raw/scorecard/institutions.csv, raw/ipeds/<file>.csv, raw/ipeds/<file>_dict.json (variable titles and code
 labels from the dictionary workbook) and data/admissions/manifest.json (URL, size, SHA-256, year of every file).
@@ -39,7 +40,13 @@ IPEDS = "https://nces.ed.gov/ipeds/datacenter/data/"
 SCORECARD_PAGE = "https://collegescorecard.ed.gov/data/"
 # "Most Recent Institution-Level Data", release of June 10, 2026. Update when Scorecard publishes a new release.
 SCORECARD_ZIP = "https://ed-public-download.scorecard.network/downloads/Most-Recent-Cohorts-Institution_06102026.zip"
-IPEDS_FILES = ["HD", "ADM", "IC"]
+# key -> file name for a given year. ADM: admissions; HD: directory; IC: characteristics; IC_AY: tuition;
+# DRVEF: derived enrollment; EF D: retention; DRVGR: derived graduation rates; SFA: net price.
+IPEDS_FILES = {
+    "hd": lambda y: f"HD{y}", "adm": lambda y: f"ADM{y}", "ic": lambda y: f"IC{y}", "ic_ay": lambda y: f"IC{y}_AY",
+    "drvef": lambda y: f"DRVEF{y}", "efd": lambda y: f"EF{y}D", "drvgr": lambda y: f"DRVGR{y}",
+    "sfa": lambda y: f"SFA{str(y - 1)[2:]}{str(y)[2:]}",
+}
 
 
 def get(url, tries=4):
@@ -111,44 +118,58 @@ def parse_dictionary(xlsx_bytes):
 
 
 def fetch_ipeds(manifest):
-    """Each file from its own newest published year (ADM, HD and IC are released on different schedules)."""
+    """Each file from its own newest published year (IPEDS releases its surveys on different schedules)."""
     forced = os.environ.get("IPEDS_YEAR")
     this_year = datetime.date.today().year
     years = [int(forced)] if forced else list(range(this_year, this_year - 5, -1))
     (RAW / "ipeds").mkdir(parents=True, exist_ok=True)
     manifest["ipeds_years"] = {}
-    for f in IPEDS_FILES:
-        year = next((y for y in years if exists(f"{IPEDS}{f}{y}.zip") and exists(f"{IPEDS}{f}{y}_Dict.zip")), None)
+    for key, name_for in IPEDS_FILES.items():
+        year = next((y for y in years if exists(f"{IPEDS}{name_for(y)}.zip")
+                     and exists(f"{IPEDS}{name_for(y)}_Dict.zip")), None)
         if year is None:
-            raise SystemExit(f"no published IPEDS {f} file with a dictionary (tried {years})")
-        name = f"{f}{year}"
+            raise SystemExit(f"no published IPEDS {name_for(this_year)} file with a dictionary (tried {years})")
+        name = name_for(year)
         url = f"{IPEDS}{name}.zip"
         data = get(url)
         with zipfile.ZipFile(io.BytesIO(data)) as zf:
             member = pick_member(zf, ".csv")
-            (RAW / "ipeds" / f"{f.lower()}.csv").write_bytes(zf.read(member))
-        record(manifest, f"ipeds_{f.lower()}", url, data, year=year, member=member)
+            (RAW / "ipeds" / f"{key}.csv").write_bytes(zf.read(member))
+        record(manifest, f"ipeds_{key}", url, data, year=year, member=member)
         durl = f"{IPEDS}{name}_Dict.zip"
         ddata = get(durl)
         with zipfile.ZipFile(io.BytesIO(ddata)) as zf:
             parsed = parse_dictionary(zf.read(pick_member(zf, ".xlsx")))
-        write_json(RAW / "ipeds" / f"{f.lower()}_dict.json", parsed)
-        record(manifest, f"ipeds_{f.lower()}_dict", durl, ddata, year=year)
-        manifest["ipeds_years"][f.lower()] = year
+        write_json(RAW / "ipeds" / f"{key}_dict.json", parsed)
+        record(manifest, f"ipeds_{key}_dict", durl, ddata, year=year)
+        manifest["ipeds_years"][key] = year
         print(f"IPEDS {name}: {member}, {len(parsed['vars'])} variables in dictionary")
 
 
 def fetch_scorecard(manifest):
+    """Optional: Scorecard's download host refuses GitHub's runners (403). Without it, the Scorecard-only
+    columns (earnings, accreditor, SAT average, ...) stay empty. On a machine it lets through, set
+    SCORECARD_ZIP_FILE to a downloaded copy or let this function download it."""
+    local = os.environ.get("SCORECARD_ZIP_FILE")
     url = os.environ.get("SCORECARD_ZIP_URL")
-    if not url:
-        try:  # a newer release than the pinned one, if the data page links it
-            page = get(SCORECARD_PAGE, tries=1).decode("utf-8", "ignore")
-            links = re.findall(r"""(https://[^"'()\s]*Most-Recent-Cohorts-Institution[^"'()\s]*\.zip)""", page)
-            url = links[0] if links else None
-        except Exception as e:  # the page refuses scripted requests (403); fall back to the pinned release
-            print(f"Scorecard data page not readable ({e}); using {SCORECARD_ZIP}")
-        url = url or SCORECARD_ZIP
-    data = get(url)
+    try:
+        if local:
+            data, url = open(local, "rb").read(), local
+        else:
+            if not url:
+                try:  # a newer release than the pinned one, if the data page links it
+                    page = get(SCORECARD_PAGE, tries=1).decode("utf-8", "ignore")
+                    links = re.findall(r"""(https://[^"'()\s]*Most-Recent-Cohorts-Institution[^"'()\s]*\.zip)""",
+                                       page)
+                    url = links[0] if links else None
+                except Exception as e:
+                    print(f"Scorecard data page not readable ({e}); using {SCORECARD_ZIP}")
+                url = url or SCORECARD_ZIP
+            data = get(url)
+    except Exception as e:
+        print(f"WARNING: College Scorecard not downloaded ({e}); Scorecard-only columns will be empty")
+        manifest["scorecard_missing"] = str(e)
+        return
     with zipfile.ZipFile(io.BytesIO(data)) as zf:
         members = [n for n in zf.namelist() if n.lower().endswith(".csv") and "institution" in n.lower()]
         member = (members or [pick_member(zf, ".csv")])[0]

@@ -7,6 +7,7 @@ more admits than applicants, an alias, a typo and two posts for one college.
 """
 import csv
 import json
+import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -47,16 +48,20 @@ with tempfile.TemporaryDirectory() as tmp:
     eq("Harvard control and level", (h["control"], h["level"]), ("Private not-for-profit", "Four or more years"))
     eq("Harvard Carnegie uses newest C??BASIC", h["carnegie"], "Doctoral Universities: Very High Research Activity")
     eq("Harvard negative longitude kept", h["lon"], "-71.118")
-    eq("Harvard undergrads (not total enrollment)", h["undergrad_enrollment"], "7110")
-    eq("Harvard net price falls back to private", h["net_price"], "14327")
+    eq("Harvard undergrads from IPEDS (not total enrollment)", h["undergrad_enrollment"], "7240")
+    eq("Harvard tuition from the latest IC_AY year", (h["tuition_in_state"], h["tuition_out_of_state"]),
+       ("59320", "59320"))
+    eq("Harvard net price from the private variable", h["net_price"], "13900")
+    eq("Harvard grad and retention rates as 0-1", (h["grad_rate"], h["retention_rate"]), ("0.97", "0.98"))
     eq("Harvard religious affiliation not applicable -> empty", h["religious_affiliation"], "")
     eq("Harvard not-applicable dates empty", (h["closed_date"], h["merged_into"]), ("", ""))
 
     a = rows["100751"]
     eq("Alabama impossible SAT math 900 dropped", (a["sat_math_p25"], a["sat_math_p75"]), ("540", ""))
     eq("Alabama suppressed earnings empty, not 0", a["median_earnings_10yr"], "")
-    eq("Alabama grad rate from C150_L4 when C150_4 is null", a["grad_rate"], "0.72")
-    eq("Alabama public net price", a["net_price"], "22000")
+    eq("Alabama grad rate falls back to Scorecard when IPEDS is empty", a["grad_rate"], "0.72")
+    eq("Alabama imputed retention dropped, Scorecard fallback", a["retention_rate"], "0.87")
+    eq("Alabama public net price", a["net_price"], "21500")
 
     s = rows["888001"]
     eq("Scorecard-only row uses Scorecard admissions", (s["admissions_source"], s["admit_rate"]),
@@ -72,6 +77,8 @@ with tempfile.TemporaryDirectory() as tmp:
     eq("field sources cite ADM year and variable", (src["applicants"]["source"], src["applicants"]["variable"]),
        ("IPEDS ADM2024", "APPLCN"))
     eq("ADMCON mapped by dictionary title", src["req_legacy"]["variable"], "ADMCON12")
+    eq("measure sources name the variable", (src["tuition_in_state"]["variable"], src["net_price"]["variable"]),
+       ("CHG2AY3", "NPGRN2 / NPIST2"))
     eq("report lists dropped values", "more admits than applicants" in report and "outside 200-800" in report, True)
 
     res = {r["slug"]: r for r in match.main(["--colleges", str(FIX / "colleges"),
@@ -87,6 +94,18 @@ with tempfile.TemporaryDirectory() as tmp:
     eq("no candidate", res["gone-forever"]["method"], "none")
     review = list(csv.DictReader(open(tmp / "match_review.csv")))
     eq("review list", sorted(r["slug"] for r in review), ["example-college", "gone-forever", "saint-example"])
+
+# Without the Scorecard file (its host refuses GitHub's runners) the build still runs on IPEDS alone.
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    shutil.copytree(FIX, tmp / "fix")
+    shutil.rmtree(tmp / "fix" / "raw" / "scorecard")
+    build.main(["--raw", str(tmp / "fix" / "raw"), "--out", str(tmp)])
+    rows = {r["unitid"]: r for r in csv.DictReader(open(tmp / "institutions.csv"))}
+    h = rows["166027"]
+    eq("IPEDS-only build keeps admissions and cost", (h["admit_rate"], h["tuition_in_state"]), ("0.0364", "59320"))
+    eq("IPEDS-only build leaves Scorecard columns empty", (h["median_earnings_10yr"], h["accreditor"]), ("", ""))
+    eq("IPEDS-only universe", sorted(rows), ["100751", "166027", "999001", "999003"])
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

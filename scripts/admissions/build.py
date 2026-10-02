@@ -51,23 +51,37 @@ COST = ["undergrad_enrollment", "tuition_in_state", "tuition_out_of_state", "net
         "retention_rate", "median_earnings_10yr"]
 
 
+IPEDS_KEYS = ("hd", "adm", "ic", "ic_ay", "drvef", "efd", "drvgr", "sfa")
+# IPEDS measures found by dictionary title: column -> (file, title phrase, phrases to exclude).
+MEASURES = {
+    "undergrad_enrollment": ("drvef", "undergraduate enrollment", ("percent", "full-time", "part-time")),
+    "tuition_in_state": ("ic_ay", "in-state tuition and fees", ("out-of-state", "in-district")),
+    "tuition_out_of_state": ("ic_ay", "out-of-state tuition and fees", ()),
+    "net_price": ("sfa", "average net price-students awarded grant or scholarship aid", ("income",)),
+    "grad_rate": ("drvgr", "graduation rate, total cohort", ()),
+    "retention_rate": ("efd", "full-time retention rate", ()),
+}
+
+
 class Data:
     def __init__(self, raw):
         raw = Path(raw)
         self.ipeds = {}
         self.dicts = {}
-        for f in ("hd", "adm", "ic"):
+        for f in IPEDS_KEYS:
             rows = read_csv(raw / "ipeds" / f"{f}.csv")
             self.ipeds[f] = {r["UNITID"]: r for r in rows}
             self.dicts[f] = json.loads((raw / "ipeds" / f"{f}_dict.json").read_text())
             self.dicts[f]["header"] = set(rows[0]) if rows else set()
-        sc = read_csv(raw / "scorecard" / "institutions.csv")
+        sc_file = raw / "scorecard" / "institutions.csv"  # optional: the download host may refuse us
+        sc = read_csv(sc_file) if sc_file.exists() else []
         self.sc = {r["UNITID"]: r for r in sc}
         self.sc_header = set(sc[0]) if sc else set()
         manifest = raw.parent / "manifest.json"
         self.manifest = json.loads(manifest.read_text()) if manifest.exists() else {}
         self.years = self.manifest.get("ipeds_years", {})  # {"hd": 2024, "adm": 2024, "ic": 2024}
         self.year = self.years.get("adm")
+        self.measures = {col: (f, self.titled(f, phrase, exclude)) for col, (f, phrase, exclude) in MEASURES.items()}
         self.imputed = Counter()
         self.dropped = []  # (unitid, column, value, reason)
 
@@ -85,10 +99,29 @@ class Data:
                    "TUITIONFEE_OUT", "NPT4_PUB", "NPT4_PRIV", "CURROPER", "MAIN", "PREDDEG", "HIGHDEG",
                    "ACCREDAGENCY", "C150_4", "C150_L4", "RET_FT4", "RET_FTL4", "MD_EARN_WNE_P10"] + \
                   [f"{p}{q}" for p in TEST_PARTS for q in (25, 75)]
-        missing += [f"scorecard: {v}" for v in sc_need if v not in self.sc_header]
+        if self.sc:
+            missing += [f"scorecard: {v}" for v in sc_need if v not in self.sc_header]
+        for col, (f, var) in self.measures.items():
+            if var is None:
+                missing.append(f"{f}: no variable titled like {MEASURES[col][1]}")
         if missing:
             raise SystemExit("columns missing from the source files (renamed in this release?):\n  "
                              + "\n  ".join(missing))
+
+    def titled(self, f, phrase, exclude=()):
+        """Variables whose dictionary title holds phrase (an exact title wins), from the latest year named in the
+        titles: IC_AY and SFA carry several years side by side (e.g. CHG2AY0..CHG2AY3). Several variables can
+        share a title (SFA's public and private net price); the first with a value is used."""
+        hits = []
+        for var, meta in self.dicts[f]["vars"].items():
+            t = " ".join(meta["title"].lower().split())
+            if phrase in t and not any(x in t for x in exclude) and var in self.dicts[f]["header"]:
+                year = max((int(y) for y in re.findall(r"(?:19|20)\d\d", t)), default=0)
+                hits.append((t != phrase, -year, var))
+        if not hits:
+            return None
+        best = min(hits)[:2]
+        return tuple(sorted(v for e, y, v in hits if (e, y) == best))
 
     def by_title(self, f, prefix, keywords):
         """{our column: variable} for variables like ADMCON3, matched on their dictionary title."""
@@ -218,12 +251,22 @@ def build_row(d, uid, admcon, credits):
     for col, var in credits.items():
         row[col] = yes_no(d.label("ic", uid, var))
 
-    row["undergrad_enrollment"] = num(d.sv(uid, "UGDS"), "int")
-    row["tuition_in_state"] = num(d.sv(uid, "TUITIONFEE_IN"), "int")
-    row["tuition_out_of_state"] = num(d.sv(uid, "TUITIONFEE_OUT"), "int")
-    row["net_price"] = num(d.sv(uid, "NPT4_PUB") or d.sv(uid, "NPT4_PRIV"), "int")
-    row["grad_rate"] = num(d.sv(uid, "C150_4") or d.sv(uid, "C150_L4"))
-    row["retention_rate"] = num(d.sv(uid, "RET_FT4") or d.sv(uid, "RET_FTL4"))
+    def measure(col, kind="int", scale=1):
+        f, variables = d.measures[col]
+        v = None
+        for var in variables or ():
+            v = num(d.iv(f, uid, var), "float")
+            if v is not None:
+                break
+        return None if v is None else (int(round(v)) if kind == "int" else round(v / scale, 4))
+
+    row["undergrad_enrollment"] = measure("undergrad_enrollment") or num(d.sv(uid, "UGDS"), "int")
+    row["tuition_in_state"] = measure("tuition_in_state") or num(d.sv(uid, "TUITIONFEE_IN"), "int")
+    row["tuition_out_of_state"] = measure("tuition_out_of_state") or num(d.sv(uid, "TUITIONFEE_OUT"), "int")
+    row["net_price"] = measure("net_price") or num(d.sv(uid, "NPT4_PUB") or d.sv(uid, "NPT4_PRIV"), "int")
+    gr, ret = measure("grad_rate", "rate", 100), measure("retention_rate", "rate", 100)
+    row["grad_rate"] = gr if gr is not None else num(d.sv(uid, "C150_4") or d.sv(uid, "C150_L4"))
+    row["retention_rate"] = ret if ret is not None else num(d.sv(uid, "RET_FT4") or d.sv(uid, "RET_FTL4"))
     row["median_earnings_10yr"] = num(d.sv(uid, "MD_EARN_WNE_P10"), "int")
     check(d, row)
     return row
@@ -289,12 +332,10 @@ def sources(d, admcon, credits):
         "sat_submit_pct": (f"IPEDS ADM{y}", "SATPCT", y, "% of enrollees who submitted SAT"),
         "act_submit_pct": (f"IPEDS ADM{y}", "ACTPCT", y, "% of enrollees who submitted ACT"),
         "sat_avg": (sc, "SAT_AVG", None, "Scorecard's SAT-equivalent average of admitted students (derived)"),
-        "undergrad_enrollment": (sc, "UGDS", None, "Degree-seeking undergraduates"),
-        "tuition_in_state": (sc, "TUITIONFEE_IN", None, "Tuition and fees, USD"),
-        "tuition_out_of_state": (sc, "TUITIONFEE_OUT", None, "Tuition and fees, USD"),
-        "net_price": (sc, "NPT4_PUB / NPT4_PRIV", None, "Average net price, USD"),
-        "grad_rate": (sc, "C150_4 / C150_L4", None, "Completion within 150% of normal time, 0-1"),
-        "retention_rate": (sc, "RET_FT4 / RET_FTL4", None, "First-time full-time retention, 0-1"),
+        **{col: (f"IPEDS {d.measures[col][0].upper()} {d.years.get(d.measures[col][0])} (else Scorecard)",
+                 " / ".join(d.measures[col][1] or ()), d.years.get(d.measures[col][0]),
+                 d.dicts[d.measures[col][0]]["vars"].get((d.measures[col][1] or ("",))[0], {}).get("title", ""))
+           for col in MEASURES},
         "median_earnings_10yr": (sc, "MD_EARN_WNE_P10", None, "Median earnings 10 years after entry, USD"),
     }
     for part in TEST_PARTS:

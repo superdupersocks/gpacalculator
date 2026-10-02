@@ -390,5 +390,5 @@ switch ( $cd_args[0] ?? '' ) {
 		cd_revert( $cd_args[1] ?? '' );
 		break;
 	default:
-		WP_CLI::error( 'usage: plan|apply <C|D|S|M> <actions.csv> <log.tsv> [<consolidate.csv>], or revert <log.tsv>' );
+		WP_CLI::error( 'usage: plan|apply <C|D|S|M|R|P|N> <actions.csv> <log.tsv> [<consolidate.csv>], or revert <log.tsv>' );
 }

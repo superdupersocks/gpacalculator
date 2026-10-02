@@ -25,6 +25,7 @@ import cds_pages  # noqa: E402
 import fetch  # noqa: E402
 import match  # noqa: E402
 import phase2_e_import  # noqa: E402
+import phase2_r_review  # noqa: E402
 import phase2_s_pages  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
@@ -621,6 +622,65 @@ eq("S: each new page gets E's fields, and its campuses a 301 to it",
     [(a["checkpoint"], a["slug"], a["action"], a["target"]) for a in _act]),
    ([{"slug": "harvard-new", "post_title": "Harvard New"}], [("harvard-new", "Harvard New", "166027", "3.6%")],
     [("S", "harvard-extension", "301", "https://gpacalculator.net/admissions/harvard-new/")]))
+
+# Identity review of the pages E left unchanged
+_r = phase2_r_review
+_older = ("IPEDS HD2002-HD2013: DeVry University-Utah (UNITID 448877), Sandy, UT; deleted from IPEDS 2013 (DEATHYR); "
+          "merged into UNITID 482644 (NEWID) | IPEDS HD2013-HD2015: DeVry University-Utah (UNITID 482644), Sandy, UT; "
+          "closed 06/01/2015 (CLOSEDAT, HD2015); deleted from IPEDS 2015 (DEATHYR)")
+_two = ("IPEDS HD2002-HD2005: Medvance Institute (UNITID 415011), Baton Rouge, LA; closed 12/31/2004 (CLOSEDAT, HD2005)"
+        " | IPEDS HD2002-HD2023: Fortis College-Baton Rouge (UNITID 439738), Baton Rouge, LA")
+eq("R: the audit's older records parse, and a NEWID chain leads to one college or, with two colleges, to none",
+   ([(s["unitid"], s["last"], s["closed"], s["newid"]) for s in _r.segments(_older)],
+    _r.chain_end(_r.segments(_older)), _r.chain_end(_r.segments(_two))),
+   ([("448877", 2013, "", "482644"), ("482644", 2015, "06/01/2015", "")], "482644", ""))
+_rm = {"method": "review", "unitid": "", "ipeds_name": ""}
+eq("R: which college a page names now: renamed, merged, a NEWID chain that closed, a near-exact name; none when it "
+   "left IPEDS or was never in it",
+   [_r.identity(slug, f, o, {"merged-one": {"successor_unitid": "231165", "successor_name": "Vermont State University"}},
+                m)[0] for slug, f, o, m in (
+       ("old-name", "renamed: same name, city and state as UNITID 188438, now SUNY Adirondack", "", _rm),
+       ("merged-one", "", "", _rm),
+       ("devry-utah", "ambiguous: 2 colleges carried this name in this city", _older, _rm),
+       ("typo", "", "", {"method": "fuzzy", "unitid": "180878", "ipeds_name": "Bryan College of Health Sciences"}),
+       ("gone", "left IPEDS: last listed in HD2016, no closing date recorded", "", _rm),
+       ("never", "", "", _rm))],
+   ["188438", "231165", "482644", "180878", "", ""])
+_ri = {"129367": {"name": "Connecticut State Community College", "closed_date": "", "operating": "Yes",
+                  "control": "Public", "level": "2-year", "opeid": "00163500"},
+       "150987": {"name": "Ivy Tech Community College", "closed_date": "", "operating": "Yes", "control": "Public",
+                  "level": "2-year", "opeid": "00932400"},
+       "15098713": {"name": "Ivy Tech Community College-Bloomington", "closed_date": "", "operating": "Yes",
+                    "control": "", "level": "", "opeid": "00932413"},
+       "1": {"name": "Closed U", "closed_date": "05/01/2020", "operating": "", "control": "Public", "level": "4-year",
+             "opeid": "1"},
+       "2": {"name": "Has Page U", "closed_date": "", "operating": "Yes", "control": "Public", "level": "4-year",
+             "opeid": "2"},
+       "3": {"name": "Gone U", "closed_date": "", "operating": "No", "control": "Public", "level": "4-year",
+             "opeid": "3"},
+       "4": {"name": "Unlisted U", "closed_date": "", "operating": "", "control": "Public", "level": "4-year",
+             "opeid": "4"},
+       "5": {"name": "Renamed U", "closed_date": "", "operating": "Yes", "control": "Public", "level": "4-year",
+             "opeid": "5"}}
+eq("R: outcomes: a new N page, an S page (also for a campus S's college reports for), IPEDS's closing date, an "
+   "existing page, Scorecard's not-operating or missing flag, and E's import",
+   [_r.outcome("x", u, _ri, {"2": "has-page"}, {"150987": "ivy-tech-community-college"})[:3] for u in (
+       "129367", "150987", "15098713", "1", "2", "3", "4", "5", "9")],
+   [("301", "N", "129367"), ("301", "P", "150987"), ("301", "P", "150987"), ("retire", "R", ""), ("301", "R", "2"),
+    ("hold", "", ""), ("hold", "", ""), ("import", "R", ""), ("hold", "", "")])
+_rmatch = {s: {"title": s.title(), "location": "X, Y", "method": "review", "unitid": "", "ipeds_name": ""}
+           for s in ("a-college", "a-college-too", "ats-institute-of-technology", "b-college")}
+_rrows, _rimp = _r.review(sorted(_rmatch), {
+    "a-college": {"finding": "renamed: same name, city and state as UNITID 5, now Renamed U", "older_ipeds": ""},
+    "a-college-too": {"finding": "renamed: same name, city and state as UNITID 5, now Renamed U", "older_ipeds": ""},
+    "ats-institute-of-technology": {"finding": "renamed: same name, city and state as UNITID 5, now Renamed U",
+                                    "older_ipeds": ""},
+    "b-college": {"finding": "renamed: same name, city and state as UNITID 2, now Has Page U", "older_ipeds": ""}},
+    {}, _rmatch, _ri, {"2": "has-page"}, {})
+eq("R: two pages confirmed as one college both wait; a manual hold stays; a college with a page gets the 301",
+   ([(r["slug"], r["outcome"], r["target"]) for r in _rrows], _rimp),
+   ([("a-college", "hold", ""), ("a-college-too", "hold", ""), ("ats-institute-of-technology", "hold", ""),
+     ("b-college", "301", "https://gpacalculator.net/admissions/has-page/")], {}))
 
 # CDS files on another college's website aren't this college's (same-named colleges)
 _web = {"219718": {"name": "Bethel University", "website": "www.bethelu.edu/"},

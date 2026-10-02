@@ -244,6 +244,67 @@ If Digant approves only part of it, run only that part: S needs the new pages (s
    log, `bash scripts/admissions/phase2_e_live.sh revert <log>`, `bash scripts/admissions/phase2_s_live.sh revert <log>`.
 7. Changelog: one row each for the new pages, Fortis's fields, S and M, each with its undo.
 
+## Identity review: fresh figures for 212 more pages, and 19 closed or merged colleges (R)
+
+Within the go of 05:58, on E's and C's terms: it kept the 399 live pages without a confident match unchanged pending
+review, and `scripts/admissions/phase2_r_review.py` is that review (`data/admissions/audit/phase2_r_review.csv` has
+every page, the college it is now and why). It uses the audit's own evidence: a college whose exact name, city and
+state an older IPEDS directory gives to a UNITID that IPEDS 2024 still lists under a new name (Adirondack Community
+College is SUNY Adirondack), or a chain of UNITIDs linked by IPEDS's NEWID. A page gets E's fields only when that
+college is open in IPEDS 2024, operating in College Scorecard and no other page here has it. Two judgment calls
+settle which college a page is and seven leave a page unchanged (`MANUAL` in the script). Runs after "B2, second
+list"; P and N below wait for Digant's word.
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-r.sql.gz`).
+2. Fresh figures: `bash scripts/admissions/phase2_e_live.sh plan data/admissions/audit/phase2_r_import.csv` must end
+   "212 posts would change, 0 already match, 0 skipped" (report any skip), then the same command with `apply`.
+3. Closed and merged colleges: `bash scripts/admissions/phase2_cd_live.sh plan R` must end "19 rows ready, 0 fields
+   to copy" (16 retire: 15 DeVry campuses and University of Phoenix's Colorado campus, each with a closing date in
+   IPEDS; 3 x 301: Milligan College to Milligan University, Southwest Georgia Technical College to Southern Regional
+   Technical College, Northwood University's Texas campus to its Michigan page, which step 2 updates). Then
+   `apply R` and `check R` ("38 addresses checked, 0 wrong").
+4. Check: /admissions/pennsylvania-state-university-main-campus/ shows 61% for fall 2024 (53,579 of 88,478
+   applicants), SAT 620–700 reading and writing and 620–720 math; /admissions/miami-university/ 75% (29,843 of
+   39,580); /admissions/arizona-state-university/ 90% (63,756 of 70,928); /admissions/devry-university-utah/ answers
+   410 and /admissions/milligan-college/ lands on /admissions/milligan-university/. On each updated page the JSON-LD
+   parses and Freestar tags are present.
+   If anything breaks: `bash scripts/admissions/phase2_cd_live.sh revert <R log>`, then
+   `bash scripts/admissions/phase2_e_live.sh revert <log>`.
+5. Changelog: one row for the 212 pages' fields and one for R, each with its undo.
+
+## P: 16 more pages into S's new pages (with S)
+
+Runs right after "Held pages" step 4, only if Digant approves S: redirects of the same kind, to the same six pages,
+that the identity review found. Ivy Tech's nine regional pages and its Bloomington page go to Ivy Tech Community
+College, Hibbing, Itasca, Mesabi Range and Vermilion to Minnesota North College, Baker College of Flint to Baker
+College and Olney Central College to Illinois Eastern Community Colleges.
+
+1. `bash scripts/admissions/phase2_cd_live.sh plan P` must end "16 rows ready, 0 fields to copy" (a `SKIP` for a
+   target that isn't published means S's pages aren't there yet), then `apply P` and `check P` ("32 addresses
+   checked, 0 wrong").
+2. Changelog: one row with its undo, `bash scripts/admissions/phase2_cd_live.sh revert <P log>`.
+
+## N: pages for seven colleges formed by mergers, and 30 redirects to them (waits for Digant's word)
+
+Like S: several of our pages now report to IPEDS as one college that has no page here. Connecticut State Community
+College (12 former colleges), Coastal Alabama Community College (3), Metropolitan Community College-Kansas City (5),
+Vermont State University (4), Long Island University (2), Pierce College District (2) and Montgomery County Community
+College (2) each get a page with E's fresh fields (`phase2_n_new.csv`, `phase2_n_pages.csv`), and the 30 pages 301
+there (checkpoint N in `phase2_r_actions.csv`).
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-n.sql.gz`).
+2. New pages: `bash scripts/admissions/phase2_s_live.sh plan N` must end "7 pages would be added, 0 skipped" (report
+   any `SKIP`), then `bash scripts/admissions/phase2_s_live.sh apply N`; it ends "added 7, skipped 0" and names the
+   log. Then `bash scripts/admissions/phase2_e_live.sh plan data/admissions/audit/phase2_n_pages.csv` must end "0 posts
+   would change, 7 already match, 0 skipped".
+3. N: `bash scripts/admissions/phase2_cd_live.sh plan N` must end "30 rows ready, 0 fields to copy", then `apply N` and
+   `check N` ("60 addresses checked, 0 wrong").
+4. Check: /admissions/connecticut-state-community-college/ shows Open Admission and 36,315 undergraduates (fall 2024);
+   /admissions/long-island-university/ 86% for fall 2024; the JSON-LD parses and Freestar tags are present on each.
+   If anything breaks: `bash scripts/admissions/phase2_cd_live.sh revert <N log>`, then
+   `bash scripts/admissions/phase2_s_live.sh revert <log>`.
+5. Changelog: one row for the new pages and one for N, each with its undo.
+
 ## C and D: retire closed colleges, redirect merged ones and duplicates
 
 The list is `data/admissions/audit/phase2_cd_actions.csv`, made by `scripts/admissions/phase2_cd_actions.py` from the

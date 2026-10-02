@@ -14,8 +14,13 @@ page, by the rules E and C already use:
 - the college now reports as a campus of one of the six colleges S adds: 301 to that page (P, after S);
 - several of our pages now report as one college that has no page here: a page for that college and a 301 from
   each (N, waits for Digant's word, like S);
-- everything else stays unchanged, with what would settle it (FSA's closed-school list for the colleges that left
-  IPEDS, the college's own site for the rest).
+- a college that left IPEDS, or that no IPEDS directory since 2002 lists, and that Federal Student Aid's closed-school
+  file lists as closed (by its OPEID from IPEDS, else by exact name, city and state): 410 (R, like C). E's held pages
+  that IPEDS 2024 lists but College Scorecard doesn't, or calls closed, get the same check;
+- everything else stays unchanged, with what would settle it (the college's own site).
+
+FSA's file and the colleges' older IPEDS records with their OPEIDs come from scripts/admissions/review_sources.py, which
+runs on GitHub (data/admissions/review/); without them the FSA check finds nothing.
 
 Writes data/admissions/audit/:
 - phase2_r_review.csv: every page reviewed, with the college it now is, the outcome and why
@@ -116,6 +121,73 @@ def chain_end(segs):
             u = succ[u]
         ends.add(u)
     return ends.pop() if len(ends) == 1 else ""
+
+
+REVIEW = e.DATA / "review"
+LEFT = "left IPEDS without a closing date: check FSA's closed-school list"
+NEVER = "no IPEDS directory since 2002 lists this name in this state"
+ABBREVIATIONS = {"st": "saint", "ft": "fort", "mt": "mount"}
+
+
+def norm(s):
+    """A name or city for comparison: lower case, '&' as 'and', no punctuation, 'the' or 'inc', St. as Saint."""
+    words = re.sub(r"[^a-z0-9 ]", " ", (s or "").lower().replace("&", " and ")).split()
+    return " ".join(ABBREVIATIONS.get(w, w) for w in words if w not in ("the", "inc"))
+
+
+def iso(date):
+    """A closing date as YYYY-MM-DD (FSA's may read MM/DD/YYYY or YYYY-MM-DD...), else as given."""
+    m = re.match(r"(\d{1,2})/(\d{1,2})/(\d{4})", date or "")
+    if m:
+        return f"{m.group(3)}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
+    m = re.match(r"\d{4}-\d{2}-\d{2}", date or "")
+    return m.group(0) if m else (date or "")
+
+
+def fsa_closures():
+    """FSA's closed-school file by OPEID and by (name, city, state); both empty until review_sources.py has run."""
+    by_ope, by_place = {}, {}
+    path = REVIEW / "fsa_closed_schools.csv"
+    if path.exists():
+        for r in e.read(path):
+            r = {**r, "close_date": iso(r["close_date"]), "state": r["state"].strip().upper()}
+            by_ope.setdefault(r["opeid"], []).append(r)
+            by_place.setdefault((norm(r["name"]), norm(r["city"]), r["state"]), []).append(r)
+    return by_ope, by_place
+
+
+def opeids_of(uids, hist, inst):
+    """The OPEIDs IPEDS gave these UNITIDs (institutions.csv, then ipeds_history.csv), newest first, no repeats."""
+    out = [inst[u]["opeid"] for u in uids if inst.get(u, {}).get("opeid")]
+    for h in sorted((h for u in uids for h in hist.get(u, [])), key=lambda h: -int(h["last_year"])):
+        out.append(h["opeid"])
+    return list(dict.fromkeys(o for o in out if o))
+
+
+def fsa_closed(opeids, place, open_until, by_ope, by_place):
+    """(closing date, evidence) when FSA's closed-school file lists the college as closed, else ('', why not).
+
+    opeids: the college's OPEIDs from IPEDS, looked up first; place: (name, city, two-letter state), matched exactly
+    (after norm) when no OPEID is listed, and the state an OPEID's listing must be in. A closing date before the year
+    ahead of the last IPEDS directory that lists the college (open_until) doesn't count: that listing says it was open.
+    """
+    found, how = [r for o in opeids for r in by_ope.get(o, [])], "OPEID"
+    if not found and place:
+        found, how = by_place.get((norm(place[0]), norm(place[1]), place[2]), []), "name, city and state"
+    if not found:
+        if not (by_ope or by_place):
+            return "", "FSA's closed-school file hasn't been downloaded (review_sources.py)"
+        return "", (f"FSA's closed-school file doesn't list OPEID {', '.join(opeids)}" if opeids else
+                    "FSA's closed-school file lists no school with this name in this city and state")
+    r = max(found, key=lambda x: x["close_date"])
+    said = f"FSA's closed-school file lists OPEID {r['opeid']} ({r['name']}, {r['city']}, {r['state']})"
+    if not re.match(r"\d{4}-\d{2}-\d{2}$", r["close_date"]):
+        return "", f"{said} with a closing date that can't be read: {r['close_date']!r}"
+    if place and r["state"] != place[2]:
+        return "", f"{said}, not in {place[2]}"
+    if open_until and int(r["close_date"][:4]) < open_until - 1:
+        return "", f"{said} closed {r['close_date']}, but IPEDS lists the college until HD{open_until}"
+    return r["close_date"], f"closed {r['close_date']} ({said}, matched by {how})"
 
 
 def identity(slug, finding, older, merged, match):
@@ -222,6 +294,49 @@ def review(pages, unmatched, merged, match, inst, page_of, s_pages):
     return rows, imports
 
 
+def ipeds_history():
+    """review_sources.py's older IPEDS records by UNITID (with their OPEIDs); empty until it has run."""
+    hist = {}
+    if (REVIEW / "ipeds_history.csv").exists():
+        for h in e.read(REVIEW / "ipeds_history.csv"):
+            hist.setdefault(h["unitid"], []).append(h)
+    return hist
+
+
+def fsa_review(rows, unmatched, match, inst, held, hist, by_ope, by_place):
+    """FSA's closed-school file for the review's colleges that left IPEDS or that no directory since 2002 lists
+    (updates rows in place), and for E's held pages that IPEDS 2024 lists but College Scorecard doesn't or calls closed
+    (returns their rows). A closure FSA confirms retires the page in R."""
+    for r in rows:
+        if r["outcome"] != "hold" or r["reason"] not in (LEFT, NEVER):
+            continue
+        if r["reason"] == LEFT:
+            segs = segments(unmatched[r["slug"]]["older_ipeds"])
+            last = max(segs, key=lambda s: s["last"])
+            date, why = fsa_closed(opeids_of([s["unitid"] for s in segs], hist, inst),
+                                   (last["name"], last["city"], last["state"]), last["last"], by_ope, by_place)
+            before = f"left IPEDS after HD{last['last']} without a closing date"
+        else:
+            city, _, state = r["location"].rpartition(", ")
+            date, why = fsa_closed([], (r["title"], city, e.STATES.get(state, "")), 0, by_ope, by_place)
+            before = NEVER
+        r.update(outcome="retire", checkpoint="R", target="", reason=f"{before}; {why}") if date else \
+            r.update(reason=f"{before}; {why}")
+    out = []
+    for h in held:
+        if not h["why"].startswith(("open in IPEDS 2024", "not operating according to College Scorecard")):
+            continue
+        i = inst.get(h["unitid"], {})
+        date, why = fsa_closed(opeids_of([h["unitid"]], hist, inst), (i.get("name", ""), i.get("city", ""),
+                               i.get("state", "")), 2024, by_ope, by_place)
+        out.append({"slug": h["slug"], "url": f"{SITE}{h['slug']}/", "title": h["post_title"],
+                    "location": match.get(h["slug"], {}).get("location", ""), "finding": "E held",
+                    "unitid": h["unitid"], "ipeds_name": i.get("name", ""), "ipeds_city": i.get("city", ""),
+                    "ipeds_state": i.get("state", ""), "outcome": "retire" if date else "hold",
+                    "checkpoint": "R" if date else "", "target": "", "reason": f"{h['why']}; {why}"})
+    return out
+
+
 def main():
     inst = e.institutions()
     years = e.source_years()
@@ -250,6 +365,9 @@ def main():
                      reason=r["reason"].replace("the college it merged into has no page yet",
                                                 "R imports that college's page"))
 
+    rows += fsa_review(rows, unmatched, match, inst, read(AUDIT / "phase2_e_held.csv"), ipeds_history(),
+                       *fsa_closures())
+
     import_rows = [e.row_for({"slug": s, "title": match[s]["title"]}, inst[u], years) for s, u in sorted(imports.items())]
     new = [{"slug": s, "post_title": t} for s, t in NEW_PAGES.values()]
     new_rows = [e.row_for({"slug": s, "title": t}, inst[u], years) for u, (s, t) in NEW_PAGES.items()]
@@ -266,8 +384,10 @@ def main():
             w.writeheader()
             w.writerows(data)
     n = Counter((r["outcome"], r["checkpoint"]) for r in rows)
-    print(f"{len(rows)} pages: import {n[('import', 'R')]}; R: {n[('retire', 'R')]} x 410, {n[('301', 'R')]} x 301; "
-          f"P: {n[('301', 'P')]} x 301; N: {len(new)} new pages, {n[('301', 'N')]} x 301; hold {n[('hold', '')]}")
+    fsa = sum(r["outcome"] == "retire" and "FSA's closed-school file" in r["reason"] for r in rows)
+    print(f"{len(rows)} pages: import {n[('import', 'R')]}; R: {n[('retire', 'R')]} x 410 ({fsa} closed per FSA), "
+          f"{n[('301', 'R')]} x 301; P: {n[('301', 'P')]} x 301; N: {len(new)} new pages, {n[('301', 'N')]} x 301; "
+          f"hold {n[('hold', '')]}")
 
 
 if __name__ == "__main__":

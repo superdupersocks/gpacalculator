@@ -682,6 +682,71 @@ eq("R: two pages confirmed as one college both wait; a manual hold stays; a coll
    ([("a-college", "hold", ""), ("a-college-too", "hold", ""), ("ats-institute-of-technology", "hold", ""),
      ("b-college", "301", "https://gpacalculator.net/admissions/has-page/")], {}))
 
+# FSA's closed-school file settles the colleges that left IPEDS, that IPEDS never listed, or that E held
+eq("R/FSA: names compare without case, punctuation, 'the' or 'Inc', with St. as Saint; dates read as YYYY-MM-DD",
+   ([_r.norm(s) for s in ("St. Mary's College & Seminary, Inc.", "The ANTONELLI   Institute")],
+    [_r.iso(d) for d in ("09/18/2026", "2017-08-31T00:00:00", "8/1/1999", "")]),
+   (["saint mary s college and seminary", "antonelli institute"], ["2026-09-18", "2017-08-31", "1999-08-01", ""]))
+_fsa = [{"opeid": "00210800", "name": "ANTONELLI INSTITUTE", "city": "ERDENHEIM", "state": "PA",
+         "close_date": "2017-08-31"},
+        {"opeid": "00999900", "name": "OLD SCHOOL OF NURSING", "city": "ST. LOUIS", "state": "MO",
+         "close_date": "1998-06-30"},
+        {"opeid": "01234500", "name": "EARLY COLLEGE", "city": "AUSTIN", "state": "TX", "close_date": "2005-05-01"},
+        {"opeid": "05555500", "name": "ODD DATE COLLEGE", "city": "RENO", "state": "NV", "close_date": "soon"}]
+_bo, _bp = {}, {}
+for _f in _fsa:
+    _bo.setdefault(_f["opeid"], []).append(_f)
+    _bp.setdefault((_r.norm(_f["name"]), _r.norm(_f["city"]), _f["state"]), []).append(_f)
+eq("R/FSA: a closure counts by OPEID in the same state, or by exact name, city and state; not in another state, "
+   "before IPEDS's last listing, with an unreadable date, or when FSA doesn't list it",
+   [(d, w in why) for (d, why), w in zip([_r.fsa_closed(o, p, y, _bo, _bp) for o, p, y in (
+       (["00210800"], ("Antonelli Institute", "Erdenheim", "PA"), 2017),
+       ([], ("Old School of Nursing", "Saint Louis", "MO"), 0),
+       (["00210800"], ("Antonelli Institute", "Erdenheim", "NJ"), 2017),
+       (["01234500"], ("Early College", "Austin", "TX"), 2017),
+       (["05555500"], ("Odd Date College", "Reno", "NV"), 0),
+       (["00777700"], ("Open College", "Boise", "ID"), 2016),
+       ([], ("Open College", "Boise", "ID"), 0))] + [_r.fsa_closed(["00210800"], ("A", "B", "PA"), 0, {}, {})], (
+       "(FSA's closed-school file lists OPEID 00210800 (ANTONELLI INSTITUTE, ERDENHEIM, PA), matched by OPEID)",
+       "OPEID 00999900 (OLD SCHOOL OF NURSING, ST. LOUIS, MO), matched by name, city and state)",
+       "OPEID 00210800 (ANTONELLI INSTITUTE, ERDENHEIM, PA), not in NJ",
+       "closed 2005-05-01, but IPEDS lists the college until HD2017", "a closing date that can't be read: 'soon'",
+       "FSA's closed-school file doesn't list OPEID 00777700",
+       "FSA's closed-school file lists no school with this name in this city and state",
+       "FSA's closed-school file hasn't been downloaded (review_sources.py)"))],
+   [("2017-08-31", True), ("1998-06-30", True), ("", True), ("", True), ("", True), ("", True), ("", True),
+    ("", True)])
+eq("R/FSA: a college's OPEIDs come from IPEDS 2024, then its older records, newest first, without repeats",
+   _r.opeids_of(["1", "2"], {"1": [{"last_year": "2010", "opeid": "00111100"}, {"last_year": "2016", "opeid": "00111101"}],
+                             "2": [{"last_year": "2012", "opeid": "00111100"}]},
+                {"1": {"opeid": "00111102"}}),
+   ["00111102", "00111101", "00111100"])
+_frows = [{"slug": "antonelli-institute", "title": "Antonelli Institute", "location": "Erdenheim, Pennsylvania",
+           "outcome": "hold", "checkpoint": "", "target": "", "reason": _r.LEFT},
+          {"slug": "old-school-of-nursing", "title": "Old School of Nursing", "location": "St. Louis, Missouri",
+           "outcome": "hold", "checkpoint": "", "target": "", "reason": _r.NEVER},
+          {"slug": "still-open", "title": "Still Open", "location": "Boise, Idaho", "outcome": "hold",
+           "checkpoint": "", "target": "", "reason": _r.NEVER},
+          {"slug": "renamed-one", "title": "Renamed One", "location": "Austin, Texas", "outcome": "hold",
+           "checkpoint": "", "target": "", "reason": "renamed: ...; another page here is the same college"}]
+_fum = {"antonelli-institute": {"older_ipeds": "IPEDS HD2002-HD2017: Antonelli Institute (UNITID 210890), Erdenheim, "
+                                               "PA"}}
+_fheld = [{"slug": "early-college", "post_title": "Early College", "unitid": "7",
+           "why": "open in IPEDS 2024 but missing from College Scorecard's June 2026 release (may have closed since)"},
+          {"slug": "baker-branch", "post_title": "Baker Branch", "unitid": "16884704",
+           "why": "no IPEDS 2024 record of its own: only College Scorecard lists it"}]
+_fextra = _r.fsa_review(_frows, _fum, {}, {"7": {"name": "Early College", "city": "Austin", "state": "TX",
+                                                  "opeid": "01234500"}}, _fheld,
+                        {"210890": [{"last_year": "2017", "opeid": "00210800"}]}, _bo, _bp)
+eq("R/FSA: FSA's closures retire pages in R with their evidence; the rest keep waiting, saying what FSA showed; E's "
+   "held pages that IPEDS 2024 still lists open need a closure from 2023 on",
+   [(r["slug"], r["outcome"], r["checkpoint"], r["reason"].split("; ")[-1][:42]) for r in _frows + _fextra],
+   [("antonelli-institute", "retire", "R", "closed 2017-08-31 (FSA's closed-school fil"),
+    ("old-school-of-nursing", "retire", "R", "closed 1998-06-30 (FSA's closed-school fil"),
+    ("still-open", "hold", "", "FSA's closed-school file lists no school w"),
+    ("renamed-one", "hold", "", "another page here is the same college"),
+    ("early-college", "hold", "", "FSA's closed-school file lists OPEID 01234")])
+
 # CDS files on another college's website aren't this college's (same-named colleges)
 _web = {"219718": {"name": "Bethel University", "website": "www.bethelu.edu/"},
         "173160": {"name": "Bethel University", "website": "https://www.bethel.edu"},

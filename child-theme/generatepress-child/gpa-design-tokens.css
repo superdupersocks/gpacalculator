@@ -263,9 +263,9 @@
     --gpa-radius-pill: 9999px;
 
     /* ---- Shadows ---- */
-    --gpa-shadow-sm: 0 4px 12px rgba(0,0,0,0.06);
-    --gpa-shadow-md: 0 10px 25px rgba(0,0,0,0.05);
-    --gpa-shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
+    --gpa-shadow-sm: 0 4px 12px color-mix(in srgb, var(--gpa-black) 6%, transparent);
+    --gpa-shadow-md: 0 10px 25px color-mix(in srgb, var(--gpa-black) 5%, transparent);
+    --gpa-shadow-lg: 0 10px 25px color-mix(in srgb, var(--gpa-black) 8%, transparent);
 
     /* ---- Inputs / buttons ---- */
     --gpa-input-radius: 8px;
@@ -373,7 +373,7 @@ h4 {
 .entry-content select:focus {
     outline: none;
     border-color: var(--gpa-border-focus);
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--gpa-blue-600) 15%, transparent);
 }
 
 .gpa-btn {
@@ -391,7 +391,7 @@ h4 {
 }
 .gpa-btn-primary {
     background: var(--gpa-primary);
-    color: #fff;
+    color: var(--gpa-white);
 }
 .gpa-btn-primary:hover { background: var(--gpa-primary-dark); }
 .gpa-btn-primary:active { transform: translateY(1px); }
@@ -443,47 +443,47 @@ h4 {
 :where(#root) button:not([class*="hover:text-"]):focus { color: inherit; }
  
 :where(#root) button.text-white:not([class*="hover:text-"]):hover,
-:where(#root) button.text-white:not([class*="hover:text-"]):focus { color: #ffffff; }
+:where(#root) button.text-white:not([class*="hover:text-"]):focus { color: var(--gpa-white); }
  
 :where(#root) button.text-gray-500:not([class*="hover:text-"]):hover,
-:where(#root) button.text-gray-500:not([class*="hover:text-"]):focus { color: #6b7280; }
+:where(#root) button.text-gray-500:not([class*="hover:text-"]):focus { color: var(--gpa-text-muted); }
  
 :where(#root) button.text-gray-600:not([class*="hover:text-"]):hover,
-:where(#root) button.text-gray-600:not([class*="hover:text-"]):focus { color: #4b5563; }
+:where(#root) button.text-gray-600:not([class*="hover:text-"]):focus { color: var(--gpa-text-secondary); }
  
 :where(#root) button.text-gray-700:not([class*="hover:text-"]):hover,
-:where(#root) button.text-gray-700:not([class*="hover:text-"]):focus { color: #374151; }
+:where(#root) button.text-gray-700:not([class*="hover:text-"]):focus { color: var(--gpa-text); }
  
 :where(#root) button.text-gray-900:not([class*="hover:text-"]):hover,
-:where(#root) button.text-gray-900:not([class*="hover:text-"]):focus { color: #111827; }
+:where(#root) button.text-gray-900:not([class*="hover:text-"]):focus { color: var(--gpa-text-strong); }
  
 :where(#root) button.text-blue-600:not([class*="hover:text-"]):hover,
-:where(#root) button.text-blue-600:not([class*="hover:text-"]):focus { color: #2563eb; }
+:where(#root) button.text-blue-600:not([class*="hover:text-"]):focus { color: var(--gpa-primary); }
  
 :where(#root) button.text-red-500:not([class*="hover:text-"]):hover,
-:where(#root) button.text-red-500:not([class*="hover:text-"]):focus { color: #ef4444; }
+:where(#root) button.text-red-500:not([class*="hover:text-"]):focus { color: var(--gpa-red-500); }
  
 :where(#root) button.text-red-600:not([class*="hover:text-"]):hover,
-:where(#root) button.text-red-600:not([class*="hover:text-"]):focus { color: #dc2626; }
+:where(#root) button.text-red-600:not([class*="hover:text-"]):focus { color: var(--gpa-red-600); }
  
 /* --- background colour ---------------------------------------------------- */
 :where(#root) button:not([class*="hover:bg-"]):hover,
 :where(#root) button:not([class*="hover:bg-"]):focus { background-color: transparent; }
  
 :where(#root) button.bg-white:not([class*="hover:bg-"]):hover,
-:where(#root) button.bg-white:not([class*="hover:bg-"]):focus { background-color: #ffffff; }
+:where(#root) button.bg-white:not([class*="hover:bg-"]):focus { background-color: var(--gpa-surface); }
  
 :where(#root) button.bg-gray-100:not([class*="hover:bg-"]):hover,
-:where(#root) button.bg-gray-100:not([class*="hover:bg-"]):focus { background-color: #f3f4f6; }
+:where(#root) button.bg-gray-100:not([class*="hover:bg-"]):focus { background-color: var(--gpa-gray-100); }
  
 :where(#root) button.bg-gray-200:not([class*="hover:bg-"]):hover,
-:where(#root) button.bg-gray-200:not([class*="hover:bg-"]):focus { background-color: #e5e7eb; }
+:where(#root) button.bg-gray-200:not([class*="hover:bg-"]):focus { background-color: var(--gpa-gray-200); }
  
 :where(#root) button.bg-blue-600:not([class*="hover:bg-"]):hover,
-:where(#root) button.bg-blue-600:not([class*="hover:bg-"]):focus { background-color: #2563eb; }
+:where(#root) button.bg-blue-600:not([class*="hover:bg-"]):focus { background-color: var(--gpa-primary); }
  
 :where(#root) button.bg-red-500:not([class*="hover:bg-"]):hover,
-:where(#root) button.bg-red-500:not([class*="hover:bg-"]):focus { background-color: #ef4444; }
+:where(#root) button.bg-red-500:not([class*="hover:bg-"]):focus { background-color: var(--gpa-red-500); }
 /* COLLEGE GPA CALCULATOR STYLE END */
 
 /* ============================================================
@@ -512,27 +512,27 @@ h4 {
 .gpa-breadcrumb__item {
     display: inline-flex;
     align-items: center;
-    color: var(--gpa-text-muted, #6b7280);
+    color: var(--gpa-text-muted, var(--gpa-text-muted));
     min-width: 0;
 }
 .gpa-breadcrumb__item + .gpa-breadcrumb__item::before {
     content: "/";
     margin: 0 0.5em;
-    color: var(--gpa-text-light, #9ca3af);
+    color: var(--gpa-text-light, var(--gpa-gray-400));
     flex: none;
 }
 .gpa-breadcrumb__link {
-    color: var(--gpa-text-muted, #6b7280);
+    color: var(--gpa-text-muted, var(--gpa-text-muted));
     text-decoration: none;
     transition: color 0.15s ease;
 }
 .gpa-breadcrumb__link:hover,
 .gpa-breadcrumb__link:focus {
-    color: var(--gpa-primary, #2563eb);
+    color: var(--gpa-primary, var(--gpa-primary));
     text-decoration: underline;
 }
 .gpa-breadcrumb__current {
-    color: var(--gpa-text-body, #374151);
+    color: var(--gpa-text-body, var(--gpa-text));
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;

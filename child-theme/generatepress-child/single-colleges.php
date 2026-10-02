@@ -135,7 +135,7 @@ if (has_post_thumbnail()) {
 }
 $hero_style = $hero_bg
     ? 'background-image: url(\'' . esc_url( $hero_bg ) . '\'); background-size: cover; background-position: center;'
-    : 'background-image: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #8B5CF6 100%);';
+    : 'background-image: var(--gpa-gradient-brand);';
 
 // Key Highlights cards that actually have data
 $highlight_cards = array();
@@ -229,11 +229,11 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
 
 <style>
     .db-hero__title-sub { display: block; font-size: 0.5em; font-weight: 600; opacity: 0.9; margin-top: 0.35em; line-height: 1.25; }
-    .db-scores__empty { padding: 16px 20px; color: #64748b; font-size: 0.95em; margin: 0; }
-    .db-stat-card__note { font-size: 0.75em; color: #64748b; margin-top: 4px; line-height: 1.3; }
+    .db-scores__empty { padding: 16px 20px; color: var(--gpa-slate-500); font-size: 0.95em; margin: 0; }
+    .db-stat-card__note { font-size: 0.75em; color: var(--gpa-slate-500); margin-top: 4px; line-height: 1.3; }
     .db-stat-card__value.db-stat-card__value--pair { font-size: 22px !important; }
-    .db-scores__note { padding: 0 20px 16px; color: #64748b; font-size: 0.85em; margin: 0; }
-    .db-sources__list { margin: 0; padding: 16px 20px 20px 40px; color: #475569; font-size: 0.9em; line-height: 1.5; }
+    .db-scores__note { padding: 0 20px 16px; color: var(--gpa-slate-500); font-size: 0.85em; margin: 0; }
+    .db-sources__list { margin: 0; padding: 16px 20px 20px 40px; color: var(--gpa-text-secondary); font-size: 0.9em; line-height: 1.5; }
     .db-sources__list li + li { margin-top: 8px; }
 </style>
 

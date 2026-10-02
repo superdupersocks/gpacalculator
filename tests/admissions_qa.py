@@ -691,6 +691,9 @@ _ws.append(["Weekly closed school search file"])
 _ws.append(["OPE ID", "School Name", "Address", "City", "State", "Zip", "Country", "Close Date"])
 for _k in range(40):
     _ws.append([f"{_k:06d}00", f"School {_k}", "", "Erdenheim", "PA", "", "", "08/31/2017"])
+_ws.append([])
+_ws.append(["Foreign", "", "", "", "", "", "", "YEAR"])
+_ws.append(["124", "0.0", "", "", "", "", "", "2026.0"])
 _buf = io.BytesIO()
 _wb.save(_buf)
 _xlsx, _zbuf = zipfile.ZipFile(io.BytesIO(_buf.getvalue())), io.BytesIO()
@@ -705,7 +708,8 @@ with zipfile.ZipFile(_outer, "w") as _zout:
     _zout.writestr("WKCL.20260927.001.xlsx", _zbuf.getvalue())
     _zout.writestr("notes.csv", "OPEID,Close Date\n00123400,01/02/2003\n")
 _label, _frows = review_sources.fsa_table(_outer.getvalue(), "WEEKLY_CLOSED_REPORT.zip")
-eq("FSA download: every table in the zip is read past the workbook's recorded size, and the biggest is kept",
+eq("FSA download: every table in the zip is read past the workbook's recorded size, the biggest is kept, and "
+   "the summary by year below the list is left out",
    (_label, len(_frows), _frows[-1]["opeid"], _frows[-1]["close_date"]),
    ("WKCL.20260927.001.xlsx [CLOSED SCHOOL SEARCH PAGE]", 40, "00003900", "08/31/2017"))
 

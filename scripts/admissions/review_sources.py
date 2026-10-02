@@ -156,7 +156,8 @@ def fsa_rows(rows):
             out = []
             for r in rows[n + 1:]:
                 rec = {f: (str(r[i]).strip() if i < len(r) and r[i] is not None else "") for f, i in col.items()}
-                if rec["opeid"]:
+                # a school has an OPEID and a closing date; the sheet's summary by year below the list has neither
+                if rec["opeid"] and re.match(r"\d{1,2}/\d{1,2}/\d{4}$|\d{4}-\d{2}-\d{2}", rec["close_date"]):
                     rec["opeid"] = re.sub(r"\D", "", rec["opeid"]).zfill(8)
                     out.append({f: rec.get(f, "") for f in FSA_COLUMNS})
             return out

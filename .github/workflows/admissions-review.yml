@@ -24,7 +24,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install openpyxl xlrd
+      - run: pip install openpyxl xlrd playwright
+      # FSA's closed-school page is a JavaScript app; review_sources.py opens it in Chromium when it links no file.
+      - run: python -m playwright install --with-deps chromium
       - run: python scripts/admissions/review_sources.py
       - name: Commit results
         run: |

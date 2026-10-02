@@ -26,7 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 import audit  # noqa: E402
-from fetch import get  # noqa: E402
+from fetch import HEADERS, get  # noqa: E402
 
 DATA = Path(__file__).resolve().parents[2] / "data" / "admissions"
 OUT = DATA / "review"
@@ -125,6 +125,84 @@ def fsa_rows(rows):
     raise SystemExit("no header row with an OPEID and a closing date in FSA's file")
 
 
+def json_records(obj):
+    """The longest list of records in a JSON value whose fields name an OPEID and a closing date, else []."""
+    best = []
+    if isinstance(obj, dict):
+        for v in obj.values():
+            found = json_records(v)
+            best = found if len(found) > len(best) else best
+    elif isinstance(obj, list):
+        if obj and all(isinstance(r, dict) for r in obj):
+            keys = [key(k) for k in obj[0]]
+            if any(k.startswith("ope") for k in keys) and any("close" in k for k in keys):
+                return obj
+        for v in obj:
+            found = json_records(v)
+            best = found if len(found) > len(best) else best
+    return best
+
+
+def records_table(records):
+    """JSON records as table() rows: a header of their fields, then their values."""
+    fields = list(records[0])
+    return [fields] + [["" if r.get(f) is None else str(r.get(f)) for f in fields] for r in records]
+
+
+def fsa_rendered():
+    """FSA's page is a JavaScript app ("School Data Webapp"), so open it in Chromium: take a file it links, a download
+    one of its controls starts, or JSON it loads with OPEIDs and closing dates. Logs what it loads and offers."""
+    from playwright.sync_api import sync_playwright
+    tried = []
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch()
+        page = browser.new_page(accept_downloads=True, user_agent=HEADERS["User-Agent"])
+        seen = []
+        page.on("response", seen.append)
+        page.goto(FSA_PAGE, wait_until="domcontentloaded", timeout=120_000)
+        try:
+            page.wait_for_load_state("networkidle", timeout=60_000)
+        except Exception as e:  # noqa: BLE001 - an app that keeps polling never goes idle; read what it has
+            print(f"FSA page in Chromium: not idle after 60 s ({e.__class__.__name__})")
+        page.wait_for_timeout(5_000)
+        html = page.content()
+        print("FSA page in Chromium: " + describe(html))
+        for r in seen[:80]:
+            print(f"  loaded: {r.status} {r.request.method} {r.url[:160]} {r.headers.get('content-type', '')}")
+        for r in seen:
+            if "json" not in r.headers.get("content-type", ""):
+                continue
+            try:
+                records = json_records(r.json())
+                if records:
+                    rows = fsa_rows(records_table(records))
+                    return r.url, r.body(), rows
+            except (Exception, SystemExit) as e:  # noqa: BLE001 - try the next response
+                tried.append(f"{r.url}: {e}")
+        for url in links(html, FSA_PAGE):
+            try:
+                data = get(url)
+                return url, data, fsa_rows(table(data, url))
+            except (Exception, SystemExit) as e:  # noqa: BLE001 - try the next link
+                tried.append(f"{url}: {e}")
+        controls = page.locator("a, button, [role=button], [role=tab], [role=link]")
+        texts = [" ".join((controls.nth(i).inner_text() or "").split()) for i in range(min(controls.count(), 200))]
+        print("  controls: " + " | ".join(t for t in texts if t)[:3000])
+        for i, text in enumerate(texts):
+            if not re.search(r"download|excel|xlsx|csv|export|closed school", text, flags=re.I):
+                continue
+            try:
+                with page.expect_download(timeout=60_000) as info:
+                    controls.nth(i).click()
+                dl = info.value
+                data = Path(dl.path()).read_bytes()
+                return f"{FSA_PAGE} ({text!r}: {dl.suggested_filename})", data, fsa_rows(table(data, dl.suggested_filename))
+            except (Exception, SystemExit) as e:  # noqa: BLE001 - try the next control
+                tried.append(f"control {text!r}: {e}")
+        browser.close()
+    raise SystemExit("nothing readable in the rendered page:\n" + "\n".join(tried))
+
+
 def fsa():
     tried = []
     try:
@@ -145,7 +223,12 @@ def fsa():
             continue
         print(f"FSA closed schools: {len(rows):,} rows from {url}")
         return url, data, rows
-    raise SystemExit("no closed-school file could be read:\n" + "\n".join(tried))
+    try:
+        url, data, rows = fsa_rendered()
+    except (Exception, SystemExit) as e:  # noqa: BLE001 - report every address tried
+        raise SystemExit("no closed-school file could be read:\n" + "\n".join(tried + [f"{FSA_PAGE} in Chromium: {e}"]))
+    print(f"FSA closed schools: {len(rows):,} rows from {url}")
+    return url, data, rows
 
 
 def review_unitids():

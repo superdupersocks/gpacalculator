@@ -15,14 +15,15 @@ each went to the thread. Each step below still waits for Digant's typed go.
 
 ## 1. Templates: the hub and the college pages
 
-Code: ba7a76b, seven theme files (admissions.css, archive-colleges.php, template-parts/college-db-archive.php,
-single-colleges.php, college-data.php, functions.php, database-ajax.js). It merges the design branch at e5a6183 (cc09193
-live since 21:47 UTC: rails V6, the 800px column with 720px text; e5a6183 keeps the 800px column below 1260px too), so
-its functions.php keeps everything the design deploys shipped. The design's CSS files are not part of this deploy.
+Code: 52f5804, seven theme files (admissions.css, archive-colleges.php, template-parts/college-db-archive.php,
+single-colleges.php, college-data.php, functions.php, database-ajax.js). It merges the design branch at e475ef3, which has
+everything the design deployed: cc09193 at 21:47 UTC (rails V6, the 800px column with 720px text), e5a6183 (the 800px
+column below 1260px too) and 3f2c93d at 22:17 (the rails' resize rule, functions.php). So its functions.php keeps
+everything the design deploys shipped. The design's CSS files are not part of this deploy.
 
 1. Digant runs it from Terminal (this Mac's permission settings block theme deploys):
    `cd ~/Documents/Claude/gpacalculator && git pull && bash scripts/admissions/deploy_phase3.sh`.
-   The script first reads the seven live files and stops, changing nothing, if one of them is a version ba7a76b doesn't
+   The script first reads the seven live files and stops, changing nothing, if one of them is a version 52f5804 doesn't
    contain (a newer design deploy): then the branch needs the design branch merged and `COMMIT` updated. Otherwise it
    backs up the live theme, ships the seven files and prints the backup name and the revert command.
 2. When Digant says "deployed", check on desktop (1440 wide) and phone (390 wide), with no sideways scroll anywhere:
@@ -43,7 +44,7 @@ its functions.php keeps everything the design deploys shipped. The design's CSS 
    - /admissions/lone-star-college-system/ (open admission) and /admissions/fairfax-university-of-america/ ("Figures
      under review", no figures).
    - /college-gpa-calculator/ and /gpa-scale/3-8-gpa/ look as before (their files weren't touched).
-3. Changelog row: "/admissions/ hub and the college pages", deployed ba7a76b by Digant from Terminal
+3. Changelog row: "/admissions/ hub and the college pages", deployed 52f5804 by Digant from Terminal
    (`scripts/admissions/deploy_phase3.sh`, seven files), what was checked; undo
    `bash scripts/deploy_theme.sh --revert <backup>`. If anything is broken, revert first, then report.
 

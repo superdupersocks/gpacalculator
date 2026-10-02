@@ -12,6 +12,8 @@
 # img_url (images hotlinked from collegesimply.imgix.net). Values are blanked, not deleted: the listing sorts and
 # filters with meta_key queries, which drop posts that lack the row. Run from the repo on the Mac (it uses the
 # same SSH key as scripts/deploy_theme.sh). Log each run in docs/LIVE_CHANGELOG.md.
+# The revert SELECT spells 'UPD' 'ATE' apart: WP-CLI 2.12 treats any query containing UPDATE as a write and prints
+# "Rows affected" instead of the rows.
 set -euo pipefail
 
 HOST="master_rfzfmbbwze@67.205.161.226"
@@ -33,8 +35,10 @@ case "${1:-}" in
   export)
     NAME="admissions-b-$(date -u +%Y%m%d-%H%M)"
     remote "wp db query \"SELECT p.ID, p.post_name, p.post_status, m.meta_key, m.meta_value $WHERE ORDER BY p.post_name, m.meta_key\" > ~/backups/$NAME.tsv
-      wp db query --skip-column-names \"SELECT CONCAT('UPDATE \${P}postmeta SET meta_value = ', QUOTE(m.meta_value), ' WHERE meta_id = ', m.meta_id, ';') $WHERE\" > ~/backups/$NAME-revert.sql
-      echo rows: \$(( \$(wc -l < ~/backups/$NAME.tsv) - 1 )) values, \$(wc -l < ~/backups/$NAME-revert.sql) revert statements"
+      wp db query --skip-column-names \"SELECT CONCAT('UPD', 'ATE \${P}postmeta SET meta_value = ', QUOTE(m.meta_value), ' WHERE meta_id = ', m.meta_id, ';') $WHERE\" > ~/backups/$NAME-revert.sql
+      V=\$(( \$(grep -c . ~/backups/$NAME.tsv) - 1 )); S=\$(grep -c '^UPDATE ' ~/backups/$NAME-revert.sql || true)
+      echo rows: \$V values, \$S revert statements
+      test \"\$V\" -eq \"\$S\" || { echo 'revert file does not cover every value: stop'; exit 1; }"
     mkdir -p "$LOCAL"
     scp -q -i "$KEY" -o IdentitiesOnly=yes "$HOST:backups/$NAME.tsv" "$HOST:backups/$NAME-revert.sql" "$LOCAL/"
     echo "export $NAME: ~/backups/ on the server and $LOCAL/" ;;

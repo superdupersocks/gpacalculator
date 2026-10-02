@@ -33,11 +33,14 @@ isn't needed.
    ```
 3. `bash scripts/admissions/phase2_b_live.sh count`, then `bash scripts/admissions/phase2_b_live.sh export` (note the
    export name it prints). The export is the audit copy of the original values Digant asked to keep.
-4. Theme first, so the listing stops sorting by GPA before the GPAs go:
-   `bash scripts/deploy_theme.sh 9a803a3 --dry-run --only functions.php,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,database-ajax.js`.
-   Only those five files may change. Then the same command without `--dry-run`; note the theme backup name.
+4. Theme first, so the listing stops sorting by GPA before the GPAs go. B2's data is already in (06:27), so B and B2
+   ship together from 759f5b7 (B's five files, B2's GPA card and the exact-slug 404 guess; B2 step 3 is then done):
+   `bash scripts/deploy_theme.sh 759f5b7 --dry-run --only functions.php,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,database-ajax.js`.
+   Only those five files may change. Then the same command without `--dry-run`; note the theme backup name. If this
+   Mac's permission settings block the deploy, Digant runs that command (without `--dry-run`) in Terminal and types
+   "deployed" in the thread; find the backup name with `bash scripts/deploy_theme.sh --list`.
 5. Data: `bash scripts/admissions/phase2_b_live.sh apply <export name>`. The leftover count must be 0.
-6. Check:
+6. Check (and run B2 step 5's checks too when the theme came from 759f5b7):
    - Profiles that had a GPA (abilene-christian-university, harvard, clark-atlanta-university, hardin-simmons-university)
      and two that didn't (westcliff-university, a-t-still-university) return 200. Their `<title>`, meta description,
      `og:title` and H1 carry no GPA figure and no "GPA Requirements"; the page has no "Average GPA" stat, no "Admission

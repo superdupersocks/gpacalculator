@@ -158,7 +158,7 @@ def fsa_rendered():
         browser = pw.chromium.launch()
         page = browser.new_page(accept_downloads=True, user_agent=HEADERS["User-Agent"])
         seen = []
-        page.on("response", seen.append)
+        page.on("response", lambda r: seen.append(r))
         page.goto(FSA_PAGE, wait_until="domcontentloaded", timeout=120_000)
         try:
             page.wait_for_load_state("networkidle", timeout=60_000)

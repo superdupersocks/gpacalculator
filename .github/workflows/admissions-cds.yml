@@ -1,0 +1,45 @@
+name: Admissions CDS
+# Reads each college's newest Common Data Set (scripts/admissions/cds_sources.py, cds.py) and commits
+# data/admissions/cds_*.csv back to the branch. Runs by hand, or on a push that changes the CDS scripts.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/admissions/cds*.py'
+      - 'scripts/admissions/cds_tags.json'
+      - '.github/workflows/admissions-cds.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-cds-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  cds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install openpyxl pypdf
+      - run: python tests/admissions_qa.py
+      - run: python scripts/admissions/cds_sources.py
+      - run: python scripts/admissions/cds.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions/cds_*.csv
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "Refresh Common Data Set values"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push
+      - name: Keep collegedata.fyi's readings for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cds-collegedata-values
+          path: data/admissions/raw/cds/
+          if-no-files-found: ignore

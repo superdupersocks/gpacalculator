@@ -130,8 +130,28 @@ eq("CDS C11 total column", (g.get("gpa_4_0"), g.get("gpa_250_299"), g.get("gpa_b
 eq("CDS bands add up", cds.check(g), [])
 g = cds.parse("C11\nPercent who had GPA of 4.0 0.4\nPercent who had GPA between 3.75 and 3.99 0.6\nC12")
 eq("CDS Excel fractions become percents", (cds.check(g), g["gpa_4_0"]), ([], 40.0))
-g = {"gpa_avg": 39.2}
-eq("CDS impossible average flagged", cds.check(g), ["average GPA 39.2 outside 1-5"])
+eq("CDS impossible average flagged", cds.check({"gpa_avg": 39.2}), [("gpa_avg", "average GPA 39.2 outside 1-5")])
+g = cds.parse("C9 Percent and number of first-time, first-year students enrolled ...\n"
+              "Submitting SAT Scores 54% 1046\nSubmitting ACT Scores 21% 405\n"
+              "SAT Composite 1500 1540 1570\nSAT Evidence-Based Reading and Writing 740 760 780\n"
+              "SAT Math 760 780 800\nACT Composite 34 35 36\nC10")
+eq("CDS C9 percentiles and submit %", (g.get("sat_comp_p50"), g.get("sat_erw_p25"), g.get("act_comp_p75"),
+                                       g.get("sat_submit_pct")), (1540, 740, 36, 54.0))
+eq("CDS form values decoded", (cds.clean("level", "/VI"), cds.clean("yn", "/Y"), cds.clean("pct", "0.25"),
+                               cds.clean("count", "1,234"), cds.clean("gpa", "N/A")),
+   ("Very Important", "Yes", 25.0, 1234, None))
+eq("CDS form fields mapped by template year",
+   cds.from_form({"FRSH_GPA": "3.91", "Q111_3": "/VI", "AP_RECD_1ST_N": "1000", "AP_ADMT_1ST_N": "250"}, "2025-26"),
+   {"applicants": 1000, "admits": 250, "factor_gpa": "Very Important", "gpa_avg": 3.91})
+src = {"unitid": "1", "name": "X", "cds_year": "2023-24", "source_url": "https://x.edu/cds.pdf"}
+vals, prov, rev = cds.decide(src, {"admissions_year": "2023", "sat_math_p25": "760", "applicants": "500"},
+                             {"factor_gpa": "Important"}, {"gpa_avg": 3.9, "sat_math_p50": 780},
+                             {"C.1201": "3.90", "C.911": "760", "C.912": "790", "C.117": "500", "C.1202": "88"})
+eq("CDS decide: form, text+collegedata, collegedata+IPEDS",
+   {k: vals.get(k) for k in ("factor_gpa", "gpa_avg", "sat_math_p25", "applicants")},
+   {"factor_gpa": "Important", "gpa_avg": 3.9, "sat_math_p25": 760, "applicants": 500})
+eq("CDS decide: disagreement and single readings go to review",
+   sorted(r["field"] for r in rev), ["gpa_submit_pct", "sat_math_p50"])
 
 # IPEDS provisional release: the newest Tablesdoc on the Access page, its titles and labels per table, and
 # sources marked as provisional.
@@ -162,6 +182,10 @@ wb.save(buf)
 doc = fetch.parse_tablesdoc(buf.getvalue())
 eq("Tablesdoc titles per table", doc["ADM2024"]["vars"]["APPLCN"]["title"], "Applicants total")
 eq("Tablesdoc code labels", doc["ADM2024"]["codes"]["ADMCON7"], {"1": "Required"})
+eq("provisional table without net price is skipped", fetch.usable("sfa", {"vars": {}}),
+   ["average net price-students awarded grant or scholarship aid"])
+eq("provisional ADM with the counts is used", fetch.usable("adm", {"vars": {v: {"title": ""} for v in
+                                                                         ("APPLCN", "ADMSSN", "ENRLT")}}), [])
 with tempfile.TemporaryDirectory() as tmp:
     tmp = Path(tmp)
     shutil.copytree(FIX, tmp / "fix")

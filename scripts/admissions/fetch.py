@@ -201,6 +201,18 @@ def access_tables(url, tables, opener):
     return out
 
 
+def usable(key, dictionary):
+    """What build.py needs from this file that a release's table lacks (empty when it has everything)."""
+    from build import MEASURES
+
+    titles = [" ".join(v["title"].lower().split()) for v in dictionary["vars"].values()]
+    lacking = [phrase for f, phrase, exclude in MEASURES.values() if f == key
+               and not any(phrase in t and not any(x in t for x in exclude) for t in titles)]
+    if key == "adm":
+        lacking += [v for v in ("APPLCN", "ADMSSN", "ENRLT") if v not in dictionary["vars"]]
+    return lacking
+
+
 def provisional(manifest, years):
     """Tables from a release newer than the complete data files, via the data generator. Returns the keys
     replaced."""
@@ -224,8 +236,16 @@ def provisional(manifest, years):
         return set()
     manifest["ipeds_provisional"] = {"year": year, "tablesdoc": doc_url, "access": access_url}
     record(manifest, "ipeds_tablesdoc", doc_url, doc, year=year)
-    wanted = {key: name_for(year).upper() for key, name_for in IPEDS_FILES.items()
-              if year > years[key] and name_for(year).upper() in tables}
+    wanted = {}
+    for key, name_for in IPEDS_FILES.items():
+        table = name_for(year).upper()
+        if year <= years[key] or table not in tables:
+            continue
+        lacking = usable(key, tables[table])
+        if lacking:  # e.g. SFA2324 moved net price into split tables
+            print(f"IPEDS provisional {table} lacks {lacking}; keeping {name_for(years[key])}")
+            continue
+        wanted[key] = table
     got = {}  # key -> (csv bytes, url, member)
     for key, table in wanted.items():
         url = GENERATOR.format(year=year, table=table)
@@ -257,6 +277,7 @@ def provisional(manifest, years):
         (RAW / "ipeds" / f"{key}.csv").write_bytes(csv_bytes)
         write_json(RAW / "ipeds" / f"{key}_dict.json", tables[table])
         record(manifest, f"ipeds_{key}", url, data, year=year, member=member, release="provisional")
+        manifest["files"][f"ipeds_{key}_dict"] = {**manifest["files"]["ipeds_tablesdoc"], "table": table}
         manifest["ipeds_years"][key] = year
         done.add(key)
         print(f"IPEDS {table} (provisional release, {'Access database' if url == access_url else 'data generator'}):"

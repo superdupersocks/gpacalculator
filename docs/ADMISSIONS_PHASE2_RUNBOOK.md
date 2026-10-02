@@ -11,6 +11,10 @@ surviving pages before its four 301s. C retires the verified closures and redire
 pages in `data/admissions/audit/phase2_c_held.csv` and everything still under review stay unchanged. Individual pages
 within that scope need no further approval; report counts and exceptions.
 
+Still to run (2026-10-02 17:30 UTC), one checkpoint at a time, each after its own backup: S, M, P and N (Digant's "go S,
+M, P and N" at 17:28; P after S); "B2, second list" and R (within the 05:58 go); and the theme deploy in "Hub filters
+and sitemap order" (Digant runs it from Terminal and types "deployed"; then its checks). None waits for another.
+
 `SSH` below means `ssh -i ~/.ssh/gpacalculator_cloudways -o IdentitiesOnly=yes master_rfzfmbbwze@67.205.161.226`, and
 `WP` is `applications/xwnzegvpyy/public_html` on the server.
 

@@ -161,14 +161,23 @@ colleges ("Under 10%" showed 1,335). Commits 623589d (acceptance rate) and 5b501
 only file that differs from af793b4. Digant runs the deploy from Terminal, since this session's permissions block
 deploy_theme.sh. "B2, second list" below doesn't wait for it.
 
-1. Digant runs `git pull && bash scripts/deploy_theme.sh 5b5018f --only functions.php` and types "deployed".
+The design overhaul's theme (PR #4, branch `claude/design-system-overhaul-xkzbf0`) already includes this fix and also
+changes functions.php, so `deploy_theme.sh 5b5018f --only functions.php` after it would undo the design changes.
+`scripts/admissions/deploy_hub_filters.sh` deploys only while the live functions.php is still af793b4's, and says
+"nothing to do" when 5b5018f's or a later version with both filter fixes is live.
+
+1. Digant runs `git pull && bash scripts/admissions/deploy_hub_filters.sh` (or the earlier
+   `deploy_theme.sh 5b5018f --only functions.php`, only while the design overhaul's theme isn't live) and types
+   "deployed".
 2. Check: the live functions.php is 5b5018f's
    (`SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show 5b5018f:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`).
+   DIFFERS is right only when the script said a later deploy already shipped the fix (check that `docs/LIVE_CHANGELOG.md`
+   on the design branch lists that deploy); then skip the changelog row in step 3.
    On /admissions/, "Under 10%" lists only colleges with a rate under 10% (about 30), "Under 1200" only colleges with
    an SAT figure under 1200, and the other filters, the sorts and Load More work as before; a profile and a calculator
    page load with Freestar tags.
 3. Changelog: one row with the undo, `bash scripts/deploy_theme.sh --revert <theme backup>` (puts af793b4's
-   functions.php back).
+   functions.php back; only while no later theme deploy has replaced functions.php).
 
 ## B2, second list: GPAs cited on the college's own page
 

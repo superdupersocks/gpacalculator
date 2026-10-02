@@ -44,6 +44,7 @@ HEADERS = {
 IPEDS = "https://nces.ed.gov/ipeds/datacenter/data/"
 ACCESS_PAGE = "https://nces.ed.gov/ipeds/use-the-data/download-access-database"
 GENERATOR = "https://nces.ed.gov/ipeds/data-generator?year={year}&tableName={table}&HasRV=0&type=csv"
+PLAIN_UA = "gpacalculator-admissions-data/1.0 (+https://gpacalculator.net)"
 SCORECARD_PAGE = "https://collegescorecard.ed.gov/data/"
 # "Most Recent Institution-Level Data", release of June 10, 2026. Update when Scorecard publishes a new release.
 SCORECARD_ZIP = "https://ed-public-download.scorecard.network/downloads/Most-Recent-Cohorts-Institution_06102026.zip"
@@ -155,12 +156,49 @@ def parse_tablesdoc(xlsx_bytes):
 
 
 def newest_release(html):
-    """(data year, Tablesdoc URL) of the newest collection on the Access database page; IPEDS202425 -> 2024."""
-    links = re.findall(r"""href=["']([^"']*IPEDS(\d{4})(\d{2})Tablesdoc\.xlsx)["']""", html, re.I)
+    """(data year, Tablesdoc URL, Access zip URL) of the newest collection on the Access database page;
+    IPEDS202425Tablesdoc.xlsx and IPEDS_2024-25_Provisional.zip -> 2024."""
+    links = re.findall(r"""href=["']([^"']*IPEDS_?(\d{4})(\d{2})Tablesdoc\.xlsx)["']""", html, re.I)
     if not links:
-        return None, None
+        return None, None, None
     url, start, _ = max(links, key=lambda t: t[1])
-    return int(start), urllib.parse.urljoin(ACCESS_PAGE, url)
+    access = [u for u, y in re.findall(r"""href=["']([^"']*IPEDS_(\d{4})-\d{2}[^"']*\.zip)["']""", html, re.I)
+              if y == start]
+    return (int(start), urllib.parse.urljoin(ACCESS_PAGE, url),
+            urllib.parse.urljoin(ACCESS_PAGE, access[0]) if access else None)
+
+
+def access_tables(url, tables, opener):
+    """{table: csv bytes} exported with mdb-export from the release's Access database (the data generator
+    does not serve every provisional table)."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    if not shutil.which("mdb-export"):
+        print("WARNING: mdb-export (mdbtools) is not installed; cannot read the Access database")
+        return {}
+    out = {}
+    with tempfile.TemporaryDirectory() as tmp:
+        zpath = os.path.join(tmp, "release.zip")
+        req = urllib.request.Request(url, headers={"User-Agent": PLAIN_UA})
+        with opener.open(req, timeout=900) as r, open(zpath, "wb") as f:
+            shutil.copyfileobj(r, f, 1 << 20)
+        with zipfile.ZipFile(zpath) as zf:
+            member = next((n for n in zf.namelist() if n.lower().endswith((".accdb", ".mdb"))), None)
+            if member is None:
+                print(f"WARNING: no Access database in {url}")
+                return {}
+            db = zf.extract(member, tmp)
+        os.remove(zpath)
+        names = {n.strip().upper(): n.strip() for n in
+                 subprocess.run(["mdb-tables", "-1", db], capture_output=True, text=True).stdout.splitlines()}
+        for t in tables:
+            if t in names:
+                res = subprocess.run(["mdb-export", db, names[t]], capture_output=True)
+                if res.returncode == 0 and res.stdout:
+                    out[t] = res.stdout
+    return out
 
 
 def provisional(manifest, years):
@@ -171,7 +209,7 @@ def provisional(manifest, years):
     import http.cookiejar
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
     try:
-        year, doc_url = newest_release(get(ACCESS_PAGE, tries=2, opener=opener).decode("utf-8", "ignore"))
+        year, doc_url, access_url = newest_release(get(ACCESS_PAGE, tries=2, opener=opener).decode("utf-8", "ignore"))
         if year is None or all(year <= y for y in years.values()):
             print(f"IPEDS provisional: no release newer than the complete files ({year})")
             return set()
@@ -184,28 +222,45 @@ def provisional(manifest, years):
         print(f"WARNING: IPEDS provisional release not read ({e}); using complete data files only")
         manifest["ipeds_provisional_missing"] = str(e)
         return set()
-    manifest["ipeds_provisional"] = {"year": year, "tablesdoc": doc_url}
+    manifest["ipeds_provisional"] = {"year": year, "tablesdoc": doc_url, "access": access_url}
     record(manifest, "ipeds_tablesdoc", doc_url, doc, year=year)
-    done = set()
-    for key, name_for in IPEDS_FILES.items():
-        table = name_for(year).upper()
-        if year <= years[key] or table not in tables:
-            continue
+    wanted = {key: name_for(year).upper() for key, name_for in IPEDS_FILES.items()
+              if year > years[key] and name_for(year).upper() in tables}
+    got = {}  # key -> (csv bytes, url, member)
+    for key, table in wanted.items():
         url = GENERATOR.format(year=year, table=table)
         try:
-            data = get(url, opener=opener)
+            req = urllib.request.Request(url, headers={"User-Agent": PLAIN_UA})
+            with opener.open(req, timeout=300) as r:
+                data = r.read()
             with zipfile.ZipFile(io.BytesIO(data)) as zf:
                 member = pick_member(zf, ".csv")
-                csv_bytes = zf.read(member)
+                got[key] = (zf.read(member), url, member, data)
         except Exception as e:
-            print(f"WARNING: IPEDS provisional {table} not downloaded ({e}); keeping {name_for(years[key])}")
+            print(f"IPEDS provisional {table}: data generator failed ({e})")
+    missing = {k: t for k, t in wanted.items() if k not in got}
+    if missing and access_url:
+        try:
+            exported = access_tables(access_url, set(missing.values()), opener)
+        except Exception as e:
+            print(f"WARNING: IPEDS Access database not read ({e})")
+            exported = {}
+        for key, table in missing.items():
+            if table in exported:
+                got[key] = (exported[table], access_url, table, exported[table])
+    done = set()
+    for key, table in wanted.items():
+        if key not in got:
+            print(f"WARNING: IPEDS provisional {table} not available; keeping {IPEDS_FILES[key](years[key])}")
             continue
+        csv_bytes, url, member, data = got[key]
         (RAW / "ipeds" / f"{key}.csv").write_bytes(csv_bytes)
         write_json(RAW / "ipeds" / f"{key}_dict.json", tables[table])
         record(manifest, f"ipeds_{key}", url, data, year=year, member=member, release="provisional")
         manifest["ipeds_years"][key] = year
         done.add(key)
-        print(f"IPEDS {table} (provisional release): {member}, {len(tables[table]['vars'])} variables")
+        print(f"IPEDS {table} (provisional release, {'Access database' if url == access_url else 'data generator'}):"
+              f" {len(tables[table]['vars'])} variables")
     return done
 
 

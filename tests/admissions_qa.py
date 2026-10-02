@@ -136,10 +136,13 @@ eq("CDS impossible average flagged", cds.check(g), ["average GPA 39.2 outside 1-
 # IPEDS provisional release: the newest Tablesdoc on the Access page, its titles and labels per table, and
 # sources marked as provisional.
 page = ('<a href="/ipeds/tablefiles/tableDocs/IPEDS202324Tablesdoc.xlsx">2023-24</a>'
+        '<a href="https://nces.ed.gov/ipeds/tablefiles/zipfiles/IPEDS_2023-24_Final.zip">2023-24</a>'
+        '<a href="https://nces.ed.gov/ipeds/tablefiles/zipfiles/IPEDS_2024-25_Provisional.zip">2024-25</a>'
         '<a href="https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx">2024-25</a>')
 eq("newest release on the Access page", fetch.newest_release(page),
-   (2024, "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx"))
-eq("no release on the page", fetch.newest_release("<html></html>"), (None, None))
+   (2024, "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx",
+    "https://nces.ed.gov/ipeds/tablefiles/zipfiles/IPEDS_2024-25_Provisional.zip"))
+eq("no release on the page", fetch.newest_release("<html></html>"), (None, None, None))
 import io  # noqa: E402
 import openpyxl  # noqa: E402
 wb = openpyxl.Workbook()

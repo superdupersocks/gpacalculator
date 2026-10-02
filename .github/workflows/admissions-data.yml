@@ -34,6 +34,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install openpyxl
+      - run: sudo apt-get install -y -qq mdbtools >/dev/null
       - run: python tests/admissions_qa.py
       - name: Download sources
         env:

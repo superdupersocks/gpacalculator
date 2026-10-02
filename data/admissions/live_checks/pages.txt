@@ -1,6 +1,7 @@
 # Pages read by scripts/page_check.py (admissions-pages.yml). Edit the stage line to run the check again.
-# stage: after S, M, P and N (17:30-17:37 UTC), the old-address fix (17:14) and the design overhaul's theme deploy
-# (17:38, with the hub filter fix and the sitemap tie-break); before B2's second list and R
+# stage: after R (applied and checked by 17:53 UTC), B2's second list (17:44), S, M, P and N (17:30-17:37), the
+# old-address fix (17:14) and the design overhaul's theme deploy (17:38); before H (the 53 pages under review still
+# show their old figures: Fairfax, Kaplan Davenport, Wichita Area Technical, UT Brownsville below)
 /admissions/harvard/
 /admissions/abilene-christian-university/
 /admissions/clark-atlanta-university/
@@ -34,4 +35,18 @@
 /admissions/georgia-military-college-augusta-campus/
 /admissions/university-of-phoenix-las-vegas-campus/
 /admissions/auburn-university/
+/admissions/pennsylvania-state-university-main-campus/
+/admissions/miami-university/
+/admissions/arizona-state-university/
+/admissions/lone-star-college-system/
+/admissions/umass-global/
+/admissions/devry-university-utah/
+/admissions/lincoln-college/
+/admissions/corcoran-college-of-art-and-design/
+/admissions/california-jazz-conservatory/
+/admissions/milligan-college/
+/admissions/fairfax-university-of-america/
+/admissions/kaplan-university-davenport-campus/
+/admissions/wichita-area-technical-college/
+/admissions/the-university-of-texas-at-brownsville/
 sitemap /sitemap_index.xml colleges

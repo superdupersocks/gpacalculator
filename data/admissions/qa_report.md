@@ -97,13 +97,14 @@ Admissions block source: none 4,045, IPEDS ADM 1,956
 | net_price_30_48k | 4,492 (75%) | 2,137 (76%) |
 | net_price_48_75k | 4,260 (71%) | 2,108 (75%) |
 | net_price_75_110k | 3,685 (61%) | 2,006 (72%) |
-| net_price_110k_plus | 0 (0%) | 0 (0%) |
+| net_price_110k_plus | 3,259 (54%) | 1,868 (67%) |
 
 ## Imputed IPEDS values left out
 
 - sfa.NPT412: 5
 - sfa.NPGRN2: 4
 - sfa.NPT442: 1
+- sfa.NPT452: 1
 
 ## Values dropped by checks (0)
 

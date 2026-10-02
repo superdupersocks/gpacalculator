@@ -523,8 +523,8 @@
   },
   "net_price_110k_plus": {
     "source": "IPEDS SFA 2023",
-    "variable": "",
+    "variable": "NPIS452 / NPT452",
     "year": 2023,
-    "meaning": ""
+    "meaning": "Average net price (income over 110,000)-students awarded Title IV federal financial aid, 2022-23"
   }
 }

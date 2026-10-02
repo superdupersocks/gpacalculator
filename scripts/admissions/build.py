@@ -71,14 +71,14 @@ MEASURES = {
 
 # Optional measures: empty (not an error) when a release lacks them. Published prices only, never computed.
 INCOME = [("0_30k", "0-30,000"), ("30_48k", "30,001-48,000"), ("48_75k", "48,001-75,000"),
-          ("75_110k", "75,001-110,000"), ("110k_plus", "110,001 and more")]
+          ("75_110k", "75,001-110,000"), ("110k_plus", "110,001")]
 EXTRA_MEASURES = {
     "tuition_in_district": ("ic_ay", "in-district tuition and fees", ("out-of-state", "in-state")),
-    "room_board_on_campus": ("ic_ay", "on campus, room and board", ()),
+    "room_board_on_campus": ("ic_ay", ("on campus, food and housing", "on campus, room and board"), ()),
     "books_supplies": ("ic_ay", "books and supplies", ()),
     "cost_in_state_on_campus": ("drvic", "total price for in-state students living on campus", ()),
     "cost_out_of_state_on_campus": ("drvic", "total price for out-of-state students living on campus", ()),
-    **{f"net_price_{k}": ("sfa", f"average net price (income {band})-students awarded title iv", ())
+    **{f"net_price_{k}": ("sfa", f"average net price (income {band}", ("grant or scholarship",))
        for k, band in INCOME},
 }
 COST += list(EXTRA_MEASURES)
@@ -105,8 +105,12 @@ class Data:
         self.manifest = json.loads(manifest.read_text()) if manifest.exists() else {}
         self.years = self.manifest.get("ipeds_years", {})  # {"hd": 2024, "adm": 2024, "ic": 2024}
         self.year = self.years.get("adm")
-        self.measures = {col: (f, self.titled(f, phrase, exclude))
-                         for col, (f, phrase, exclude) in {**MEASURES, **EXTRA_MEASURES}.items()}
+        self.measures = {}
+        for col, (f, phrases, exclude) in {**MEASURES, **EXTRA_MEASURES}.items():
+            found = None  # several phrases: IPEDS renamed some titles ("room and board" -> "food and housing")
+            for phrase in (phrases,) if isinstance(phrases, str) else phrases:
+                found = found or self.titled(f, phrase, exclude)
+            self.measures[col] = (f, found)
         self.imputed = Counter()
         self.dropped = []  # (unitid, column, value, reason)
 

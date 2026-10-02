@@ -107,8 +107,9 @@ $blocks = cs_walk( $blocks, $removed, $faq_n, $used );
 $heads = array();
 $calc  = null;
 foreach ( $blocks as $i => $b ) {
-	$html = render_block( $b );
-	if ( null === $calc && ( false !== strpos( $html, 'id="root"' ) || false !== strpos( $html, 'gpacalc-mount' ) ) ) {
+	// Calculators often sit in a shortcode block that only expands in the_content, so expand shortcodes here too.
+	$html = do_shortcode( render_block( $b ) );
+	if ( null === $calc && preg_match( '#id=["\']root["\']|gpacalc-mount|frm_forms#', $html ) ) {
 		$calc = $i;
 		continue;
 	}
@@ -138,7 +139,16 @@ foreach ( $removed as $r ) { $p = strpos( $a, $r ); if ( false !== $p ) { $a = s
 $b = cs_text( do_blocks( $new ) );
 $toc_txt = $has_toc || null === $calc || count( $heads ) < 4 ? '' : cs_text( 'On this page' . implode( '', wp_list_pluck( $heads, 'content' ) ) );
 if ( '' !== $toc_txt ) { $p = strpos( $b, $toc_txt ); if ( false !== $p ) { $b = substr_replace( $b, '', $p, strlen( $toc_txt ) ); } }
-printf( "page %d %s: pills removed %d, FAQ questions %d, TOC entries %d%s\n", $id, $post->post_name, count( $removed ), $faq_n, $has_toc ? 0 : count( $heads ), $has_toc ? ' (already had a TOC)' : '' );
+if ( $has_toc ) {
+	$toc_msg = 'TOC: already there';
+} elseif ( null === $calc ) {
+	$toc_msg = 'TOC: SKIPPED, no calculator block found';
+} elseif ( count( $heads ) < 4 ) {
+	$toc_msg = 'TOC: skipped, fewer than 4 headings';
+} else {
+	$toc_msg = sprintf( 'TOC: inserted after block %d with %d entries', $calc, count( $heads ) );
+}
+printf( "page %d %s: pills removed %d, FAQ questions %d. %s\n", $id, $post->post_name, count( $removed ), $faq_n, $toc_msg );
 if ( $a !== $b ) {
 	$p = 0;
 	while ( $p < strlen( $a ) && $p < strlen( $b ) && $a[ $p ] === $b[ $p ] ) { $p++; }

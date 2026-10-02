@@ -688,6 +688,51 @@ function gpa_calc_page_schema($data, $jsonld) {
     return $data;
 }
 
+// Content pages (GPA scale, guides): Rank Math nests a FAQ block's FAQPage under Article.subjectOf.
+// Lift it to one top-level FAQPage like the calculator pages (a nested copy is dropped when one is already top-level). College pages remove theirs at priority 99, so they have none left here.
+add_filter( 'rank_math/json_ld', 'gpa_lift_nested_faqpage', 115, 2 );
+function gpa_lift_nested_faqpage( $data, $jsonld ) {
+    if ( ! is_array( $data ) || is_front_page() || ! is_singular() ) {
+        return $data;
+    }
+    $has_top = false;
+    foreach ( $data as $node ) {
+        if ( is_array( $node ) && isset( $node['@type'] ) && 'FAQPage' === $node['@type'] ) {
+            $has_top = true;
+            break;
+        }
+    }
+    $faq = null;
+    foreach ( $data as $key => $node ) {
+        if ( ! is_array( $node ) || empty( $node['subjectOf'] ) || ! is_array( $node['subjectOf'] ) ) {
+            continue;
+        }
+        $subjects = isset( $node['subjectOf']['@type'] ) ? array( $node['subjectOf'] ) : $node['subjectOf'];
+        $keep     = array();
+        foreach ( $subjects as $s ) {
+            if ( is_array( $s ) && isset( $s['@type'] ) && 'FAQPage' === $s['@type'] ) {
+                if ( null === $faq && ! empty( $s['mainEntity'] ) ) {
+                    $faq = $s;
+                }
+                continue;
+            }
+            $keep[] = $s;
+        }
+        if ( count( $keep ) === count( $subjects ) ) {
+            continue;
+        }
+        if ( $keep ) {
+            $data[ $key ]['subjectOf'] = $keep;
+        } else {
+            unset( $data[ $key ]['subjectOf'] );
+        }
+    }
+    if ( ! $has_top && null !== $faq ) {
+        $data['FAQPage'] = $faq;
+    }
+    return $data;
+}
+
 add_filter('rank_math/opengraph/type', 'gpa_calc_og_type');
 function gpa_calc_og_type($type) {
     if (gpa_is_calculator_page()) {

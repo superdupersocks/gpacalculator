@@ -3428,3 +3428,13 @@ function gpa_scale_page_nav( $content ) {
 	$hub_link = sprintf( '<a class="gpa-scale-nav__hub" href="%s">All GPA scale pages</a>', esc_url( get_permalink( $hub ) ) );
 	return $content . '<nav class="gpa-scale-nav" aria-label="Other GPA values">' . $prev . $hub_link . $next . '</nav>';
 }
+
+/**
+ * 404 guessing: only redirect to a post whose slug matches exactly.
+ *
+ * WordPress's default guess redirects a missing address to any published post whose slug starts with the same
+ * text. After checkpoint C retired colleges with a 410 rule in Rank Math, which sets the status but lets the request
+ * run on, /admissions/remington-college/ was still sent to remington-college-baton-rouge-campus, and
+ * /admissions/auburn-university/ to auburn-university-at-montgomery. Exact matches keep working.
+ */
+add_filter( 'strict_redirect_guess_404_permalink', '__return_true' );

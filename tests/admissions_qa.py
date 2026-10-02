@@ -336,6 +336,21 @@ eq("CDS C1 for another fall: an admit rate far from IPEDS's goes to review",
 eq("CDS C1 for another fall: growth with the same admit rate stays",
    cds.c1_jump({"applicants": 9678, "admits": 8778, "enrolled": 519},
                {"applicants": "5037", "admits": "4492", "enrolled": "603"}), [])
+# A file that contradicts itself: Appalachian State's form gives a SAT math 25th percentile of 354 beside a
+# composite 25th of 1140; Pratt admitted more from its wait list than accepted a place; Barnard answers "No" to a
+# wait-list policy and reports wait-list counts. The values that can't all be right go to review together.
+_app = {"sat_comp_p25": 1140, "sat_comp_p50": 1200, "sat_comp_p75": 1270, "sat_erw_p25": 570, "sat_erw_p50": 610,
+        "sat_erw_p75": 660, "sat_math_p25": 354, "sat_math_p50": 550, "sat_math_p75": 620}
+eq("CDS consistency: SAT composite far from its sections", [c for c, _ in cds.consistency(_app)], ["sat_scores"])
+eq("CDS consistency: SAT sections that add up are fine",
+   cds.consistency({**_app, "sat_math_p25": 534}), [])
+eq("CDS consistency: wait list and early decision contradictions", [c for c, _ in cds.consistency(
+    {"waitlist_offered": 1001, "waitlist_accepted": 139, "waitlist_admitted": 925, "waitlist_policy": "No",
+     "ed_offered": "No", "ed_applicants": 300, "ed_admits": 120})],
+   ["waitlist_counts", "waitlist_policy", "ed_offered"])
+vals2, _, rev2 = cds.decide(src, None, {**_app, "factor_gpa": "Important"}, {}, {})
+eq("CDS decide: a self-contradicting group goes to review whole",
+   (sorted(vals2), [r["field"] for r in rev2]), (["factor_gpa"], ["sat_scores"]))
 _wb = openpyxl.Workbook()
 _ws = _wb.active
 _ws.append(["C11", "Percent who had GPA of 4.0", 0.55])

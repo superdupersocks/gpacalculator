@@ -676,7 +676,47 @@ def check(vals):
         problems.append(("admits", "more admits than applicants"))
     if b is not None and e is not None and e > b:
         problems.append(("enrolled", "more enrollees than admits"))
-    return problems
+    return problems + consistency(vals)
+
+
+# Values that can't all be right go to review together: the file contradicts itself, and which part is wrong
+# can't be told from the file alone.
+GROUPS = {"gpa_bands": BAND_COLS,
+          **{name: [f"{name}_p{q}" for q in (25, 50, 75)] for name, *_ in TESTS},
+          "sat_scores": [f"sat_{t}_p{q}" for t in ("comp", "erw", "math") for q in (25, 50, 75)],
+          "waitlist_counts": ["waitlist_offered", "waitlist_accepted", "waitlist_admitted"],
+          "ed_counts": ["ed_applicants", "ed_admits"]}
+
+
+def consistency(vals):
+    """Contradictions inside one file's values, as (column or GROUPS key, why). Seen in real files: Appalachian
+    State's SAT math 25th percentile of 354 beside a composite 25th of 1140, composites far below their sections'
+    sum (UNLV, Dakota State), more students admitted from a wait list than accepted a place on it (Pratt), and a
+    "No" wait-list policy beside wait-list counts (Barnard)."""
+    out = []
+    for name, *_ in TESTS:
+        got = [vals.get(f"{name}_p{q}") for q in (25, 50, 75)]
+        have = [v for v in got if v is not None]
+        if have != sorted(have):
+            out.append((name, f"{name} percentiles out of order: {got}"))
+    for q in (25, 50, 75):
+        comp, erw, math_ = (vals.get(f"sat_{t}_p{q}") for t in ("comp", "erw", "math"))
+        if comp and erw and math_ and abs(comp - erw - math_) > 120:
+            out.append(("sat_scores", f"SAT composite {q}th percentile {comp} is far from its sections' {erw} + "
+                                      f"{math_}"))
+            break
+    wo, wa, wd = (vals.get(c) for c in GROUPS["waitlist_counts"])
+    if (wo is not None and wa is not None and wa > wo) or (wa is not None and wd is not None and wd > wa):
+        out.append(("waitlist_counts", f"wait list: {wo} offered, {wa} accepted, {wd} admitted"))
+    ea, ed = vals.get("ed_applicants"), vals.get("ed_admits")
+    if (ea is not None and ed is not None and ed > ea) or (ea and vals.get("applicants") and ea > vals["applicants"]) \
+            or (ed and vals.get("admits") and ed > vals["admits"]):
+        out.append(("ed_counts", f"early decision: {ea} applicants, {ed} admits"))
+    if vals.get("waitlist_policy") == "No" and any(vals.get(c) for c in GROUPS["waitlist_counts"]):
+        out.append(("waitlist_policy", "no wait-list policy, but wait-list counts"))
+    if vals.get("ed_offered") == "No" and (ea or ed):
+        out.append(("ed_offered", "no early decision plan, but early decision counts"))
+    return out
 
 
 GPA_MID = dict(zip(BAND_COLS, (4.0, 3.87, 3.62, 3.37, 3.12, 2.75, 2.25, 1.5, 0.5)))  # each band's middle
@@ -768,7 +808,7 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
     if ipeds and not same_fall:
         problems += c1_jump(values, ipeds)
     for col, why in problems:
-        cols = BAND_COLS if col == "gpa_bands" else [col]
+        cols = GROUPS.get(col, [col])
         for c in cols:
             values.pop(c, None)
         for p in prov:

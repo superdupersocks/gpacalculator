@@ -1,22 +1,39 @@
 # Admissions data
 
-Builds one clean row per college for `/admissions/` from Department of Education sources. Plan and field list:
-the "Admissions Data Phase 1" doc in the project. Nothing here touches the live site; Phase 2 imports the output.
+Builds one clean row per college for `/admissions/` from the colleges' own Common Data Sets and Department of
+Education sources. Plan and field list: the "Admissions Data Phase 1" doc in the project. Nothing here touches
+the live site; Phase 2 imports the output.
 
 | Step | Script | Output in `data/admissions/` |
 | --- | --- | --- |
-| 1. Download | `fetch.py` | `raw/` (not committed), `manifest.json` (URLs, SHA-256, IPEDS year) |
+| 1. Download | `fetch.py` | `raw/` (not committed), `manifest.json` (URLs, SHA-256, year of every file) |
 | 2. Clean and join | `build.py` | `institutions.csv`, `field_sources.json`, `qa_report.md` |
 | 3. Link existing posts | `match.py` | `match.csv`, `match_review.csv` |
+| 4. Find each college's CDS | `cds_sources.py` | `cds_sources.csv` |
+| 5. Read the CDS files | `cds.py` | `cds_values.csv`, `cds_provenance.csv`, `cds_review.csv` |
 
-The cloud sessions can't reach ed.gov, so these run in GitHub Actions (`.github/workflows/admissions-data.yml`):
-by hand from the Actions tab, or on any push that changes these scripts on a `claude/admissions-*` branch. The
-workflow commits the outputs back to the branch. Locally: `pip install openpyxl`, then run the three scripts in
-order. Tests: `python3 tests/admissions_qa.py`.
+The cloud sessions can't reach ed.gov or the colleges' sites, so these run in GitHub Actions: steps 1-3 in
+`.github/workflows/admissions-data.yml`, steps 4-5 in `admissions-cds.yml`. Both run by hand from the Actions
+tab, or on a push that changes their scripts on a `claude/admissions-*` branch, and commit their outputs back
+to the branch. Locally: `pip install openpyxl pypdf cryptography`, then run the scripts in order. Tests:
+`python3 tests/admissions_qa.py`.
 
-IPEDS is the required source for every field. College Scorecard only adds extras (median earnings, accreditor,
-SAT average, operating and main-campus flags) and fills gaps; its download host refuses GitHub's runners, so on
-a workflow run those columns stay empty unless a copy is supplied (`SCORECARD_ZIP_FILE` on a machine that can
-download it).
+## Sources
 
-GPA is not in IPEDS or College Scorecard; it comes from each college's Common Data Set (separate step).
+- **IPEDS** (required): every core field. `fetch.py` takes each file from its newest complete release, then
+  replaces it with the newer provisional release when NCES has one (read from the Access database, since the
+  data generator doesn't serve those tables); sources from it say "provisional release". Variables are found
+  by their dictionary titles, because IPEDS renames them between years.
+- **College Scorecard** (extras: accreditor, earnings, debt, Pell and loan shares; the Department's DAPIP
+  accreditation download refuses scripted requests, so the accreditor comes from here): its host refuses GitHub's
+  runners, so `fetch.py` falls back to `data/admissions/scorecard/institutions.csv`, a slimmed copy of a file
+  downloaded by hand (`slim_scorecard.py <zip>`; `source.json` records the file and its SHA-256). The same
+  script slims the Field of Study file to `programs.csv` (bachelor's programs: graduates, earnings, debt).
+- **Common Data Set** (GPA, admission factors, early decision/action, wait list, newer test scores and counts):
+  `cds_sources.py` uses collegedata.fyi's public index (MIT-licensed) only to find each college's newest CDS on
+  the college's own site. `cds.py` reads the college's file and publishes a value only when it is exact (the
+  PDF's form fields, or collegedata.fyi's read of the college's form fields or Excel file) or when two
+  independent readings agree (our reading of the text, collegedata.fyi's extraction, IPEDS for the same fall).
+  Everything else goes to `cds_review.csv`. Values are cited to the college's own file.
+
+Values are never estimated, and suppressed or missing values stay blank, never 0.

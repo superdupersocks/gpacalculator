@@ -168,19 +168,6 @@ with zipfile.ZipFile(_buf, "w") as _z:
                 "<w:t>3.87</w:t></w:p></w:tc></w:tr></w:tbl></w:body></w:document>")
 eq("CDS Word file read", cds.parse(cds.text_of(_buf.getvalue())).get("gpa_avg"), 3.87)
 
-import accreditation  # noqa: E402
-_buf = io.BytesIO()
-with zipfile.ZipFile(_buf, "w") as _z:
-    _z.writestr("AccreditationRecords.csv",
-                "DapipId,Institution Name,Ipeds UnitIds,Agency Name,Program Name,Accreditation Status,Accreditation Date\n"
-                "1,Harvard University,166027,New England Commission of Higher Education,Institutional Accreditation,"
-                "Accredited,2018-04-01\n"
-                "1,Harvard University,166027,Liaison Committee on Medical Education,Medical Education,Accredited,2020-01-01\n"
-                "2,Gone College,999001,Some Agency,Institutional Accreditation,Terminated,2019-01-01\n")
-_acc = accreditation.accreditors(accreditation.tables(_buf.getvalue()))
-eq("DAPIP institutional accreditor only, active only", _acc,
-   {"166027": ("New England Commission of Higher Education", "Accredited", "2018-04-01")})
-
 # IPEDS provisional release: the newest Tablesdoc on the Access page, its titles and labels per table, and
 # sources marked as provisional.
 page = ('<a href="/ipeds/tablefiles/tableDocs/IPEDS202324Tablesdoc.xlsx">2023-24</a>'

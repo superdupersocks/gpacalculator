@@ -49,13 +49,29 @@ HIST_COLUMNS = ["unitid", "first_year", "last_year", "name", "city", "state", "o
 
 
 def links(html, base):
-    """Links to a spreadsheet, CSV or zip in a page, absolute."""
+    """Links to a spreadsheet, CSV or zip anywhere in a page (attributes or scripts), absolute, in page order."""
     out = []
-    for href in re.findall(r'href="([^"]+)"', html, flags=re.I):
-        if re.search(r"\.(xlsx|xls|csv|zip)(\?|$)", href, flags=re.I):
-            out.append(href if href.startswith("http") else re.sub(r"(https?://[^/]+).*", r"\1", base) + "/" +
-                       href.lstrip("/"))
+    text = html.replace("\\/", "/")  # JSON in scripts escapes slashes
+    for href in re.findall(r"""[^"'\s<>()]+\.(?:xlsx|xls|csv|zip)(?:\?[^"'\s<>()#]*)?(?=["'\s<>()#]|$)""", text,
+                           flags=re.I):
+        url = href if href.startswith("http") else re.sub(r"(https?://[^/]+).*", r"\1", base) + "/" + href.lstrip("/")
+        if url not in out:
+            out.append(url)
     return out
+
+
+def describe(html):
+    """What a page holds, for the log when it links no file: its title and the links and words about closed schools."""
+    title = re.search(r"<title[^>]*>(.*?)</title>", html, flags=re.I | re.S)
+    hrefs = re.findall(r"""href=["']([^"']+)["']""", html, flags=re.I)
+    near = [h for h in hrefs if re.search(r"closed|download|file|report|xls|csv|api", h, flags=re.I)]
+    words = re.findall(r"[^<>\"']{0,80}[Cc]losed [Ss]chool[^<>\"']{0,80}", html)
+    lines = [f"{len(html):,} characters; title {title.group(1).strip()[:120] if title else None!r}; {len(hrefs)} links"]
+    lines += [f"  link: {h}" for h in near[:40]]
+    lines += [f"  text: {' '.join(w.split())}" for w in words[:15]]
+    if not title:
+        lines.append("  start: " + " ".join(html[:600].split()))
+    return "\n".join(lines)
 
 
 def key(h):
@@ -114,6 +130,9 @@ def fsa():
     try:
         page = get(FSA_PAGE).decode("utf-8", errors="replace")
         candidates = links(page, FSA_PAGE)
+        print(f"FSA page: {len(candidates)} file links" + "".join(f"\n  {u}" for u in candidates))
+        if not candidates:
+            print(describe(page))
     except Exception as e:  # noqa: BLE001 - fall back to PEPS's old address
         print(f"FSA page: {e}")
         candidates = []

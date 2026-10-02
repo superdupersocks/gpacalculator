@@ -830,3 +830,5 @@
 /* Formula box: left-aligned like the rest of the page, with room above its closing line */
 #page #main .entry-content .rx-formula > p:is(.rx-sub, .rx-pill):not(#root *) { text-align: left !important; }
 #page #main .entry-content .rx-formula > .wp-block-columns + p:not(#root *) { margin-top: 20px !important; }
+/* Calculators asked for Inter: they use Lexend like the rest of the page (Inter's download goes in phase 5) */
+body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { font-family: var(--gpa-font) !important; }

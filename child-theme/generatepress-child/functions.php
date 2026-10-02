@@ -813,6 +813,18 @@ function gpa_college_page_schema($data, $jsonld) {
 
     $faq_items = array();
 
+    $cds_gpa = gpa_college_cds_gpa( $post_id );
+    if ( $cds_gpa ) {
+        $faq_items[] = array(
+            '@type' => 'Question',
+            'name'  => 'What is the average high school GPA at ' . $college . '?',
+            'acceptedAnswer' => array(
+                '@type' => 'Answer',
+                'text'  => gpa_college_cds_gpa_answer( $college, $cds_gpa ),
+            ),
+        );
+    }
+
     if ( $avg_gpa ) {
         $faq_items[] = array(
             '@type' => 'Question',
@@ -1065,6 +1077,38 @@ if ( ! function_exists( 'gpa_college_gpa_txt' ) ) {
         }
         $s = number_format( $num, 2 );
         return ( '0' === substr( $s, -1 ) ) ? substr( $s, 0, -1 ) : $s;    }
+}
+if ( ! function_exists( 'gpa_college_cds_gpa' ) ) {
+    // The average high school GPA the college reported on its own Common Data Set (C12), imported by
+    // scripts/admissions/phase2_b2_live.sh, or null without a value, its year and its source. Pages show a GPA
+    // only from these fields, always labeled as reported by the college with its year (and basis when known).
+    function gpa_college_cds_gpa( $post_id ) {
+        $value = trim( (string) get_post_meta( $post_id, 'cds_gpa', true ) );
+        $year  = trim( (string) get_post_meta( $post_id, 'cds_gpa_year', true ) );
+        $url   = trim( (string) get_post_meta( $post_id, 'cds_gpa_source_url', true ) );
+        if ( ! is_numeric( $value ) || (float) $value <= 0 || '' === $year || '' === $url ) {
+            return null;
+        }
+        $pct   = trim( (string) get_post_meta( $post_id, 'cds_gpa_submit_pct', true ) );
+        $basis = trim( (string) get_post_meta( $post_id, 'cds_gpa_basis', true ) );
+        return array(
+            'value'  => $value,
+            'year'   => str_replace( '-', '–', $year ),
+            'submit' => ( is_numeric( $pct ) && (float) $pct > 0 ) ? round( (float) $pct ) . '%' : '',
+            'basis'  => in_array( $basis, array( 'weighted', 'unweighted' ), true ) ? $basis : '',
+            'url'    => $url,
+        );
+    }
+}
+if ( ! function_exists( 'gpa_college_cds_gpa_answer' ) ) {
+    // The sentence that states a reported GPA: who reported it, where, for whom, and why it isn't a target.
+    function gpa_college_cds_gpa_answer( $college, array $g ) {
+        $basis = 'weighted' === $g['basis'] ? ' This is a weighted average (it is above 4.0).' : ( 'unweighted' === $g['basis'] ? ' This is an unweighted average.' : '' );
+        return 'The average high school GPA of ' . $college . '\'s first-year students who submitted one'
+            . ( '' !== $g['submit'] ? ' (' . $g['submit'] . ' did)' : '' )
+            . ' is ' . $g['value'] . ', as reported by the college in its ' . $g['year'] . ' Common Data Set.' . $basis
+            . ' Colleges calculate GPA in different ways, so this average can\'t be compared directly with your own GPA.';
+    }
 }
 if ( ! function_exists( 'gpa_college_range_txt' ) ) {
     function gpa_college_range_txt( $value ) {

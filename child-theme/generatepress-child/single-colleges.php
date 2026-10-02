@@ -102,6 +102,8 @@ if ( function_exists( 'gpa_college_gpa_txt' ) ) {
 } else {
     $gpa_fmt = gpa_fmt_gpa( $average_gpa );
 }
+// The GPA the college itself reported on its Common Data Set, with its year and source (null when there is none)
+$cds_gpa = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
 
 // Ranges with a proper en dash, or '' when missing
 $sat_range_display = $has( $sat_range ) ? str_replace( '-', '–', $sat_range ) : '';
@@ -127,7 +129,9 @@ $hero_style = $hero_bg
 
 // Key Highlights cards that actually have data
 $highlight_cards = array();
-if ( '' !== $gpa_fmt ) {
+if ( $cds_gpa ) {
+    $highlight_cards[] = array( 'class' => 'db-stat-card--blue', 'value' => $cds_gpa['value'], 'label' => 'Average high school GPA', 'note' => 'As reported by the college, ' . $cds_gpa['year'] . ( '' !== $cds_gpa['basis'] ? ' (' . $cds_gpa['basis'] . ')' : '' ), 'icon' => '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>' );
+} elseif ( '' !== $gpa_fmt ) {
     $highlight_cards[] = array( 'class' => 'db-stat-card--blue', 'value' => $gpa_fmt, 'label' => 'Average GPA', 'icon' => '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>' );
 }
 if ( '' !== $sat_range_display ) {
@@ -172,6 +176,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
 <style>
     .db-hero__title-sub { display: block; font-size: 0.5em; font-weight: 600; opacity: 0.9; margin-top: 0.35em; line-height: 1.25; }
     .db-scores__empty { padding: 16px 20px; color: #64748b; font-size: 0.95em; margin: 0; }
+    .db-stat-card__note { font-size: 0.75em; color: #64748b; margin-top: 4px; line-height: 1.3; }
 </style>
 
 <div class="db-college-profile">
@@ -256,6 +261,9 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                         </div>
                         <div class="db-stat-card__value"><?php echo esc_html( $card['value'] ); ?></div>
                         <div class="db-stat-card__label"><?php echo esc_html( $card['label'] ); ?></div>
+                        <?php if ( ! empty( $card['note'] ) ) : ?>
+                        <div class="db-stat-card__note"><?php echo esc_html( $card['note'] ); ?></div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -608,7 +616,12 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
 
         $faqs = array();
 
-        if ( '' !== $gpa_fmt ) {
+        if ( $cds_gpa ) {
+            $faqs[] = array(
+                'question' => 'What is the average high school GPA at ' . $college_name . '?',
+                'answer'   => esc_html( gpa_college_cds_gpa_answer( $college_name, $cds_gpa ) ) . ' Source: <a href="' . esc_url( $cds_gpa['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $college_name . ' Common Data Set ' . $cds_gpa['year'] ) . '</a>.',
+            );
+        } elseif ( '' !== $gpa_fmt ) {
             $faqs[] = array(
                 'question' => 'What GPA do I need to get into ' . $college_name . '?',
                 'answer'   => 'The average GPA of admitted students at ' . $college_name . ' is <strong>' . esc_html($gpa_fmt) . '</strong>. While this is the average, ' . $college_name . ' considers your entire application holistically. A strong GPA combined with extracurricular activities, essays, and recommendations can strengthen your application. We recommend aiming for a GPA at or above the average to be competitive.',

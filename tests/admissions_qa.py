@@ -273,6 +273,18 @@ eq("CDS text: lines \"of another gender\" count toward the total", cds.parse(
     "Total first-time, first-year men who enrolled 220\nTotal first-time, first-year women who enrolled 227\n"
     "Total first-time, first-year of another gender who enrolled 29\n"
     "Total first-time, first-year (degree-seeking) enrolled   95   347   34   476")["_alt"], {})
+# Rose-Hulman puts each row's total first, in parentheses, and words its lines by sex "first-year (freshman) men".
+_rh = cds.parse("""Total first-time, first-year (freshman) men who applied 4,553
+Total first-time, first-year (freshman) women who applied 1,541 (Total: 6,097)
+Total full-time, first-time, first-year (freshman) men who enrolled 451 (Fall Enrollment Snapshot: 451)
+Total full-time, first-time, first-year (freshman) women who enrolled 153 (Fall Enrollment Snapshot: 153)
+Total first-time, first-year (degree seeking) who applied (6,097) 1,295 3,847 955
+Total first-time, first-year (degree seeking) enrolled (604) 159 377 68""")
+eq("CDS text: the total its row adds up to, wherever it sits; \"(freshman)\" lines by sex",
+   (_rh.get("applicants"), _rh.get("enrolled"), _rh["_alt"]), (6097, 604, {"applicants": 6094}))
+eq("CDS text: a stated total is the number the rest of its row adds up to",
+   [cds.stated_total(r) for r in ([2885, 36130, 9181, 0, 48196], [3512, 24960, 4282], [10339], [0])],
+   [48196, None, 10339, None])
 # A lone number in the residency row can be its in-state column (RIT); a file that states two totals keeps both,
 # and a second reading settles which one is published.
 _rit = cds.parse("""Total first-time, first-year men who applied 18303

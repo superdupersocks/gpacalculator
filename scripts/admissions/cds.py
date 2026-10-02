@@ -345,9 +345,11 @@ def first_after(text, label, pick=-1):
 C1_DEGREE = r"Total\s+first-time,?\s+first-year\s+\((?:degree[-\s]+seeking|freshman)\)\s+(?:students\s+)?(?:who\s+)?"
 C1_STUDENTS = r"Total\s+first-time,?\s+first-year\s+(?:degree-seeking\s+)?students\s+(?:who\s+)?"
 C1 = {"applicants": r"applied\b", "admits": r"(?:were\s+)?admitted\b", "enrolled": r"enrolled\b"}
-# The C1 lines by sex that the total adds up: men, women, (of) another gender, (of) unknown gender up to 2024-25;
-# males, females, students of unknown sex from 2025-26. Enrollees come by sex, and by sex and full- or part-time.
-C1_SEX = re.compile(r"Total\s+(?:(full|part)-time,?\s+)?first-time,?\s+first-year\s+(?:students\s+)?(?:of\s+)?"
+# The C1 lines by sex that the total adds up: men, women, (of) another gender, (of) unknown gender up to 2024-25
+# (some files still say "first-year (freshman) men"); males, females, students of unknown sex from 2025-26.
+# Enrollees come by sex, and by sex and full- or part-time.
+C1_SEX = re.compile(r"Total\s+(?:(full|part)-time,?\s+)?first-time,?\s+first-year\s+(?:\(freshman\)\s+)?"
+                    r"(?:students\s+)?(?:of\s+)?"
                     r"(men|women|males?|females?|another\s+gender|unknown\s+(?:gender|sex)|non-?binary)\s+"
                     r"(?:students\s+)?who\s+(applied|were\s+admitted|enrolled)\b", re.I)
 C1_WHAT = {"applied": "applicants", "were admitted": "admits", "enrolled": "enrolled"}
@@ -375,6 +377,15 @@ def c1_by_sex(t):
                 out[col] = sum(v for v in lines.values() if v)
                 break
     return out
+
+
+def stated_total(parts):
+    """The total a C1 row states: a lone number, or the one number the others add up to, wherever it sits (the
+    template puts the Total after the residency columns; Rose-Hulman puts it first, in parentheses). None when no
+    number is the others' sum: the Total was left blank and the row holds residency columns only."""
+    if len(parts) == 1:
+        return parts[0] or None
+    return next((x for x in parts if x and x == sum(parts) - x), None)
 
 
 C1_LINE = re.compile(r"first-time,?\s+first-year\b[^\n]*?\b(?:applied|admitted|enrolled)\b", re.I)
@@ -497,7 +508,7 @@ def parse(text):
     sums = c1_by_sex(t)
     for col, label in C1.items():
         row = next((g for g in (after(t, m) for m in re.finditer(C1_DEGREE + label, t, re.I)) if g), [])
-        v = clean("count", row[-1]) if row else None
+        v = stated_total([clean("count", x) or 0 for x in row]) if row else None
         if not v:
             for m in re.finditer(C1_STUDENTS + label, t, re.I):
                 got = after(t, m)
@@ -506,14 +517,12 @@ def parse(text):
                     break
         s = sums.get(col)
         if s and v != s:
-            # The "(degree-seeking)" row of 2025-26 has residency columns (in-state, out-of-state, international,
-            # unknown) before its Total; with the Total blank, its last number is one of them, and the numbers
-            # before it don't add up to it: the lines by sex give the total. Otherwise the file states two totals: a
-            # lone number can be the in-state column (RIT's 10,339 of 31,527 applicants), and a row that adds up can
-            # count other students than the lines by sex (Auburn Montgomery's 162 enrollees, against 364 by sex and
-            # in IPEDS). Both stay, for a second reading or IPEDS to settle; the run log lists them.
-            parts = [clean("count", x) or 0 for x in row]
-            if not v or (len(parts) > 1 and parts[-1] == v and parts[-1] != sum(parts[:-1])):
+            # With no stated total (a blank calculated field, or a residency row whose Total is blank), the lines by
+            # sex give it. A file can also state two totals: a lone number can be the in-state column (RIT's 10,339
+            # of 31,527 applicants), and a row that adds up can count other students than the lines by sex (Auburn
+            # Montgomery's 162 enrollees, against 364 by sex and in IPEDS). Both stay, for a second reading or IPEDS
+            # to settle; the run log lists them.
+            if not v:
                 v = s
                 summed.add(col)
             else:

@@ -832,27 +832,3 @@
 #page #main .entry-content .rx-formula > .wp-block-columns + p:not(#root *) { margin-top: 20px !important; }
 /* Calculators asked for Inter: they use Lexend like the rest of the page (Inter's download goes in phase 5) */
 body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { font-family: var(--gpa-font) !important; }
-
-/* 12. TRIAL (Digant 2026-10-02 20:28): the College GPA calculator page (id 22) with a 700px white column.
-   The calculator fills the column; text, boxes, tables, TOC and FAQ sit at 620px inside it.
-   Remove this block to go back to the 900/800 layout, or widen the selector to roll it out. */
-body.page-id-22 { --gpa-content-max: 700px; --gpa-text-max: 620px; }
-/* the calculator template hard-codes a 900px column (calculator-page.css section 14) */
-html body.page-id-22 #page #main article .inside-article .entry-content { max-width: var(--gpa-content-max) !important; }
-@media (min-width: 941px) {
-    body.page-id-22 #page #main .entry-content > :is(.rx-sec, .rx-about, .wp-block-group, figure, .wp-block-table, .wp-block-columns, .wp-block-rank-math-toc-block, .rank-math-block):not(#root *) {
-        max-width: min(620px, calc(100% - 80px)) !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-    body.page-id-22 #page #main .entry-content :is(.rx-sec, .rx-about) > :is(p, ul, ol, h2, h3, blockquote, .rx-formula, .rx-meaning, .rx-card, .wp-block-columns, figure, .wp-block-table, .rank-math-block, .wp-block-rank-math-faq-block, .rx-faqwrap, .rx-relcard):not(#root *) {
-        max-width: 100% !important;
-    }
-}
-@media (min-width: 641px) {
-    html body.page-id-22.gpa-calc-tool #page #root:not(.hs-root) {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-    }
-}

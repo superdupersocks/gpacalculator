@@ -795,7 +795,6 @@
  
 /* 14. Hero band: the shared hero lives in layout.css */
 .page-template-template-calculator.page-template-template-calculator article .inside-article .entry-content{
-    max-width:900px !important;
     margin-left:auto !important;
     margin-right:auto !important;
 }
@@ -926,10 +925,14 @@ body.page-id-26311 #root,
 body.page-id-26313 #root,
 body.page-id-28758 #root { min-height: 720px !important; }
 
-/* Every calculator: one rounded card, 800px wide on wider screens and 14px from the screen edge on phones (same as the high school calculator) */
+/* Every calculator: one rounded card exactly as wide as the white column from 641px up (GPA_COLUMN_TIERS in style.css),
+   14px from the screen edge on phones. Homepage, college, high school and Formidable calculators alike. */
 body.gpa-calc-tool #root .max-w-4xl.px-4 { max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; }
 @media (min-width: 641px) {
-  body.gpa-calc-tool #root:not(.hs-root) { width: min(800px, calc(100vw - 32px)) !important; max-width: none !important; margin-left: calc((100% - min(800px, calc(100vw - 32px))) / 2) !important; margin-right: 0 !important; }
+  html body #page #root:not(.hs-root),
+  html body #page #root.hs-root,
+  html body #page .hs-root,
+  html body #page .entry-content > .frm_forms { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
 }
 @media (max-width: 640px) {
   body.gpa-calc-tool #root:not(.hs-root) { width: auto !important; max-width: none !important; margin-left: -16px !important; margin-right: -16px !important; }
@@ -939,13 +942,12 @@ body.gpa-calc-tool #root .max-w-4xl.px-4 { max-width: none !important; padding-l
 @media (min-width: 641px) { body.gpa-calc-tool #root .hsx { border-radius: 16px; } }
 
 /* Older form-based calculators (Formidable): the same card around the form */
-body.gpa-calc-tool .entry-content > .frm_forms { box-sizing: border-box; width: min(800px, calc(100vw - 32px)); max-width: none; margin-left: calc((100% - min(800px, calc(100vw - 32px))) / 2); background: var(--gpa-calc-bg); border: 1px solid var(--gpa-border); border-radius: 16px; padding: 32px; }
+body.gpa-calc-tool .entry-content > .frm_forms { box-sizing: border-box; background: var(--gpa-calc-bg); border: 1px solid var(--gpa-border); border-radius: 16px; padding: 32px; }
 @media (max-width: 640px) {
   body.gpa-calc-tool .entry-content > .frm_forms { width: auto; margin-left: -16px; margin-right: -16px; border-radius: 18px; padding: 20px 16px; }
 }
 
-/* High school calculator: 16px less side padding below 1024px wide, and no full-screen minimum height */
-@media (max-width: 1023px) { body.page-id-77 #root { max-width: 734px !important; } }
+/* High school calculator: no full-screen minimum height (its width follows the column, above) */
 body.page-id-77 #root .min-h-screen { min-height: 0 !important; }
 
 /* Section headings on calculator pages: pill, title and subtitle type and spacing */

@@ -285,8 +285,8 @@
     /* ---- Layout ---- */
     --gpa-container-max: 1140px;     /* content area (all templates) */
     --gpa-container-wide: 1280px;    /* header / footer (full bleed band) */
-    --gpa-content-max: 900px;        /* white content column: tables, calculator, images */
-    --gpa-text-max: 800px;           /* text blocks inside the column */
+    --gpa-content-max: 800px;        /* white content column: tables, calculator, images */
+    --gpa-text-max: 720px;           /* text blocks inside the column */
     --gpa-column-radius: 16px;
 
     /* ---- Radii ---- */

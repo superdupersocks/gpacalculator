@@ -179,9 +179,10 @@ vals2, _, rev2 = cds.decide(src, {"admissions_year": "2023", "applicants": "2811
 eq("CDS decide: C1 far from IPEDS for the same fall goes to review",
    (vals2, [r["field"] for r in rev2]), ({}, ["applicants"]))
 
-# Which college a file belongs to: a file listed for three campuses is used for the one whose applicant count
-# it matches; a single file far from IPEDS's count describes another campus; a misread count alone doesn't
-# disqualify a file when another reading is close.
+# Which college a file belongs to: a file listed for three campuses is used for the one whose first-year class
+# it matches; a single file far from IPEDS's class describes another campus; collegedata.fyi's row-shifted counts
+# (fewer applicants than enrollees, or a lone count) don't disqualify a college's own file; applications can
+# swing from year to year while the class size holds.
 def _src(u, name, archive):
     return {"unitid": u, "name": name, "cds_year": "2025-26", "source_url": "https://x.edu/" + archive,
             "archive_url": "https://archive/" + archive + ".pdf"}
@@ -189,13 +190,19 @@ def _src(u, name, archive):
 
 readings = {"1": (_src("1", "Main", "aaa"), {}, {"applicants": 46000}, {}, ""),
             "2": (_src("2", "Branch", "aaa"), {}, {"applicants": 46000}, {}, ""),
-            "3": (_src("3", "Other", "bbb"), {}, {}, {"C.116": "52703"}, ""),
+            "3": (_src("3", "Other", "bbb"), {}, {}, {"C.116": "52703", "C.117": "31701", "C.118": "7272"}, ""),
             "4": (_src("4", "Misread", "ccc"), {}, {"applicants": 45000}, {"C.116": "2885"}, ""),
-            "5": (_src("5", "No IPEDS", "ddd"), {}, {"applicants": 900}, {}, "")}
-ipeds = {"1": {"applicants": "44000"}, "2": {"applicants": "5100"}, "3": {"applicants": "3005"},
-         "4": {"applicants": "45409"}}
+            "5": (_src("5", "No IPEDS", "ddd"), {}, {"applicants": 900}, {}, ""),
+            "6": (_src("6", "Shifted", "eee"), {}, {}, {"C.116": "1284"}, ""),
+            "7": (_src("7", "Upside down", "fff"), {}, {}, {"C.116": "1829", "C.117": "900", "C.118": "2657"}, ""),
+            "8": (_src("8", "Surge", "ggg"), {"applicants": 4133, "enrolled": 249}, {}, {}, "")}
+ipeds = {"1": {"applicants": "44000"}, "2": {"applicants": "5100"}, "3": {"applicants": "3005", "enrolled": "666"},
+         "4": {"applicants": "45409"}, "6": {"applicants": "28232"}, "7": {"applicants": "9568", "enrolled": "800"},
+         "8": {"applicants": "1747", "enrolled": "260"}}
 skip = cds.assign(readings, ipeds)
 eq("CDS files matched to their college", sorted(skip), ["2", "3"])
+eq("CDS skipped file says why", skip["3"].split("(")[1].split(")")[0],
+   "file: 7,272 enrolled, 52,703 applicants; IPEDS: 666 enrolled, 3,005 applicants")
 
 LAYOUT = """C1. Applications
 Total first-time, first-year students who applied in Fall 2023 1,578.0 2,055.0 9.0
@@ -226,6 +233,69 @@ eq("CDS layout text: C1 total column, C7 marks under their headings, C21, C12",
     "factor_interview": "Not Considered", "ed_offered": "No", "ed_applicants": 1053, "gpa_avg": 3.71,
     "gpa_submit_pct": 96.4})
 eq("CDS layout text: a by-sex row isn't a total", cds.parse(LAYOUT.split("IN-STATE")[0]).get("applicants"), None)
+C1_BLANK = """C1 Applications
+Total first-time, first-year men who applied                         5,831
+Total first-time, first-year women who applied                       6,310
+Total first-time, first-year another gender who applied                 12
+Total first-time, first-year unknown gender who applied
+Total full-time, first-time, first-year men who enrolled             1,402
+Total part-time, first-time, first-year men who enrolled                 3
+Total full-time, first-time, first-year women who enrolled           1,488
+Total first-time, first-year students who applied
+Total first-time, first-year students who enrolled"""
+g = cds.parse(C1_BLANK)
+eq("CDS text: a blank C1 total is its lines by sex added up",
+   ({k: g.get(k) for k in ("applicants", "admits", "enrolled")}, sorted(g["_summed"])),
+   ({"applicants": 12153, "admits": None, "enrolled": 2893}, ["applicants", "enrolled"]))
+C1_2025 = """Total first-time, first-year males who applied          14,020
+Total first-time, first-year females who applied        18,734
+Total first-time, first-year students of unknown sex who applied     0
+First-Time, First-Year Student Applicants   In-State   Out-of-State   International   Unknown   Total
+Total first-time, first-year (degree-seeking) who applied    3,512    24,960    4,282"""
+eq("CDS text: a 2025-26 residency row with its Total blank isn't the total",
+   cds.parse(C1_2025).get("applicants"), 32754)
+eq("CDS text: a residency row whose Total adds up stays",
+   cds.parse(C1_2025 + "    32,754").get("applicants"), 32754)
+eq("CDS text: enrollees by sex aren't counted again by full- and part-time", cds.parse(
+    "Total first-time, first-year males who enrolled 100\nTotal first-time, first-year females who enrolled 120\n"
+    "Total full-time, first-time, first-year males who enrolled 90\nTotal part-time, first-time, first-year males "
+    "who enrolled 10\nTotal full-time, first-time, first-year females who enrolled 120").get("enrolled"), 220)
+# The 2025-26 spreadsheet template indexes every question in columns right of the form, on unrelated rows: the
+# C11 band rows end with the application closing month and day.
+_wb = openpyxl.Workbook()
+_ws = _wb.active
+_ws.append(["C11", "Percentage of all enrolled ..."])
+for _i, (_band, _p) in enumerate([("of 4.0", 40.0), ("between 3.75 and 3.99", 30.0), ("between 3.50 and 3.74", 20.0),
+                                  ("between 3.25 and 3.49", 6.0), ("between 3.00 and 3.24", 4.0)]):
+    _ws.append([None, "Percent who had GPA " + _band, None, _p, _p, _p] + [None] * 20
+               + [f"C.14{_i:02d}", "Application closing date (fall): Month", _i + 1])
+for _i in range(6):
+    _ws.append([None] * 26 + [f"C.15{_i:02d}", "Another question", 15])
+_ws.append(["C12", "Average high school GPA of all degree-seeking, first-time, first-year students who submitted GPA:",
+            None, 3.71])
+_buf3 = io.BytesIO()
+_wb.save(_buf3)
+g = cds.parse(cds.text_of(_buf3.getvalue(), "xlsx"))
+eq("CDS spreadsheet: the question index right of the form is cut off",
+   ([g.get(c) for c in cds.BAND_COLS[:5]], "gpa_350_374" in g["_tight"]), ([40.0, 30.0, 20.0, 6.0, 4.0], True))
+_m = {c: "file text, checked" for c in cds.BAND_COLS}
+_bands = dict(zip(cds.BAND_COLS, (87.6, 7.1, 3.4, 0.8, 0.7, 0.3, 0.1, 0.0, 0.0)))
+eq("CDS GPA bands that can't give their average: the lone reading goes",
+   cds.gpa_conflict({"gpa_avg": 3.71, **_bands}, {**_m, "gpa_avg": "form fields"}),
+   [("gpa_bands", "the GPA bands put the class near 3.96, well above its 3.71 average")])
+_both = {c: "file text + collegedata.fyi" for c in cds.BAND_COLS}
+eq("CDS GPA bands and average both confirmed stay",
+   cds.gpa_conflict({"gpa_avg": 3.71, **_bands}, {**_both, "gpa_avg": "form fields"}), [])
+eq("CDS weighted average above its bands is fine",
+   cds.gpa_conflict({"gpa_avg": 4.54, **dict(zip(cds.BAND_COLS, (56.8, 26.9, 9.9, 2.8, 2.9, 0.7, 0.1, 0, 0)))},
+                    {**_m, "gpa_avg": "file text, checked"}), [])
+eq("CDS C1 for another fall: an admit rate far from IPEDS's goes to review",
+   [c for c, _ in cds.c1_jump({"applicants": 6785, "admits": 2612, "enrolled": 1742},
+                              {"applicants": "8824", "admits": "7266", "enrolled": "2044"})],
+   ["applicants", "admits", "enrolled"])
+eq("CDS C1 for another fall: growth with the same admit rate stays",
+   cds.c1_jump({"applicants": 9678, "admits": 8778, "enrolled": 519},
+               {"applicants": "5037", "admits": "4492", "enrolled": "603"}), [])
 _wb = openpyxl.Workbook()
 _ws = _wb.active
 _ws.append(["C11", "Percent who had GPA of 4.0", 0.55])

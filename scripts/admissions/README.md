@@ -35,9 +35,12 @@ in order. Tests: `python3 tests/admissions_qa.py`.
   text laid out as on the page (`pdftotext -layout` from poppler-utils; spreadsheet and Word cells keep their
   columns). A value is published when it comes from the form fields or when two readings agree (our text,
   collegedata.fyi's extraction, IPEDS for the same fall); a GPA printed on its label's own line may stand alone
-  if it passes its checks. collegedata.fyi alone is never enough: its readings of some files are off by a row
-  or a column. Before reading, each file is checked against its college: a file whose applicant count is far
-  from IPEDS's (another campus's CDS) or that is listed for several colleges is used only where it matches.
-  Everything else goes to `cds_review.csv`. Values are cited to the college's own file.
+  if it passes its checks (including an average its own GPA bands can produce). collegedata.fyi alone is never
+  enough: its readings of some files are off by a row or a column. A C1 total left blank is its lines by sex
+  added up; C1 counts for another fall than IPEDS's must stay within half to twice IPEDS's with a similar admit
+  rate. Before reading, each file is checked against its college: a file whose first-year class is far from
+  IPEDS's (another campus's CDS) or that is listed for several colleges is used only where it matches. In
+  spreadsheets, the question index the 2025-26 template keeps beside the form is cut off. Everything else goes
+  to `cds_review.csv`. Values are cited to the college's own file.
 
 Values are never estimated, and suppressed or missing values stay blank, never 0.

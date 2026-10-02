@@ -20,13 +20,16 @@ Each value can have up to four readings:
 - IPEDS for the same fall, where IPEDS reports the same measure
 A value is published when it comes from the form fields, or when two of the other readings agree. A high
 school GPA value read from the text with its label on the same line, and with no other reading, is published
-when it passes its own checks (average between 1 and 5, bands adding up to 100). Everything else goes to review
-with every reading. Values are never estimated, a blank stays blank, and an applicant count of 0 (an unfilled
-total on the form) counts as blank; the total is then the form's lines by sex added up.
+when it passes its own checks (average between 1 and 5, bands adding up to 100, an average its bands can
+produce). Everything else goes to review with every reading. Values are never estimated, a blank stays blank,
+and an applicant count of 0 (an unfilled total on the form) counts as blank; the total is then its lines by sex
+added up, on the form or in the text. C1 counts must be within 15% of IPEDS for the same fall; for another fall,
+within half to twice IPEDS's, with an admit rate within 25 points.
 
-Each file is matched to its college first: a file whose first-year applicant count is nowhere near IPEDS's for
-that college (another campus's CDS, say) isn't used, and a file listed for several colleges is used only for the
-one whose numbers it matches.
+Each file is matched to its college first: a file whose first-year class is nowhere near IPEDS's for that
+college (another campus's CDS, say) isn't used, and a file listed for several colleges is used only for the one
+whose numbers it matches. collegedata.fyi's counts take part in that check only when nothing of ours does and
+they hang together.
 
 Writes data/admissions/cds_values.csv (published values, one row per college, with the CDS year and the source
 URL on the college's site for citations), cds_provenance.csv (every reading of every value) and cds_review.csv
@@ -238,7 +241,14 @@ def docx_text(data):
     return grid(rows)
 
 
+QUESTION_NO = re.compile(r"[A-J]\.\d{3,5}")
+
+
 def xlsx_text(data):
+    """The workbook's sheets as layout text. The 2025-26 template keeps an index of every question (its number,
+    wording and answer) in columns to the right of the form, on the same rows as unrelated form lines: the C11
+    band rows carry the application closing month and day there. That index is cut off, from the first column
+    holding question numbers like "C.1402"."""
     import openpyxl
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
     sheets = []
@@ -247,7 +257,14 @@ def xlsx_text(data):
             ws.reset_dimensions()  # some files declare a wrong sheet size, which would cut rows short
         except AttributeError:
             pass
-        sheets.append(grid([[cell(c) for c in row] for row in ws.iter_rows()]))
+        rows = [[cell(c) for c in row] for row in ws.iter_rows()]
+        hits = defaultdict(int)
+        for r in rows:
+            for i, v in enumerate(r):
+                if i >= 3 and QUESTION_NO.fullmatch(v.strip()):
+                    hits[i] += 1
+        cut = min((i for i, n in hits.items() if n >= 10), default=None)
+        sheets.append(grid([r[:cut] for r in rows] if cut else rows))
     return "\n".join(sheets)
 
 
@@ -328,6 +345,34 @@ def first_after(text, label, pick=-1):
 C1_DEGREE = r"Total\s+first-time,?\s+first-year\s+\((?:degree[-\s]+seeking|freshman)\)\s+(?:students\s+)?(?:who\s+)?"
 C1_STUDENTS = r"Total\s+first-time,?\s+first-year\s+(?:degree-seeking\s+)?students\s+(?:who\s+)?"
 C1 = {"applicants": r"applied\b", "admits": r"(?:were\s+)?admitted\b", "enrolled": r"enrolled\b"}
+# The C1 lines by sex that the total adds up: men, women, another gender, unknown gender up to 2024-25; males,
+# females, students of unknown sex from 2025-26. Enrollees come by sex, and by sex and full- or part-time.
+C1_SEX = re.compile(r"Total\s+(?:(full|part)-time,?\s+)?first-time,?\s+first-year\s+(?:students\s+of\s+)?"
+                    r"(men|women|males?|females?|another\s+gender|unknown\s+(?:gender|sex)|non-?binary)\s+"
+                    r"(?:students\s+)?who\s+(applied|were\s+admitted|enrolled)\b", re.I)
+C1_WHAT = {"applied": "applicants", "were admitted": "admits", "enrolled": "enrolled"}
+
+
+def c1_by_sex(t):
+    """{column: its C1 lines by sex added up}, for a total left blank (a calculated field that never ran, or a
+    2025-26 Total column after four residency columns). Needs both a men's and a women's line."""
+    seen = {}
+    for m in C1_SEX.finditer(t):
+        col = C1_WHAT[" ".join(m.group(3).lower().split())]
+        sex = m.group(2).lower()[:3].replace("mal", "men").replace("fem", "wom")
+        key = (col, (m.group(1) or "").lower(), sex)
+        if key not in seen:  # the form comes before any repeat of it (a spreadsheet's answer sheet, say)
+            got = after(t, m)
+            seen[key] = clean("count", got[0]) if got else None
+    out = {}
+    for col in C1_WHAT.values():
+        for load in (("",), ("full", "part")):
+            lines = {k: v for k, v in seen.items() if k[0] == col and k[1] in load}
+            sexes = {k[2] for k, v in lines.items() if v is not None}
+            if {"men", "wom"} <= sexes:
+                out[col] = sum(v for v in lines.values() if v)
+                break
+    return out
 COUNTS = {"ed_applicants": r"Number\s+of\s+early\s+decision\s+applications\s+received(?:\s+by\s+your\s+institution)?",
           "ed_admits": r"Number\s+of\s+applicants\s+admitted\s+under\s+early\s+decision(?:\s+plan)?",
           "waitlist_offered": r"Number\s+of\s+qualified\s+applicants\s+offered\s+a\s+place\s+on\s+(?:the\s+)?wait",
@@ -429,15 +474,27 @@ def parse(text):
     "_tight" lists the GPA fields whose value sat on its label's own line."""
     t = text.replace("\xa0", " ").replace("\f", "\n").replace("\r", "")
     flat = re.sub(r"[ \t]+", " ", t)
-    out, tight = {}, set()
+    out, tight, summed = {}, set(), set()
+    sums = c1_by_sex(t)
     for col, label in C1.items():
-        v = clean("count", first_after(t, C1_DEGREE + label))
+        row = next((g for g in (after(t, m) for m in re.finditer(C1_DEGREE + label, t, re.I)) if g), [])
+        v = clean("count", row[-1]) if row else None
         if not v:
             for m in re.finditer(C1_STUDENTS + label, t, re.I):
                 got = after(t, m)
                 if got:
                     v = clean("count", got[0]) if len(got) == 1 else None
                     break
+        s = sums.get(col)
+        if s and v != s:
+            # The "(degree-seeking)" row of 2025-26 has residency columns (in-state, out-of-state, international,
+            # unknown) before its Total; with the Total blank, its last number is only a part: smaller than the
+            # lines by sex, or not the sum of the numbers before it.
+            parts = [clean("count", x) or 0 for x in row]
+            part = bool(row) and parts[-1] == v and (v < s or (len(parts) > 1 and parts[-1] != sum(parts[:-1])))
+            if not v or part:
+                v = s
+                summed.add(col)
         if v:
             out[col] = v
     for col, label in COUNTS.items():
@@ -509,7 +566,7 @@ def parse(text):
             out[col] = clean("pct", got[0])
 
     out.update(factor_levels(t))
-    out["_tight"] = tight
+    out["_tight"], out["_summed"] = tight, summed
     return out
 
 
@@ -590,6 +647,41 @@ def check(vals):
     return problems
 
 
+GPA_MID = dict(zip(BAND_COLS, (4.0, 3.87, 3.62, 3.37, 3.12, 2.75, 2.25, 1.5, 0.5)))  # each band's middle
+
+
+def gpa_conflict(values, methods):
+    """An average GPA its own bands can't produce: the bands put the class well above the average (bands read from
+    a weighted column beside an unweighted average, or another column altogether). A reading that stood alone goes
+    to review; when both were confirmed by a second reading, that is what the file says and both stay. (Bands
+    below a weighted average are normal: the top band is "4.0 and above".)"""
+    g = values.get("gpa_avg")
+    bands = {c: values[c] for c in BAND_COLS if values.get(c) is not None}
+    total = sum(bands.values())
+    if g is None or len(bands) < 5 or not total:
+        return []
+    implied = sum(GPA_MID[c] * p for c, p in bands.items()) / total
+    if implied - g <= 0.2:
+        return []
+    why = f"the GPA bands put the class near {implied:.2f}, well above its {g} average"
+    alone = "file text, checked"
+    return ([("gpa_avg", why)] if methods.get("gpa_avg") == alone else []) + \
+        ([("gpa_bands", why)] if any(methods.get(c) == alone for c in bands) else [])
+
+
+def c1_jump(values, ipeds):
+    """C1 counts for another fall than IPEDS's that look like a different measure: a count over twice or under
+    half IPEDS's, or an admit rate 25 points away. They go to review; IPEDS still gives its own fall's counts."""
+    a, b, e = (values.get(c) for c in ("applicants", "admits", "enrolled"))
+    ia, ib, ie = (clean("count", ipeds.get(c)) for c in ("applicants", "admits", "enrolled"))
+    why = next((f"{v:,} {what} in the CDS but {i:,} in IPEDS for another fall"
+                for v, i, what in ((a, ia, "applicants"), (b, ib, "admits"), (e, ie, "enrollees"))
+                if v and i and not 0.5 <= v / i <= 2), None)
+    if not why and a and b and ia and ib and abs(b / a - ib / ia) > 0.25:
+        why = f"admit rate {b / a:.0%} in the CDS but {ib / ia:.0%} in IPEDS for another fall"
+    return [(c, why) for c in ("applicants", "admits", "enrolled") if why and values.get(c) is not None]
+
+
 def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
     """(published values, provenance rows, review rows) for one college. producer only labels collegedata.fyi's
     reading: an extraction from the college's own cells (Excel, form fields) is still a single reading."""
@@ -597,7 +689,8 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
     same_fall = ipeds if ipeds and ipeds.get("admissions_year") == year[:4] else {}
     cdf = their_values(theirs, year)
     tight, summed = mine_text.get("_tight", set()), mine_form.get("_summed", set())
-    values, prov, review = {}, [], []
+    text_summed = mine_text.get("_summed", set())
+    values, methods, prov, review = {}, {}, [], []
 
     def flag(col, why):
         review.append({"unitid": src["unitid"], "name": src["name"], "cds_year": year,
@@ -609,12 +702,13 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
             f, t, c, i = (None if x == 0 else x for x in (f, t, c, i))
         if f is None and t is None and c is None:
             continue
+        by_sex = " (lines by sex added up)"
         if f is not None:
-            v, how = f, "form fields" + (" (lines by sex added up)" if col in summed else "")
+            v, how = f, "form fields" + (by_sex if col in summed else "")
         elif agree(kind, t, c):
-            v, how = t, "file text + collegedata.fyi"
+            v, how = t, "file text + collegedata.fyi" + (by_sex if col in text_summed else "")
         elif agree(kind, t, i):
-            v, how = t, "file text + IPEDS same fall"
+            v, how = t, "file text + IPEDS same fall" + (by_sex if col in text_summed else "")
         elif agree(kind, c, i):
             v, how = c, "collegedata.fyi + IPEDS same fall"
         elif t is not None and c is None and col in tight:
@@ -625,15 +719,17 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
                      "verified": "yes" if v is not None else "no", "method": how,
                      "form": f, "text": t, "collegedata": c, "ipeds": i})
         if v is not None:
-            values[col] = v
+            values[col], methods[col] = v, how
         else:
             flag(col, f"readings disagree or unconfirmed: file text {t}, collegedata.fyi {c} ({producer or 'n/a'}), "
                       f"IPEDS same fall {i}")
-    problems = check(values)
+    problems = check(values) + gpa_conflict(values, methods)
     for col in ("applicants", "admits", "enrolled"):  # the CDS and IPEDS describe the same students
         v, i = values.get(col), clean("count", same_fall.get(col))
         if v and i and abs(v - i) > 0.15 * i:
             problems.append((col, f"{v:,} in the CDS but {i:,} in IPEDS for the same fall"))
+    if ipeds and not same_fall:
+        problems += c1_jump(values, ipeds)
     for col, why in problems:
         cols = BAND_COLS if col == "gpa_bands" else [col]
         for c in cols:
@@ -653,16 +749,43 @@ def file_key(src):
     return archive.rsplit("/", 1)[-1].split(".")[0] if archive else src.get("source_url")
 
 
+def first_years(src, form, text, theirs):
+    """The file's first-year class as [(enrolled, applicants)] readings: ours (form fields, text), else
+    collegedata.fyi's when its three C1 counts hang together. Its row-shifted reads of some flattened PDFs (MIT's
+    admits as its applicants, Holy Cross with more enrollees than applicants) would otherwise make a college's own
+    file look like another campus's."""
+    ours = [(r.get("enrolled"), r.get("applicants")) for r in (form, text) if r.get("enrolled") or r.get("applicants")]
+    if ours:
+        return ours
+    a, b, e = (clean("count", theirs.get(question(c, src["cds_year"]))) for c in ("applicants", "admits", "enrolled"))
+    return [(e, a)] if a and b and e and a >= b >= e and a >= 100 else []
+
+
 def fit(src, form, text, theirs, ipeds):
-    """How far the file's first-year applicant count is from IPEDS's for this college (|log ratio|, 0 = equal),
-    from whichever reading comes closest; None when either side is missing."""
-    have = num((ipeds or {}).get("applicants"))
-    year = src["cds_year"]
-    readings = [x for x in (form.get("applicants"), text.get("applicants"),
-                            clean("count", theirs.get(question("applicants", year)))) if x]
-    if not have or not readings:
-        return None
-    return min(abs(math.log(r / have)) for r in readings)
+    """How far the file's first-year class is from IPEDS's for this college, from the closest reading: |log ratio|
+    of enrollees (steady from year to year), else of applicants scaled so that 3 times as many counts like twice as
+    many enrollees (applications swing more). 0 = equal; None when there's nothing to compare."""
+    ipeds = ipeds or {}
+    have_e, have_a = num(ipeds.get("enrolled")), num(ipeds.get("applicants"))
+    far = []
+    for e, a in first_years(src, form, text, theirs):
+        if e and have_e:
+            far.append(abs(math.log(e / have_e)))
+        elif a and have_a:
+            far.append(abs(math.log(a / have_a)) * math.log(2) / math.log(3))
+    return min(far) if far else None
+
+
+def described(src, form, text, theirs, ipeds):
+    """The file's first-year counts next to IPEDS's, for the review list."""
+    e, a = (first_years(src, form, text, theirs) or [(None, None)])[0]
+    ipeds = ipeds or {}
+
+    def n(v):
+        v = num(v)
+        return f"{int(v):,}" if v else "?"
+    return (f"file: {n(e)} enrolled, {n(a)} applicants; IPEDS: {n(ipeds.get('enrolled'))} enrolled, "
+            f"{n(ipeds.get('applicants'))} applicants")
 
 
 def assign(readings, ipeds):
@@ -675,8 +798,8 @@ def assign(readings, ipeds):
         if len(us) == 1:
             u = us[0]
             if fits[u] is not None and fits[u] > math.log(2):
-                skip[u] = ("first-year applicants in this file are far from IPEDS's for this college; it probably "
-                           "describes another campus")
+                skip[u] = (f"this file's first-year class is far from IPEDS's for this college "
+                           f"({described(*readings[u][:4], ipeds.get(u))}); it probably describes another campus")
             continue
         close = [u for u in us if fits[u] is not None and fits[u] <= math.log(1.5)]
         best = min(close, key=fits.get) if close else None

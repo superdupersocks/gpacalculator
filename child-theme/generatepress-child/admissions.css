@@ -1,0 +1,140 @@
+/* ============================================================
+   admissions.css — college profiles (/admissions/<slug>/), Admissions Phase 3
+   Loads on single college pages only, after content-styles.css
+   (college-data.php, gpa_college_profile_styles). The page uses the
+   content-page design from layout.css and components.css: hero band,
+   quick facts, numbered sections, FAQ, Sources. This file adds only what
+   college data needs: the H1's second line, data tables with a label
+   column, status labels, the acceptance meter and the GPA bars.
+   Colors and sizes come only from var(--gpa-*) tokens.
+   ============================================================ */
+
+/* ---------- 1. Hero ----------
+   content-styles.css sizes every page's H1 except college pages; same
+   rule here. The second line names what the page covers. */
+html body.single-colleges.gpa-hero-band .inside-article h1.entry-title {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h1-size) !important;
+    font-weight: var(--gpa-h1-weight) !important;
+    line-height: var(--gpa-h1-line) !important;
+    letter-spacing: var(--gpa-h1-tracking) !important;
+    padding: 0 !important;
+}
+body.single-colleges .entry-header .gpa-college-h1-sub {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.5em;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0;
+    color: var(--gpa-hero-text);
+}
+
+/* ---------- 2. Data tables ----------
+   Score, admission factor and GPA tables: the first column holds the
+   label, so it is left-aligned; the other columns stay centred. */
+#page .entry-content .gpa-college-table:not(#root *) :is(th, td):first-child {
+    text-align: left !important;
+}
+#page .entry-content .gpa-college-table:not(#root *) td:first-child {
+    color: var(--gpa-text-strong) !important;
+}
+#page .entry-content .gpa-college-table td > strong {
+    display: block;
+    font-weight: 600 !important;
+    color: var(--gpa-text-strong) !important;
+}
+#page .entry-content .gpa-college-table .gpa-college-table__about {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--gpa-small-size);
+    line-height: 1.45;
+    color: var(--gpa-text-muted);
+}
+#page .entry-content .gpa-college-factors:not(#root *) td:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+/* ---------- 3. Status labels (admission factors) ---------- */
+.gpa-college-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--gpa-radius-pill);
+    border: 1px solid transparent;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.45;
+    white-space: nowrap;
+}
+.gpa-college-status--required { background: var(--gpa-green-50); border-color: var(--gpa-green-200); color: var(--gpa-green-800); }
+.gpa-college-status--recommended { background: var(--gpa-tint-blue); border-color: var(--gpa-blue-100); color: var(--gpa-blue-800); }
+.gpa-college-status--considered { background: var(--gpa-tint-indigo); border-color: var(--gpa-indigo-100); color: var(--gpa-indigo-800); }
+.gpa-college-status--not { background: var(--gpa-gray-50); border-color: var(--gpa-border); color: var(--gpa-gray-600); }
+
+/* ---------- 4. Acceptance meter ----------
+   The share of applicants admitted, on the text column's width. */
+#page .entry-content .gpa-college-meter {
+    max-width: var(--gpa-text-max);
+    height: 10px;
+    margin: 0 auto var(--gpa-p-gap);
+    border-radius: var(--gpa-radius-pill);
+    background: var(--gpa-gray-100);
+    overflow: hidden;
+}
+@media (min-width: 941px) {
+    #page .entry-content .gpa-college-meter { max-width: min(var(--gpa-text-max), calc(100% - 80px)); }
+}
+#page .entry-content .gpa-college-meter > span {
+    display: block;
+    min-width: 6px;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--gpa-primary);
+}
+
+/* ---------- 5. GPA bars (Common Data Set GPA ranges) ---------- */
+#page .entry-content .gpa-college-bands:not(#root *) :is(th, td):last-child {
+    text-align: left !important;
+}
+.gpa-college-barcell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.gpa-college-bar {
+    flex: 1 1 auto;
+    max-width: 320px;
+    height: 8px;
+    border-radius: var(--gpa-radius-pill);
+    background: var(--gpa-gray-100);
+    overflow: hidden;
+}
+.gpa-college-bar > span {
+    display: block;
+    height: 100%;
+    background: var(--gpa-primary);
+}
+.gpa-college-bar__num {
+    flex: none;
+    min-width: 3.5em;
+    font-variant-numeric: tabular-nums;
+    color: var(--gpa-text-strong);
+}
+
+@media (max-width: 480px) {
+    #page .entry-content .gpa-college-factors .gpa-college-table__about { display: none; }
+    #page .entry-content .gpa-college-factors:not(#root *) td:last-child { width: auto; white-space: normal; }
+    .gpa-college-status { padding: 2px 8px; font-size: 12px; white-space: normal; text-align: center; }
+    .gpa-college-wide { display: none; }
+}
+
+/* ---------- 6. Column padding beside the rails ----------
+   layout.css keeps 40px of white beside text when the column narrows for
+   the side rails (760px at 1440px), for blocks inside .rx-sec sections.
+   College pages have no sections, so the same rule for their blocks. */
+@media (min-width: 941px) {
+    body.single-colleges #page .entry-content > :is(p, ul, ol, blockquote, h2, h3, .gpa-callout, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources, .gpa-college-meter):not(#root *) {
+        max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
+    }
+}

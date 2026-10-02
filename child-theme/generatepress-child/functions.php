@@ -1233,12 +1233,12 @@ if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
                 $name . ' Admission Requirements & Open Admission',
                 $name . ' Admission Requirements',
             );
+        } elseif ( $fresh && $fresh['requirements'] ) {
+            // Admission factors but no acceptance rate (colleges that admit few or no first-year students)
+            $options = array( $name . ' Admission Requirements' );
         } else {
-            $options = array(
-                $name . ' Admission Requirements & Acceptance Rate',
-                $name . ' Admission Requirements',
-                $name . ' Admissions',
-            );
+            // No admissions figures on the page: the title promises nothing it doesn't have
+            $options = array( $name . ' Admissions' );
         }
 		        // Very long college names: fall back to shorter formats so the title still fits
         if ( '' !== $gpa ) { $options[] = $name . ': ' . $gpa . ' GPA'; }
@@ -1301,6 +1301,30 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
         $len            = function_exists( 'mb_strlen' ) ? 'mb_strlen' : 'strlen'; // ranges use en dashes
         $has_admissions = ( $acc > 0 || '' !== $gpa || '' !== $test );
         $short_cta      = $cds ? 'See its average GPA.' : ( $has_admissions ? 'See the requirements.' : 'See admission requirements.' );
+        $thin_ctas      = array();
+        if ( ! $cds && ! $has_admissions ) {
+            // Pages without admissions figures name only what they have: admission factors, credit policies, net
+            // price (all of it when it fits); pages still under review have none of those, and say so
+            $what = array();
+            if ( $fresh && $fresh['requirements'] ) {
+                $what[] = 'admission requirements';
+            }
+            if ( $fresh && ( in_array( $fresh['ap'], array( 'Yes', 'No' ), true ) || in_array( $fresh['life'], array( 'Yes', 'No' ), true ) ) ) {
+                $what[] = 'credit policies';
+            }
+            if ( $fresh && $fresh['net_price'] && '' !== $fresh['net_price_year'] ) {
+                $what[] = 'average net price';
+            }
+            if ( count( $what ) > 1 ) {
+                $thin_ctas[] = 'See its ' . implode( ', ', array_slice( $what, 0, -1 ) ) . ' and ' . end( $what ) . '.';
+                $thin_ctas[] = 'See its ' . $what[0] . ' and more.';
+            } elseif ( $what ) {
+                $thin_ctas[] = 'See its ' . $what[0] . '.';
+            } else {
+                $thin_ctas[] = $fresh ? 'See its admissions details.' : 'Its admissions figures are under review.';
+            }
+            $short_cta = end( $thin_ctas );
+        }
         $limit          = 160 - $len( $short_cta ) - 1;
 
         $sentences = array();
@@ -1385,6 +1409,9 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
                     $candidates[] = $base . ', with an average net price of $' . number_format( $price ) . '.';
                 }
                 $candidates[] = $base . '.';
+                if ( $where ) {
+                    $candidates[] = $subject . ' is ' . $article . ' ' . $type . '.';
+                }
             }
             $head = implode( ' ', $sentences );
             $pick = ( $fresh && $sentences ) ? '' : end( $candidates ); // a second sentence only when it fits
@@ -1399,18 +1426,20 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
             }
         }
 
-        // Call to action: rotate the wording across pages, using the first version that fits
+        // Call to action: rotate the wording across pages, using the first version that fits (pages without
+        // admissions figures: the fullest list of what they have that fits)
         $ctas = $has_admissions
             ? array( 'See what it takes to get in.', 'See the full admission requirements.', "Here's what it takes to get in." )
-            : array( 'See admission requirements and credit options.', 'See its admission requirements and credit options.' );
+            : $thin_ctas;
         if ( $cds ) {
             $ctas = array( 'See its average GPA and what it takes to get in.', 'See its average GPA and full requirements.' );
         }
-        $body = implode( ' ', $sentences );
-        $cta  = $short_cta;
-        $n    = count( $ctas );
+        $body  = implode( ' ', $sentences );
+        $cta   = $short_cta;
+        $n     = count( $ctas );
+        $start = $thin_ctas ? 0 : $post_id;
         for ( $i = 0; $i < $n; $i++ ) {
-            $option = $ctas[ ( $post_id + $i ) % $n ];
+            $option = $ctas[ ( $start + $i ) % $n ];
             if ( $len( $body . ' ' . $option ) <= 160 ) {
                 $cta = $option;
                 break;

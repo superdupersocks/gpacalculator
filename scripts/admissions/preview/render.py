@@ -13,7 +13,8 @@ Child-theme files are served from this checkout, the rest from the snapshot; a s
 loads from the child theme that the live page doesn't is added in the same place. Ads, analytics and other
 third-party requests are blocked; Google Fonts come from a local cache.
 
-Pages are given by their path under /admissions/ ("hub" is /admissions/ itself). Screenshots are full-page:
+Pages are given by their path under /admissions/ ("hub" is /admissions/ itself), or for another saved page by its
+snapshot name (gpa-scale__3-8-gpa), which renders "before" only. Screenshots are full-page:
 OUTDIR/<page>-<before|after>-<size>.png.
 """
 import argparse
@@ -74,6 +75,11 @@ HEAD_PARTS = [r"<title>.*?</title>", r'<meta name="description"[^>]*>', r'<meta 
               r'<meta name="twitter:description"[^>]*>', r'<script type="application/ld\+json"[^>]*>.*?</script>']
 
 
+def theme_file(tag):
+    m = re.search(r"href=['\"]([^'\"?]+)", tag)
+    return m.group(1).split(THEME_PATH, 1)[1] if m and THEME_PATH in m.group(1) else None
+
+
 def after_page(saved, path, local):
     page, _ = local_get(local, path)
     page = to_live(page, local)
@@ -85,15 +91,41 @@ def after_page(saved, path, local):
         mine = re.search(rx, head, re.S)
         if mine:
             html = re.sub(rx, lambda m: mine.group(0), html, count=1, flags=re.S)
-    for tag in re.findall(r"<link[^>]+rel=['\"]stylesheet['\"][^>]*>", head):
-        href = re.search(r"href=['\"]([^'\"?]+)", tag).group(1)
-        if THEME_PATH in href and href not in html:
-            html = re.sub(r"(<link[^>]+database-page\.css[^>]*>)", lambda m: m.group(1) + "\n" + tag, html, count=1)
+    # Body classes: the live ones (the parent theme adds most) plus any the child theme adds locally
+    mine = re.search(r'<body[^>]*class="([^"]*)"', page).group(1).split()
+    live = re.search(r'<body[^>]*class="([^"]*)"', html)
+    extra = [c for c in mine if c not in live.group(1).split()]
+    if extra:
+        html = html[:live.start(1)] + live.group(1) + " " + " ".join(extra) + html[live.end(1):]
+    # Child-theme stylesheets: drop the ones the local page no longer loads (style.css comes from the parent theme),
+    # add the ones it loads that the live page doesn't, after the last child-theme stylesheet they share
+    links = re.compile(r"<link[^>]+rel=['\"]stylesheet['\"][^>]*>")
+    local_links = [t for t in links.findall(head) if theme_file(t)]
+    local_files = [theme_file(t) for t in local_links]
+    for tag in links.findall(html[:html.index("</head>")]):
+        f = theme_file(tag)
+        if f and f != "style.css" and f not in local_files:
+            html = html.replace(tag, "", 1)
+    for i, tag in enumerate(local_links):
+        if THEME_PATH + local_files[i] in html:
+            continue
+        anchor = None
+        for prev in reversed(local_files[:i]):
+            m = re.search(r"<link[^>]+" + re.escape(THEME_PATH + prev) + r"[^>]*>", html)
+            if m:
+                anchor = m
+                break
+        if anchor:
+            html = html[:anchor.end()] + "\n" + tag + html[anchor.end():]
+    # Footer: the child theme's scripts the live page doesn't load, and localized script data (nonces) from local
     foot = page[page.index("<!--GPA-PREVIEW-FOOTER-START-->"):page.index("<!--GPA-PREVIEW-FOOTER-END-->")]
     for tag in re.findall(r"<script[^>]+src=['\"][^'\"]*" + re.escape(THEME_PATH) + r"[^>]*></script>", foot):
         src = re.search(r"src=['\"]([^'\"?]+)", tag).group(1)
         if src not in html:
             html = html.replace("</body>", tag + "\n</body>", 1)
+    for m in re.finditer(r"<script[^>]*id=['\"]([\w-]+-js-extra)['\"][^>]*>.*?</script>", page, re.S):
+        html = re.sub(r"<script[^>]*id=['\"]" + re.escape(m.group(1)) + r"['\"][^>]*>.*?</script>",
+                      lambda _m: m.group(0), html, count=1, flags=re.S)
     return html
 
 
@@ -143,11 +175,17 @@ def main():
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM", "/opt/pw-browsers/chromium"),
                                     proxy={"server": proxy} if proxy else None)
         for name in a.pages.split(","):
-            path = "/admissions/" if name == "hub" else f"/admissions/{name}/"
-            saved_file = os.path.join(SNAPSHOT, "pages", "admissions.html" if name == "hub" else f"admissions__{name}.html")
-            with open(saved_file, encoding="utf-8") as f:
+            if name == "hub":
+                path, saved_name = "/admissions/", "admissions"
+            elif os.path.exists(os.path.join(SNAPSHOT, "pages", f"admissions__{name}.html")):
+                path, saved_name = f"/admissions/{name}/", f"admissions__{name}"
+            else:
+                path, saved_name = "/" + name.replace("__", "/") + "/", name
+            with open(os.path.join(SNAPSHOT, "pages", saved_name + ".html"), encoding="utf-8") as f:
                 saved = f.read()
             for kind in kinds:
+                if kind == "after" and not path.startswith("/admissions/"):
+                    continue
                 html = saved if kind == "before" else after_page(saved, path, a.local)
                 for size in a.sizes.split(","):
                     w, h = map(int, size.split("x"))

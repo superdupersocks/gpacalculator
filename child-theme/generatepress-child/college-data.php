@@ -115,17 +115,13 @@ if ( ! function_exists( 'gpa_college_requirement_items' ) ) {
 }
 
 if ( ! function_exists( 'gpa_college_requirement_status' ) ) {
-    // IPEDS's wording for an admission factor -> [short status, whether the college uses it]; '' when unclear.
+    // IPEDS's wording for an admission factor -> [short status, whether the college uses it]; '' when unclear. The
+    // same three words for every factor: IPEDS's "(Test Optional)" and "(Test Blind)" tags on the test rows only
+    // repeat "considered if submitted" and "not considered" (test policies come in a later phase).
     function gpa_college_requirement_status( $label ) {
         $l = strtolower( trim( (string) $label ) );
         if ( 0 === strpos( $l, 'required' ) ) {
             return array( 'Required', true );
-        }
-        if ( false !== strpos( $l, 'test optional' ) ) {
-            return array( 'Test optional', true );
-        }
-        if ( false !== strpos( $l, 'test blind' ) ) {
-            return array( 'Test blind', false );
         }
         if ( 0 === strpos( $l, 'not required' ) || 0 === strpos( $l, 'considered' ) ) {
             return array( 'Considered if submitted', true );
@@ -160,16 +156,20 @@ if ( ! function_exists( 'gpa_college_range' ) ) {
 
 if ( ! function_exists( 'gpa_college_type_phrase' ) ) {
     // "public 4-year college", "private nonprofit 4-year college", "private for-profit 2-year college", "private
-    // for-profit school with programs under two years", or "college".
+    // for-profit school with programs under two years", or "college"; "university" instead of "college" when the
+    // name says it is one.
     function gpa_college_type_phrase( $post_id ) {
-        $own = trim( (string) get_field( 'owning', $post_id ) );
+        $own  = trim( (string) get_field( 'owning', $post_id ) );
+        $type = 'college';
         if ( preg_match( '/^(Public|Private nonprofit|Private for-profit), (4-year|2-year|less than 2 years)$/', $own, $m ) ) {
-            return strtolower( $m[1] ) . ( 'less than 2 years' === $m[2] ? ' school with programs under two years' : ' ' . $m[2] . ' college' );
+            $type = strtolower( $m[1] ) . ( 'less than 2 years' === $m[2] ? ' school with programs under two years' : ' ' . $m[2] . ' college' );
+        } elseif ( preg_match( '/(Public|Private)\s*(\d)\s*Year/i', $own, $m ) ) {
+            $type = strtolower( $m[1] ) . ' ' . $m[2] . '-year college';
         }
-        if ( preg_match( '/(Public|Private)\s*(\d)\s*Year/i', $own, $m ) ) {
-            return strtolower( $m[1] ) . ' ' . $m[2] . '-year college';
+        if ( 'college' === substr( $type, -7 ) && false !== stripos( get_the_title( $post_id ), 'university' ) ) {
+            $type = substr( $type, 0, -7 ) . 'university';
         }
-        return 'college';
+        return $type;
     }
 }
 
@@ -197,7 +197,7 @@ if ( ! function_exists( 'gpa_college_faqs_fresh' ) ) {
         if ( $cds ) {
             $faqs[] = array(
                 'question' => 'What is the average high school GPA at ' . $college . '?',
-                'answer'   => esc_html( gpa_college_cds_gpa_answer( $college, $cds ) ) . ' Source: <a href="' . esc_url( $cds['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $college . ' Common Data Set ' . $cds['year'] ) . '</a>.',
+                'answer'   => esc_html( gpa_college_cds_gpa_answer( $college, $cds ) ) . ' Source: ' . esc_html( $college . ' Common Data Set ' . $cds['year'] ) . '.',
             );
         } elseif ( isset( $f['requirements']['admission_requirements_high_school_gpa'] ) && '' !== $f['fall'] ) {
             list( $status ) = gpa_college_requirement_status( $f['requirements']['admission_requirements_high_school_gpa'] );
@@ -210,7 +210,7 @@ if ( ! function_exists( 'gpa_college_faqs_fresh' ) ) {
                 $faqs[] = array(
                     'question' => 'What GPA do you need to get into ' . $college . '?',
                     'answer'   => $said[ $status ] . ', according to what it reported to ' . $ed . ' for ' . $f['fall'] . '.'
-                        . ( 'Not considered' === $status ? '' : ' Federal data doesn\'t include GPA averages, and we haven\'t found one published by ' . $name . ' itself, so we don\'t list an average GPA.' ),
+                        . ( 'Not considered' === $status ? '' : ' Federal data doesn\'t include GPA averages, and ' . $name . ' hasn\'t published one we could verify, so we don\'t list an average GPA.' ),
                 );
             }
         }
@@ -324,7 +324,7 @@ if ( ! function_exists( 'gpa_college_faqs_legacy' ) ) {
         if ( $cds_gpa ) {
             $faqs[] = array(
                 'question' => 'What is the average high school GPA at ' . $college . '?',
-                'answer'   => esc_html( gpa_college_cds_gpa_answer( $college, $cds_gpa ) ) . ' Source: <a href="' . esc_url( $cds_gpa['url'] ) . '" target="_blank" rel="noopener">' . esc_html( $college . ' Common Data Set ' . $cds_gpa['year'] ) . '</a>.',
+                'answer'   => esc_html( gpa_college_cds_gpa_answer( $college, $cds_gpa ) ) . ' Source: ' . esc_html( $college . ' Common Data Set ' . $cds_gpa['year'] ) . '.',
             );
         } elseif ( '' !== $gpa_fmt ) {
             $faqs[] = array(
@@ -369,38 +369,46 @@ if ( ! function_exists( 'gpa_college_faq_text' ) ) {
 
 if ( ! function_exists( 'gpa_college_sources' ) ) {
     /**
-     * The sources a page with the imported data cites at its foot: [ 'what' => text, 'url', 'link' => link text ].
-     * The college's own Common Data Set, when the page shows its GPA, is cited in that FAQ answer instead.
+     * The sources a page cites at its foot, one link each: [ 'what' => text, 'url', 'link' => link text ]. The federal
+     * data (IPEDS, through College Navigator), the college's own Common Data Set when the page shows its GPA, and
+     * College Scorecard when it shows Scorecard's SAT estimate: three at most.
      */
     function gpa_college_sources( $post_id ) {
-        $f = gpa_college_fresh( $post_id );
-        if ( ! $f ) {
-            return array();
-        }
-        $parts = array();
-        if ( '' !== $f['fall'] ) {
-            $parts[] = 'admissions, test scores and admission factors for ' . $f['fall'];
-        }
-        if ( null !== $f['enrollment'] && '' !== $f['enrollment_year'] ) {
-            $parts[] = 'undergraduate enrollment for fall ' . $f['enrollment_year'];
-        }
-        if ( $f['net_price'] && '' !== $f['net_price_year'] ) {
-            $parts[] = 'net price for ' . $f['net_price_year'];
-        }
-        if ( '' !== $f['credits_year'] ) {
-            $parts[] = ( $f['open'] ? 'admission policy and ' : '' ) . 'credit policies for ' . $f['credits_year'];
-        }
-        $last    = array_pop( $parts );
-        $list    = $parts ? implode( ', ', $parts ) . ' and ' . $last : (string) $last;
-        $release = '' !== $f['ipeds_release'] ? ' (' . $f['ipeds_release'] . ' data)' : '';
-        $out     = array(
-            array(
+        $f   = gpa_college_fresh( $post_id );
+        $cds = gpa_college_cds_gpa( $post_id );
+        $out = array();
+        if ( $f ) {
+            $parts = array();
+            if ( '' !== $f['fall'] ) {
+                $parts[] = 'admissions, test scores and admission factors for ' . $f['fall'];
+            }
+            if ( null !== $f['enrollment'] && '' !== $f['enrollment_year'] ) {
+                $parts[] = 'undergraduate enrollment for fall ' . $f['enrollment_year'];
+            }
+            if ( $f['net_price'] && '' !== $f['net_price_year'] ) {
+                $parts[] = 'net price for ' . $f['net_price_year'];
+            }
+            if ( '' !== $f['credits_year'] ) {
+                $parts[] = ( $f['open'] ? 'admission policy and ' : '' ) . 'credit policies for ' . $f['credits_year'];
+            }
+            $last    = array_pop( $parts );
+            $list    = $parts ? implode( ', ', $parts ) . ' and ' . $last : (string) $last;
+            $release = '' !== $f['ipeds_release'] ? ' (' . $f['ipeds_release'] . ' data)' : '';
+            $out[]   = array(
                 'what' => 'U.S. Department of Education, National Center for Education Statistics, IPEDS' . $release . ( '' !== $list ? ': ' . $list : '' ) . '.',
                 'url'  => 'https://nces.ed.gov/collegenavigator/?id=' . rawurlencode( $f['unitid'] ),
                 'link' => 'College Navigator: ' . ( '' !== $f['name'] ? $f['name'] : get_the_title( $post_id ) ),
-            ),
-        );
-        if ( null !== $f['sat_avg'] ) {
+            );
+        }
+        if ( $cds ) {
+            $out[] = array(
+                'what' => wp_specialchars_decode( get_the_title( $post_id ), ENT_QUOTES ) . ': average high school GPA of first-year students'
+                    . ( gpa_college_gpa_bands( $post_id ) ? ' and how their GPAs were spread' : '' ) . '.',
+                'url'  => $cds['url'],
+                'link' => wp_specialchars_decode( get_the_title( $post_id ), ENT_QUOTES ) . ' Common Data Set ' . $cds['year'],
+            );
+        }
+        if ( $f && null !== $f['sat_avg'] ) {
             $out[] = array(
                 'what' => 'Average SAT: an estimate by the U.S. Department of Education\'s College Scorecard' . ( '' !== $f['scorecard_release'] ? ' (' . $f['scorecard_release'] . ' release)' : '' ) . '.',
                 'url'  => 'https://collegescorecard.ed.gov/data/',
@@ -409,4 +417,390 @@ if ( ! function_exists( 'gpa_college_sources' ) ) {
         }
         return $out;
     }
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Admissions Phase 3: the college page and the hub on the site's content design (hero band, quick facts, numbered
+ * sections, Rank Math FAQ markup, Sources). single-colleges.php prints what gpa_college_view() returns; nothing here
+ * adds a figure the page didn't already have, it only lays the same fields out.
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+if ( ! function_exists( 'gpa_college_gpa_bands' ) ) {
+    /**
+     * How the college's first-year students' high school GPAs were spread, from the same Common Data Set (C11) the
+     * page cites for the average: [ [range label, percent], ... ], highest range first. Empty bands are left out
+     * (a blank is not 0%), and so is every band when the average itself isn't shown.
+     */
+    function gpa_college_gpa_bands( $post_id ) {
+        if ( ! gpa_college_cds_gpa( $post_id ) ) {
+            return array();
+        }
+        $bands = array(
+            '400' => '4.0',
+            '375' => '3.75–3.99',
+            '350' => '3.50–3.74',
+            '325' => '3.25–3.49',
+            '300' => '3.00–3.24',
+            '250' => '2.50–2.99',
+            '200' => '2.00–2.49',
+            '100' => '1.00–1.99',
+            '000' => 'Below 1.0',
+        );
+        $out = array();
+        foreach ( $bands as $key => $label ) {
+            $v = trim( (string) get_post_meta( $post_id, 'cds_gpa_band_' . $key, true ) );
+            if ( is_numeric( $v ) ) {
+                $out[] = array( $label, (float) $v );
+            }
+        }
+        return count( $out ) >= 3 ? $out : array();
+    }
+}
+
+if ( ! function_exists( 'gpa_college_view' ) ) {
+    /**
+     * Everything the college page shows, worked out once: names, the hero's lines, quick facts, scores, admission
+     * factors, credit and cost. Pages without the federal import ($v['fresh'] null) get the name, place and type only.
+     */
+    function gpa_college_view( $post_id ) {
+        $name  = get_the_title( $post_id );
+        $plain = wp_specialchars_decode( $name, ENT_QUOTES );
+        $f     = gpa_college_fresh( $post_id );
+        $loc   = trim( (string) get_field( 'location', $post_id ) );
+        $v     = array(
+            'id'       => $post_id,
+            'name'     => $name,
+            'plain'    => $plain,
+            'former'   => trim( (string) get_post_meta( $post_id, 'former_name', true ) ),
+            'location' => gpa_college_has( $loc ) ? $loc : '',
+            'type'     => gpa_college_type_phrase( $post_id ),
+            'fresh'    => $f,
+            'cds'      => gpa_college_cds_gpa( $post_id ),
+            'bands'    => array(),
+            'rate'     => null,
+            'open'     => false,
+            'scores'   => array(),
+            'factors'  => array(),
+            'credits'  => array(),
+        );
+        $v['bands'] = $v['cds'] ? gpa_college_gpa_bands( $post_id ) : array();
+        if ( ! $f ) {
+            return $v;
+        }
+        $v['fall'] = $f['fall'];
+        $v['open'] = $f['open'];
+        if ( null !== $f['rate'] && '' !== $f['fall'] && ! $f['open'] ) {
+            $v['rate'] = gpa_college_pct_txt( $f['rate'] );
+        }
+        // Score table rows: [test, section, [25th, 50th, 75th]]
+        foreach ( array( 'sat' => 'SAT', 'act' => 'ACT' ) as $key => $test ) {
+            foreach ( $f[ $key ] as $section => $p ) {
+                $v['scores'][] = array( $test, $section, $p );
+            }
+        }
+        // Admission factors, required first, then the ones the college weighs, then those it doesn't
+        $order = array( 'Required' => 0, 'Recommended' => 1, 'Considered if submitted' => 2, 'Not considered' => 3 );
+        foreach ( gpa_college_requirement_items() as $field => $item ) {
+            if ( ! isset( $f['requirements'][ $field ] ) ) {
+                continue;
+            }
+            list( $status, $used ) = gpa_college_requirement_status( $f['requirements'][ $field ] );
+            if ( '' === $status ) {
+                continue;
+            }
+            $v['factors'][] = array( 'label' => $item[0], 'about' => $item[1], 'status' => $status, 'used' => $used, 'rank' => $order[ $status ] );
+        }
+        usort( $v['factors'], function ( $a, $b ) {
+            return $a['rank'] - $b['rank'];
+        } );
+        foreach ( array( 'ap' => 'Credit for AP exams', 'life' => 'Credit for life experience' ) as $key => $label ) {
+            if ( in_array( $f[ $key ], array( 'Yes', 'No' ), true ) ) {
+                $v['credits'][] = array( $label, $f[ $key ] );
+            }
+        }
+        return $v;
+    }
+}
+
+if ( ! function_exists( 'gpa_college_h1_sub' ) ) {
+    // The H1's second line names what the page has.
+    function gpa_college_h1_sub( array $v ) {
+        if ( $v['cds'] ) {
+            return 'Average GPA & Admissions';
+        }
+        if ( $v['rate'] ) {
+            return $v['scores'] ? 'Acceptance Rate & Test Scores' : 'Acceptance Rate & Admissions';
+        }
+        if ( $v['open'] ) {
+            return 'Admission Requirements';
+        }
+        return 'Admissions';
+    }
+}
+
+if ( ! function_exists( 'gpa_college_intro' ) ) {
+    // The hero's sentence or two: what kind of college it is and where (and its former name), then how selective it is.
+    function gpa_college_intro( array $v ) {
+        $f     = $v['fresh'];
+        $type  = $v['type'];
+        $parts = array();
+        if ( 'college' !== $type || '' !== $v['location'] ) {
+            $s = $v['plain'] . ( '' !== $v['former'] ? ' (formerly ' . $v['former'] . ')' : '' ) . ' is '
+                . ( preg_match( '/^[aeiou]/i', $type ) ? 'an ' : 'a ' ) . $type . ( '' !== $v['location'] ? ' in ' . $v['location'] : '' );
+            if ( $f && null !== $f['enrollment'] && '' !== $f['enrollment_year'] ) {
+                $s .= ', with ' . number_format( $f['enrollment'] ) . ' undergraduates';
+            }
+            $parts[] = $s . '.';
+        }
+        if ( $v['rate'] ) {
+            $parts[] = 'It admitted ' . $v['rate'] . ' of first-year applicants for ' . $f['fall'] . '.';
+        } elseif ( $v['open'] ) {
+            $parts[] = 'It has an open admission policy: anyone who applies is accepted.';
+        }
+        return implode( ' ', $parts );
+    }
+}
+
+if ( ! function_exists( 'gpa_college_data_line' ) ) {
+    // The small line under the hero's intro: where the figures come from (their years are on each figure).
+    function gpa_college_data_line( array $v ) {
+        $f = $v['fresh'];
+        if ( ! $f ) {
+            return '';
+        }
+        $who = 'the U.S. Department of Education' . ( $v['cds'] ? ' and the college\'s Common Data Set' : '' );
+        return '' !== $f['fall'] ? ucfirst( $f['fall'] ) . ' admissions data from ' . $who : 'Data from ' . $who;
+    }
+}
+
+if ( ! function_exists( 'gpa_college_quick_facts' ) ) {
+    // The quick facts box under the hero: [label, HTML], only for figures the page has.
+    function gpa_college_quick_facts( array $v ) {
+        $f   = $v['fresh'];
+        $out = array();
+        if ( $v['rate'] ) {
+            $out[] = array( 'Acceptance rate', esc_html( $v['rate'] ) . ' for ' . esc_html( $f['fall'] ) );
+        } elseif ( $v['open'] ) {
+            $out[] = array( 'Admission', 'open to anyone who applies' );
+        }
+        if ( $v['cds'] ) {
+            $out[] = array( 'Average high school GPA', esc_html( $v['cds']['value'] ) . ( '' !== $v['cds']['basis'] ? ' (' . esc_html( $v['cds']['basis'] ) . ')' : '' ) . ', as reported by the college for ' . esc_html( $v['cds']['year'] ) );
+        }
+        if ( $f ) {
+            $sat = array();
+            foreach ( $f['sat'] as $section => $p ) {
+                if ( '' !== gpa_college_range( $p ) ) {
+                    $sat[] = gpa_college_range( $p ) . ' ' . ( 'Math' === $section ? 'math' : 'reading and writing' );
+                }
+            }
+            if ( $sat ) {
+                $out[] = array( 'SAT, middle 50%', esc_html( implode( ', ', $sat ) ) );
+            }
+            if ( isset( $f['act']['Composite'] ) && '' !== gpa_college_range( $f['act']['Composite'] ) ) {
+                $out[] = array( 'ACT, middle 50%', esc_html( gpa_college_range( $f['act']['Composite'] ) ) . ' composite' );
+            }
+            if ( $f['net_price'] && '' !== $f['net_price_year'] ) {
+                $out[] = array( 'Average net price', '$' . number_format( $f['net_price'] ) . ' a year (' . esc_html( $f['net_price_year'] ) . ')' );
+            }
+        }
+        return $out;
+    }
+}
+
+if ( ! function_exists( 'gpa_college_pct_cell' ) ) {
+    // A share in a table: 74.7 -> "74.7%", 20.38 -> "20.4%", 0.98 -> "1%", 0.03 -> "<0.1%".
+    function gpa_college_pct_cell( $pct ) {
+        $pct = (float) $pct;
+        if ( $pct > 0 && $pct < 0.05 ) {
+            return '<0.1%';
+        }
+        return rtrim( rtrim( number_format( $pct, 1 ), '0' ), '.' ) . '%';
+    }
+}
+
+if ( ! function_exists( 'gpa_college_sections' ) ) {
+    /**
+     * The page's numbered sections in order, each only when the college has data for it:
+     * [ 'id' => anchor, 'title' => H2 text, 'html' => body ]. Every figure says who reported it and for which year;
+     * the links to those sources are in the Sources list at the foot of the page (gpa_college_sources()).
+     */
+    function gpa_college_sections( array $v ) {
+        $f   = $v['fresh'];
+        $out = array();
+        if ( ! $f ) {
+            return $out;
+        }
+        $name = esc_html( $v['name'] );
+        $ed   = 'the U.S. Department of Education';
+        $fall = '' !== $f['fall'] ? ' for ' . esc_html( $f['fall'] ) : '';
+
+        // GPA: the college's own Common Data Set, or how it weighs GPA (federal data has no GPA averages)
+        if ( $v['cds'] ) {
+            $g     = $v['cds'];
+            $basis = array(
+                'weighted'   => ' It\'s a weighted average, which adds points for honors, AP or IB classes, so it can be higher than 4.0.',
+                'unweighted' => ' It\'s an unweighted average, on a 4.0 scale.',
+                ''           => ' The college doesn\'t say whether it\'s weighted or unweighted.',
+            );
+            $html  = '<p>' . $name . ' reported an average high school GPA of <strong>' . esc_html( $g['value'] ) . '</strong> for its first-year students'
+                . ( '' !== $g['submit'] ? ' who submitted one (' . esc_html( $g['submit'] ) . ' did)' : '' )
+                . ', in its ' . esc_html( $g['year'] ) . ' Common Data Set.' . $basis[ $g['basis'] ] . '</p>';
+            if ( $v['bands'] ) {
+                // Ranges at the bottom that the college reported as 0% are summed up in the caption instead
+                $bands = $v['bands'];
+                $none  = '';
+                while ( count( $bands ) > 3 && 0.0 === (float) end( $bands )[1] ) {
+                    array_pop( $bands );
+                    $none = ' None had a GPA below ' . strtok( end( $bands )[0], '–' ) . '.';
+                }
+                $rows = '';
+                foreach ( $bands as $b ) {
+                    $rows .= '<tr><td>' . esc_html( $b[0] ) . '</td><td><div class="gpa-college-barcell"><span class="gpa-college-bar" aria-hidden="true"><span style="width:' . esc_attr( min( 100, max( 0, $b[1] ) ) ) . '%"></span></span>'
+                        . '<span class="gpa-college-bar__num">' . esc_html( gpa_college_pct_cell( $b[1] ) ) . '</span></div></td></tr>';
+                }
+                $html .= '<p>How their high school GPAs were spread:</p>'
+                    . '<figure class="wp-block-table gpa-college-table gpa-college-bands"><table><thead><tr><th scope="col">High school GPA</th><th scope="col">Share of first-year students</th></tr></thead>'
+                    . '<tbody>' . $rows . '</tbody></table>'
+                    . '<figcaption>First-year students who submitted a high school GPA, as ' . $name . ' reported in its ' . esc_html( $g['year'] ) . ' Common Data Set.' . esc_html( $none ) . '</figcaption></figure>';
+            }
+            $html .= '<div class="gpa-callout gpa-callout--note"><p><strong>An average, not a cutoff</strong>Colleges calculate GPA in different ways, so this figure can\'t be compared directly with your own GPA.</p></div>';
+            $out[] = array( 'id' => 'average-gpa', 'title' => $v['plain'] . ' average GPA', 'html' => $html );
+        } elseif ( isset( $f['requirements']['admission_requirements_high_school_gpa'] ) ) {
+            list( $status ) = gpa_college_requirement_status( $f['requirements']['admission_requirements_high_school_gpa'] );
+            $said = array(
+                'Required'                => ' requires a high school GPA from first-year applicants',
+                'Recommended'             => ' recommends that first-year applicants send a high school GPA',
+                'Considered if submitted' => ' doesn\'t require a high school GPA from first-year applicants but considers one if it\'s submitted',
+                'Not considered'          => ' doesn\'t consider high school GPA when it decides on first-year applicants',
+            );
+            if ( isset( $said[ $status ] ) ) {
+                $html = '<p>' . $name . $said[ $status ] . ', according to what it reported to ' . $ed . $fall . '.</p>';
+                if ( 'Not considered' !== $status ) {
+                    $html .= '<p>Federal data doesn\'t include GPA averages, and ' . $name . ' hasn\'t published one we could verify, so this page doesn\'t list an average GPA.</p>';
+                }
+                $out[] = array( 'id' => 'gpa-requirements', 'title' => $v['plain'] . ' GPA requirements', 'html' => $html );
+            }
+        }
+
+        // Acceptance rate, or the open admission policy
+        if ( $v['rate'] ) {
+            $html  = '<p>' . ( $f['applicants'] && null !== $f['admits']
+                    ? $name . ' admitted <strong>' . number_format( $f['admits'] ) . '</strong> of ' . number_format( $f['applicants'] ) . ' first-year applicants' . $fall . ', an acceptance rate of <strong>' . esc_html( $v['rate'] ) . '</strong>'
+                    : $name . '\'s acceptance rate' . $fall . ' was <strong>' . esc_html( $v['rate'] ) . '</strong>' )
+                . ', according to what it reported to ' . $ed . '.</p>';
+            $html .= '<div class="gpa-college-meter" aria-hidden="true"><span style="width:' . esc_attr( min( 100, max( 0, (float) $f['rate'] ) ) ) . '%"></span></div>';
+            $out[] = array( 'id' => 'acceptance-rate', 'title' => $v['plain'] . ' acceptance rate', 'html' => $html );
+        } elseif ( $v['open'] ) {
+            $out[] = array(
+                'id'    => 'acceptance-rate',
+                'title' => $v['plain'] . ' acceptance rate',
+                'html'  => '<p>' . $name . ' has an open admission policy: it accepts any student who applies, so it doesn\'t report an acceptance rate'
+                    . ( '' !== $f['open_year'] ? ' (' . esc_html( $f['open_year'] ) . ', as reported to ' . $ed . ')' : '' ) . '.</p>',
+            );
+        }
+
+        // SAT and ACT: the middle 50% of first-year students who submitted scores, and Scorecard's SAT estimate
+        if ( $v['scores'] || null !== $f['sat_avg'] ) {
+            $html = '';
+            if ( $v['scores'] ) {
+                $mid = false;
+                foreach ( $v['scores'] as $r ) {
+                    $mid = $mid || null !== $r[2][1];
+                }
+                $cell = function ( $n ) {
+                    return null !== $n ? esc_html( $n ) : '–';
+                };
+                $rows = '';
+                foreach ( $v['scores'] as $r ) {
+                    $rows .= '<tr><td>' . esc_html( $r[0] . ' ' . $r[1] ) . '</td><td>' . $cell( $r[2][0] ) . '</td>' . ( $mid ? '<td>' . $cell( $r[2][1] ) . '</td>' : '' ) . '<td>' . $cell( $r[2][2] ) . '</td></tr>';
+                }
+                $sent = array();
+                foreach ( array( 'SAT' => $f['sat_submit'], 'ACT' => $f['act_submit'] ) as $test => $pct ) {
+                    if ( null !== $pct && $f[ strtolower( $test ) ] ) {
+                        $sent[] = round( $pct ) . '% submitted ' . $test . ' scores';
+                    }
+                }
+                $html .= '<p>Scores of the first-year students who entered ' . $name . ( '' !== $f['fall'] ? ' in ' . esc_html( $f['fall'] ) : '' ) . ' and submitted them. Half of them scored between the 25th and 75th percentiles:</p>'
+                    . '<figure class="wp-block-table gpa-college-table gpa-college-scores"><table><thead><tr><th scope="col">Test</th><th scope="col">25th<span class="gpa-college-wide"> percentile</span></th>'
+                    . ( $mid ? '<th scope="col">Median</th>' : '' ) . '<th scope="col">75th<span class="gpa-college-wide"> percentile</span></th></tr></thead><tbody>' . $rows . '</tbody></table>'
+                    . '<figcaption>' . ( $sent ? ucfirst( implode( ' and ', $sent ) ) . ', as ' : 'As ' ) . $name . ' reported to ' . $ed . '.</figcaption></figure>';
+            }
+            if ( null !== $f['sat_avg'] ) {
+                $html .= '<p>' . ( $v['scores'] ? 'The' : 'For ' . $name . ', the' ) . ' U.S. Department of Education\'s College Scorecard estimates an average SAT score of <strong>' . esc_html( $f['sat_avg'] ) . '</strong> for admitted students.</p>';
+            }
+            $out[] = array( 'id' => 'sat-act-scores', 'title' => 'SAT and ACT scores', 'html' => $html );
+        }
+
+        // Admission factors, as IPEDS asks about them
+        if ( $v['factors'] ) {
+            $kind = array( 'Required' => 'required', 'Recommended' => 'recommended', 'Considered if submitted' => 'considered', 'Not considered' => 'not' );
+            $rows = '';
+            foreach ( $v['factors'] as $r ) {
+                $rows .= '<tr><td><strong>' . esc_html( $r['label'] ) . '</strong><span class="gpa-college-table__about">' . esc_html( $r['about'] ) . '</span></td>'
+                    . '<td><span class="gpa-college-status gpa-college-status--' . $kind[ $r['status'] ] . '">' . esc_html( $r['status'] ) . '</span></td></tr>';
+            }
+            $html = '<p>What ' . $name . ' looks at when it decides on first-year applicants, as it reported to ' . $ed . $fall . ':</p>'
+                . '<figure class="wp-block-table gpa-college-table gpa-college-factors"><table><thead><tr><th scope="col">Admission factor</th><th scope="col">Status</th></tr></thead><tbody>' . $rows . '</tbody></table>'
+                . '<figcaption>Requirements can differ by program and applicant type, so check with ' . $name . '\'s admissions office before you apply.</figcaption></figure>';
+            if ( ! $v['scores'] && '' !== $f['fall'] && ! $f['open'] ) {
+                $html .= '<p>' . $name . ' didn\'t report SAT or ACT scores for its ' . esc_html( $f['fall'] ) . ' first-year students.</p>';
+            }
+            $out[] = array( 'id' => 'admission-requirements', 'title' => 'Admission requirements', 'html' => $html );
+        }
+
+        // Credit for AP exams and for life experience
+        if ( $v['credits'] ) {
+            $year = '' !== $f['credits_year'] ? ' for ' . esc_html( $f['credits_year'] ) : '';
+            $said = array();
+            if ( in_array( $f['ap'], array( 'Yes', 'No' ), true ) ) {
+                $said[] = $name . ( 'Yes' === $f['ap'] ? ' awards' : ' doesn\'t award' ) . ' college credit for Advanced Placement (AP) exams, according to what it reported to ' . $ed . $year . '.'
+                    . ( 'Yes' === $f['ap'] ? ' The college decides which exams and scores earn credit.' : '' );
+            }
+            if ( 'Yes' === $f['life'] ) {
+                $said[] = ( $said ? 'It also awards' : $name . ' awards' ) . ' credit for life experience, such as work or military service' . ( $said ? '' : ', according to what it reported to ' . $ed . $year ) . '.';
+            } elseif ( 'No' === $f['life'] ) {
+                $said[] = ( $said ? 'It doesn\'t' : $name . ' doesn\'t' ) . ' award credit for life experience' . ( $said ? '' : ', according to what it reported to ' . $ed . $year ) . '.';
+            }
+            $out[] = array( 'id' => 'credit', 'title' => in_array( $f['ap'], array( 'Yes', 'No' ), true ) ? 'AP credit' : 'Credit for life experience', 'html' => '<p>' . implode( '</p><p>', $said ) . '</p>' );
+        }
+
+        // Average net price
+        if ( $f['net_price'] && '' !== $f['net_price_year'] ) {
+            $out[] = array(
+                'id'    => 'net-price',
+                'title' => 'Average net price',
+                'html'  => '<p>First-time, full-time undergraduates' . ( 'in-state' === $f['net_price_scope'] ? ' paying in-state tuition' : '' )
+                    . ' who received grant or scholarship aid paid an average net price of <strong>$' . number_format( $f['net_price'] ) . '</strong> a year at ' . $name
+                    . ' in ' . esc_html( $f['net_price_year'] ) . ', according to ' . $ed . '.</p><p>Net price is the full cost of attendance minus grants and scholarships.</p>',
+            );
+        }
+        return $out;
+    }
+}
+
+if ( ! function_exists( 'gpa_college_profile_styles' ) ) {
+    /**
+     * College pages use the content-page design: content-styles.css and admissions.css instead of database-page.css
+     * (which the /admissions/ hub keeps), and the content template's body classes, which give them the hero band, the
+     * white column and the section numbers in layout.css.
+     */
+    function gpa_college_profile_styles() {
+        if ( ! is_singular( 'colleges' ) ) {
+            return;
+        }
+        wp_dequeue_style( 'database-page' );
+        wp_enqueue_style( 'gpa-content', get_stylesheet_directory_uri() . '/content-styles.css', array( 'gpa-components' ), gpa_asset_ver( 'content-styles.css' ) );
+        wp_enqueue_style( 'gpa-admissions', get_stylesheet_directory_uri() . '/admissions.css', array( 'gpa-content' ), gpa_asset_ver( 'admissions.css' ) );
+    }
+    add_action( 'wp_enqueue_scripts', 'gpa_college_profile_styles', 20 );
+}
+
+if ( ! function_exists( 'gpa_college_profile_body_class' ) ) {
+    function gpa_college_profile_body_class( $classes ) {
+        if ( is_singular( 'colleges' ) ) {
+            $classes = array_merge( $classes, array( 'content-page', 'gpa-template-content', 'gpa-hero-band' ) );
+        }
+        return $classes;
+    }
+    add_filter( 'body_class', 'gpa_college_profile_body_class' );
 }

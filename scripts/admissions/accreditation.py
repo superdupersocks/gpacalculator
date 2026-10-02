@@ -93,10 +93,20 @@ def main(argv=None):
         url = os.environ["DAPIP_ZIP_FILE"]
         data = open(url, "rb").read()
     else:
-        from fetch import get
-        for u in URLS:
+        import urllib.request
+        from fetch import HEADERS, get
+
+        def post(u):  # the download endpoint answers GET with 405
+            req = urllib.request.Request(u, data=b"{}", method="POST",
+                                         headers={**HEADERS, "Content-Type": "application/json",
+                                                  "Accept": "application/zip, application/octet-stream, */*",
+                                                  "Referer": "https://ope.ed.gov/dapip/"})
+            with urllib.request.urlopen(req, timeout=300) as r:
+                return r.read()
+
+        for u, how in [(u, m) for u in URLS for m in (post, lambda x: get(x, tries=2))]:
             try:
-                data = get(u, tries=2)
+                data = how(u)
                 if data[:2] == b"PK":
                     url = u
                     break

@@ -11,6 +11,7 @@
  *   apply  <since> <log.tsv>  move those dates to <since> (UTC, 2026-10-02T22:32:00), logging each post's old
  *                             dates first, then clear Rank Math's sitemap cache
  *   revert <log.tsv>          put every logged date back, then clear the cache again
+ *   clear                     clear the sitemap cache alone, e.g. after a theme deploy changes what the sitemap lists
  *
  * Only post_modified and post_modified_gmt change; a date already at or after <since> stays. No revision, no
  * save_post: the page's content doesn't change.
@@ -138,6 +139,8 @@ if ( 'plan' === $cmd && isset( $args[1] ) ) {
 	dates_apply( $args[1], $args[2] );
 } elseif ( 'revert' === $cmd && isset( $args[1] ) ) {
 	dates_revert( $args[1] );
+} elseif ( 'clear' === $cmd ) {
+	dates_clear_cache();
 } else {
-	WP_CLI::error( 'usage: plan <since> | apply <since> <log.tsv> | revert <log.tsv>' );
+	WP_CLI::error( 'usage: plan <since> | apply <since> <log.tsv> | revert <log.tsv> | clear' );
 }

@@ -8,7 +8,9 @@
 # live site is a version 52f5804 already contains (any earlier commit of that file on this branch, which merges the
 # design branch) or isn't there yet (admissions.css). A live file this branch has never had, e.g. a newer
 # functions.php from a later design deploy, stops it without changing the site: deploying over it would undo that
-# deploy. The other theme files (the design overhaul's CSS) stay as they are live.
+# deploy. The other theme files (the design overhaul's CSS) stay as they are live. After a deploy it clears Rank Math's
+# sitemap cache, which a theme deploy doesn't, so the sitemaps rebuild with the new code (Phase 4 leaves the pages
+# under review out of them).
 set -euo pipefail
 
 COMMIT="52f5804"
@@ -53,4 +55,5 @@ if [[ $stop -eq 1 ]]; then
   echo "theme merged first."
   exit 1
 fi
-exec bash "$REPO/scripts/deploy_theme.sh" "$COMMIT" --only "$FILES" "$@"
+bash "$REPO/scripts/deploy_theme.sh" "$COMMIT" --only "$FILES" "$@"
+[[ " $* " == *" --dry-run "* ]] || bash "$REPO/scripts/admissions/phase4_dates_live.sh" clear

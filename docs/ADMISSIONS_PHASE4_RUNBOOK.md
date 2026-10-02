@@ -20,7 +20,25 @@ admissions-indexing.yml) and the Phase 4 tab of the admissions doc. What it foun
   net price, and there's no WebPage, WebSite or Organization node. The hub has two CollectionPage nodes.
 - The 53 pages under review (checkpoint H) are indexable and in the sitemap with no figures.
 
-## 1. Code: the hub's pages, structured data, pages under review
+The steps are numbered as in the doc: 1 runs right after the go, 2 waits for the design thread's ad-rail fix.
+
+## 1. Modified dates and the sitemap cache
+
+`scripts/admissions/phase4_dates_live.sh` moves each published college post's modified date to 22:32 UTC on
+2 October 2026 (the Phase 3 template deploy, which changed every page) unless it is later already, logging the old
+dates, then clears Rank Math's sitemap cache. Only post_modified and post_modified_gmt change.
+
+1. Database backup: `SSH 'cd WP && wp db export - | gzip > ~/backups/gpacalculator-<UTC date-time>-pre-dates.sql.gz'`,
+   then `gunzip -t`, the dump ends with "-- Dump completed", copy it to `~/gpacalculator-backups/`, SHA-256 matches.
+2. `bash scripts/admissions/phase4_dates_live.sh plan`: 2,668 posts would move if the 417 renamed at 22:39 already
+   carry that date, 3,085 if they don't (then the stale lastmod wasn't the cache); it also prints how Rank Math stores
+   its sitemap cache.
+3. `bash scripts/admissions/phase4_dates_live.sh apply` (note the log name it prints).
+4. Run the indexing check again: the colleges sitemaps' lastmod should read 2026-10-02 for every address. If they still
+   say 19 April, the cache wasn't cleared: Rank Math > Sitemap Settings > Save Changes, then check again.
+5. Changelog row with the undo `bash scripts/admissions/phase4_dates_live.sh revert <log>`.
+
+## 2. Code: the hub's pages, structured data, pages under review
 
 Code: `college-data.php`, `functions.php`, `template-parts/college-db-archive.php`, `database-ajax.js` and
 `admissions.css`, all among the seven files `scripts/admissions/deploy_phase3.sh` ships. Before the deploy command goes
@@ -28,6 +46,8 @@ to Digant, merge the design branch head into this branch (the design thread's ra
 `gpa_freestar_siderails` in functions.php) and set `COMMIT` in deploy_phase3.sh to the merge, so the deploy keeps
 everything the design shipped. The command stays the same:
 `cd ~/Documents/Claude/gpacalculator && git pull && bash scripts/admissions/deploy_phase3.sh`.
+After the deploy it runs `bash scripts/admissions/phase4_dates_live.sh clear`, since Rank Math serves the sitemaps
+from a cache that a theme deploy doesn't clear.
 
 What changes:
 - The hub's own pages: /admissions/page/N/ lists colleges 30(N-1)+1 to 30N by name (page 103 has the last 25), its
@@ -48,24 +68,10 @@ desktop and phone):
 - /admissions/harvard/: JSON-LD has CollegeOrUniversity (no url), WebPage + FAQPage with six questions, Organization,
   WebSite, BreadcrumbList, and nothing else; /admissions/calvin/: alternateName "Calvin College".
 - /admissions/fairfax-university-of-america/: robots "follow, noindex".
-- The colleges sitemaps: 3,033 addresses (3,032 colleges and the hub), none under review.
-- Changelog row; undo `bash scripts/deploy_theme.sh --revert <backup>`.
-
-## 2. Modified dates and the sitemap cache
-
-`scripts/admissions/phase4_dates_live.sh` moves each published college post's modified date to 22:32 UTC on
-2 October 2026 (the Phase 3 template deploy, which changed every page) unless it is later already, logging the old
-dates, then clears Rank Math's sitemap cache. Only post_modified and post_modified_gmt change.
-
-1. Database backup: `SSH 'cd WP && wp db export - | gzip > ~/backups/gpacalculator-<UTC date-time>-pre-dates.sql.gz'`,
-   then `gunzip -t`, the dump ends with "-- Dump completed", copy it to `~/gpacalculator-backups/`, SHA-256 matches.
-2. `bash scripts/admissions/phase4_dates_live.sh plan`: 2,668 posts would move if the 417 renamed at 22:39 already
-   carry that date, 3,085 if they don't (then the stale lastmod wasn't the cache); it also prints how Rank Math stores
-   its sitemap cache.
-3. `bash scripts/admissions/phase4_dates_live.sh apply` (note the log name it prints).
-4. Run the indexing check again: the colleges sitemaps' lastmod should read 2026-10-02 for every address. If they still
-   say 19 April, the cache wasn't cleared: Rank Math > Sitemap Settings > Save Changes, then check again.
-5. Changelog row with the undo `bash scripts/admissions/phase4_dates_live.sh revert <log>`.
+- The colleges sitemaps: 3,033 addresses (3,032 colleges and the hub), none under review. If the 53 are still listed,
+  the cache wasn't cleared: run `bash scripts/admissions/phase4_dates_live.sh clear` and check again.
+- Changelog row; undo `bash scripts/deploy_theme.sh --revert <backup>`, then
+  `bash scripts/admissions/phase4_dates_live.sh clear`.
 
 ## 3. Search Console (Digant, in the browser)
 

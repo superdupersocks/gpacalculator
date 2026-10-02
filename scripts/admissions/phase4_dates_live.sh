@@ -7,6 +7,8 @@
 #                                                             how Rank Math stores its sitemap cache
 #   bash scripts/admissions/phase4_dates_live.sh apply         move them, clear the sitemap cache, print the log name
 #   bash scripts/admissions/phase4_dates_live.sh revert <log>  put every logged date back
+#   bash scripts/admissions/phase4_dates_live.sh clear         clear the sitemap cache and the page caches alone (after a
+#                                                             theme deploy that changes what the sitemap lists)
 #
 # Each apply writes its log (each post's old dates) to ~/backups/ on the server and ~/gpacalculator-backups/ on this
 # Mac. Take a database backup first and log each run in docs/LIVE_CHANGELOG.md. Uses the same SSH key as
@@ -37,6 +39,9 @@ case "${1:-}" in
     LOG="${2:?the log name printed by apply}"
     "${SSH[@]}" "cd $APP && test -s ~/backups/$LOG && wp eval-file - revert ~/backups/$LOG" < "$PHP"
     "${SSH[@]}" "cd $APP && wp cache flush && wp breeze purge --cache=all" ;;
+  clear)
+    "${SSH[@]}" "cd $APP && wp eval-file - clear" < "$PHP"
+    "${SSH[@]}" "cd $APP && wp cache flush && wp breeze purge --cache=all" ;;
   *)
-    sed -n '2,12p' "$0"; exit 1 ;;
+    sed -n '2,14p' "$0"; exit 1 ;;
 esac

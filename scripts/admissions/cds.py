@@ -294,7 +294,10 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
 
 def fetch(url):
     from fetch import get  # same browser headers and retries as the federal downloads
-    return get(url, tries=2)
+    return get(url, tries=2, timeout=60)
+
+
+SNIPS = {}
 
 
 def read_one(src):
@@ -313,7 +316,13 @@ def read_one(src):
             err = f"{url}: empty file"
             continue
         try:
-            return src, form_fields(data), parse(text_of(data, src.get("format", ""))), ""
+            text = text_of(data, src.get("format", ""))
+            got = parse(text)
+            if "gpa_avg" not in got or "applicants" not in got:  # temporary: wording samples to tune parse()
+                SNIPS[src["unitid"]] = {k: text[max(0, i - 150):i + 650] for k, i in
+                                        (("C12", text.find("Average high school GPA")), ("C11", text.find("GPA of 4.0")),
+                                         ("C1", text.find("who applied"))) if i >= 0}
+            return src, form_fields(data), got, ""
         except Exception as e:
             err = f"could not read file: {e}"[:200]
     return src, None, None, err
@@ -346,6 +355,8 @@ def main(argv=None):
             if values:
                 rows.append({**{k: src[k] for k in ("unitid", "name", "cds_year", "source_url")}, **values})
     out = Path(a.out)
+    want = [u for u in SNIPS if (theirs.get(u) or {}).get("values", {}).get("C.1201")][:40]
+    (out / "cds_debug_snippets.json").write_text(json.dumps({u: SNIPS[u] for u in want}, indent=1))
     rows.sort(key=lambda r: r["name"])
     write_csv(out / "cds_values.csv", rows, COLUMNS)
     write_csv(out / "cds_provenance.csv", prov,

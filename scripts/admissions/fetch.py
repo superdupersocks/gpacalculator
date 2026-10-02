@@ -59,11 +59,11 @@ IPEDS_FILES = {
 OPTIONAL = {"drvic"}
 
 
-def get(url, tries=4, opener=None):
+def get(url, tries=4, opener=None, timeout=300):
     for i in range(tries):
         try:
             req = urllib.request.Request(url, headers=HEADERS)
-            with (opener.open if opener else urllib.request.urlopen)(req, timeout=300) as r:
+            with (opener.open if opener else urllib.request.urlopen)(req, timeout=timeout) as r:
                 return r.read()
         except urllib.error.HTTPError as e:
             if e.code in (403, 404, 410):

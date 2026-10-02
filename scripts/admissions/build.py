@@ -79,7 +79,10 @@ EXTRA_MEASURES = {
     "cost_in_state_on_campus": ("drvic", "total price for in-state students living on campus", ()),
     "cost_out_of_state_on_campus": ("drvic", "total price for out-of-state students living on campus", ()),
     **{f"net_price_{k}": ("sfa", f"average net price (income {band}", ("grant or scholarship",))
-       for k, band in INCOME},
+       for k, band in INCOME[:-1]},
+    "net_price_110k_plus": ("sfa", ("average net price (income 110,001", "average net price (income over 110",
+                                    "average net price (income greater than 110", "average net price (income above 110"),
+                            ("grant or scholarship",)),
 }
 COST += list(EXTRA_MEASURES)
 
@@ -111,6 +114,11 @@ class Data:
             for phrase in (phrases,) if isinstance(phrases, str) else phrases:
                 found = found or self.titled(f, phrase, exclude)
             self.measures[col] = (f, found)
+            if found is None and col in EXTRA_MEASURES and self.dicts[f]["vars"]:
+                first = phrases if isinstance(phrases, str) else phrases[0]
+                near = [m["title"] for m in self.dicts[f]["vars"].values()
+                        if first.split("(")[0].strip() in m["title"].lower()][:4]
+                print(f"note: no {f} variable titled like '{first}' for {col}; nearest: {near}")
         self.imputed = Counter()
         self.dropped = []  # (unitid, column, value, reason)
 

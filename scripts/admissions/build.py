@@ -66,7 +66,8 @@ class Data:
         self.sc_header = set(sc[0]) if sc else set()
         manifest = raw.parent / "manifest.json"
         self.manifest = json.loads(manifest.read_text()) if manifest.exists() else {}
-        self.year = self.manifest.get("ipeds_year")
+        self.years = self.manifest.get("ipeds_years", {})  # {"hd": 2024, "adm": 2024, "ic": 2024}
+        self.year = self.years.get("adm")
         self.imputed = Counter()
         self.dropped = []  # (unitid, column, value, reason)
 
@@ -255,30 +256,30 @@ def check(d, row):
 
 
 def sources(d, admcon, credits):
-    y = d.year
+    y, yh, yi = d.year, d.years.get("hd"), d.years.get("ic")
     sc = "College Scorecard, Most Recent Institution-Level Data"
     s = {
         "unitid": ("IPEDS / College Scorecard", "UNITID", None, "Federal institution ID; join key"),
-        "opeid": (f"IPEDS HD{y}", "OPEID", y, "Federal Student Aid ID"),
-        "name": (f"IPEDS HD{y}", "INSTNM", y, "Official name"),
-        "alias": (f"IPEDS HD{y}", "IALIAS", y, "Other names the college uses"),
-        "website": (f"IPEDS HD{y}", "WEBADDR", y, ""),
-        "city": (f"IPEDS HD{y}", "CITY", y, ""), "state": (f"IPEDS HD{y}", "STABBR", y, ""),
-        "zip": (f"IPEDS HD{y}", "ZIP", y, ""), "lat": (f"IPEDS HD{y}", "LATITUDE", y, ""),
-        "lon": (f"IPEDS HD{y}", "LONGITUD", y, ""),
-        "control": (f"IPEDS HD{y}", "CONTROL", y, "Public / private nonprofit / private for-profit"),
-        "level": (f"IPEDS HD{y}", "ICLEVEL", y, "Four or more years / two-year / less than two-year"),
-        "locale": (f"IPEDS HD{y}", "LOCALE", y, "City, suburb, town or rural"),
-        "carnegie": (f"IPEDS HD{y}", "C??BASIC (newest)", y, "Carnegie basic classification"),
-        "religious_affiliation": (f"IPEDS IC{y}", "RELAFFIL", y, ""),
-        "hbcu": (f"IPEDS HD{y}", "HBCU", y, "Historically Black college or university"),
+        "opeid": (f"IPEDS HD{yh}", "OPEID", yh, "Federal Student Aid ID"),
+        "name": (f"IPEDS HD{yh}", "INSTNM", yh, "Official name"),
+        "alias": (f"IPEDS HD{yh}", "IALIAS", yh, "Other names the college uses"),
+        "website": (f"IPEDS HD{yh}", "WEBADDR", yh, ""),
+        "city": (f"IPEDS HD{yh}", "CITY", yh, ""), "state": (f"IPEDS HD{yh}", "STABBR", yh, ""),
+        "zip": (f"IPEDS HD{yh}", "ZIP", yh, ""), "lat": (f"IPEDS HD{yh}", "LATITUDE", yh, ""),
+        "lon": (f"IPEDS HD{yh}", "LONGITUD", yh, ""),
+        "control": (f"IPEDS HD{yh}", "CONTROL", yh, "Public / private nonprofit / private for-profit"),
+        "level": (f"IPEDS HD{yh}", "ICLEVEL", yh, "Four or more years / two-year / less than two-year"),
+        "locale": (f"IPEDS HD{yh}", "LOCALE", yh, "City, suburb, town or rural"),
+        "carnegie": (f"IPEDS HD{yh}", "C??BASIC (newest)", yh, "Carnegie basic classification"),
+        "religious_affiliation": (f"IPEDS IC{yi}", "RELAFFIL", yi, ""),
+        "hbcu": (f"IPEDS HD{yh}", "HBCU", yh, "Historically Black college or university"),
         "predominant_degree": (sc, "PREDDEG", None, ""), "highest_degree": (sc, "HIGHDEG", None, ""),
         "accreditor": (sc, "ACCREDAGENCY", None, ""), "main_campus": (sc, "MAIN", None, ""),
         "operating": (sc, "CURROPER", None, "Currently operating"),
-        "active": (f"IPEDS HD{y}", "CYACTIVE", y, "Active in the current IPEDS year"),
-        "closed_date": (f"IPEDS HD{y}", "CLOSEDAT", y, ""),
-        "merged_into": (f"IPEDS HD{y}", "NEWID", y, "UNITID of the institution it merged into"),
-        "open_admission": (f"IPEDS IC{y}", "OPENADMP", y, "Open admission policy"),
+        "active": (f"IPEDS HD{yh}", "CYACTIVE", yh, "Active in the current IPEDS year"),
+        "closed_date": (f"IPEDS HD{yh}", "CLOSEDAT", yh, ""),
+        "merged_into": (f"IPEDS HD{yh}", "NEWID", yh, "UNITID of the institution it merged into"),
+        "open_admission": (f"IPEDS IC{yi}", "OPENADMP", yi, "Open admission policy"),
         "admissions_source": ("", "", None, "IPEDS ADM when the college filed it, else College Scorecard"),
         "admissions_year": ("", "", None, "Fall of the entering class the admissions figures describe"),
         "applicants": (f"IPEDS ADM{y}", "APPLCN", y, "First-time, degree-seeking applicants"),
@@ -303,7 +304,7 @@ def sources(d, admcon, credits):
     for col, var in admcon.items():
         s[col] = (f"IPEDS ADM{y}", var, y, d.dicts["adm"]["vars"][var]["title"])
     for col, var in credits.items():
-        s[col] = (f"IPEDS IC{y}", var, y, d.dicts["ic"]["vars"][var]["title"])
+        s[col] = (f"IPEDS IC{yi}", var, yi, d.dicts["ic"]["vars"][var]["title"])
     return {k: dict(zip(("source", "variable", "year", "meaning"), v)) for k, v in s.items()}
 
 
@@ -312,7 +313,7 @@ def report(d, rows, columns, path):
     by_src = Counter(r.get("admissions_source") or "none" for r in rows)
     four = [r for r in rows if (r.get("level") or "").lower().startswith("four")]
     lines = ["# Admissions data QA report", "",
-             f"IPEDS year: {d.year}. Scorecard file: {d.manifest.get('files', {}).get('scorecard', {}).get('url')}",
+             f"IPEDS years: {d.years}. Scorecard file: {d.manifest.get('files', {}).get('scorecard', {}).get('url')}",
              "", f"{n:,} institutions; {len(four):,} four-year.", "",
              "Admissions block source: " + ", ".join(f"{k} {v:,}" for k, v in by_src.most_common()), "",
              "## Coverage", "", "| Column | All | Four-year |", "| --- | --- | --- |"]

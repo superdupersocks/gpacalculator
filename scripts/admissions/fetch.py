@@ -1,13 +1,13 @@
 """Download the federal source files for the admissions data into data/admissions/raw/.
 
-    python3 scripts/admissions/fetch.py            # newest IPEDS year with HD, ADM and IC all published
+    python3 scripts/admissions/fetch.py            # newest published year of each IPEDS file
     IPEDS_YEAR=2024 python3 scripts/admissions/fetch.py
 
 Sources (Department of Education, public, no key needed):
-- College Scorecard, Most Recent Institution-Level Data (https://collegescorecard.ed.gov/data/). The zip's URL is
-  read from that page; set SCORECARD_ZIP_URL to override it.
-- IPEDS complete data files HD<year>, ADM<year>, IC<year> and their dictionaries
-  (https://nces.ed.gov/ipeds/datacenter/data/<FILE>.zip and <FILE>_Dict.zip).
+- College Scorecard, Most Recent Institution-Level Data (https://collegescorecard.ed.gov/data/): the release
+  linked from that page when it can be read, else the pinned SCORECARD_ZIP; SCORECARD_ZIP_URL overrides both.
+- IPEDS complete data files HD, ADM and IC, each from its newest year that has a dictionary
+  (https://nces.ed.gov/ipeds/datacenter/data/<FILE><year>.zip and <FILE><year>_Dict.zip).
 
 Writes raw/scorecard/institutions.csv, raw/ipeds/<file>.csv, raw/ipeds/<file>_dict.json (variable titles and code
 labels from the dictionary workbook) and data/admissions/manifest.json (URL, size, SHA-256, year of every file).
@@ -28,9 +28,11 @@ import zipfile
 sys.path.insert(0, os.path.dirname(__file__))
 from common import OUT, RAW, write_json  # noqa: E402
 
-UA = "Mozilla/5.0 (compatible; gpacalculator-data/1.0; +https://github.com/superdupersocks/gpacalculator)"
+UA = "Mozilla/5.0 (X11; Linux x86_64) gpacalculator-data/1.0 (+https://github.com/superdupersocks/gpacalculator)"
 IPEDS = "https://nces.ed.gov/ipeds/datacenter/data/"
 SCORECARD_PAGE = "https://collegescorecard.ed.gov/data/"
+# "Most Recent Institution-Level Data", release of June 10, 2026. Update when Scorecard publishes a new release.
+SCORECARD_ZIP = "https://ed-public-download.scorecard.network/downloads/Most-Recent-Cohorts-Institution_06102026.zip"
 IPEDS_FILES = ["HD", "ADM", "IC"]
 
 
@@ -103,16 +105,16 @@ def parse_dictionary(xlsx_bytes):
 
 
 def fetch_ipeds(manifest):
+    """Each file from its own newest published year (ADM, HD and IC are released on different schedules)."""
     forced = os.environ.get("IPEDS_YEAR")
     this_year = datetime.date.today().year
-    years = [int(forced)] if forced else range(this_year, this_year - 5, -1)
-    for year in years:
-        if all(exists(f"{IPEDS}{f}{year}.zip") for f in IPEDS_FILES):
-            break
-    else:
-        raise SystemExit(f"no IPEDS year with all of {IPEDS_FILES} published (tried {list(years)})")
+    years = [int(forced)] if forced else list(range(this_year, this_year - 5, -1))
     (RAW / "ipeds").mkdir(parents=True, exist_ok=True)
+    manifest["ipeds_years"] = {}
     for f in IPEDS_FILES:
+        year = next((y for y in years if exists(f"{IPEDS}{f}{y}.zip") and exists(f"{IPEDS}{f}{y}_Dict.zip")), None)
+        if year is None:
+            raise SystemExit(f"no published IPEDS {f} file with a dictionary (tried {years})")
         name = f"{f}{year}"
         url = f"{IPEDS}{name}.zip"
         data = get(url)
@@ -126,19 +128,20 @@ def fetch_ipeds(manifest):
             parsed = parse_dictionary(zf.read(pick_member(zf, ".xlsx")))
         write_json(RAW / "ipeds" / f"{f.lower()}_dict.json", parsed)
         record(manifest, f"ipeds_{f.lower()}_dict", durl, ddata, year=year)
+        manifest["ipeds_years"][f.lower()] = year
         print(f"IPEDS {name}: {member}, {len(parsed['vars'])} variables in dictionary")
-    manifest["ipeds_year"] = year
 
 
 def fetch_scorecard(manifest):
     url = os.environ.get("SCORECARD_ZIP_URL")
     if not url:
-        page = get(SCORECARD_PAGE).decode("utf-8", "ignore")
-        links = re.findall(r"""["'(]((?:https?:)?//[^"'()\s]*Most-Recent-Cohorts-Institution[^"'()\s]*\.zip)""", page)
-        if not links:
-            raise SystemExit(f"no Most-Recent-Cohorts-Institution zip linked from {SCORECARD_PAGE}; "
-                             "set SCORECARD_ZIP_URL to the 'Most Recent Institution-Level Data' download link")
-        url = links[0] if links[0].startswith("http") else "https:" + links[0]
+        try:  # a newer release than the pinned one, if the data page links it
+            page = get(SCORECARD_PAGE, tries=1).decode("utf-8", "ignore")
+            links = re.findall(r"""(https://[^"'()\s]*Most-Recent-Cohorts-Institution[^"'()\s]*\.zip)""", page)
+            url = links[0] if links else None
+        except Exception as e:  # the page refuses scripted requests (403); fall back to the pinned release
+            print(f"Scorecard data page not readable ({e}); using {SCORECARD_ZIP}")
+        url = url or SCORECARD_ZIP
     data = get(url)
     with zipfile.ZipFile(io.BytesIO(data)) as zf:
         members = [n for n in zf.namelist() if n.lower().endswith(".csv") and "institution" in n.lower()]

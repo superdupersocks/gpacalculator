@@ -1,8 +1,12 @@
 {
- "ipeds_year": 2024,
  "files": {
   "scorecard": {
    "url": "https://example.test/scorecard.zip"
   }
+ },
+ "ipeds_years": {
+  "hd": 2024,
+  "adm": 2024,
+  "ic": 2023
  }
 }

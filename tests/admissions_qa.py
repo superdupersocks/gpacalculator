@@ -12,6 +12,7 @@ import shutil
 import sys
 import tempfile
 import zipfile
+from collections import Counter
 from pathlib import Path
 
 import openpyxl
@@ -27,6 +28,8 @@ import match  # noqa: E402
 import phase2_e_import  # noqa: E402
 import phase2_r_review  # noqa: E402
 import phase2_s_pages  # noqa: E402
+import phase3_gpa_bands  # noqa: E402
+import phase3_names  # noqa: E402
 import review_sources  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
@@ -1032,6 +1035,125 @@ eq("H: the held pages and the corrected matches, each once, every field empty, n
    (len(_hrows) - 1, {r[0] for r in _hrows[1:]} == _hold, all(not any(r[2:]) for r in _hrows[1:]),
     sorted(_hold & _acted)),
    (53, True, True, []))
+
+# Phase 3 names: the punctuation a title lost comes back from the IPEDS name, except a hyphen that joins a campus or
+# place to the name (a space on the site); a title that is an older IPEDS name of the same college is a rename unless
+# only "The", Saint/St., the word order, a connector or a campus differs.
+_cities = {"chicago", "champaign", "urbana", "houston", "beebe", "chattanooga", "kenner", "new orleans", "smyrna",
+           "new york"}
+
+
+def _restore(title, ipeds):
+    return phase3_names.restore_punctuation(title, ipeds, _cities)
+
+
+def _kind(title, ipeds, shared_title=False, shared_name=False):
+    new = phase3_names.display(ipeds, _cities)
+    return phase3_names.classify(title, ipeds, new, _cities, shared_title, shared_name)
+
+
+eq("Names: lost hyphens, apostrophes and capitals come back; the title's comma and initials stay; a campus hyphen "
+   "stays a space; Kennedy-King keeps its hyphen after Chicago's becomes a space",
+   [_restore("Hardin Simmons University", "Hardin-Simmons University"),
+    _restore("Saint Marys College", "Saint Mary's College"),
+    _restore("Sowela Technical Community College", "SOWELA Technical Community College"),
+    _restore("A.T. Still University of Health Sciences", "AT Still University of Health Sciences"),
+    _restore("University of California, San Francisco", "University of California-San Francisco"),
+    _restore("University of Houston Clear Lake", "University of Houston-Clear Lake"),
+    _restore("University of Illinois Urbana Champaign", "University of Illinois Urbana-Champaign"),
+    _restore("City Colleges of Chicago Kennedy King College", "City Colleges of Chicago-Kennedy-King College"),
+    _restore("Texas A&M University Kingsville", "Texas A & M University-Kingsville")],
+   ["Hardin-Simmons University", "Saint Mary's College", "SOWELA Technical Community College",
+    "A.T. Still University of Health Sciences", "University of California, San Francisco",
+    "University of Houston Clear Lake", "University of Illinois Urbana-Champaign",
+    "City Colleges of Chicago Kennedy-King College", None])
+eq("Names: an IPEDS name as a title: a campus hyphen becomes a space and Main Campus goes; Urbana-Champaign and "
+   "Hardin-Simmons keep theirs",
+   [phase3_names.display(n, _cities) for n in ("Arkansas State University-Beebe",
+                                               "Kent State University at Kent-Main Campus",
+                                               "University of Illinois Urbana-Champaign", "Hardin-Simmons University")],
+   ["Arkansas State University Beebe", "Kent State University at Kent", "University of Illinois Urbana-Champaign",
+    "Hardin-Simmons University"])
+eq("Names: renamed, campus and name-form changes, and the titles that stay",
+   [_kind("Calvin College", "Calvin University"),
+    _kind("Azusa Pacific Online University", "Los Angeles Pacific University"),
+    _kind("Patrick Henry Community College", "Patrick & Henry Community College"),
+    _kind("Herzing University Kenner", "Herzing University-New Orleans"),
+    _kind("Pace University New York", "Pace University"),
+    _kind("Fortis College", "Fortis College-Smyrna", shared_title=True),
+    _kind("University of Illinois at Chicago", "University of Illinois Chicago"),
+    _kind("University of Management and Technology (The)", "University of Management and Technology"),
+    _kind("Fox College Inc", "Fox College"),
+    _kind("Lincoln University of Pennsylvania", "Lincoln University", shared_name=True),
+    _kind("Arizona State University", "Arizona State University Campus Immersion"),
+    _kind("Blinn College", "Blinn College District"),
+    _kind("Rockefeller University", "The Rockefeller University"),
+    _kind("Saint Bonaventure University", "St Bonaventure University"),
+    _kind("CUNY College of Staten Island", "College of Staten Island CUNY"),
+    _kind("University of Tennessee at Chattanooga", "The University of Tennessee-Chattanooga"),
+    _kind("Chattanooga College Medical Dental and Technical Careers",
+          "Chattanooga College Medical Dental and & Technical Careers")],
+   [("former name", ""), ("former name", ""), ("former name", ""), ("campus name", ""), ("campus name", ""),
+    ("campus name", ""), ("name form", ""), ("name form", ""), ("name form", ""),
+    (None, "without the campus or place, other colleges share the name"),
+    (None, "IPEDS adds a campus or place to a title only this page uses"),
+    (None, "IPEDS names the district or system"), (None, 'only "The" differs'), (None, "only Saint/St. differs"),
+    (None, "only the word order differs"), (None, 'IPEDS joins the campus with a hyphen where the title has "at"'),
+    (None, "IPEDS typo")])
+eq("Names: the old title as the page mentions it, with the IPEDS name's punctuation, without Main Campus, and as the "
+   "title has it when IPEDS wrote the name in capitals",
+   [phase3_names.former("Hardin Simmons College", "Hardin-Simmons College", _cities),
+    phase3_names.former("Kent State University Main Campus", "Kent State University-Main Campus", _cities),
+    phase3_names.former("Calvin College", "CALVIN COLLEGE", _cities)],
+   ["Hardin-Simmons College", "Kent State University", "Calvin College"])
+
+# Phase 3 names (the committed list): each page once and not also kept, a former name only on a rename, never the
+# new title itself
+_names = list(csv.DictReader(open(_audit / "phase3_names.csv", encoding="utf-8")))
+_nkept = list(csv.DictReader(open(_audit / "phase3_names_kept.csv", encoding="utf-8")))
+_nslugs = [r["slug"] for r in _names]
+eq("Names (the committed list): counts by kind, each page once, none also kept, former names only on renames",
+   (len(_names), sorted(Counter(r["kind"] for r in _names).items()), len(set(_nslugs)),
+    sorted(set(_nslugs) & {r["slug"] for r in _nkept}),
+    [r["slug"] for r in _names if bool(r["former_name"]) != (r["kind"] == "former name")],
+    [r["slug"] for r in _names if r["new_title"] in (r["old_title"], r["former_name"])], len(_nkept)),
+   (417, [("campus name", 30), ("former name", 306), ("name form", 16), ("punctuation", 65)], 417, [], [], [], 36))
+
+# Phase 3 GPA spread: the ranges must allow the average the page cites (every student at the bottom, or the top, of
+# their range, 0.03 either side for rounding); Harvard's weighted 4.22 can't come from ranges on a 4.0 scale.
+_fits = phase3_gpa_bands.ROUNDING
+
+
+def _fit(given, avg):
+    low, high = phase3_gpa_bands.allowed(given)
+    return low - _fits <= avg <= high + _fits
+
+
+_wilkes = dict(zip([f for f, _ in phase3_gpa_bands.BANDS], ["13.29", "22.8", "23.52", "11.13", "10.23", "14.18", "4.85",
+                                                             "0.0", "0.0"]))
+_harvard = {"gpa_4_0": "74.7", "gpa_375_399": "20.38", "gpa_350_374": "3.49", "gpa_325_349": "0.98",
+            "gpa_300_324": "0.18", "gpa_250_299": "0.18", "gpa_200_249": "0.09"}
+eq("GPA spread: what Wilkes's ranges allow, and whether Wilkes's 3.46 and Harvard's 4.22 fit their ranges",
+   ([round(x, 3) for x in phase3_gpa_bands.allowed(_wilkes)], _fit(_wilkes, 3.46), _fit(_harvard, 4.22),
+    [round(x, 2) for x in phase3_gpa_bands.allowed(_harvard)]),
+   ([3.33, 3.586], True, False, [3.92, 3.98]))
+_cdsv = {r["unitid"]: r for r in csv.DictReader(open(ROOT / "data" / "admissions" / "cds_values.csv",
+                                                     encoding="utf-8"))}
+_bands = list(csv.DictReader(open(_audit / "phase3_gpa_bands.csv", encoding="utf-8")))
+_bpend = list(csv.DictReader(open(_audit / "phase3_gpa_bands_pending.csv", encoding="utf-8")))
+_apart = [r for r in _bpend if "different bases" in r["why"]]
+eq("GPA spread (the committed lists): every page's ranges fit its average and add up to 99-101%, and every page held "
+   "for different bases doesn't fit",
+   (len(_bands), len(_bpend), len(_apart),
+    [r["slug"] for r in _bands
+     if not _fit({f: r[f"cds_gpa_band_{k}"] for f, k in phase3_gpa_bands.BANDS if r[f"cds_gpa_band_{k}"] != ""},
+                 float(r["cds_gpa"]))
+     or not 99 <= float(r["sum"]) <= 101],
+    [r["slug"] for r in _apart
+     if _fit({f: _cdsv[r["unitid"]][f] for f, _ in phase3_gpa_bands.BANDS if _cdsv[r["unitid"]][f].strip() != ""},
+             float(_cdsv[r["unitid"]]["gpa_avg"]))],
+    sorted({r["slug"] for r in _bands} & {r["slug"] for r in _bpend})),
+   (192, 75, 27, [], [], []))
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

@@ -38,6 +38,14 @@ COLS = ["slug", "unitid", "college", "cds_gpa", "cds_gpa_year"] + [f"cds_gpa_ban
 PENDING_COLS = ["slug", "unitid", "college", "cds_gpa_year", "why"]
 
 
+def allowed(given):
+    """The lowest and highest average the given ranges allow ({CDS field: percent}): every student at the bottom, or
+    at the top, of their range."""
+    total = sum(float(v) for v in given.values())
+    shares = [(float(given[f]), SPAN[k]) for f, k in BANDS if f in given]
+    return sum(p * span[0] for p, span in shares) / total, sum(p * span[1] for p, span in shares) / total
+
+
 def read(path):
     with open(path, newline="") as f:
         return list(csv.DictReader(f))
@@ -66,9 +74,7 @@ def main():
         if not 99 <= total <= 101:
             pending.append(base + [f"ranges add up to {total}%"])
             continue
-        shares = [(float(given[f]), SPAN[k]) for f, k in BANDS if f in given]
-        low = sum(p * span[0] for p, span in shares) / total
-        high = sum(p * span[1] for p, span in shares) / total
+        low, high = allowed(given)
         avg = float(b2["cds_gpa"])
         if not low - ROUNDING <= avg <= high + ROUNDING:
             pending.append(base + [f"the ranges allow an average of {low:.2f}-{high:.2f}, the college reported {avg:.2f}: "

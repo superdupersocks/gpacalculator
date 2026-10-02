@@ -201,8 +201,8 @@ ipeds = {"1": {"applicants": "44000"}, "2": {"applicants": "5100"}, "3": {"appli
          "8": {"applicants": "1747", "enrolled": "260"}}
 skip = cds.assign(readings, ipeds)
 eq("CDS files matched to their college", sorted(skip), ["2", "3"])
-eq("CDS skipped file says why", skip["3"].split("(")[1].split(")")[0],
-   "file: 7,272 enrolled, 52,703 applicants; IPEDS: 666 enrolled, 3,005 applicants")
+eq("CDS skipped file says why, and whose reading it is", skip["3"].split("(")[1].split(")")[0],
+   "collegedata.fyi reading of the file: 7,272 enrolled, 52,703 applicants; IPEDS: 666 enrolled, 3,005 applicants")
 
 LAYOUT = """C1. Applications
 Total first-time, first-year students who applied in Fall 2023 1,578.0 2,055.0 9.0
@@ -256,6 +256,14 @@ eq("CDS text: a 2025-26 residency row with its Total blank isn't the total",
    cds.parse(C1_2025).get("applicants"), 32754)
 eq("CDS text: a residency row whose Total adds up stays",
    cds.parse(C1_2025 + "    32,754").get("applicants"), 32754)
+_stated = cds.parse("""Total first-time, first-year males who applied          20,000
+Total first-time, first-year females who applied        28,196
+Total first-time, first-year students of unknown sex who applied     48,196
+Total first-time, first-year (degree-seeking) who applied                   48,196""")
+eq("CDS text: a total the file states stays when its lines by sex don't give it",
+   (_stated.get("applicants"), _stated["_summed"], _stated["_c1_odd"]), (48196, set(), {"applicants": (48196, 96392)}))
+eq("CDS text: the C1 lines as read, for the run log", _stated["_c1_lines"][-1],
+   "Total first-time, first-year (degree-seeking) who applied 48,196")
 eq("CDS text: enrollees by sex aren't counted again by full- and part-time", cds.parse(
     "Total first-time, first-year males who enrolled 100\nTotal first-time, first-year females who enrolled 120\n"
     "Total full-time, first-time, first-year males who enrolled 90\nTotal part-time, first-time, first-year males "

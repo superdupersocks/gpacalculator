@@ -373,6 +373,21 @@ def c1_by_sex(t):
                 out[col] = sum(v for v in lines.values() if v)
                 break
     return out
+
+
+C1_LINE = re.compile(r"first-time,?\s+first-year\b[^\n]*?\b(?:applied|admitted|enrolled)\b", re.I)
+
+
+def c1_lines(t):
+    """The file's C1 lines as read, for the run log on a file not used or a total its lines by sex don't give."""
+    out = []
+    for m in C1_LINE.finditer(t):
+        line = " ".join(t[t.rfind("\n", 0, m.start()) + 1:line_end(t, m.end())].split())[:220]
+        if line not in out:
+            out.append(line)
+    return out[:30]
+
+
 COUNTS = {"ed_applicants": r"Number\s+of\s+early\s+decision\s+applications\s+received(?:\s+by\s+your\s+institution)?",
           "ed_admits": r"Number\s+of\s+applicants\s+admitted\s+under\s+early\s+decision(?:\s+plan)?",
           "waitlist_offered": r"Number\s+of\s+qualified\s+applicants\s+offered\s+a\s+place\s+on\s+(?:the\s+)?wait",
@@ -471,10 +486,12 @@ def factor_levels(text):
 
 def parse(text):
     """Readings from the file's text, matched against the CDS wording. Returns {} for fields not found.
-    "_tight" lists the GPA fields whose value sat on its label's own line."""
+    "_tight" lists the GPA fields whose value sat on its label's own line, "_summed" the C1 totals added up from
+    the lines by sex, "_c1_odd" the stated C1 totals those lines don't give ({column: (stated, by sex)}) and
+    "_c1_lines" the C1 lines as read."""
     t = text.replace("\xa0", " ").replace("\f", "\n").replace("\r", "")
     flat = re.sub(r"[ \t]+", " ", t)
-    out, tight, summed = {}, set(), set()
+    out, tight, summed, odd = {}, set(), set(), {}
     sums = c1_by_sex(t)
     for col, label in C1.items():
         row = next((g for g in (after(t, m) for m in re.finditer(C1_DEGREE + label, t, re.I)) if g), [])
@@ -488,13 +505,16 @@ def parse(text):
         s = sums.get(col)
         if s and v != s:
             # The "(degree-seeking)" row of 2025-26 has residency columns (in-state, out-of-state, international,
-            # unknown) before its Total; with the Total blank, its last number is only a part: smaller than the
-            # lines by sex, or not the sum of the numbers before it.
+            # unknown) before its Total; with the Total blank, its last number is only one of them, and the numbers
+            # before it don't add up to it. A total the file states (a lone number, or one that adds up its row)
+            # stays, even when the lines by sex say otherwise; the run log lists those.
             parts = [clean("count", x) or 0 for x in row]
-            part = bool(row) and parts[-1] == v and (v < s or (len(parts) > 1 and parts[-1] != sum(parts[:-1])))
+            part = len(parts) > 1 and parts[-1] == v and parts[-1] != sum(parts[:-1])
             if not v or part:
                 v = s
                 summed.add(col)
+            else:
+                odd[col] = (v, s)
         if v:
             out[col] = v
     for col, label in COUNTS.items():
@@ -566,7 +586,7 @@ def parse(text):
             out[col] = clean("pct", got[0])
 
     out.update(factor_levels(t))
-    out["_tight"], out["_summed"] = tight, summed
+    out["_tight"], out["_summed"], out["_c1_odd"], out["_c1_lines"] = tight, summed, odd, c1_lines(t)
     return out
 
 
@@ -777,15 +797,16 @@ def fit(src, form, text, theirs, ipeds):
 
 
 def described(src, form, text, theirs, ipeds):
-    """The file's first-year counts next to IPEDS's, for the review list."""
+    """The file's first-year counts next to IPEDS's, for the review list, saying whose reading they are."""
+    ours = any(r.get("enrolled") or r.get("applicants") for r in (form, text))
     e, a = (first_years(src, form, text, theirs) or [(None, None)])[0]
     ipeds = ipeds or {}
 
     def n(v):
         v = num(v)
         return f"{int(v):,}" if v else "?"
-    return (f"file: {n(e)} enrolled, {n(a)} applicants; IPEDS: {n(ipeds.get('enrolled'))} enrolled, "
-            f"{n(ipeds.get('applicants'))} applicants")
+    return (f"{'file' if ours else 'collegedata.fyi reading of the file'}: {n(e)} enrolled, {n(a)} applicants; "
+            f"IPEDS: {n(ipeds.get('enrolled'))} enrolled, {n(ipeds.get('applicants'))} applicants")
 
 
 def assign(readings, ipeds):
@@ -799,7 +820,8 @@ def assign(readings, ipeds):
             u = us[0]
             if fits[u] is not None and fits[u] > math.log(2):
                 skip[u] = (f"this file's first-year class is far from IPEDS's for this college "
-                           f"({described(*readings[u][:4], ipeds.get(u))}); it probably describes another campus")
+                           f"({described(*readings[u][:4], ipeds.get(u))}); it probably describes another campus "
+                           f"or college")
             continue
         close = [u for u in us if fits[u] is not None and fits[u] <= math.log(1.5)]
         best = min(close, key=fits.get) if close else None
@@ -812,6 +834,21 @@ def assign(readings, ipeds):
 
 
 # ---- running it ----------------------------------------------------------------------------------------------
+
+def explain(readings, skip):
+    """Prints the C1 lines of each file not used for its college, and of each stated C1 total that its lines by
+    sex miss by over 5%, so the run log shows what the reader saw."""
+    shown, log = set(), []
+    for u, (src, form, text, their, producer) in sorted(readings.items(), key=lambda kv: kv[1][0]["name"]):
+        odd = {c: (v, s) for c, (v, s) in (text.get("_c1_odd") or {}).items() if abs(v - s) > 0.05 * v}
+        why = skip.get(u) or "; ".join(f"stated {c} total {v:,}, lines by sex {s:,}" for c, (v, s) in odd.items())
+        if why and text.get("_c1_lines") and file_key(src) not in shown:
+            shown.add(file_key(src))
+            log.append(f"{src['name']} ({src['cds_year']}, {src['source_url']}): {why}\n    "
+                       + "\n    ".join(text["_c1_lines"]))
+    if log:
+        print("C1 lines of the files not used, and of stated totals their lines by sex don't give:\n" + "\n".join(log))
+
 
 def fetch(url):
     from fetch import get  # same browser headers and retries as the federal downloads
@@ -874,6 +911,7 @@ def main(argv=None):
             info = theirs.get(src["unitid"]) or {}
             readings[src["unitid"]] = (src, from_form(form), text, info.get("values") or {}, info.get("producer") or "")
     skip = assign(readings, ipeds)
+    explain(readings, skip)
     rows, prov = [], []
     for u, (src, form, text, their, producer) in readings.items():
         if u in skip:

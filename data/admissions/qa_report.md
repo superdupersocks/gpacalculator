@@ -1,16 +1,16 @@
 # Admissions data QA report
 
-IPEDS years: {'hd': 2024, 'adm': 2023, 'ic': 2024, 'ic_ay': 2023, 'drvef': 2023, 'efd': 2023, 'drvgr': 2023, 'sfa': 2023}. Scorecard file: None
+IPEDS years: {'hd': 2024, 'adm': 2024, 'ic': 2024, 'ic_ay': 2023, 'drvef': 2024, 'efd': 2024, 'drvgr': 2024, 'sfa': 2023}. Scorecard file: None
 
-6,003 institutions; 2,796 four-year.
+6,001 institutions; 2,796 four-year.
 
-Admissions block source: none 4,031, IPEDS ADM 1,972
+Admissions block source: none 4,045, IPEDS ADM 1,956
 
 ## Coverage
 
 | Column | All | Four-year |
 | --- | --- | --- |
-| unitid | 6,003 (100%) | 2,796 (100%) |
+| unitid | 6,001 (100%) | 2,796 (100%) |
 | opeid | 5,963 (99%) | 2,773 (99%) |
 | name | 6,001 (100%) | 2,796 (100%) |
 | alias | 2,167 (36%) | 1,216 (43%) |
@@ -34,65 +34,56 @@ Admissions block source: none 4,031, IPEDS ADM 1,972
 | active | 6,001 (100%) | 2,796 (100%) |
 | closed_date | 68 (1%) | 24 (1%) |
 | merged_into | 26 (0%) | 0 (0%) |
-| admissions_source | 1,972 (33%) | 1,756 (63%) |
-| admissions_year | 1,972 (33%) | 1,756 (63%) |
+| admissions_source | 1,956 (33%) | 1,745 (62%) |
+| admissions_year | 1,956 (33%) | 1,745 (62%) |
 | open_admission | 5,498 (92%) | 2,404 (86%) |
-| applicants | 1,972 (33%) | 1,756 (63%) |
-| admits | 1,949 (32%) | 1,746 (62%) |
-| enrolled | 1,946 (32%) | 1,743 (62%) |
-| admit_rate | 1,949 (32%) | 1,746 (62%) |
-| yield_rate | 1,946 (32%) | 1,743 (62%) |
-| sat_submit_pct | 1,165 (19%) | 1,150 (41%) |
-| act_submit_pct | 1,160 (19%) | 1,146 (41%) |
-| sat_erw_p25 | 992 (17%) | 985 (35%) |
-| sat_erw_p50 | 992 (17%) | 985 (35%) |
-| sat_erw_p75 | 992 (17%) | 985 (35%) |
-| sat_math_p25 | 992 (17%) | 985 (35%) |
-| sat_math_p50 | 992 (17%) | 985 (35%) |
-| sat_math_p75 | 992 (17%) | 985 (35%) |
-| act_comp_p25 | 972 (16%) | 965 (35%) |
-| act_comp_p50 | 972 (16%) | 965 (35%) |
-| act_comp_p75 | 972 (16%) | 965 (35%) |
-| act_english_p25 | 916 (15%) | 910 (33%) |
-| act_english_p50 | 916 (15%) | 910 (33%) |
-| act_english_p75 | 916 (15%) | 910 (33%) |
-| act_math_p25 | 918 (15%) | 911 (33%) |
-| act_math_p50 | 918 (15%) | 911 (33%) |
-| act_math_p75 | 918 (15%) | 911 (33%) |
+| applicants | 1,956 (33%) | 1,745 (62%) |
+| admits | 1,931 (32%) | 1,729 (62%) |
+| enrolled | 1,928 (32%) | 1,728 (62%) |
+| admit_rate | 1,931 (32%) | 1,729 (62%) |
+| yield_rate | 1,927 (32%) | 1,727 (62%) |
+| sat_submit_pct | 1,153 (19%) | 1,137 (41%) |
+| act_submit_pct | 1,153 (19%) | 1,137 (41%) |
+| sat_erw_p25 | 950 (16%) | 943 (34%) |
+| sat_erw_p50 | 950 (16%) | 943 (34%) |
+| sat_erw_p75 | 950 (16%) | 943 (34%) |
+| sat_math_p25 | 950 (16%) | 943 (34%) |
+| sat_math_p50 | 950 (16%) | 943 (34%) |
+| sat_math_p75 | 950 (16%) | 943 (34%) |
+| act_comp_p25 | 921 (15%) | 915 (33%) |
+| act_comp_p50 | 921 (15%) | 915 (33%) |
+| act_comp_p75 | 921 (15%) | 915 (33%) |
+| act_english_p25 | 872 (15%) | 866 (31%) |
+| act_english_p50 | 872 (15%) | 866 (31%) |
+| act_english_p75 | 872 (15%) | 866 (31%) |
+| act_math_p25 | 873 (15%) | 867 (31%) |
+| act_math_p50 | 873 (15%) | 867 (31%) |
+| act_math_p75 | 873 (15%) | 867 (31%) |
 | sat_avg | 0 (0%) | 0 (0%) |
-| req_gpa | 1,972 (33%) | 1,756 (63%) |
-| req_class_rank | 1,972 (33%) | 1,756 (63%) |
-| req_hs_record | 1,972 (33%) | 1,756 (63%) |
-| req_prep_program | 1,972 (33%) | 1,756 (63%) |
-| req_recommendations | 1,972 (33%) | 1,756 (63%) |
-| req_competencies | 1,972 (33%) | 1,756 (63%) |
-| req_other_test | 1,972 (33%) | 1,756 (63%) |
-| req_test_scores | 1,972 (33%) | 1,756 (63%) |
-| req_work_experience | 1,972 (33%) | 1,756 (63%) |
-| req_essay | 1,972 (33%) | 1,756 (63%) |
-| req_legacy | 1,972 (33%) | 1,756 (63%) |
+| req_gpa | 1,956 (33%) | 1,745 (62%) |
+| req_class_rank | 1,956 (33%) | 1,745 (62%) |
+| req_hs_record | 1,956 (33%) | 1,745 (62%) |
+| req_prep_program | 1,956 (33%) | 1,745 (62%) |
+| req_recommendations | 1,956 (33%) | 1,745 (62%) |
+| req_competencies | 1,956 (33%) | 1,745 (62%) |
+| req_other_test | 1,956 (33%) | 1,745 (62%) |
+| req_test_scores | 1,956 (33%) | 1,745 (62%) |
+| req_work_experience | 1,956 (33%) | 1,745 (62%) |
+| req_essay | 1,956 (33%) | 1,745 (62%) |
+| req_legacy | 1,956 (33%) | 1,745 (62%) |
 | life_experience_credit | 5,893 (98%) | 2,770 (99%) |
 | ap_credit | 5,893 (98%) | 2,770 (99%) |
-| undergrad_enrollment | 5,635 (94%) | 2,505 (90%) |
-| tuition_in_state | 3,412 (57%) | 2,343 (84%) |
-| tuition_out_of_state | 3,412 (57%) | 2,343 (84%) |
+| undergrad_enrollment | 5,578 (93%) | 2,490 (89%) |
+| tuition_in_state | 3,410 (57%) | 2,343 (84%) |
+| tuition_out_of_state | 3,410 (57%) | 2,343 (84%) |
 | net_price | 5,228 (87%) | 2,292 (82%) |
-| grad_rate | 5,257 (88%) | 2,298 (82%) |
-| retention_rate | 4,988 (83%) | 2,097 (75%) |
+| grad_rate | 5,217 (87%) | 2,284 (82%) |
+| retention_rate | 4,947 (82%) | 2,073 (74%) |
 | median_earnings_10yr | 0 (0%) | 0 (0%) |
 
 ## Imputed IPEDS values left out
 
-- efd.RET_PCF: 6
 - sfa.NPGRN2: 4
-- adm.SATVR25: 2
-- adm.SATVR50: 2
-- adm.SATVR75: 2
-- adm.SATMT25: 2
-- adm.SATMT50: 2
-- adm.SATMT75: 2
-- adm.SATPCT: 1
-- adm.ACTPCT: 1
 
 ## Values dropped by checks (0)
 

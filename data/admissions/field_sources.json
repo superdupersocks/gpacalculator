@@ -162,135 +162,135 @@
     "meaning": "Open admission policy"
   },
   "applicants": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "APPLCN",
-    "year": 2023,
+    "year": 2024,
     "meaning": "First-time, degree-seeking applicants"
   },
   "admits": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMSSN",
-    "year": 2023,
+    "year": 2024,
     "meaning": ""
   },
   "enrolled": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ENRLT",
-    "year": 2023,
+    "year": 2024,
     "meaning": ""
   },
   "admit_rate": {
-    "source": "IPEDS ADM2023 (else Scorecard ADM_RATE)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard ADM_RATE)",
     "variable": "ADMSSN / APPLCN",
-    "year": 2023,
+    "year": 2024,
     "meaning": "0-1"
   },
   "yield_rate": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ENRLT / ADMSSN",
-    "year": 2023,
+    "year": 2024,
     "meaning": "0-1"
   },
   "sat_submit_pct": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "SATPCT",
-    "year": 2023,
+    "year": 2024,
     "meaning": "% of enrollees who submitted SAT"
   },
   "act_submit_pct": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ACTPCT",
-    "year": 2023,
+    "year": 2024,
     "meaning": "% of enrollees who submitted ACT"
   },
   "sat_erw_p25": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "SATVR25",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "sat_erw_p50": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "SATVR50",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "sat_erw_p75": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "SATVR75",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "sat_math_p25": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "SATMT25",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "sat_math_p50": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "SATMT50",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "sat_math_p75": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "SATMT75",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_comp_p25": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTCM25",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_comp_p50": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTCM50",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_comp_p75": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTCM75",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_english_p25": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTEN25",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_english_p50": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTEN50",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_english_p75": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTEN75",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_math_p25": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTMT25",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_math_p50": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTMT50",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "act_math_p75": {
-    "source": "IPEDS ADM2023 (else Scorecard)",
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
     "variable": "ACTMT75",
-    "year": 2023,
+    "year": 2024,
     "meaning": "50th percentile reported from 2022-23 on"
   },
   "sat_avg": {
@@ -300,69 +300,69 @@
     "meaning": "Scorecard's SAT-equivalent average of admitted students (derived)"
   },
   "req_gpa": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON1",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Secondary school GPA"
   },
   "req_class_rank": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON2",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Secondary school rank"
   },
   "req_hs_record": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON3",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Secondary school record"
   },
   "req_prep_program": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON4",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Completion of college-preparatory program"
   },
   "req_recommendations": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON5",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Recommendations"
   },
   "req_competencies": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON6",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Formal demonstration of competencies"
   },
   "req_other_test": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON9",
-    "year": 2023,
-    "meaning": "Other Test (Wonderlic, WISC-III, etc.)"
+    "year": 2024,
+    "meaning": "Other Test (Wonderlic, WISC-III, etc.)  "
   },
   "req_test_scores": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON7",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Admission test scores"
   },
   "req_work_experience": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON10",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Work experience"
   },
   "req_essay": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON11",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Personal statement or essay"
   },
   "req_legacy": {
-    "source": "IPEDS ADM2023",
+    "source": "IPEDS ADM2024 provisional release",
     "variable": "ADMCON12",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Legacy status"
   },
   "life_experience_credit": {
@@ -378,9 +378,9 @@
     "meaning": "Advanced placement (AP) credits"
   },
   "undergrad_enrollment": {
-    "source": "IPEDS DRVEF 2023 (else Scorecard)",
+    "source": "IPEDS DRVEF 2024 provisional release (else Scorecard)",
     "variable": "EFUG",
-    "year": 2023,
+    "year": 2024,
     "meaning": "Undergraduate enrollment"
   },
   "tuition_in_state": {
@@ -402,16 +402,16 @@
     "meaning": "Average net price-students awarded grant or scholarship aid, 2022-23"
   },
   "grad_rate": {
-    "source": "IPEDS DRVGR 2023 (else Scorecard)",
+    "source": "IPEDS DRVGR 2024 provisional release (else Scorecard)",
     "variable": "GRRTTOT",
-    "year": 2023,
-    "meaning": "Graduation rate, total cohort"
+    "year": 2024,
+    "meaning": "Graduation rate, total cohort "
   },
   "retention_rate": {
-    "source": "IPEDS EFD 2023 (else Scorecard)",
+    "source": "IPEDS EFD 2024 provisional release (else Scorecard)",
     "variable": "RET_PCF",
-    "year": 2023,
-    "meaning": "Full-time retention rate, 2023"
+    "year": 2024,
+    "meaning": "Full-time retention rate, 2024"
   },
   "median_earnings_10yr": {
     "source": "College Scorecard, Most Recent Institution-Level Data",

@@ -916,8 +916,8 @@
 
 /* ==== Calculator pages: layout overrides for prerendered calculators ==== */
 
-/* Same width as the homepage calculator, and no blank space reserved under it (the calculator is prerendered, so nothing needs to be held open) */
-body.gpa-calc-tool #root { max-width: 750px !important; margin-left: auto; margin-right: auto; min-height: 0 !important; }
+/* No blank space reserved under the calculator (it is prerendered, so nothing needs to be held open); its width is set below */
+body.gpa-calc-tool #root { margin-left: auto; margin-right: auto; min-height: 0 !important; }
 
 /* Grade-style calculators: full width, and keep the reserved height (they aren't prerendered, so the page would jump while they load) */
 body.page-id-296 #root,

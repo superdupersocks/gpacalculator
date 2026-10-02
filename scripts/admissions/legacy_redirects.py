@@ -7,8 +7,11 @@ Reads where each old address in data/admissions/redirects/old_admission_urls_che
 scripts/check_urls.py on GitHub) and names the college behind its old slug: the current post whose title gives that
 slug, or else the IPEDS colleges whose name or alias gives it, in the current directory and, with --history, in the
 directories back to 2002 (downloaded as scripts/admissions/audit.py does; GitHub runs it this way). When several
-colleges carry the name, they must all lead to the same answer. Then, for every address that ends on a 404, on
-WordPress's slug guess, or on a Rank Math redirect to a missing page:
+colleges carry the name, they must all lead to the same answer; a slug that starts with "the-" prefers the one whose
+name starts with "The". A slug that finds nothing as written is read again with "uni" as "university" and "dc" as
+"district of columbia", and with a trailing state ("-maine", "-wi") and city ("-bangor-maine") taken as the college's
+location. Then, for every address that ends on a 404, on WordPress's slug guess, or on a Rank Math redirect to a
+missing page:
 
 - 301 to the college's page, when one published post that stays (after checkpoints C and D) is matched to it;
 - the same answer C and D give that page, when they retire or redirect it;
@@ -33,7 +36,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
-from common import norm_name  # noqa: E402
+from common import STATES, norm_name  # noqa: E402
 from match import strip_campus  # noqa: E402
 
 DATA = Path(__file__).resolve().parents[2] / "data"
@@ -41,6 +44,9 @@ ADM = DATA / "admissions"
 OUT = ADM / "redirects"
 SITE = "https://gpacalculator.net/admissions/"
 CONFIDENT = {"exact", "renamed", "alias", "fuzzy"}
+SLUG_WORDS = {"uni": "university", "dc": "district of columbia"}  # 'uni-of-the-dc-david-a-clarke-school-of-law'
+STATE_SLUGS = {k.lower().replace(" ", "-"): v for k, v in STATES.items()}  # 'new-york' -> 'NY'
+STATE_CODES = set(STATES.values())
 
 
 def read(path, delimiter=","):
@@ -57,6 +63,24 @@ def keys(name):
 def squashed(name):
     """The same without spaces, so 'texas a m' and 'texas am' agree; used only when the words find nothing."""
     return {k.replace(" ", "") for k in keys(name)}
+
+
+def readings(old):
+    """Other ways to read an old slug, tried when it finds no answer as written: (name, state, city, how)."""
+    words = old.split("-")
+    spelled = [SLUG_WORDS.get(w, w) for w in words]
+    if spelled != words:
+        yield " ".join(spelled), "", "", "abbreviation spelled out"
+    for n in (3, 2, 1):
+        tail = "-".join(words[-n:])
+        if len(words) > n and tail in STATE_SLUGS:
+            rest = words[:-n]
+            for c in range(min(3, len(rest) - 1) + 1):
+                city = " ".join(rest[len(rest) - c:])
+                yield " ".join(rest[:len(rest) - c]), STATE_SLUGS[tail], city, f"located in {city + ', ' if city else ''}{STATE_SLUGS[tail]}"
+            break
+    if len(words) > 1 and len(words[-1]) == 2 and words[-1].upper() in STATE_CODES:
+        yield " ".join(words[:-1]), words[-1].upper(), "", f"located in {words[-1].upper()}"
 
 
 def slug_of(url):
@@ -88,8 +112,11 @@ def main(argv=None):
         for k in keys(p["title"]):
             by_title[k].add(slug)
     by_ipeds, by_squash = defaultdict(set), defaultdict(set)  # name key -> unitids whose name or alias gives it
+    names_of, places_of = defaultdict(set), defaultdict(set)  # unitid -> every name, every (city, state) it had
 
-    def index(u, name, aliases):
+    def index(u, name, aliases, city, state):
+        names_of[u].add(name.lower())
+        places_of[u].add((norm_name(city), state))
         for n in [name] + [x for x in (aliases or "").replace("|", ",").split(",") if x.strip()]:
             for k in keys(n):
                 by_ipeds[k].add(u)
@@ -97,18 +124,25 @@ def main(argv=None):
                 by_squash[k].add(u)
 
     for u, r in inst.items():
-        index(u, r["name"], r.get("alias"))
+        index(u, r["name"], r.get("alias"), r["city"], r["state"])
     hist = {}
     if a.history:
         import audit  # noqa: E402 - downloads the HD files the first time
         hist = audit.load_history(2002, 2023)
         for u, years in hist.items():
             for rec in years.values():
-                index(u, rec["INSTNM"], rec.get("IALIAS"))
+                index(u, rec["INSTNM"], rec.get("IALIAS"), rec["CITY"], rec["STABBR"])
     posts_of = defaultdict(list)  # unitid -> confidently matched posts
     for slug, m in match.items():
         if m["unitid"] and m["method"] in CONFIDENT:
             posts_of[m["unitid"]].append(slug)
+
+    def post_place(slug):
+        city, _, state = match.get(slug, {}).get("location", "").rpartition(",")
+        return {(norm_name(city), STATES.get(state.strip(), ""))}
+
+    def placed(places, state, city):
+        return any(s == state and (not city or c == norm_name(city)) for c, s in places)
 
     def answer_for_post(slug):
         """What the post's own address answers after C and D: ('301', url) or ('410', '')."""
@@ -151,23 +185,37 @@ def main(argv=None):
         if closed:
             return "410", "", f"closed {closed} (IPEDS)"
         if u in inst:
+            if inst[u].get("operating") == "No":
+                return None, "", "no page here; College Scorecard (June 2026) says it no longer operates, IPEDS gives no closing date"
+            if inst[u].get("operating") != "Yes":
+                return None, "", "no page here; open in IPEDS 2024 but missing from College Scorecard's June 2026 release (may have closed since)"
             return None, "", "operating, but no page here"
         return None, "", f"left IPEDS after {max(hist[u])} without a closing date or a successor"
 
-    def decide(old):
-        """(action, target, college, unitid, how, note); action None leaves the address as it is."""
-        ks = keys(old)
+    def decide_one(old, name, state="", city=""):
+        """(action, target, college, unitid, how, note) for one reading of the slug; action None finds no answer."""
+        ks = keys(name)
         titled = set().union(*(by_title.get(k, set()) for k in ks))
+        if state:
+            titled = {s for s in titled if placed(post_place(s), state, city)}
+        if len(titled) > 1 and old.startswith("the-"):
+            titled = {s for s in titled if posts[s]["title"].lower().startswith("the ")} or titled
         if len(titled) == 1:
             slug = titled.pop()
             return (*answer_for_post(slug), posts[slug]["title"], match.get(slug, {}).get("unitid", ""), "title", "")
         if len(titled) > 1:
             return None, "", "", "", "", "several pages: " + " ".join(sorted(titled))
         units, how = set().union(*(by_ipeds.get(k, set()) for k in ks)), "ipeds"
+        if state:
+            units = {u for u in units if placed(places_of[u], state, city)}
         if not units:
-            units, how = set().union(*(by_squash.get(k, set()) for k in squashed(old))), "ipeds, spacing aside"
+            units, how = set().union(*(by_squash.get(k, set()) for k in squashed(name))), "ipeds, spacing aside"
+            if state:
+                units = {u for u in units if placed(places_of[u], state, city)}
         if not units:
             return None, "", "", "", "", "no college by that name in IPEDS" + (" (2002-2024)" if hist else " (2024)")
+        if len(units) > 1 and old.startswith("the-"):
+            units = {u for u in units if any(n.startswith("the ") for n in names_of[u])} or units
         answers = {u: page_answer(u) for u in sorted(units)}
         found = {(x[0], x[1]) for x in answers.values()}
         names = " | ".join(f"{u} {name_of(u)}" for u in answers)
@@ -181,6 +229,17 @@ def main(argv=None):
             return None, "", names, " ".join(answers), how, next(iter(answers.values()))[2]
         return None, "", names, " ".join(answers), how, "several colleges with different answers: " + "; ".join(
             f"{name_of(u)}: {x[0] or 'none'} {x[1] or x[2]}" for u, x in answers.items())
+
+    def decide(old):
+        """The slug as written, else the first other reading that finds an answer (else the slug's own result)."""
+        first = decide_one(old, old)
+        if first[0]:
+            return first
+        for name, state, city, why in readings(old):
+            got = decide_one(old, name, state, city)
+            if got[0]:
+                return (*got[:4], f"{got[4]}, {why}", got[5])
+        return first
 
     rows, unresolved, wrong = [], [], []
     for c in read(OUT / "old_admission_urls_check.tsv", "\t"):

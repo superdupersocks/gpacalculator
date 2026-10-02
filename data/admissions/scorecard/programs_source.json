@@ -1,0 +1,20 @@
+{
+ "file": "Most-Recent-Cohorts-Field-of-Study_06102026.zip",
+ "member": "Most-Recent-Cohorts-Field-of-Study.csv",
+ "bytes": 17188590,
+ "sha256": "9c4339d65f0699a60d6078fe54fc3bf03fded30a65079222d9221952b8578165",
+ "page": "https://collegescorecard.ed.gov/data/",
+ "columns": {
+  "UNITID": "unitid",
+  "CIPCODE": "cip",
+  "CIPDESC": "program",
+  "IPEDSCOUNT1": "graduates_prev",
+  "IPEDSCOUNT2": "graduates",
+  "EARN_MDN_1YR": "earnings_1yr",
+  "EARN_MDN_4YR": "earnings_4yr",
+  "DEBT_ALL_STGP_EVAL_MDN": "median_debt",
+  "EARN_MDN_4YR_NAT": "earnings_4yr_national"
+ },
+ "slimmed_at": "2026-10-02",
+ "release": "June 10, 2026"
+}

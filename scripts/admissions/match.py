@@ -5,7 +5,9 @@
 The posts carry no federal ID, only a title and "City, State". Matching runs in steps, stopping at the first hit:
 1. exact: same cleaned name and state (one candidate)
 2. alias: the post's name equals one of the college's IPEDS aliases, same state
-3. fuzzy: closest name in the same state (city match breaks ties); accepted at score >= 0.92 with a clear
+3. renamed: same city, and the names agree once generic words (college, university, campus...) are dropped,
+   or one name's distinctive words contain the other's (King College -> King University; one candidate only)
+4. fuzzy: closest name in the same state (city match breaks ties); accepted at score >= 0.955 with a clear
    lead over the runner-up, otherwise sent to review with the top three candidates
 
 Writes data/admissions/match.csv (every post, with method and score) and match_review.csv (posts that need a
@@ -13,6 +15,7 @@ person: low-confidence or no candidate, or two posts claiming the same college).
 """
 import argparse
 import csv
+import html
 import json
 import os
 import sys
@@ -23,7 +26,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from common import COLLEGES, OUT, STATES, norm_name, write_csv  # noqa: E402
 
-ACCEPT = 0.92
+ACCEPT = 0.955
 REVIEW = 0.75
 LEAD = 0.03
 
@@ -34,6 +37,14 @@ def strip_campus(n):
         if n.endswith(tail):
             return n[: -len(tail)]
     return n
+
+
+QUALIFIERS = {"branch", "north", "south", "east", "west", "area", "cuny", "suny", "campus"}
+GENERIC = {"college", "university", "community", "district", "institute", "campus", "main", "school", "center", "inc"}
+
+
+def core(n):
+    return frozenset(w for w in n.split() if w not in GENERIC)
 
 
 def score(a, b):
@@ -68,17 +79,30 @@ def match(posts, insts):
         by_state[r["state"]].append(r)
     out = []
     for p in posts:
-        name = norm_name(p["title"])
+        name = norm_name(html.unescape(p["title"]))
         pool = by_state.get(p["state"]) or insts
         res = {"slug": p["slug"], "title": p["title"], "location": p["location"]}
         exact = [r for r in pool if name in r["_names"] or strip_campus(name) in r["_names"]]
         if len(exact) > 1:  # same name in one state: the city decides
             exact = [r for r in exact if r["city"].lower() == p["city"].lower()] or exact
         alias = [r for r in pool if name in r["_aliases"]]
+        mine = core(name)
+        same_city = [r for r in pool if r["city"].lower() == p["city"].lower()]
+        place = set(norm_name(f"{p['city']} {p['location'].rpartition(',')[2]} {p['state']}").split()) | QUALIFIERS
+
+        def same_school(c):  # equal, or one adds only place words ("Penn State Hazleton" in Pennsylvania)
+            if not mine or not c:
+                return False
+            small, big = sorted((c, mine), key=len)
+            return small == big or (len(small) >= 2 and small <= big and not small <= place and big - small <= place)
+
+        renamed = [r for r in same_city if any(same_school(c) for c in map(core, r["_names"]))]
         if len(exact) == 1:
             hit, method, sc = exact[0], "exact", 1.0
         elif not exact and len(alias) == 1:
             hit, method, sc = alias[0], "alias", 1.0
+        elif not exact and not alias and len(renamed) == 1:
+            hit, method, sc = renamed[0], "renamed", 0.95
         else:
             ranked = sorted(((max(score(name, n) for n in r["_names"] | r["_aliases"])
                               + (0.03 if r["city"].lower() == p["city"].lower() else 0), r) for r in pool),

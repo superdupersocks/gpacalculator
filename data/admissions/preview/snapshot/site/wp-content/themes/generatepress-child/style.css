@@ -1,0 +1,423 @@
+/************************************************
+Theme Name: GeneratePress Child
+Template: generatepress
+Version: 1.1.1
+Description: Child theme for GPA Calculator site.
+Typography, colors, and spacing defined in
+gpa-design-tokens.css (source of truth: gpa-homepage.css).
+
+/* ---- Container ---- */
+ 
+/* ============================================
+   1. SECTION HEADER (label pill + H2)
+   ============================================ */
+.content-label {
+    display: inline-block !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 24px !important;
+}
+.content-label-blue { background: var(--gpa-blue-100) !important; color: var(--gpa-blue-800) !important; }
+.content-label-green { background: var(--gpa-green-100) !important; color: var(--gpa-green-800) !important; }
+.content-label-amber { background: var(--gpa-amber-100) !important; color: var(--gpa-amber-800) !important; }
+.content-label-pink { background: var(--gpa-pink-100) !important; color: var(--gpa-pink-800) !important; }
+.content-label-teal { background: var(--gpa-teal-100) !important; color: var(--gpa-teal-800) !important; }
+.content-label-slate { background: var(--gpa-gray-200) !important; color: var(--gpa-text-strong) !important; }
+
+.content-h2 {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h2-size) !important;
+    font-weight: var(--gpa-h2-weight) !important;
+    line-height: var(--gpa-h2-line) !important;
+    color: var(--gpa-text-heading) !important;
+    margin-bottom: 16px !important;
+}
+
+/* ============================================
+   2. PARAGRAPH TEXT
+   ============================================ */
+.content-text {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-body-size) !important;
+    color: var(--gpa-text-body) !important;
+    line-height: var(--gpa-body-line) !important;
+    font-weight: var(--gpa-body-weight) !important;
+}
+
+/* ============================================
+   3. BULLET LIST
+   ============================================ */
+.content-bullets {
+  list-style: disc outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-bullets li {
+  font-family: var(--gpa-font) !important;
+  font-size: var(--gpa-body-size) !important;
+  color: var(--gpa-text-body) !important;
+  line-height: var(--gpa-body-line) !important;
+  margin-bottom: 12px !important;
+  display: list-item;
+  padding-left: 0;
+}
+.content-bullets li::before {
+  content: none;
+}
+
+/* ============================================
+   4. NUMBERED LIST
+   ============================================ */
+.content-numbered {
+  list-style: decimal outside;
+  padding-left: 1.5rem;
+  margin-bottom: 24px;
+}
+.content-numbered li {
+  font-family: var(--gpa-font) !important;
+  font-size: var(--gpa-body-size) !important;
+  color: var(--gpa-text-body) !important;
+  line-height: var(--gpa-body-line) !important;
+  margin-bottom: 16px !important;
+  display: list-item;
+  padding-left: 0;
+}
+.content-numbered li::before {
+  content: none;
+}
+
+/* Tables, formula, result and FAQ blocks: components.css */
+
+/* ============================================
+   6. DEFINITION BLOCK
+   ============================================ */
+.content-card-definition {
+    background: var(--gpa-tint-blue) !important;
+    border-radius: 8px !important;
+    padding: 24px !important;
+    border-left: 4px solid var(--gpa-primary) !important;
+    margin-bottom: 32px !important;
+}
+.content-card-definition .content-card-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: var(--gpa-heading) !important;
+    margin-bottom: 8px !important;
+}
+.content-card-definition .content-card-body {
+    font-size: 16px !important;
+    color: var(--gpa-text) !important;
+    line-height: 1.7 !important;
+}
+
+/* ============================================
+   7. IMPORTANT NOTE BLOCK
+   ============================================ */
+.content-card-note {
+    background: var(--gpa-amber-50) !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    border: 2px solid var(--gpa-amber-400) !important;
+    margin-bottom: 32px !important;
+}
+.content-card-note .content-card-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: var(--gpa-amber-900) !important;
+    margin-bottom: 8px !important;
+}
+.content-card-note .content-card-body {
+    font-size: 16px !important;
+    color: var(--gpa-amber-800) !important;
+    line-height: 1.7 !important;
+}
+
+/* ============================================
+   8. TIP BLOCK
+   ============================================ */
+.content-card-tip {
+    background: var(--gpa-green-50) !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    border: 2px solid var(--gpa-green-400) !important;
+    margin-bottom: 32px !important;
+}
+.content-card-tip .content-card-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: var(--gpa-green-900) !important;
+    margin-bottom: 8px !important;
+}
+.content-card-tip .content-card-body {
+    font-size: 16px !important;
+    color: var(--gpa-green-800) !important;
+    line-height: 1.7 !important;
+}
+
+/* ============================================
+   11. IMAGE WITH CAPTION
+   ============================================ */
+.content-image {
+    background: var(--gpa-gray-100) !important;
+    border-radius: 8px !important;
+    padding: 32px !important;
+    border: 1px solid var(--gpa-border-strong) !important;
+    text-align: center !important;
+    margin-bottom: 32px !important;
+}
+.content-image img {
+    border-radius: 8px !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin-bottom: 16px !important;
+}
+.content-image figcaption,
+.content-caption {
+    font-size: 16px !important;
+    color: var(--gpa-text-secondary) !important;
+    font-style: italic !important;
+}
+
+/* ============================================
+   13. RELATED LINKS CARDS
+   ============================================ */
+.content-related-grid {
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+}
+.content-rel-card {
+    background: var(--gpa-surface) !important;
+    border-radius: 8px !important;
+    padding: 32px !important;
+    border: 1px solid var(--gpa-border) !important;
+    transition: all 0.3s ease !important;
+}
+.content-rel-card:hover {
+    border-color: var(--gpa-primary) !important;
+}
+.content-rel-icon {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 16px !important;
+    font-size: 24px !important;
+}
+.content-rel-icon-blue { background: var(--gpa-primary) !important; }
+.content-rel-icon-green { background: var(--gpa-green-600) !important; }
+.content-rel-icon-amber { background: var(--gpa-amber-600) !important; }
+.content-rel-icon-purple { background: var(--gpa-accent) !important; }
+
+.content-rel-title {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h3-size) !important;
+    font-weight: var(--gpa-h3-weight) !important;
+    color: var(--gpa-text-heading) !important;
+    margin-bottom: 12px !important;
+}
+.content-rel-desc {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-body-lg-size) !important;
+    color: var(--gpa-text-body) !important;
+    margin-bottom: 16px !important;
+}
+.content-rel-cta a {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-body-lg-size) !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: transform 0.2s ease !important;
+}
+.content-rel-cta a:hover { transform: translateX(4px) !important; }
+.content-rel-cta-blue a { color: var(--gpa-primary) !important; }
+.content-rel-cta-green a { color: var(--gpa-green-600) !important; }
+.content-rel-cta-amber a { color: var(--gpa-amber-600) !important; }
+.content-rel-cta-purple a { color: var(--gpa-accent) !important; }
+
+/* ============================================
+   SECTION DIVIDERS
+   (colored header bars from style guide)
+   ============================================ */
+.content-section-bar {
+    padding: 24px 32px !important;
+    border-radius: 12px !important;
+    margin-bottom: 40px !important;
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--gpa-black) 10%, transparent) !important;
+}
+.content-section-bar h2 {
+    font-family: var(--gpa-font) !important;
+    font-size: var(--gpa-h1-size-m) !important;
+    font-weight: var(--gpa-h1-weight) !important;
+    color: var(--gpa-white) !important;
+    line-height: var(--gpa-h1-line) !important;
+    margin: 0 !important;
+    -webkit-text-fill-color: var(--gpa-white) !important;
+}
+@media (min-width: 768px) {
+    .content-section-bar h2 { font-size: var(--gpa-h1-size) !important; }
+}
+.content-bar-blue { background: linear-gradient(to right, var(--gpa-primary), var(--gpa-primary-hover)) !important; }
+.content-bar-green { background: linear-gradient(to right, var(--gpa-green-600), var(--gpa-green-700)) !important; }
+.content-bar-amber { background: linear-gradient(to right, var(--gpa-amber-600), var(--gpa-amber-700)) !important; }
+.content-bar-pink { background: linear-gradient(to right, var(--gpa-pink-600), var(--gpa-pink-700)) !important; }
+.content-bar-teal { background: linear-gradient(to right, var(--gpa-teal-600), var(--gpa-teal-700)) !important; }
+.content-bar-slate { background: linear-gradient(to right, var(--gpa-slate-700), var(--gpa-gray-800)) !important; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .content-h2 { font-size: var(--gpa-h2-size-m) !important; }
+    .content-label { font-size: 16px !important; padding: 8px 16px !important; }
+    .content-card-definition,
+    .content-card-note,
+    .content-card-tip { padding: 20px !important; }
+    .content-rel-card { padding: 24px !important; }
+    .content-section-bar { padding: 20px 24px !important; }
+    .content-section-bar h2 { font-size: var(--gpa-h1-size-m) !important; }
+}
+
+
+/* ---- Accessibility utilities ---- */
+.screen-reader-text {
+    border: 0 !important;
+    clip: rect(1px, 1px, 1px, 1px) !important;
+    -webkit-clip-path: inset(50%) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    word-wrap: normal !important;
+}
+
+/* Header, nav and footer: layout.css (sections 8 and 9) */
+
+/* NATIVE LIST SEMANTICS - content-bullets / content-numbered badges removed */
+.gpa-embed select + .absolute.inset-y-0.left-3.flex.items-center.pointer-events-none.text-blue-600 {
+  display: none !important;
+} 
+ 
+
+/* ============================================================
+ * GPA_INTERACTIVE â€” hover and focus feedback
+ * Every interactive element already resolved to cursor:pointer;
+ * the problem was that hover states were invisible (nav hover
+ * was rgba(0,0,0,.02) over a white header). These give a
+ * visible hover, and a clear keyboard focus ring via
+ * :focus-visible so GeneratePress's mouse-focus suppression
+ * is left intact.
+ * ============================================================ */
+
+.entry-content a:not([class]):hover {
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+}
+
+button:not(.menu-toggle):hover,
+.wp-block-button__link:hover,
+.gpa-cta a:hover {
+	filter: brightness(0.94);
+}
+
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+	outline: 2px solid var(--gpa-primary) !important;
+	outline-offset: 2px !important;
+}
+ 
+/* 24-SEP-2026  */
+.gpa-rail {
+	position: absolute;
+	display: none;
+	flex-direction: column;
+	z-index: 20;
+	pointer-events: none;
+}
+body.gpa-rails-on .gpa-rail { display: flex; }
+ 
+.gpa-rail__seg {
+	flex: 1 1 0;
+	min-height: 620px;
+}
+.gpa-rail__sticky {
+	position: sticky;
+	top: 90px;
+	pointer-events: auto;
+}
+.gpa-rail [id^="gpacalculator-net_siderail"] {
+	min-height: 600px;
+}
+ 
+/* Kargo spotlight is auto-sized by Freestar */
+#gpacalculator-net_kargo_spotlight { min-height: 0 !important; }
+ 
+/* Never on tablet / mobile */
+@media (max-width: 1023px) {
+	.gpa-rail { display: none !important; }
+}
+
+/* GPA_FULLBLEED â€” homepage hero and section bands span the full viewport */
+body.home { overflow-x: clip; }
+body.home .inside-article { background: transparent !important; }
+body.home .entry-content > .wp-block-group {
+	margin-left:  calc(50% - 50vw) !important;
+	margin-right: calc(50% - 50vw) !important;
+	padding-left:  calc(50vw - 50%) !important;
+	padding-right: calc(50vw - 50%) !important;
+}
+
+@media (min-width: 1560px) {
+  body.home .site-content { max-width: 900px !important; }
+}
+
+@media (min-width: 1440px) {
+	body.page-template-template-calculator .entry-content,
+	body.page-template-template-content .entry-content,
+	body.gpa-template-content .entry-content,
+	body.page-template-gpa-content-page .entry-content,
+	body.single-post .entry-content,
+	body.home .site-content,
+	body.single-colleges .db-container,
+	body.post-type-archive-colleges .db-container {
+		width: min(100%, calc(100vw - 680px)) !important;
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+}
+ 
+/* College templates force width:100% on page elements, which was
+   stretching the rails to full screen width. Keep rails their own size. */
+html body div.gpa-rail {
+	width: max-content !important;
+	max-width: 336px !important;
+}
+
+/* Article column, text width, type and section rhythm: layout.css */
+
+ /* Give rail slots their size before the ad loads */
+.gpa-rail [id^="gpacalculator-net_siderail"] { min-width: 300px; }
+
+/* Rail ads: pin the ad to the top of its slot instead of floating mid-slot */
+.gpa-rail [id^="gpacalculator-net_siderail"] {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+}
+

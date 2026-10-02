@@ -1,0 +1,13 @@
+{
+ "taken_utc": "2026-10-02 19:23",
+ "pages": {
+  "admissions": "https://gpacalculator.net/admissions/",
+  "admissions__harvard": "https://gpacalculator.net/admissions/harvard/",
+  "admissions__miami-university": "https://gpacalculator.net/admissions/miami-university/",
+  "admissions__lone-star-college-system": "https://gpacalculator.net/admissions/lone-star-college-system/",
+  "admissions__fairfax-university-of-america": "https://gpacalculator.net/admissions/fairfax-university-of-america/",
+  "admissions__pitt": "https://gpacalculator.net/admissions/pitt/"
+ },
+ "skipped": [],
+ "files": 18
+}

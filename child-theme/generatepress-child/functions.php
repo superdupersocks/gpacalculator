@@ -2918,17 +2918,20 @@ if ( ! function_exists( 'get_field' ) ) {
 // Side rails V6 (2026-10-02): tiered rails that match the Freestar siderail size mapping and the column tiers in style.css.
 
 /**
- * Freestar placements for the side rails: segment 1 always, segment 2 on tall pages (rail height >= 1300px).
- * Freestar's sizeMapping (fsdata.json v158, checked 2026-10-02): siderail_left_1/2/3 use the target tiers
- * (1260 = 160x600/120x600, 1350 = up to 300 wide, 1440 = up to 336 wide); siderail_right_1/2/3 still use
- * 1000/1349/1439/1440, which would request 300px ads into 160px rails at 1260-1349. So the right rail uses left_3.
- * When Freestar corrects right_1/right_2, switch the right rail with this one line:
- *     'right' => array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_right_2' ),
+ * Freestar placements for the side rails, per side and rail tier (rail width in px): the first id always, the second
+ * when the rail is tall enough for two 600px ads.
+ * Freestar sizeMapping (fsdata.json v158, checked 2026-10-02): siderail_left_1/2/3 use the target tiers
+ * (1260 = 160x600/120x600, 1350 = up to 300 wide, 1440 = up to 336 wide). siderail_right_1/2/3 still use
+ * 1000/1349/1439/1440: at 1260-1348 they would ask for 300-336px ads in a 160px rail, but from 1350 up they never
+ * ask for more than the rail holds. So the right rail keeps the established right_1 (+ right_3) from 1350 up and
+ * uses left_3 only in the 160 tier. When Freestar corrects right_1/right_2, set every 'right' tier to right_1, right_2.
  */
 function gpa_rail_placements() {
+	$left = array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_2' );
+	$right = array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_right_3' );
 	return array(
-		'left'  => array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_2' ),
-		'right' => array( 'gpacalculator-net_siderail_left_3' ),
+		'left'  => array( 160 => $left, 300 => $left, 336 => $left ),
+		'right' => array( 160 => array( 'gpacalculator-net_siderail_left_3' ), 300 => $right, 336 => $right ),
 	);
 }
 
@@ -2949,8 +2952,8 @@ function gpa_freestar_siderails() {
 	echo "\n<!-- Freestar side rails (GPA_RAILS_V6) -->\n";
 	foreach ( array( 'left', 'right' ) as $side ) {
 		echo '<div class="gpa-rail gpa-rail--' . $side . '">';
-		foreach ( $placements[ $side ] as $id ) {
-			echo '<div class="gpa-rail__seg"><div class="gpa-rail__sticky"><div align="center" id="' . esc_attr( $id ) . '"></div></div></div>';
+		foreach ( array_unique( call_user_func_array( 'array_merge', array_values( $placements[ $side ] ) ) ) as $id ) {
+			echo '<div class="gpa-rail__seg" style="display:none"><div class="gpa-rail__sticky"><div align="center" data-freestar-ad="__300x600" id="' . esc_attr( $id ) . '"></div></div></div>';
 		}
 		echo "</div>\n";
 	}
@@ -2965,7 +2968,7 @@ function gpa_freestar_siderails() {
 		{ w: 300, mq: window.matchMedia('(min-width: 1350px)') },
 		{ w: 160, mq: window.matchMedia('(min-width: 1260px)') }
 	];
-	var GAP_MIN = 20, GAP_MAX = 56, EDGE = 8, SEG2_MIN = 1300, AD_H = 600;
+	var GAP_MIN = 20, GAP_MAX = 56, EDGE = 8, SEG2_MIN = 1240, AD_H = 600; // two 600px ads + spacing
 	var rails = { left: document.querySelector('.gpa-rail--left'), right: document.querySelector('.gpa-rail--right') };
 	if (!rails.left || !rails.right) { return; }
 	var body = document.body;
@@ -3018,9 +3021,9 @@ function gpa_freestar_siderails() {
 		};
 	}
 
-	function want(side, p) { // placement ids a rail should hold now
-		if (!p || p[side] === null) { return []; }
-		return PLACEMENTS[side].slice(0, p.two ? 2 : 1);
+	function want(side, p, w) { // placement ids a rail should hold now
+		if (!p || p[side] === null || !PLACEMENTS[side][w]) { return []; }
+		return PLACEMENTS[side][w].slice(0, p.two ? 2 : 1);
 	}
 	function sync(ids) { // request newly shown slots, delete hidden ones
 		var add = ids.filter(function (id) { return !requested[id]; });
@@ -3064,8 +3067,15 @@ function gpa_freestar_siderails() {
 			el.style.top = p.top + 'px';
 			el.style.height = p.h + 'px';
 			el.style.left = p[side] + 'px';
-			[].forEach.call(el.children, function (seg, i) { seg.style.display = (i === 0 || p.two) ? '' : 'none'; });
-			ids = ids.concat(want(side, p));
+			var mine = want(side, p, w);
+			// show only this tier's slots (markup order = placement order; never move a slot, that reloads its ad) and tag each with the tier size
+			[].forEach.call(el.children, function (seg) {
+				var slot = seg.querySelector('[id^="gpacalculator-net_siderail"]');
+				var on = !!slot && mine.indexOf(slot.id) >= 0;
+				seg.style.display = on ? '' : 'none';
+				if (on) { slot.setAttribute('data-freestar-ad', '__' + w + 'x600'); }
+			});
+			ids = ids.concat(mine);
 		});
 		body.classList.toggle('gpa-rails-on', !!p && (p.left !== null || p.right !== null));
 		sync(ids);

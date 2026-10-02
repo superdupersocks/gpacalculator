@@ -3658,3 +3658,17 @@ function gpa_faq_accordion() {
 </script>
 	<?php
 }
+
+/**
+ * Sitemap pages: break ties on the modified time by ID.
+ *
+ * Rank Math pages each post-type sitemap with "ORDER BY p.post_modified DESC LIMIT n OFFSET m" and offers no filter
+ * for the order. Thousands of college posts share a modified time from the bulk imports, so MySQL could return them in
+ * a different order for each page: 2 colleges appeared twice and 2 never (October 2026). Only that statement changes.
+ */
+add_filter( 'query', function ( $sql ) {
+	if ( false !== strpos( $sql, 'ORDER BY p.post_modified DESC LIMIT' ) && false !== strpos( $sql, 'rank_math_robots' ) ) {
+		$sql = str_replace( 'ORDER BY p.post_modified DESC LIMIT', 'ORDER BY p.post_modified DESC, p.ID DESC LIMIT', $sql );
+	}
+	return $sql;
+} );

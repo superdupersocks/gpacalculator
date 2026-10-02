@@ -27,6 +27,7 @@ import match  # noqa: E402
 import phase2_e_import  # noqa: E402
 import phase2_r_review  # noqa: E402
 import phase2_s_pages  # noqa: E402
+import review_sources  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
 fails = []
@@ -681,6 +682,224 @@ eq("R: two pages confirmed as one college both wait; a manual hold stays; a coll
    ([(r["slug"], r["outcome"], r["target"]) for r in _rrows], _rimp),
    ([("a-college", "hold", ""), ("a-college-too", "hold", ""), ("ats-institute-of-technology", "hold", ""),
      ("b-college", "301", "https://gpacalculator.net/admissions/has-page/")], {}))
+
+# FSA's closed-school download: a zip holding a workbook whose recorded size is wrong
+_wb = openpyxl.Workbook()
+_ws = _wb.active
+_ws.title = "CLOSED SCHOOL SEARCH PAGE"
+_ws.append(["Weekly closed school search file"])
+_ws.append(["OPE ID", "School Name", "Address", "City", "State", "Zip", "Country", "Close Date"])
+for _k in range(40):
+    _ws.append([f"{_k:06d}00", f"School {_k}", "", "Erdenheim", "PA", "", "", "08/31/2017"])
+_ws.append([])
+_ws.append(["Foreign", "", "", "", "", "", "", "YEAR"])
+_ws.append(["124", "0.0", "", "", "", "", "", "2026.0"])
+_buf = io.BytesIO()
+_wb.save(_buf)
+_xlsx, _zbuf = zipfile.ZipFile(io.BytesIO(_buf.getvalue())), io.BytesIO()
+with zipfile.ZipFile(_zbuf, "w") as _zout:
+    for _item in _xlsx.infolist():
+        _d = _xlsx.read(_item.filename)
+        if _item.filename.startswith("xl/worksheets/sheet"):
+            _d = __import__("re").sub(rb'<dimension ref="[^"]+"', b'<dimension ref="A1:H10"', _d)
+        _zout.writestr(_item, _d)
+_outer = io.BytesIO()
+with zipfile.ZipFile(_outer, "w") as _zout:
+    _zout.writestr("WKCL.20260927.001.xlsx", _zbuf.getvalue())
+    _zout.writestr("notes.csv", "OPEID,Close Date\n00123400,01/02/2003\n")
+_label, _frows = review_sources.fsa_table(_outer.getvalue(), "WEEKLY_CLOSED_REPORT.zip")
+eq("FSA download: every table in the zip is read past the workbook's recorded size, the biggest is kept, and "
+   "the summary by year below the list is left out",
+   (_label, len(_frows), _frows[-1]["opeid"], _frows[-1]["close_date"]),
+   ("WKCL.20260927.001.xlsx [CLOSED SCHOOL SEARCH PAGE]", 40, "00003900", "08/31/2017"))
+
+# FSA's closed-school file settles the colleges that left IPEDS, that IPEDS never listed, or that E held
+eq("R/FSA: names compare without case, punctuation, 'the', 'Inc' or 'Campus', with St. as Saint and Purdue Global "
+   "spelled out, and also without the city they end with; dates read as YYYY-MM-DD",
+   ([_r.norm(s) for s in ("St. Mary's College & Seminary, Inc.", "The ANTONELLI   Institute",
+                          "Purdue Global Omaha Campus")],
+    [_r.iso(d) for d in ("09/18/2026", "2017-08-31T00:00:00", "8/1/1999", "")],
+    _r.place_names(["Bryan University Topeka", "bryan university topeka", "Provo College American Fork Campus"],
+                   "Topeka")),
+   (["saint mary s college and seminary", "antonelli institute", "purdue university global omaha"],
+    ["2026-09-18", "2017-08-31", "1999-08-01", ""],
+    ["bryan university topeka", "bryan university", "provo college american fork"]))
+_fsa = [{"opeid": "00210800", "name": "ANTONELLI INSTITUTE", "city": "ERDENHEIM", "state": "PA",
+         "close_date": "2017-08-31"},
+        {"opeid": "00999900", "name": "OLD SCHOOL OF NURSING", "city": "ST. LOUIS", "state": "MO",
+         "close_date": "1998-06-30"},
+        {"opeid": "01234500", "name": "EARLY COLLEGE", "city": "AUSTIN", "state": "TX", "close_date": "2005-05-01"},
+        {"opeid": "05555500", "name": "ODD DATE COLLEGE", "city": "RENO", "state": "NV", "close_date": "soon"}]
+_bo, _bp = {}, {}
+for _f in _fsa:
+    _bo.setdefault(_f["opeid"], []).append(_f)
+    _bp.setdefault((_r.norm(_f["name"]), _r.norm(_f["city"]), _f["state"]), []).append(_f)
+eq("R/FSA: a closure counts by OPEID in the same state, or by exact name, city and state; not in another state, "
+   "before a year IPEDS lists it, with an unreadable date, or when FSA doesn't list it",
+   [(d, w in why) for (d, why), w in zip([_r.fsa_closed(o, p, y, _bo, _bp) for o, p, y in (
+       (["00210800"], (["Antonelli Institute"], "Erdenheim", "PA"), 2017),
+       ([], (["Old School of Nursing Campus"], "Saint Louis", "MO"), 0),
+       (["00210800"], (["Antonelli Institute"], "Erdenheim", "NJ"), 2017),
+       (["01234500"], (["Early College"], "Austin", "TX"), 2017),
+       (["05555500"], (["Odd Date College"], "Reno", "NV"), 0),
+       (["00777700"], (["Open College"], "Boise", "ID"), 2016),
+       ([], (["Open College"], "Boise", "ID"), 0))] + [_r.fsa_closed(["00210800"], (["A"], "B", "PA"), 0, {}, {})], (
+       "(FSA's closed-school file lists OPEID 00210800 (ANTONELLI INSTITUTE, ERDENHEIM, PA), matched by OPEID)",
+       "OPEID 00999900 (OLD SCHOOL OF NURSING, ST. LOUIS, MO), matched by name, city and state)",
+       "OPEID 00210800 (ANTONELLI INSTITUTE, ERDENHEIM, PA), not in NJ",
+       "closed 2005-05-01, but IPEDS lists the college in HD2017", "a closing date that can't be read: 'soon'",
+       "FSA's closed-school file doesn't list OPEID 00777700",
+       "FSA's closed-school file lists no school with this name in this city and state",
+       "FSA's closed-school file hasn't been downloaded (review_sources.py)"))],
+   [("2017-08-31", True), ("1998-06-30", True), ("", True), ("", True), ("", True), ("", True), ("", True),
+    ("", True)])
+eq("R/FSA: a college's OPEID is the one IPEDS gave it last, with the first year it did, never IPEDS's code for none "
+   "(University of Phoenix's Idaho campus moved from Meridian to Boise in 2017 under a new OPEID)",
+   (_r.latest_opeid(["1", "2"], {
+       "1": [{"unitid": "1", "first_year": "2002", "last_year": "2009", "opeid": "00209889"},
+             {"unitid": "1", "first_year": "2010", "last_year": "2016", "opeid": "62098899"},
+             {"unitid": "1", "first_year": "2017", "last_year": "2018", "opeid": "52098853"}],
+       "2": [{"unitid": "2", "first_year": "2002", "last_year": "2019", "opeid": "00000002"}]}),
+    _r.real_opeid("00000002"), _r.real_opeid("00314700"), _r.latest_opeid(["3"], {})),
+   (("52098853", 2017), False, True, ("", 0)))
+_frows = [{"slug": "antonelli-institute", "title": "Antonelli Institute", "location": "Erdenheim, Pennsylvania",
+           "outcome": "hold", "checkpoint": "", "target": "", "reason": _r.LEFT},
+          {"slug": "old-school-of-nursing", "title": "Old School of Nursing", "location": "St. Louis, Missouri",
+           "outcome": "hold", "checkpoint": "", "target": "", "reason": _r.NEVER},
+          {"slug": "still-open", "title": "Still Open", "location": "Boise, Idaho", "outcome": "hold",
+           "checkpoint": "", "target": "", "reason": _r.NEVER},
+          {"slug": "renamed-one", "title": "Renamed One", "location": "Austin, Texas", "outcome": "hold",
+           "checkpoint": "", "target": "", "reason": "renamed: ...; another page here is the same college"}]
+_fum = {"antonelli-institute": {"older_ipeds": "IPEDS HD2002-HD2017: Antonelli Institute (UNITID 210890), Erdenheim, "
+                                               "PA"}}
+_fheld = [{"slug": "early-college", "post_title": "Early College", "unitid": "7",
+           "why": "open in IPEDS 2024 but missing from College Scorecard's June 2026 release (may have closed since)"},
+          {"slug": "baker-branch", "post_title": "Baker Branch", "unitid": "16884704",
+           "why": "no IPEDS 2024 record of its own: only College Scorecard lists it"}]
+_fextra = _r.fsa_review(_frows, _fum, {}, {"7": {"name": "Early College", "city": "Austin", "state": "TX",
+                                                  "opeid": "01234500"}}, _fheld,
+                        {"210890": [{"unitid": "210890", "first_year": "2002", "last_year": "2017", "opeid": "00210800"}]}, _bo, _bp)
+eq("R/FSA: FSA's closures retire pages in R with their evidence; the rest keep waiting, saying what FSA showed; E's "
+   "held pages that IPEDS 2024 still lists open need a closure from 2023 on",
+   [(r["slug"], r["outcome"], r["checkpoint"], r["reason"].split("; ")[-1][:42]) for r in _frows + _fextra],
+   [("antonelli-institute", "retire", "R", "closed 2017-08-31 (FSA's closed-school fil"),
+    ("old-school-of-nursing", "retire", "R", "closed 1998-06-30 (FSA's closed-school fil"),
+    ("still-open", "hold", "", "FSA's closed-school file lists no school w"),
+    ("renamed-one", "hold", "", "another page here is the same college"),
+    ("early-college", "hold", "", "FSA's closed-school file lists OPEID 01234")])
+
+# A second look at the pages no directory lists by their title
+eq("R/second look: a page's state, whatever the case of 'of', and its names with and without the city at the end",
+   ([_r.place(x) for x in ("Washington, District Of Columbia", "Online / Arizona", "Dunmore, Pennsylvania")],
+    sorted(_r.page_keys("Bryan University Springfield", "bryan-university-springfield", "Springfield, Missouri")),
+    _r.page_keys("UT Southwestern Medical Center", "ut-southwestern", "")),
+   ([("Washington", "DC"), ("", ""), ("Dunmore", "PA")],
+    [("bryan university", "springfield", "MO"), ("bryan university springfield", "MO"),
+     ("bryan university springfield", "springfield", "MO")],
+    {("university of texas southwestern medical center", ""), ("university of texas southwestern", "")}))
+_ci = {"228635": {"name": "University of Texas Southwestern Medical Center", "alias": "UT Southwestern",
+                  "city": "Dallas", "state": "TX"},
+       "154156": {"name": "Des Moines University-Osteopathic Medical Center", "alias": "Des Moines University",
+                  "city": "West Des Moines", "state": "IA"},
+       "244437": {"name": "Georgia State University-Perimeter College", "alias": "", "city": "Atlanta",
+                  "state": "GA"},
+       "369516": {"name": "Bryan University", "alias": "", "city": "Springfield", "state": "MO"},
+       "110219": {"name": "Bryan University", "alias": "", "city": "Tempe", "state": "AZ"},
+       "1": {"name": "Twin College-North", "alias": "", "city": "A", "state": "OH"},
+       "2": {"name": "Twin College-South", "alias": "Twin College", "city": "B", "state": "OH"},
+       "3": {"name": "Other Twin-Twin College", "alias": "", "city": "C", "state": "OH"}}
+_cx = _r.current_index(_ci)
+eq("R/second look: IPEDS 2024 by its name with UT spelled out, an alias, the campus after a hyphen, or the name "
+   "without the page's city; two colleges by that name settle nothing; a single word never counts",
+   [(lambda f: f and (f[0], f[1][:40]))(_r.current_match(_r.page_keys(t, s, loc), _cx, _ci)) for t, s, loc in (
+       ("UT Southwestern Medical Center", "ut-southwestern-medical-center", "Dallas, Texas"),
+       ("Des Moines University Medicine and Health Sciences", "des-moines-university", "West Des Moines, Iowa"),
+       ("Perimeter College", "georgia-perimeter-college", "Decatur, Georgia"),
+       ("Bryan University Springfield", "bryan-university-springfield", "Springfield, Missouri"),
+       ("Twin College", "twin-college", "A, Ohio"),
+       ("North", "north", "A, Ohio"))],
+   [("228635", "IPEDS 2024 lists this college as Univers"), ("154156", "IPEDS 2024 gives the name Des Moines Uni"),
+    ("244437", "IPEDS 2024 gives the name Perimeter Coll"), ("369516", "IPEDS 2024 lists this college as Bryan U"),
+    ("", "IPEDS 2024 gives this name to more than "), None])
+_h = {"10": [{"unitid": "10", "first_year": "2002", "last_year": "2017", "name": "Potomac College",
+              "city": "Washington", "state": "DC", "opeid": "03218300", "closed": "", "newid": ""}],
+      "20": [{"unitid": "20", "first_year": "2002", "last_year": "2014", "name": "Corcoran College of Art and Design",
+              "city": "Washington", "state": "DC", "opeid": "00144400", "closed": "", "newid": "30"}],
+      "40": [{"unitid": "40", "first_year": "2002", "last_year": "2015", "name": "Kaplan University-Davenport Campus",
+              "city": "Davenport", "state": "IA", "opeid": "00454800", "closed": "06/30/2015", "newid": ""}],
+      "50": [{"unitid": "50", "first_year": "2002", "last_year": "2018", "name": "Gone College", "city": "Erie",
+              "state": "PA", "opeid": "00555500", "closed": "", "newid": ""}],
+      "60": [{"unitid": "60", "first_year": "2005", "last_year": "2023", "name": "Penn State Worthington Scranton",
+              "city": "Dunmore", "state": "PA", "opeid": "00332915", "closed": "", "newid": "70"}],
+      "70": [{"unitid": "70", "first_year": "2020", "last_year": "2022", "name": "The Pennsylvania State University",
+              "city": "University Park", "state": "PA", "opeid": "00332900", "closed": "", "newid": "80"}],
+      "80": [{"unitid": "80", "first_year": "2002", "last_year": "2023", "name": "Penn State Main Campus",
+              "city": "University Park", "state": "PA", "opeid": "00332900", "closed": "", "newid": "70"}]}
+_hi = {"10": {"name": "University of the Potomac-Washington DC Campus"}, "30": {"name": "George Washington University"},
+       "60": {"name": "Penn State Scranton"}}
+_hx = _r.history_index(_h)
+eq("R/second look: the older directories by title or slug: renamed, merged by NEWID (with its own record, for FSA), "
+   "closed, left IPEDS (for FSA), a NEWID loop that IPEDS 2024's own record ends, and nothing",
+   [(lambda f: f and (f["uid"], f["end"], f["merged"], f["closed"], len(f["segs"])))(
+       _r.history_match(_r.page_keys(t, s, loc), _hx, _h, _hi)) for t, s, loc in (
+       ("Potomac College Washington", "potomac-college-washington", "Washington, District Of Columbia"),
+       ("Corcoran College of Art and Design", "corcoran", "Washington, District Of Columbia"),
+       ("Purdue Global Davenport Campus", "kaplan-university-davenport-campus", "Davenport, Iowa"),
+       ("Gone College", "gone-college", "Erie, Pennsylvania"),
+       ("Worthington Scranton", "penn-state-worthington-scranton", "Dunmore, Pennsylvania"),
+       ("Nowhere College", "nowhere-college", "Erie, Pennsylvania"))],
+   [("10", "10", False, False, 0), ("30", "30", True, False, 1), ("", "40", False, True, 1),
+    ("", "50", False, False, 1), ("60", "60", False, False, 0), None])
+_sm = {s: {"title": t, "location": loc, "method": "none", "unitid": "", "ipeds_name": ""} for s, t, loc in (
+    ("corcoran", "Corcoran College of Art and Design", "Washington, District Of Columbia"),
+    ("gone-college", "Gone College", "Erie, Pennsylvania"),
+    ("kaplan-university-davenport-campus", "Purdue Global Davenport Campus", "Davenport, Iowa"),
+    ("potomac-college-washington", "Potomac College Washington", "Washington, District Of Columbia"))}
+_si = {"10": {"name": "University of the Potomac-Washington DC Campus", "alias": "", "city": "Washington",
+              "state": "DC", "closed_date": "", "operating": "Yes", "control": "Private for-profit",
+              "level": "4-year", "opeid": "03218300"},
+       "30": {"name": "George Washington University", "alias": "", "city": "Washington", "state": "DC",
+              "closed_date": "", "operating": "Yes", "control": "Private not-for-profit", "level": "4-year",
+              "opeid": "00144400"}}
+_srows, _simp = _r.review(sorted(_sm), {}, {}, _sm, _si, {"30": "george-washington"}, {}, _h)
+eq("R/second look in the review: a renamed college gets E's fields, a merged one the 301 to its successor's page, "
+   "a closing date retires the page, and a college that left IPEDS waits for FSA's check",
+   ([(r["slug"], r["outcome"], r["checkpoint"], r["target"][-18:], r["reason"] == _r.LEFT) for r in _srows], _simp),
+   ([("corcoran", "301", "R", "george-washington/", False), ("gone-college", "hold", "", "", True),
+     ("kaplan-university-davenport-campus", "retire", "R", "", False),
+     ("potomac-college-washington", "import", "R", "", False)], {"potomac-college-washington": "10"}))
+_kh = {"90": [{"unitid": "90", "first_year": "2010", "last_year": "2019", "name": "Kaplan University-Hagerstown Campus",
+               "city": "Hagerstown", "state": "MD", "opeid": "00458612", "closed": "", "newid": "95"}],
+       "91": [{"unitid": "91", "first_year": "2008", "last_year": "2019", "name": "Kaplan University-Lincoln Campus",
+               "city": "Lincoln", "state": "NE", "opeid": "00458609", "closed": "", "newid": "95"}]}
+_ki = {"95": {"name": "Purdue University Global", "alias": "", "city": "West Lafayette", "state": "IN",
+              "closed_date": "", "operating": "Yes", "control": "Public", "level": "4-year", "opeid": "00458600"}}
+_km = {s: {"title": t, "location": loc, "method": "none", "unitid": "", "ipeds_name": ""} for s, t, loc in (
+    ("kaplan-university-hagerstown-campus", "Purdue Global Hagerstown Campus", "Hagerstown, Maryland"),
+    ("kaplan-university-lincoln-campus", "Purdue Global Lincoln Campus", "Lincoln, Nebraska"))}
+_krows, _ = _r.review(sorted(_km), {}, {}, _km, _ki, {"95": "purdue-global"}, {}, _kh)
+_kfsa = [{"opeid": "00458612", "name": "Purdue University Global - Hagerstown", "city": "Hagerstown", "state": "MD",
+          "close_date": "2019-09-18"}]
+_r.fsa_review(_krows, {}, {}, _ki, [], _kh, {"00458612": _kfsa}, {})
+eq("R/second look: a campus IPEDS folded into another college (NEWID) retires when FSA lists the campus itself "
+   "closed, else it goes where the college went; '&amp;' in a title reads as '&'",
+   ([(r["slug"], r["outcome"], r["checkpoint"], r["reason"].split("; ")[-1][:30]) for r in _krows],
+    _r.norm("McCann School of Business &amp; Technology")),
+   ([("kaplan-university-hagerstown-campus", "retire", "R", "closed 2019-09-18 (FSA's close"),
+     ("kaplan-university-lincoln-campus", "301", "R", "FSA's closed-school file doesn")],
+    "mccann school of business and technology"))
+_srem = [{"slug": "remington-college-knoxville", "title": "Remington College Knoxville",
+          "location": "Knoxville, Tennessee", "unitid": "497000", "outcome": "hold", "checkpoint": "", "target": "",
+          "reason": "renamed: ...; open in IPEDS 2024 but missing from College Scorecard's June 2026 release"}]
+_rfsa = [{"opeid": "03026523", "name": "Remington College - Knoxville", "city": "Knoxville", "state": "TN",
+          "close_date": "2024-01-16"}]
+_r.fsa_review(_srem, {}, {}, {"497000": {"name": "Remington College-Online Dallas", "city": "Dallas", "state": "TX",
+                                         "opeid": "03026523"}}, [], {},
+              {"03026523": _rfsa}, {("remington college knoxville", "knoxville", "TN"): _rfsa})
+eq("R/FSA: a page the review placed at a college College Scorecard doesn't list retires when FSA lists its OPEID "
+   "closed, where IPEDS 2024 or our page puts it",
+   [(r["outcome"], r["checkpoint"], r["reason"].split("; ")[-1][:20]) for r in _srem],
+   [("retire", "R", "closed 2024-01-16 (F")])
 
 # CDS files on another college's website aren't this college's (same-named colleges)
 _web = {"219718": {"name": "Bethel University", "website": "www.bethelu.edu/"},

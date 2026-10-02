@@ -33,10 +33,15 @@ function lr_rows( $file ) {
 	return $rows;
 }
 
+// The address a row's rule answers: admission/<old slug>, or admissions/<old slug> when the row says prefix=admissions.
+function lr_source( $row ) {
+	return ( ( $row['prefix'] ?? '' ) === 'admissions' ? 'admissions/' : 'admission/' ) . $row['old_slug'];
+}
+
 function lr_check( $row ) {
 	global $wpdb;
 	$lr_table = lr_table();
-	$source = 'admission/' . $row['old_slug'];
+	$source = lr_source( $row );
 	if ( get_page_by_path( $row['old_slug'], OBJECT, 'colleges' ) ) {
 		return array( false, 'a college post already has this slug' );
 	}
@@ -71,7 +76,7 @@ switch ( $lr_args[0] ?? '' ) {
 		$skipped = 0;
 		foreach ( lr_rows( $lr_args[1] ) as $row ) {
 			list( $good, $why ) = lr_check( $row );
-			$what = 'admission/' . $row['old_slug'] . ' -> ' . ( '301' === $row['code'] ? '301 ' . $row['target'] : '410' );
+			$what = lr_source( $row ) . ' -> ' . ( '301' === $row['code'] ? '301 ' . $row['target'] : '410' );
 			if ( ! $good ) {
 				WP_CLI::log( "SKIP $what: $why" );
 				++$skipped;
@@ -83,7 +88,7 @@ switch ( $lr_args[0] ?? '' ) {
 				continue;
 			}
 			$rule = Redirection::from( array( 'header_code' => (int) $row['code'], 'status' => 'active' ) );
-			$rule->add_source( 'admission/' . $row['old_slug'], 'exact' );
+			$rule->add_source( lr_source( $row ), 'exact' );
 			if ( '301' === $row['code'] ) {
 				$rule->add_destination( $row['target'] );
 			}

@@ -219,8 +219,9 @@ Undo: `bash scripts/admissions/phase2_b2_live.sh revert <log name>` removes the 
 
 ## Held pages: six new college pages, and redirects to them (S) and to parent colleges (M)
 
-Waits for Digant's word in this thread: the go of 05:58 held these pages. C held 25 merged colleges' pages because the
-college they merged into has no page here, and E held 27 branch campuses whose parent college reports for them.
+Digant's "yes to both" (2026-10-02 17:11 UTC) approves the two decisions asked at 15:22, S and M below (P runs
+with S). The go of 05:58 had held these pages: C held 25 merged colleges' pages because the college they merged
+into has no page here, and E held 27 branch campuses whose parent college reports for them.
 `scripts/admissions/phase2_s_pages.py` builds from those two lists:
 
 - six new pages (`data/admissions/audit/phase2_s_new.csv`), each with E's fresh fields (`phase2_s_pages.csv`): Baker
@@ -309,6 +310,9 @@ College and Olney Central College to Illinois Eastern Community Colleges.
 2. Changelog: one row with its undo, `bash scripts/admissions/phase2_cd_live.sh revert <P log>`.
 
 ## N: pages for nine colleges formed by mergers, and 37 redirects to them (waits for Digant's word)
+
+Digant's "yes to both" (17:11) answered the two decisions asked at 15:22; whether it covers N too is asked in the
+thread. Run N only after Digant's own yes to it there.
 
 Like S: several of our pages now report to IPEDS as one college that has no page here. Connecticut State Community
 College (12 former colleges), Metropolitan Community College-Kansas City (5), Vermont State University (4), Purdue

@@ -59,6 +59,9 @@ def mirror_markup(html, slug, pages_dir, theme):
                       f'<div class="site-logo"><a href="https://gpacalculator.net/" rel="home" aria-label="GPA Calculator">{badge}</a></div>',
                       html, count=1, flags=re.S)
         html = re.sub(r'(<p class="main-title">\s*<a [^>]*rel="home"[^>]*>)\s*GPA\b', r'\1<span class="gpa-wordmark-accent">GPA</span>', html, count=1)
+    if "function gpa_faq_accordion" in php:
+        js = re.search(r"function gpa_faq_accordion\(\).*?(<script>.*?</script>)", php, re.S).group(1)
+        html = html.replace("</body>", js + "</body>", 1)
     body = re.search(r'<body[^>]*class="([^"]*)"', html)
     classes = body.group(1).split() if body else []
     if "gpa_hero_breadcrumb" in php and slug != "home" and "single-colleges" not in classes:

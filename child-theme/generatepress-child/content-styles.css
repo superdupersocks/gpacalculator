@@ -107,129 +107,7 @@ body:has(.gpa-hero) > #page .entry-header {
     color: var(--gpa-text-heading) !important;
 }
 
-.content-page .entry-content a:not(#root *, .gpacalc-mount *) {
-    color: var(--gpa-primary) !important;
-    font-weight: 500 !important;
-    text-decoration: underline !important;
-}
-.content-page .entry-content a:not(#root *, .gpacalc-mount *):hover {
-    color: var(--gpa-primary-dark) !important;
-}
-
-/* ============================================
-   BASE: BULLET LIST (<ul>)
-   Blue checkmark style
-   ============================================ */
-.content-page .entry-content ul {
-  list-style: disc outside;
-  padding-left: 1.5rem;
-  margin-bottom: 24px;
-}
-.content-page .entry-content ul li {
-  font-family: var(--gpa-font) !important;
-  font-size: var(--gpa-body-size) !important;
-  margin-bottom: 12px !important;
-  display: list-item;
-  padding-left: 0;
-}
-.content-page .entry-content ul li::before {
-  content: none;
-}
-
-/* ============================================
-   BASE: NUMBERED LIST (<ol>)
-   Blue numbered badges
-   ============================================ */
-.content-page .entry-content ol {
-  list-style: decimal outside;
-  padding-left: 1.5rem;
-  margin-bottom: 24px;
-}
-.content-page .entry-content ol li {
-  font-family: var(--gpa-font) !important;
-  font-size: var(--gpa-body-size) !important;
-  margin-bottom: 16px !important;
-  display: list-item;
-  padding-left: 0;
-}
-.content-page .entry-content ol li::before {
-  content: none;
-}
-
-/* ============================================
-   BASE: TABLE (<table>)
-   Blue header + hover rows
-   ============================================ */
-.content-page .entry-content table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    background: var(--gpa-surface) !important;
-    border-radius: 8px !important;
-    overflow: hidden !important;
-    border: 1px solid var(--gpa-border) !important;
-    margin-bottom: 32px !important;
-}
-.content-page .entry-content figure.wp-block-table {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    margin-bottom: 32px !important;
-    /* 2026-08-30: was `overflow: hidden`, which clipped wide tables on phones
-       instead of letting them scroll — the 5-column sample table (474px) lost
-       its Grade Points and Quality Points columns inside a 292px container,
-       with no way to reach them. overflow-y stays hidden so the rounded
-       corners are still clipped. */
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-}
-.content-page .entry-content thead {
-    background: var(--gpa-primary) !important;
-}
-.content-page .entry-content thead th {
-    color: var(--gpa-white) !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    border: none !important;
-}
-.content-page .entry-content tbody td {
-    font-size: 16px !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    color: var(--gpa-text-strong) !important;
-    border-bottom: 1px solid var(--gpa-border) !important;
-    border-left: none !important;
-    border-right: none !important;
-}
-.content-page .entry-content tbody tr:hover {
-    background: var(--gpa-surface-subtle) !important;
-}
-
-/* ============================================
-   BASE: BLOCKQUOTE → Definition Block
-   ============================================ */
-.content-page .entry-content blockquote {
-    background: var(--gpa-tint-blue) !important;
-    border-radius: 8px !important;
-    padding: 24px !important;
-    border: none !important;
-    border-left: 4px solid var(--gpa-primary) !important;
-    margin: 0 0 32px 0 !important;
-    font-style: normal !important;
-}
-.content-page .entry-content blockquote p {
-    font-size: 16px !important;
-    color: var(--gpa-text) !important;
-    line-height: 1.7 !important;
-    margin-bottom: 0 !important;
-}
-.content-page .entry-content blockquote cite,
-.content-page .entry-content blockquote footer {
-    font-size: 14px !important;
-    color: var(--gpa-heading) !important;
-    font-weight: 600 !important;
-    font-style: normal !important;
-}
+/* Lists, tables, quotes, FAQ, formula and result blocks, in-text links: components.css */
 
 /* ============================================
    BASE: IMAGE + CAPTION
@@ -249,33 +127,6 @@ body:has(.gpa-hero) > #page .entry-header {
     font-style: italic !important;
     text-align: center !important;
     margin-top: 12px !important;
-}
-
-/* ============================================
-   BASE: RANK MATH FAQ
-   ============================================ */
-.content-page .entry-content .rank-math-faq-item,
-.content-page .entry-content .rank-math-list-item,
-.content-page .entry-content .wp-block-rank-math-faq-block .rank-math-faq-item {
-    background: var(--gpa-surface) !important;
-    border-radius: 8px !important;
-    padding: 32px !important;
-    border: 1px solid var(--gpa-border) !important;
-    margin-bottom: 24px !important;
-}
-.content-page .entry-content .rank-math-question {
-    font-family: var(--gpa-font) !important;
-    font-size: var(--gpa-h4-size) !important;
-    font-weight: var(--gpa-h4-weight) !important;
-    color: var(--gpa-text-heading) !important;
-    margin-bottom: 12px !important;
-}
-.content-page .entry-content .rank-math-answer,
-.content-page .entry-content .rank-math-answer p {
-    font-family: var(--gpa-font) !important;
-    font-size: var(--gpa-body-size) !important;
-    color: var(--gpa-text-muted) !important;
-    line-height: 1.6 !important;
 }
 
 /* ============================================
@@ -315,27 +166,6 @@ body:has(.gpa-hero) > #page .entry-header {
     color: var(--gpa-text) !important;
     line-height: 1.7 !important;
 }
-
-/* Explicit class versions of lists */
-.content-bullets {
-  list-style: disc outside;
-  padding-left: 1.5rem;
-  margin-bottom: 24px;
-}
-.content-numbered {
-  list-style: decimal outside;
-  padding-left: 1.5rem;
-  margin-bottom: 24px;
-}
-
-/* Explicit class versions of tables */
-.content-table table { width: 100% !important; border-collapse: collapse !important; background: var(--gpa-surface) !important; border-radius: 8px !important; overflow: hidden !important; border: 1px solid var(--gpa-border) !important; }
-.content-table thead { background: var(--gpa-primary) !important; }
-.content-table thead th { color: var(--gpa-white) !important; font-size: 16px !important; font-weight: 600 !important; padding: 16px 24px !important; text-align: center !important; border: none !important; }
-.content-table tbody td { font-size: 16px !important; padding: 16px 24px !important; text-align: center !important; color: var(--gpa-text-strong) !important; border-bottom: 1px solid var(--gpa-border) !important; }
-.content-table tbody tr:hover { background: var(--gpa-surface-subtle) !important; }
-.content-table-gray thead { background: var(--gpa-gray-100) !important; }
-.content-table-gray thead th { color: var(--gpa-text-strong) !important; }
 
 /* Definition Block */
 .content-card-definition {
@@ -397,49 +227,6 @@ body:has(.gpa-hero) > #page .entry-header {
     line-height: 1.7 !important;
 }
 
-/* Formula Block */
-.content-formula {
-    background: var(--gpa-tint-blue) !important;
-    border-radius: 12px !important;
-    padding: 32px !important;
-    border: 1px solid var(--gpa-blue-200) !important;
-    text-align: center !important;
-    margin-bottom: 32px !important;
-}
-.content-formula p {
-    font-size: 24px !important;
-    font-weight: 700 !important;
-    color: var(--gpa-primary-hover) !important;
-    line-height: 1.3 !important;
-    margin: 0 !important;
-}
-@media (min-width: 768px) {
-    .content-formula p { font-size: 30px !important; }
-}
-
-/* Result Block */
-.content-result {
-    background: linear-gradient(to right, var(--gpa-green-50), var(--gpa-tint-blue)) !important;
-    border-radius: 8px !important;
-    padding: 24px !important;
-    border: 2px solid var(--gpa-green-500) !important;
-    text-align: center !important;
-    margin-bottom: 32px !important;
-}
-.content-result p {
-    font-size: 20px !important;
-    color: var(--gpa-text) !important;
-    margin: 0 !important;
-}
-.content-result-big {
-    font-size: 36px !important;
-    font-weight: 700 !important;
-    color: var(--gpa-green-700) !important;
-}
-@media (min-width: 768px) {
-    .content-result-big { font-size: 48px !important; }
-}
-
 /* Image with Caption */
 .content-image {
     background: var(--gpa-gray-100) !important;
@@ -491,20 +278,9 @@ body:has(.gpa-hero) > #page .entry-header {
     .content-page .entry-content h2:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-h2-size-m) !important; }
     .content-page .entry-content h3:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-h3-size-m) !important; }
     .content-page .entry-content p:not(#root *, .gpacalc-mount *) { font-size: var(--gpa-body-size) !important; }
-    .content-page .entry-content ul li,
-    .content-page .entry-content ol li {
-  font-size: var(--gpa-body-size) !important;
-  display: list-item;
-  padding-left: 0;
-}
-    .content-page .entry-content thead th { padding: 12px !important; font-size: 14px !important; }
-    .content-page .entry-content tbody td { padding: 12px !important; font-size: 14px !important; }
-    .content-page .entry-content blockquote { padding: 20px !important; }
     .content-card-definition,
     .content-card-note,
     .content-card-tip { padding: 20px !important; }
-    .content-formula { padding: 24px !important; }
-    .content-result { padding: 20px !important; }
     .content-rel-card { padding: 24px !important; }
 }
 
@@ -592,58 +368,6 @@ body:has(.gpa-hero) > #page .entry-header {
     color: var(--gpa-text) !important;
     line-height: 1.7 !important;
 }
-.content-page .entry-content ul.content-bullets {
-  list-style: disc outside;
-  padding-left: 1.5rem;
-  margin-bottom: 24px;
-}
-.content-page .entry-content ol.content-numbered {
-  list-style: decimal outside;
-  padding-left: 1.5rem;
-  margin-bottom: 24px;
-}
-.content-page .entry-content .content-table thead {
-    background: var(--gpa-primary) !important;
-}
-.content-page .entry-content .content-table thead th {
-    color: var(--gpa-white) !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    border: none !important;
-}
-.content-page .entry-content .content-table tbody td {
-    font-size: 16px !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    color: var(--gpa-text-strong) !important;
-    border-bottom: 1px solid var(--gpa-border) !important;
-}
-.content-page .entry-content .content-table-gray thead {
-    background: var(--gpa-gray-100) !important;
-}
-.content-page .entry-content .content-table-gray thead th {
-    color: var(--gpa-text-strong) !important;
-}
-.content-page .entry-content .content-formula p {
-    font-size: 30px !important;
-    font-weight: 700 !important;
-    color: var(--gpa-primary-hover) !important;
-    line-height: 1.3 !important;
-    margin: 0 !important;
-}
-.content-page .entry-content .content-result p {
-    font-size: 20px !important;
-    color: var(--gpa-text) !important;
-    margin: 0 !important;
-}
-@media (max-width: 767px) {
-    .content-page .entry-content .content-formula p {
-        font-size: 24px !important;
-    }
-}
-
 /* Content template hero band: the shared hero lives in layout.css */
 
 /* ============================================================
@@ -662,178 +386,6 @@ body:has(.gpa-hero) > #page .entry-header {
 .content-page .entry-content h2:not(#root *, .gpacalc-mount *) {
     letter-spacing: var(--gpa-h2-tracking) !important;
 }
-
-/* Bulleted list as cards */
-.content-page .entry-content ul:is(.wp-block-list, .content-bullets) {
-  list-style: disc outside;
-  padding-left: 1.5rem;
-  margin-bottom: 24px;
-}
-.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
-  margin-bottom: var(--gpa-li-gap) !important;
-  font-size: var(--gpa-body-size) !important;
-  display: list-item;
-  padding-left: 0;
-}
-.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li:hover {
-}
-.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li::before {
-  content: none;
-}
-
-/* Tables */
-.content-page .entry-content figure.wp-block-table {
-    background: var(--gpa-surface) !important;
-    border: 1px solid var(--gpa-border) !important;
-    border-radius: 16px !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    margin-bottom: 32px !important;
-}
-.content-page .entry-content table {
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-}
-.content-page .entry-content thead {
-    background: transparent !important;
-}
-.content-page .entry-content thead th {
-    background: transparent !important;
-    color: var(--gpa-text-muted) !important;
-    font-size: 14px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.7px !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    border: none !important;
-}
-.content-page .entry-content tbody td {
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    color: var(--gpa-text-strong) !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    border: none !important;
-    border-top: 1px solid var(--gpa-divider) !important;
-}
-.content-page .entry-content tbody tr:hover {
-    background: color-mix(in srgb, var(--gpa-green-50) 60%, transparent) !important;
-}
-
-/* FAQ cards, still static */
-.content-page .entry-content .rank-math-faq-item,
-.content-page .entry-content .rank-math-list-item,
-.content-page .entry-content .wp-block-rank-math-faq-block .rank-math-faq-item {
-    background: var(--gpa-surface) !important;
-    border: 1px solid var(--gpa-border) !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    margin-bottom: 16px !important;
-}
-.content-page .entry-content .rank-math-question {
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    color: var(--gpa-text-strong) !important;
-    padding: 20px 32px !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    min-height: 88px !important;
-}
-.content-page .entry-content .rank-math-answer,
-.content-page .entry-content .rank-math-answer p {
-    font-size: var(--gpa-body-size) !important;
-    line-height: var(--gpa-body-line) !important;
-    color: var(--gpa-text) !important;
-}
-.content-page .entry-content .rank-math-answer {
-    padding: 20px 32px 28px !important;
-    border-top: 1px solid var(--gpa-divider) !important;
-    margin: 0 !important;
-}
-.content-page .entry-content .rank-math-answer p {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-@media (max-width: 768px) {
-    .content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
-  display: list-item;
-  padding-left: 0;
-}
-    .content-page .entry-content ul:is(.wp-block-list, .content-bullets) li::before {
-  content: none;
-}
-    .content-page .entry-content thead th,
-    .content-page .entry-content tbody td {
-        padding: 12px 16px !important;
-    }
-    .content-page .entry-content tbody td {
-        font-size: 16px !important;
-    }
-    .content-page .entry-content .rank-math-question {
-        padding: 16px 20px !important;
-        min-height: 0 !important;
-    }
-    .content-page .entry-content .rank-math-answer {
-        padding: 16px 20px 20px !important;
-    }
-}
-
-/* TABLE DENSITY
-   The guide's sample table has three columns, so 18px cells with 24px
-   padding fit. Real pages run six or more and the last column was
-   breaking mid word. Tighter horizontal padding, and never break
-   inside a word: a table that still does not fit scrolls in its own
-   box instead. */
-.content-page .entry-content thead th,
-.content-page .entry-content tbody td {
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-    word-break: normal !important;
-    overflow-wrap: normal !important;
-    hyphens: none !important;
-}
-
-/* GUIDE REFRESH ADJUSTMENTS
-   1 Table cells are normal weight again. The VA bolds a cell when it
-     needs emphasis rather than every cell arriving bold.
-   2 The header rule keeps its 3px thickness but drops to the same
-     light grey as the row dividers.
-   3 Content pages capped .site-content at 1140px while calculator
-     pages run full width, so the grey page colour showed as bands
-     down both sides. Matching the calculator behaviour.
-   4 Outline removed from the checklist and numbered list. The icon
-     and the spacing carry the list on their own. */
-.content-page .entry-content tbody td {
-    font-weight: 400 !important;
-}
-.content-page .entry-content thead {
-    border-bottom: 3px solid var(--gpa-divider) !important;
-}
-body.gpa-template-content .site-content {
-    max-width: 100% !important;
-}
-.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li {
-  display: list-item;
-  padding-left: 0;
-}
-.content-page .entry-content ul:is(.wp-block-list, .content-bullets) li:hover {
-}
-
-/* GLOBAL TABLE HEADER RULE
-   The 3px near black line comes from .wp-block-table thead in the
-   inline global styles, which matches every core table block on the
-   site. The earlier override only reached .content-page, so this
-   repeats it at the same breadth to cover every template. */
-.wp-block-table thead {
-    border-bottom: 3px solid var(--gpa-divider) !important;
-}
-
 
 /* ==========================================================================
    MOBILE + EMBED CONSISTENCY FIXES
@@ -939,47 +491,6 @@ body.gpa-template-content #page.grid-container {
 }
 
 
-/* ==========================================================================
-   RELATED TOOLS LIST - 2026-09-11
-   Every row keeps the same height whether or not the name is a link.
-   The anchor carried 13px of vertical padding on top of the row's own
-   16px, which made linked rows 26px taller than plain ones.
-   Link colours are scoped to this list, not to links site wide.
-   ========================================================================== */
-.page-template-template-calculator .entry-content .rx-rellist li a {
-  color: var(--gpa-primary);
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.page-template-template-calculator .entry-content .rx-rellist li a:hover,
-.page-template-template-calculator .entry-content .rx-rellist li a:focus-visible {
-  color: var(--gpa-primary-hover);
-}
-
-/* ------------------------------------------------------------------
-   Default prose hyperlink style - site wide, all templates
-   Applies to unstyled inline links in body copy, lists and tables.
-   Navigation, footer, buttons, gpa-cta card links and the accent
-   rx-eyebrow / rx-rellist links keep their own treatment.
-   ------------------------------------------------------------------ */
-.entry-content p:not(.gpa-cta):not(.rx-eyebrow) > a:not([class]),
-.entry-content li:not(.gpa-cta) > a:not([class]),
-.entry-content td > a:not([class]),
-.entry-content dd > a:not([class]) {
-  color: var(--gpa-primary);
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.entry-content p:not(.gpa-cta):not(.rx-eyebrow) > a:not([class]):hover,
-.entry-content li:not(.gpa-cta) > a:not([class]):hover,
-.entry-content td > a:not([class]):hover,
-.entry-content dd > a:not([class]):hover {
-  color: var(--gpa-primary-hover);
-}
-
 /* ------------------------------------------------------------------
    Calculator selects - hide the graduation-cap icon
    The Course Level select renders a lucide graduation-cap svg pinned
@@ -1019,20 +530,6 @@ body.gpa-template-content #page.grid-container {
 /* Content pages (guides, GPA scale, etc.): same heading rhythm as the calculator pages */
 body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: var(--gpa-body-size) !important; line-height: var(--gpa-body-line) !important; color: var(--gpa-text-muted) !important; }
 
-/* Phones: let wide tables scroll inside themselves instead of pushing the whole page sideways */
-@media (max-width: 767px) { body.gpa-hero-band .entry-content table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } }
-
-.content-page .entry-content table th {
-  background: transparent !important;
-  color: var(--gpa-text-muted) !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  text-transform: uppercase !important;
-  letter-spacing: .7px !important;
-  padding: 16px 24px !important;
-  text-align: center !important;
-  border: none !important;
-}
 /* ==========================================================================
    GPA SCALE TABLE (/gpa-scale/<x-x>-gpa/ pages)
    Core Table block with class gpa-scale-table: GPA | Percentage | Letter grade.
@@ -1044,7 +541,6 @@ body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: var(--gpa
     width: 100% !important;
     margin-left: auto !important;
     margin-right: auto !important;
-    box-shadow: 0 1px 2px color-mix(in srgb, var(--gpa-gray-900) 4%, transparent), 0 8px 24px color-mix(in srgb, var(--gpa-gray-900) 6%, transparent);
 }
 .content-page .entry-content .gpa-scale-table table { table-layout: fixed; }
 .content-page .entry-content .gpa-scale-table thead th {
@@ -1072,17 +568,6 @@ body.gpa-hero-band #primary #main .entry-content p.rx-sub { font-size: var(--gpa
 .content-page .entry-content .gpa-scale-table tr.is-band-c td:last-child { color: var(--gpa-band-c, var(--gpa-amber-700)) !important; }
 .content-page .entry-content .gpa-scale-table tr.is-band-d td:last-child { color: var(--gpa-band-d, var(--gpa-orange-700)) !important; }
 .content-page .entry-content .gpa-scale-table tr.is-band-f td:last-child { color: var(--gpa-band-f, var(--gpa-red-700)) !important; }
-.content-page .entry-content .gpa-scale-table tr.is-current-gpa td,
-.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child,
-.content-page .entry-content .gpa-scale-table tr.is-current-gpa td:last-child {
-    background: var(--gpa-primary, var(--gpa-primary)) !important;
-    color: var(--gpa-white) !important;
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    padding-top: 14px !important;
-    padding-bottom: 14px !important;
-    border-bottom-color: var(--gpa-primary, var(--gpa-primary)) !important;
-}
 .content-page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after {
     content: "Your GPA";
     display: inline-block;
@@ -1144,70 +629,3 @@ body.gpa-hero-band .entry-header .gpa-updated {
     .content-page .entry-content .gpa-scale-nav__next { grid-column: 2; }
 }
 
-/* ==========================================================================
-   FAQ (Rank Math FAQ block): cards with a "Q" marker and a blue accent; answers stay in the HTML.
-   Overrides the older "FAQ cards, still static" rules above (same selectors + #rank-math-faq).
-   ========================================================================== */
-.content-page .entry-content #rank-math-faq .rank-math-list {
-    display: grid;
-    gap: 14px;
-    margin: 8px 0 32px !important;
-    padding: 0 !important;
-}
-.content-page .entry-content #rank-math-faq .rank-math-list-item {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: var(--gpa-bg-white, var(--gpa-surface)) !important;
-    border: 1px solid var(--gpa-border, var(--gpa-border)) !important;
-    border-left: 4px solid var(--gpa-primary, var(--gpa-primary)) !important;
-    border-radius: 14px !important;
-    box-shadow: 0 1px 2px color-mix(in srgb, var(--gpa-gray-900) 4%, transparent);
-    transition: box-shadow .15s ease;
-}
-.content-page .entry-content #rank-math-faq .rank-math-list-item:hover {
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--gpa-blue-600) 9%, transparent);
-}
-.content-page .entry-content #rank-math-faq .rank-math-question {
-    position: relative;
-    display: block !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    padding: 18px 24px 8px 62px !important;
-    font-size: 19px !important;
-    line-height: 1.4 !important;
-    color: var(--gpa-text-heading, var(--gpa-text-strong)) !important;
-}
-.content-page .entry-content #rank-math-faq .rank-math-question::before {
-    content: "Q";
-    position: absolute;
-    left: 20px;
-    top: 16px;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--gpa-band-b-bg, var(--gpa-tint-blue));
-    color: var(--gpa-primary, var(--gpa-primary));
-    font-size: 15px;
-    font-weight: 700;
-}
-.content-page .entry-content #rank-math-faq .rank-math-answer {
-    margin: 0 !important;
-    padding: 0 24px 20px 62px !important;
-    border-top: none !important;
-}
-.content-page .entry-content #rank-math-faq .rank-math-answer,
-.content-page .entry-content #rank-math-faq .rank-math-answer p {
-    font-size: 16px !important;
-    line-height: 1.7 !important;
-    color: var(--gpa-text-body, var(--gpa-text)) !important;
-}
-.content-page .entry-content #rank-math-faq .rank-math-answer p { margin: 0 !important; padding: 0 !important; }
-.content-page .entry-content #rank-math-faq .rank-math-answer p + p { margin-top: 10px !important; }
-@media (max-width: 768px) {
-    .content-page .entry-content #rank-math-faq .rank-math-question { padding: 16px 16px 6px 54px !important; font-size: 17px !important; }
-    .content-page .entry-content #rank-math-faq .rank-math-question::before { left: 14px; top: 14px; width: 28px; height: 28px; }
-    .content-page .entry-content #rank-math-faq .rank-math-answer { padding: 0 16px 16px 54px !important; }
-}

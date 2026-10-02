@@ -3621,3 +3621,40 @@ add_filter( 'generate_site_title_output', 'gpa_site_title_wordmark', 20 );
 function gpa_site_title_wordmark( $output ) {
 	return preg_replace( '#(rel="home"[^>]*>)\s*GPA\b#', '$1<span class="gpa-wordmark-accent">GPA</span>', $output, 1 );
 }
+
+/**
+ * Design overhaul phase 4: Rank Math FAQ blocks become an accordion with the
+ * first question open. The answers stay in the HTML (and in the FAQ schema);
+ * without JavaScript every answer shows. Styles: components.css section 8.
+ */
+add_action( 'wp_footer', 'gpa_faq_accordion', 30 );
+function gpa_faq_accordion() {
+	if ( is_admin() || ! is_singular() ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	document.querySelectorAll('.entry-content .rank-math-block').forEach(function (block, b) {
+		var items = block.querySelectorAll('.rank-math-list-item');
+		if (!items.length) { return; }
+		items.forEach(function (item, i) {
+			var q = item.querySelector('.rank-math-question'), a = item.querySelector('.rank-math-answer');
+			if (!q || !a) { return; }
+			a.id = a.id || 'gpa-faq-' + b + '-' + i;
+			q.setAttribute('role', 'button');
+			q.setAttribute('tabindex', '0');
+			q.setAttribute('aria-controls', a.id);
+			function set(open) { item.classList.toggle('is-open', open); q.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+			set(i === 0);
+			q.addEventListener('click', function () { set(!item.classList.contains('is-open')); });
+			q.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); set(!item.classList.contains('is-open')); }
+			});
+		});
+		block.classList.add('gpa-faq-ready');
+	});
+})();
+</script>
+	<?php
+}

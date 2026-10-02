@@ -82,7 +82,7 @@ COLUMNS = (["slug", "post_title", "ipeds_unitid", "ipeds_name", "college_city", 
             "average_sat_score_source"]
            + list(SCORES) + list(REQUIREMENTS) + ["ap_credit", "credit_for_life_experiences", "credits_year"]
            + EMPTIED + ["ipeds_release", "scorecard_release"])
-HELD_COLUMNS = ["slug", "post_title", "unitid", "ipeds_name", "why"]
+HELD_COLUMNS = ["slug", "post_title", "unitid", "ipeds_name", "why", "next_step"]
 
 
 def read(path):
@@ -186,6 +186,34 @@ def hold_reason(m, i, corrected, held_c, unconfirmed):
     return ""
 
 
+def parent_of(u, inst):
+    """The IPEDS record that reports for a campus only College Scorecard lists: its UNITID without Scorecard's
+    two-digit branch suffix, else the college with the same 6-digit OPEID whose OPEID ends in 00 (the main campus)."""
+    i = inst.get(u)
+    if len(u) == 8 and u[:6] in inst and inst[u[:6]]["control"]:
+        return u[:6]
+    op6 = (i or {}).get("opeid", "")[:6]
+    mains = [k for k, v in inst.items() if op6 and v["opeid"] == op6 + "00" and v["control"]]
+    return mains[0] if len(mains) == 1 else ""
+
+
+def next_step(why, u, inst, page_of):
+    """What would let a held page move on, for Digant's review."""
+    if why.startswith("no IPEDS 2024 record"):
+        parent = parent_of(u, inst)
+        if not parent:
+            return "find the college that reports for this campus"
+        name = inst[parent]["name"]
+        if parent in page_of:
+            return f"301 to {name}'s page, /admissions/{page_of[parent]}/, which has the federal figures for this campus"
+        return f"leave unchanged until {name} (UNITID {parent}) has a page here, then 301 to it"
+    if why.startswith("the audit corrected"):
+        return "confirm the corrected match, then import with that UNITID"
+    if why.startswith("merged college held"):
+        return "redirect once its successor has a page (checkpoint C's recommendation)"
+    return "check the college's own website: retire it as in checkpoint C if it closed, import it if it's open"
+
+
 def main():
     inst = {r["unitid"]: r for r in read(DATA / "institutions.csv")}
     for need in ("undergrad_enrollment_source", "net_price_source"):
@@ -229,6 +257,10 @@ def main():
             notes["net price from College Scorecard left out"] += 1
         if i["admissions_source"] == "College Scorecard":
             notes["admissions figures from College Scorecard left out"] += 1
+
+    page_of = {r["ipeds_unitid"]: r["slug"] for r in rows}
+    for h in held:
+        h["next_step"] = next_step(h["why"], h["unitid"], inst, page_of)
 
     by_unitid = Counter(r["ipeds_unitid"] for r in rows)
     shared = {u for u, n in by_unitid.items() if n > 1}

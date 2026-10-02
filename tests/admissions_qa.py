@@ -564,5 +564,16 @@ eq("E: hold reasons, in order",
    ["", "IPEDS lists a closing date", "open in IPEDS 2024 but missing from College Scorecard's June 2026 release",
     "no IPEDS 2024 record of its own", "the audit corrected this match", "UNITID 1 isn't in institutions.csv"])
 
+_branch = {"16884704": {"name": "Baker College of Cadillac", "opeid": "00229504", "control": ""},
+           "168847": {"name": "Baker College", "opeid": "00229500", "control": "Private not-for-profit"},
+           "501211": {"name": "Ohio Business College-Columbus", "opeid": "02158507", "control": ""},
+           "203720": {"name": "Ohio Business College-Sheffield", "opeid": "02158500", "control": "Private for-profit"}}
+_why = "no IPEDS 2024 record of its own: only College Scorecard lists it"
+eq("E: a branch campus points to the college that reports for it, by UNITID or main-campus OPEID",
+   [_e.next_step(_why, u, _branch, {"203720": "ohio-business-college-sheffield"}) for u in ("16884704", "501211")],
+   ["leave unchanged until Baker College (UNITID 168847) has a page here, then 301 to it",
+    "301 to Ohio Business College-Sheffield's page, /admissions/ohio-business-college-sheffield/, which has the "
+    "federal figures for this campus"])
+
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

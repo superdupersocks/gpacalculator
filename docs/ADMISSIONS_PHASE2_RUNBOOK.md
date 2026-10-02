@@ -253,7 +253,7 @@ If Digant approves only part of it, run only that part: S needs the new pages (s
    log, `bash scripts/admissions/phase2_e_live.sh revert <log>`, `bash scripts/admissions/phase2_s_live.sh revert <log>`.
 7. Changelog: one row each for the new pages, Fortis's fields, S and M, each with its undo.
 
-## Identity review: fresh figures for 212 more pages, and 19 closed or merged colleges (R)
+## Identity review: fresh figures for 212 more pages, 69 closed colleges retired, 3 merged ones redirected (R)
 
 Within the go of 05:58, on E's and C's terms: it kept the 399 live pages without a confident match unchanged pending
 review, and `scripts/admissions/phase2_r_review.py` is that review (`data/admissions/audit/phase2_r_review.csv` has
@@ -261,21 +261,29 @@ every page, the college it is now and why). It uses the audit's own evidence: a 
 state an older IPEDS directory gives to a UNITID that IPEDS 2024 still lists under a new name (Adirondack Community
 College is SUNY Adirondack), or a chain of UNITIDs linked by IPEDS's NEWID. A page gets E's fields only when that
 college is open in IPEDS 2024, operating in College Scorecard and no other page here has it. Two judgment calls
-settle which college a page is and seven leave a page unchanged (`MANUAL` in the script). Runs after "B2, second
-list"; P and N below wait for Digant's word.
+settle which college a page is and seven leave a page unchanged (`MANUAL` in the script). A college that left IPEDS,
+that no IPEDS directory since 2002 lists, or that E held because College Scorecard doesn't list it, retires when
+Federal Student Aid's closed-school file lists it as closed: by the last OPEID IPEDS gave it (same state), else by its
+name, city and state (`data/admissions/review/`, downloaded on GitHub by `review_sources.py`; FSA's list of
+2026-09-27, 23,006 schools). Runs after "B2, second list"; P and N below wait for Digant's word.
 
 1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-r.sql.gz`).
 2. Fresh figures: `bash scripts/admissions/phase2_e_live.sh plan data/admissions/audit/phase2_r_import.csv` must end
    "212 posts would change, 0 already match, 0 skipped" (report any skip), then the same command with `apply`.
-3. Closed and merged colleges: `bash scripts/admissions/phase2_cd_live.sh plan R` must end "19 rows ready, 0 fields
-   to copy" (16 retire: 15 DeVry campuses and University of Phoenix's Colorado campus, each with a closing date in
-   IPEDS; 3 x 301: Milligan College to Milligan University, Southwest Georgia Technical College to Southern Regional
+3. Closed and merged colleges: `bash scripts/admissions/phase2_cd_live.sh plan R` must end "72 rows ready, 0 fields
+   to copy" (69 retire: the 15 DeVry campuses and University of Phoenix's Colorado campus that IPEDS gives a closing
+   date, and 53 colleges FSA's file lists as closed, such as Lincoln College in Illinois (2022), Memphis College of
+   Art (2020), Union Institute & University (2024) and six of E's held pages, California Jazz Conservatory among them;
+   3 x 301: Milligan College to Milligan University, Southwest Georgia Technical College to Southern Regional
    Technical College, Northwood University's Texas campus to its Michigan page, which step 2 updates). Then
-   `apply R` and `check R` ("38 addresses checked, 0 wrong").
+   `apply R` and `check R` ("144 addresses checked, 0 wrong"). The first-pass rule from
+   `admission/union-institute-and-university` (06:31) still forwards to /admissions/union-institute-university/,
+   which now answers 410; leave it, since search engines drop a 301 to a 410 as they drop the 410.
 4. Check: /admissions/pennsylvania-state-university-main-campus/ shows 61% for fall 2024 (53,579 of 88,478
    applicants), SAT 620–700 reading and writing and 620–720 math; /admissions/miami-university/ 75% (29,843 of
-   39,580); /admissions/arizona-state-university/ 90% (63,756 of 70,928); /admissions/devry-university-utah/ answers
-   410 and /admissions/milligan-college/ lands on /admissions/milligan-university/. On each updated page the JSON-LD
+   39,580); /admissions/arizona-state-university/ 90% (63,756 of 70,928); /admissions/devry-university-utah/,
+   /admissions/lincoln-college/ and /admissions/california-jazz-conservatory/ answer 410 and
+   /admissions/milligan-college/ lands on /admissions/milligan-university/. On each updated page the JSON-LD
    parses and Freestar tags are present.
    If anything breaks: `bash scripts/admissions/phase2_cd_live.sh revert <R log>`, then
    `bash scripts/admissions/phase2_e_live.sh revert <log>`.

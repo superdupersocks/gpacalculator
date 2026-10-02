@@ -127,12 +127,26 @@ REVIEW = e.DATA / "review"
 LEFT = "left IPEDS without a closing date: check FSA's closed-school list"
 NEVER = "no IPEDS directory since 2002 lists this name in this state"
 ABBREVIATIONS = {"st": "saint", "ft": "fort", "mt": "mount"}
+SPELLED_OUT = {"purdue global": "purdue university global"}  # our titles' short form -> FSA's
 
 
 def norm(s):
-    """A name or city for comparison: lower case, '&' as 'and', no punctuation, 'the' or 'inc', St. as Saint."""
+    """A name or city for comparison: lower case, '&' as 'and', no punctuation, 'the', 'inc' or 'campus', St. as
+    Saint, and the names FSA spells out (SPELLED_OUT)."""
     words = re.sub(r"[^a-z0-9 ]", " ", (s or "").lower().replace("&", " and ")).split()
-    return " ".join(ABBREVIATIONS.get(w, w) for w in words if w not in ("the", "inc"))
+    out = " ".join(ABBREVIATIONS.get(w, w) for w in words if w not in ("the", "inc", "campus"))
+    for short, full in SPELLED_OUT.items():
+        out = re.sub(rf"\b{short}\b", full, out)
+    return out
+
+
+def place_names(names, city):
+    """The forms a college's names may take in FSA's file: each as is, and without the city at its end ("Bryan
+    University Topeka" is FSA's "Bryan University" in Topeka)."""
+    c, out = norm(city), []
+    for n in map(norm, names):
+        out += [n, n[:-len(c)].strip() if c and n.endswith(" " + c) else ""]
+    return [x for x in dict.fromkeys(out) if x]
 
 
 def iso(date):
@@ -156,24 +170,35 @@ def fsa_closures():
     return by_ope, by_place
 
 
-def opeids_of(uids, hist, inst):
-    """The OPEIDs IPEDS gave these UNITIDs (institutions.csv, then ipeds_history.csv), newest first, no repeats."""
-    out = [inst[u]["opeid"] for u in uids if inst.get(u, {}).get("opeid")]
-    for h in sorted((h for u in uids for h in hist.get(u, [])), key=lambda h: -int(h["last_year"])):
-        out.append(h["opeid"])
-    return list(dict.fromkeys(o for o in out if o))
+def real_opeid(o):
+    """An OPEID, not IPEDS's code for none (-1 or -2, which reads 00000001 or 00000002 zero-filled)."""
+    return bool(o) and o[:6].strip("0") != ""
 
 
-def fsa_closed(opeids, place, open_until, by_ope, by_place):
+def latest_opeid(uids, hist):
+    """(OPEID, first year) of the newest IPEDS record among these UNITIDs that has an OPEID: the college's federal
+    ID when it left IPEDS, and the first directory that gives it that ID. Older OPEIDs don't count: a college
+    usually takes a new one when another college takes it over, and FSA then lists the old one as closed."""
+    spans = [h for u in uids for h in hist.get(u, []) if real_opeid(h["opeid"])]
+    if not spans:
+        return "", 0
+    last = max(spans, key=lambda h: int(h["last_year"]))
+    return last["opeid"], min(int(h["first_year"]) for h in hist[last["unitid"]] if h["opeid"] == last["opeid"])
+
+
+def fsa_closed(opeids, place, since, by_ope, by_place):
     """(closing date, evidence) when FSA's closed-school file lists the college as closed, else ('', why not).
 
-    opeids: the college's OPEIDs from IPEDS, looked up first; place: (name, city, two-letter state), matched exactly
-    (after norm) when no OPEID is listed, and the state an OPEID's listing must be in. A closing date before the year
-    ahead of the last IPEDS directory that lists the college (open_until) doesn't count: that listing says it was open.
+    opeids: the college's current or last OPEID from IPEDS, looked up first; place: (names, city, two-letter state),
+    matched exactly (after norm and place_names) when FSA doesn't list the OPEID, and the state an OPEID's listing must
+    be in. since:
+    a year IPEDS lists the college under this OPEID (or open); a closing date more than a year before it belongs to
+    something else.
     """
     found, how = [r for o in opeids for r in by_ope.get(o, [])], "OPEID"
     if not found and place:
-        found, how = by_place.get((norm(place[0]), norm(place[1]), place[2]), []), "name, city and state"
+        found = [r for n in place_names(place[0], place[1]) for r in by_place.get((n, norm(place[1]), place[2]), [])]
+        how = "name, city and state"
     if not found:
         if not (by_ope or by_place):
             return "", "FSA's closed-school file hasn't been downloaded (review_sources.py)"
@@ -185,8 +210,8 @@ def fsa_closed(opeids, place, open_until, by_ope, by_place):
         return "", f"{said} with a closing date that can't be read: {r['close_date']!r}"
     if place and r["state"] != place[2]:
         return "", f"{said}, not in {place[2]}"
-    if open_until and int(r["close_date"][:4]) < open_until - 1:
-        return "", f"{said} closed {r['close_date']}, but IPEDS lists the college until HD{open_until}"
+    if since and int(r["close_date"][:4]) < since - 1:
+        return "", f"{said} closed {r['close_date']}, but IPEDS lists the college in HD{since}"
     return r["close_date"], f"closed {r['close_date']} ({said}, matched by {how})"
 
 
@@ -313,12 +338,14 @@ def fsa_review(rows, unmatched, match, inst, held, hist, by_ope, by_place):
         if r["reason"] == LEFT:
             segs = segments(unmatched[r["slug"]]["older_ipeds"])
             last = max(segs, key=lambda s: s["last"])
-            date, why = fsa_closed(opeids_of([s["unitid"] for s in segs], hist, inst),
-                                   (last["name"], last["city"], last["state"]), last["last"], by_ope, by_place)
+            ope, since = latest_opeid([s["unitid"] for s in segs], hist)
+            date, why = fsa_closed([ope] if ope else [], ([last["name"], r["title"]], last["city"], last["state"]),
+                                   since or last["first"], by_ope, by_place)
             before = f"left IPEDS after HD{last['last']} without a closing date"
         else:
             city, _, state = r["location"].rpartition(", ")
-            date, why = fsa_closed([], (r["title"], city, e.STATES.get(state, "")), 0, by_ope, by_place)
+            date, why = fsa_closed([], ([r["title"], r["slug"].replace("-", " ")], city, e.STATES.get(state, "")), 0,
+                                   by_ope, by_place)
             before = NEVER
         r.update(outcome="retire", checkpoint="R", target="", reason=f"{before}; {why}") if date else \
             r.update(reason=f"{before}; {why}")
@@ -327,8 +354,9 @@ def fsa_review(rows, unmatched, match, inst, held, hist, by_ope, by_place):
         if not h["why"].startswith(("open in IPEDS 2024", "not operating according to College Scorecard")):
             continue
         i = inst.get(h["unitid"], {})
-        date, why = fsa_closed(opeids_of([h["unitid"]], hist, inst), (i.get("name", ""), i.get("city", ""),
-                               i.get("state", "")), 2024, by_ope, by_place)
+        ope = i.get("opeid", "")
+        date, why = fsa_closed([ope] if real_opeid(ope) else [], ([i.get("name", ""), h["post_title"]],
+                               i.get("city", ""), i.get("state", "")), 2024, by_ope, by_place)
         out.append({"slug": h["slug"], "url": f"{SITE}{h['slug']}/", "title": h["post_title"],
                     "location": match.get(h["slug"], {}).get("location", ""), "finding": "E held",
                     "unitid": h["unitid"], "ipeds_name": i.get("name", ""), "ipeds_city": i.get("city", ""),

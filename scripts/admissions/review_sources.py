@@ -296,8 +296,9 @@ def history(ids):
         span = None
         for y in sorted(hist[uid]):
             r = hist[uid][y]
+            ope = re.sub(r"\D", "", r.get("OPEID", "")) if not r.get("OPEID", "").strip().startswith("-") else ""
             rec = {"name": r["INSTNM"], "city": r["CITY"], "state": r["STABBR"],
-                   "opeid": re.sub(r"\D", "", r.get("OPEID", "")).zfill(8) if r.get("OPEID") else "",
+                   "opeid": ope.zfill(8) if ope.strip("0") else "",  # IPEDS writes -1 or -2 for none
                    "website": r.get("WEBADDR", ""), "closed": r["CLOSEDAT"] if audit.is_set(r["CLOSEDAT"]) else "",
                    "newid": r["NEWID"] if audit.is_set(r["NEWID"]) else "",
                    "deathyr": r["DEATHYR"] if audit.is_set(r["DEATHYR"]) else ""}

@@ -48,7 +48,7 @@ body {
 
 /* When the column narrows for the side rails (760px at 1440px wide), keep 40px of white either side of the text */
 @media (min-width: 941px) {
-    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(.entry-content, .rx-sec, .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
         max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
     }
 }
@@ -578,21 +578,22 @@ html body .site-footer .grid-container {
 }
 
 /* ---------- 10. Section numbers ----------
-   Content H2s are numbered 01, 02, 03 with a CSS counter; the number is not
-   part of the heading text. Not numbered: the hero H1, the FAQ heading,
-   "Keep planning"/related tools, Sources, widget H2s and anything inside a
-   calculator. The TOC (section 11) skips the same headings, so its numbers
-   always match. Blog posts are numbered only when they have a TOC. */
+   Every content H2 is numbered 01, 02, 03 with a CSS counter (FAQ and
+   related tools included); the number is not part of the heading text.
+   Not numbered: the hero H1, widget H2s, anything inside a calculator,
+   and an H2 given the class gpa-no-number. The TOC (section 11) lists the
+   same headings, so its numbers always match. Blog posts are numbered
+   only when they have a TOC. */
 :is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content,
 body.single-post .entry-content:has(.wp-block-rank-math-toc-block) {
     counter-reset: gpa-sec;
 }
-:is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content h2:not(#root *, .gpacalc-mount *, .wp-block-rank-math-toc-block *, .gpa-sources *, .widget *, .rx-sec:is([id*="faq" i], :has(.rx-faq, .rank-math-block, .rx-rel)) *, .gpa-no-number, [id*="faq" i], [id*="fa-q" i], [id*="related" i], [id*="keep-planning" i], [id*="sources" i]):not(:has(+ .rank-math-block, + .wp-block-rank-math-faq-block, + .rx-rel, + p.rx-sub + .rx-rel, + .wp-block-spacer + .rx-rel, + p.rx-sub + .wp-block-spacer + .rx-rel)),
-body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa-no-number, [id*="faq" i], [id*="fa-q" i], [id*="related" i], [id*="sources" i]):not(:has(+ .rank-math-block, + .wp-block-rank-math-faq-block)) {
+:is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content h2:not(#root *, .gpacalc-mount *, .wp-block-rank-math-toc-block *, .widget *, .gpa-no-number),
+body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa-no-number) {
     counter-increment: gpa-sec;
 }
-:is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content h2:not(#root *, .gpacalc-mount *, .wp-block-rank-math-toc-block *, .gpa-sources *, .widget *, .rx-sec:is([id*="faq" i], :has(.rx-faq, .rank-math-block, .rx-rel)) *, .gpa-no-number, [id*="faq" i], [id*="fa-q" i], [id*="related" i], [id*="keep-planning" i], [id*="sources" i]):not(:has(+ .rank-math-block, + .wp-block-rank-math-faq-block, + .rx-rel, + p.rx-sub + .rx-rel, + .wp-block-spacer + .rx-rel, + p.rx-sub + .wp-block-spacer + .rx-rel))::before,
-body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa-no-number, [id*="faq" i], [id*="fa-q" i], [id*="related" i], [id*="sources" i]):not(:has(+ .rank-math-block, + .wp-block-rank-math-faq-block))::before {
+:is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content h2:not(#root *, .gpacalc-mount *, .wp-block-rank-math-toc-block *, .widget *, .gpa-no-number)::before,
+body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa-no-number)::before {
     content: counter(gpa-sec, decimal-leading-zero);
     display: inline-flex;
     align-items: center;
@@ -620,7 +621,7 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 
 /* ---------- 11. Table of contents (Rank Math TOC block) ----------
    Outline box, "On this page" title, numbered items matching the section
-   numbers. Items for the FAQ, related tools and Sources are left out. */
+   numbers. */
 #page .entry-content .wp-block-rank-math-toc-block {
     max-width: var(--gpa-text-max);
     margin: var(--gpa-hdr-below) auto 0 !important;
@@ -676,10 +677,6 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
     font-variant-numeric: tabular-nums;
 }
 #page .entry-content .wp-block-rank-math-toc-block li { align-items: center; }
-#page .entry-content .wp-block-rank-math-toc-block li:has(> a:is([href*="faq" i], [href*="fa-q" i], [href*="related" i], [href*="keep-planning" i], [href*="sources" i])) {
-    display: none;
-}
-#page .entry-content .wp-block-rank-math-toc-block li:has(> a:is([href*="faq" i], [href*="fa-q" i], [href*="related" i], [href*="keep-planning" i], [href*="sources" i])) + li { border-top: 0; }
 #page .entry-content .wp-block-rank-math-toc-block li a {
     color: var(--gpa-text) !important;
     font-weight: 400 !important;

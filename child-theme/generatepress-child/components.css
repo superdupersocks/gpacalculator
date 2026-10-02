@@ -399,7 +399,7 @@
     box-shadow: none !important;
 }
 #page .entry-content .rank-math-block .rank-math-list-item:first-child { border-top: 0 !important; }
-#page .entry-content .rank-math-block .rank-math-question {
+#page #main .entry-content .rank-math-block .rank-math-question:not(#root *) {
     position: relative;
     display: flex !important;
     align-items: center;
@@ -444,7 +444,7 @@
     line-height: var(--gpa-body-line) !important;
     color: var(--gpa-text) !important;
 }
-#page .entry-content .rank-math-block .rank-math-answer p { margin: 0 0 10px !important; padding: 0 !important; }
+#page .entry-content .rank-math-block .rank-math-answer p:not(#root *) { margin: 0 0 10px !important; padding: 0 !important; }
 #page .entry-content .rank-math-block .rank-math-answer > :last-child { margin-bottom: 0 !important; }
 #page .entry-content .rank-math-block.gpa-faq-ready .rank-math-list-item:not(.is-open) .rank-math-answer { display: none !important; }
 
@@ -633,3 +633,186 @@
 #page .entry-content .gpa-sources ol > li > a:hover { color: var(--gpa-primary) !important; }
 /* One-line rows (name + service tag) center their dot */
 #page .entry-content .rx-relcard .rx-rellist > li::before { top: 50%; margin-top: -3px; }
+
+/* ---------- 11. Page content standard ----------
+   One look for the blocks every calculator and guide page is built from
+   (the College GPA calculator page is the model). Spacing: 64px between
+   sections, 12px heading → intro, 24px intro → first block, 16px between
+   cards. Cards: white, 1px border, 12px corners, 24px padding, a 40px
+   tinted icon square, 18px title, 16px text. */
+#page #main .entry-content .rx-sec > .wp-block-spacer { display: none !important; }
+#page #main .entry-content .rx-sec > h2 + p.rx-sub:not(#root *) { margin-top: 12px !important; }
+#page #main .entry-content .rx-about > h2 + p:not(#root *) { margin-top: 16px !important; }
+#page #main .entry-content .rx-sec > :is(h2, p.rx-sub) + :is(.wp-block-columns, figure, .rx-formula, .rx-meaning, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-faq-block, blockquote, .gpa-callout),
+#page #main .entry-content .rx-sec > :is(h2, p.rx-sub) + .wp-block-spacer + :is(.wp-block-columns, figure, .rx-formula, .rx-meaning, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-faq-block, blockquote, .gpa-callout) {
+    margin-top: 24px !important;
+}
+#page #main .entry-content .rx-sec > .wp-block-columns { gap: 16px !important; margin-bottom: 0 !important; }
+#page #main .entry-content .rx-sec > .wp-block-columns + .wp-block-columns { margin-top: 16px !important; }
+#page #main .entry-content .rx-sec > * + :is(p.rx-note, blockquote, .gpa-callout, p.rx-result) { margin-top: 24px !important; }
+#page #main .entry-content > .rx-sec:not(:has(~ .rx-sec, ~ p, ~ h2)) { margin-bottom: 0 !important; }
+#page #main .entry-content .rx-relcard .rx-rellist > li::before { top: 50% !important; margin-top: -3px !important; }
+
+/* Cards: step, feature and exception cards share one layout */
+#page #main .entry-content :is(.rx-step, .rx-feat) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 24px !important;
+    background: var(--gpa-surface) !important;
+    border: 1px solid var(--gpa-border) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+}
+#page #main .entry-content :is(.rx-step, .rx-feat):hover { box-shadow: none !important; }
+#page #main .entry-content :is(.rx-step, .rx-feat)::before {
+    content: "" !important;
+    display: block !important;
+    position: static !important;
+    flex: none;
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 0 16px !important;
+    border-radius: 10px !important;
+    background: var(--gpa-tint-indigo) !important;
+    box-shadow: none !important;
+}
+#page #main .entry-content :is(.rx-step, .rx-feat)::after {
+    content: "" !important;
+    display: block !important;
+    position: absolute !important;
+    left: 34px !important;
+    top: 34px !important;
+    width: 20px !important;
+    height: 20px !important;
+    background: var(--gpa-accent) !important;
+    -webkit-mask: var(--rx-ico) center / contain no-repeat;
+    mask: var(--rx-ico) center / contain no-repeat;
+}
+#page #main .entry-content :is(.rx-step, .rx-feat) > .rx-card-t:not(#root *) {
+    margin: 0 0 8px !important;
+    padding: 0 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    line-height: 1.35 !important;
+    color: var(--gpa-heading) !important;
+}
+#page #main .entry-content :is(.rx-step, .rx-feat) > .rx-card-b:not(#root *) {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+    color: var(--gpa-text) !important;
+}
+
+/* Worked result under a table: the same light result box as the calculator */
+#page #main .entry-content p.rx-result:not(#root *) {
+    display: block !important;
+    max-width: var(--gpa-text-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 16px 20px !important;
+    background: var(--gpa-calc-result-bg) !important;
+    border: 1px solid var(--gpa-calc-result-line) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+    color: var(--gpa-gray-600) !important;
+    text-align: center !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+#page #main .entry-content p.rx-result strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    color: var(--gpa-heading) !important;
+}
+
+/* Formula box: tinted panel, formula line, then three white definition cards */
+#page #main .entry-content .rx-formula { padding: 24px !important; }
+#page #main .entry-content .rx-formula > p.rx-sub:not(#root *) {
+    margin: 0 !important;
+    font-size: 16px !important;
+    color: var(--gpa-gray-600) !important;
+    text-align: center !important;
+}
+#page #main .entry-content .rx-formula > p.rx-pill:not(#root *) {
+    margin: 8px 0 20px !important;
+    text-align: center !important;
+    box-shadow: none !important;
+}
+#page #main .entry-content .rx-formula > .wp-block-columns { gap: 12px !important; margin: 0 !important; }
+#page #main .entry-content .rx-formula .rx-def {
+    padding: 16px 18px !important;
+    background: var(--gpa-surface) !important;
+    border: 1px solid var(--gpa-calc-result-line) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+#page #main .entry-content .rx-formula .rx-def-t:not(#root *) {
+    margin: 0 0 6px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+    letter-spacing: 0.02em !important;
+    text-transform: uppercase !important;
+    color: var(--gpa-accent) !important;
+}
+#page #main .entry-content .rx-formula .rx-def-b:not(#root *) {
+    margin: 0 !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    color: var(--gpa-text) !important;
+}
+#page #main .entry-content .rx-formula > .wp-block-columns + p.rx-sub { margin-top: 16px !important; font-size: 15px !important; }
+
+/* GPA range rows */
+#page #main .entry-content .rx-meaning {
+    display: grid !important;
+    grid-template-columns: 240px 1fr;
+    align-items: center;
+    gap: 16px;
+    margin: 12px 0 0 !important;
+    padding: 18px 20px !important;
+    background: var(--gpa-surface) !important;
+    border: 1px solid var(--gpa-border) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+}
+#page #main .entry-content .rx-meaning > p:not(#root *) { margin: 0 !important; padding: 0 !important; }
+#page #main .entry-content .rx-meaning .rx-mrange { white-space: nowrap; }
+#page #main .entry-content .rx-meaning .rx-mdesc { font-size: 16px !important; line-height: 1.6 !important; color: var(--gpa-text) !important; }
+@media (max-width: 640px) {
+    #page #main .entry-content .rx-meaning { grid-template-columns: 1fr; gap: 8px; }
+}
+
+/* Short disclaimer lines read as a note box (same as a plain quote) */
+#page #main .entry-content p.rx-note:not(#root *) {
+    padding: 16px 18px !important;
+    background: var(--gpa-gray-50) !important;
+    border: 1px solid var(--gpa-border) !important;
+    border-radius: 12px !important;
+    font-size: 15px !important;
+    font-style: normal !important;
+    line-height: 1.6 !important;
+    color: var(--gpa-gray-600) !important;
+}
+
+/* Older FAQ (details blocks): answer lines up with the question */
+#page #main .entry-content .rx-faq > summary { padding: 16px 52px 16px 20px !important; }
+#page #main .entry-content .rx-faq > :not(summary) { margin: 0 !important; padding: 0 20px 18px !important; }
+
+/* Related tools: name, service tag and dot on one line */
+#page #main .entry-content .rx-relcard .rx-rellist > li:not(#root *) {
+    margin: 0 !important;
+    padding: 6px 0 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+#page #main .entry-content .rx-relcard .rx-rellist > li > mark { flex: none; margin: 0 !important; }

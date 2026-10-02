@@ -261,13 +261,6 @@ C,altamaha-technical-college,301,https://gpacalculator.net/admissions/coastal-pi
 C,american-sentinel-university,301,https://gpacalculator.net/admissions/post-university/,merged into Post University (IPEDS 130183)
 C,averett-university-non-traditional-programs,301,https://gpacalculator.net/admissions/averett-university/,merged into Averett University (IPEDS 231420)
 C,bainbridge-college,301,https://gpacalculator.net/admissions/abraham-baldwin-agricultural-college/,merged into Abraham Baldwin Agricultural College (IPEDS 138558)
-C,baker-college-center-for-graduate-studies,retire,,merged into Baker College (IPEDS 168847); the successor has no page
-C,baker-college-of-allen-park,retire,,merged into Baker College (IPEDS 168847); the successor has no page
-C,baker-college-of-auburn-hills,retire,,merged into Baker College (IPEDS 168847); the successor has no page
-C,baker-college-of-clinton-township,retire,,merged into Baker College (IPEDS 168847); the successor has no page
-C,baker-college-of-owosso,retire,,merged into Baker College (IPEDS 168847); the successor has no page
-C,baker-college-of-port-huron,retire,,merged into Baker College (IPEDS 168847); the successor has no page
-C,bloomsburg-university-of-pennsylvania,retire,,merged into Commonwealth University of Pennsylvania (IPEDS 498562); the successor has no page
 C,bryant-and-stratton-college-cleveland,301,https://gpacalculator.net/admissions/bryant-and-stratton-college-parma/,merged into Bryant & Stratton College-Parma (IPEDS 201469)
 C,bryant-and-stratton-college-eastlake,301,https://gpacalculator.net/admissions/bryant-and-stratton-college-parma/,merged into Bryant & Stratton College-Parma (IPEDS 201469)
 C,bryant-and-stratton-college-glendale,301,https://gpacalculator.net/admissions/bryant-and-stratton-college-wauwatosa/,merged into Bryant & Stratton College-Wauwatosa (IPEDS 451750)
@@ -275,14 +268,10 @@ C,colorado-technical-university-greenwood-village,301,https://gpacalculator.net/
 C,colorado-technical-university-online,301,https://gpacalculator.net/admissions/colorado-technical-university-colorado-springs/,merged into Colorado Technical University-Colorado Springs (IPEDS 126827)
 C,colorado-technical-university-sioux-falls,301,https://gpacalculator.net/admissions/colorado-technical-university-colorado-springs/,merged into Colorado Technical University-Colorado Springs (IPEDS 126827)
 C,darton-college,301,https://gpacalculator.net/admissions/albany-state-university/,merged into Albany State University (IPEDS 138716)
-C,florida-career-college-clearwater,retire,,merged into Florida Career College-Miami (IPEDS 133997); the successor has no page
-C,fortis-institute,retire,,merged into Fortis Institute-Cookeville (IPEDS 494436); the successor has no page
 C,georgia-military-college-atlanta-campus,301,https://gpacalculator.net/admissions/georgia-military-college/,merged into Georgia Military College (IPEDS 485111)
 C,jefferson-college-of-health-sciences,301,https://gpacalculator.net/admissions/radford-university/,merged into Radford University (IPEDS 233277)
 C,kendall-college,301,https://gpacalculator.net/admissions/national-louis-university/,merged into National Louis University (IPEDS 147536)
-C,lock-haven-university,retire,,merged into Commonwealth University of Pennsylvania (IPEDS 498562); the successor has no page
 C,lyme-academy-college-of-fine-arts,301,https://gpacalculator.net/admissions/university-of-new-haven/,merged into University of New Haven (IPEDS 129941)
-C,mansfield-university-of-pennsylvania,retire,,merged into Commonwealth University of Pennsylvania (IPEDS 498562); the successor has no page
 C,monroe-college-new-rochelle,301,https://gpacalculator.net/admissions/monroe-college-main-campus/,merged into Monroe University (IPEDS 193308)
 C,moultrie-technical-college,301,https://gpacalculator.net/admissions/southern-regional-technical-college/,merged into Southern Regional Technical College (IPEDS 487162)
 C,new-england-school-of-communications,301,https://gpacalculator.net/admissions/husson-university/,merged into Husson University (IPEDS 487524)
@@ -303,43 +292,29 @@ C,texas-state-technical-college-marshall,301,https://gpacalculator.net/admission
 C,texas-state-technical-college-west-texas,301,https://gpacalculator.net/admissions/texas-state-technical-college/,merged into Texas State Technical College (IPEDS 487320)
 C,university-of-phoenix-atlanta-campus,retire,,merged into University of Phoenix-Georgia (IPEDS 484677); the successor closed too
 C,university-of-phoenix-augusta-campus,retire,,merged into University of Phoenix-Georgia (IPEDS 484677); the successor closed too
-C,university-of-phoenix-austin-campus,retire,,merged into University of Phoenix-Texas (IPEDS 484756); the successor has no page
 C,university-of-phoenix-baton-rouge,retire,,merged into University of Phoenix-Louisiana (IPEDS 484686); the successor closed too
-C,university-of-phoenix-bay-area-campus,retire,,merged into University of Phoenix-California (IPEDS 484631); the successor has no page
 C,university-of-phoenix-central-florida-campus,retire,,merged into University of Phoenix-Florida (IPEDS 484668); the successor closed too
-C,university-of-phoenix-central-valley-campus,retire,,merged into University of Phoenix-California (IPEDS 484631); the successor has no page
 C,university-of-phoenix-charlotte-campus,retire,,merged into University of Phoenix-North Carolina (IPEDS 484729); the successor closed too
 C,university-of-phoenix-chattanooga-campus,retire,,merged into University of Phoenix-Tennessee (IPEDS 484747); the successor closed too
 C,university-of-phoenix-columbus-georgia-campus,retire,,merged into University of Phoenix-Georgia (IPEDS 484677); the successor closed too
-C,university-of-phoenix-dallas-campus,retire,,merged into University of Phoenix-Texas (IPEDS 484756); the successor has no page
-C,university-of-phoenix-houston-campus,retire,,merged into University of Phoenix-Texas (IPEDS 484756); the successor has no page
 C,university-of-phoenix-kansas-city-campus,retire,,merged into University of Phoenix-Missouri (IPEDS 484701); the successor closed too
 C,university-of-phoenix-knoxville,retire,,merged into University of Phoenix-Tennessee (IPEDS 484747); the successor closed too
 C,university-of-phoenix-lafayette,retire,,merged into University of Phoenix-Louisiana (IPEDS 484686); the successor closed too
-C,university-of-phoenix-las-vegas-campus,retire,,merged into University of Phoenix-Nevada (IPEDS 484710); the successor has no page
 C,university-of-phoenix-little-rock-campus,retire,,merged into University of Phoenix-Arkansas (IPEDS 484622); the successor closed too
 C,university-of-phoenix-louisiana-campus,retire,,merged into University of Phoenix-Louisiana (IPEDS 484686); the successor closed too
 C,university-of-phoenix-memphis-campus,retire,,merged into University of Phoenix-Tennessee (IPEDS 484747); the successor closed too
 C,university-of-phoenix-metro-detroit-campus,retire,,merged into University of Phoenix-Michigan (IPEDS 484695); the successor closed too
 C,university-of-phoenix-nashville-campus,retire,,merged into University of Phoenix-Tennessee (IPEDS 484747); the successor closed too
 C,university-of-phoenix-north-florida-campus,retire,,merged into University of Phoenix-Florida (IPEDS 484668); the successor closed too
-C,university-of-phoenix-northern-nevada-campus,retire,,merged into University of Phoenix-Nevada (IPEDS 484710); the successor has no page
 C,university-of-phoenix-northern-virginia-campus,retire,,merged into University of Phoenix-Virginia (IPEDS 484765); the successor closed too
 C,university-of-phoenix-northwest-arkansas-campus,retire,,merged into University of Phoenix-Arkansas (IPEDS 484622); the successor closed too
 C,university-of-phoenix-northwest-indiana-campus,retire,,merged into University of Phoenix-Indiana (IPEDS 443544); the successor closed too
 C,university-of-phoenix-oklahoma-city-campus,retire,,merged into University of Phoenix-Oklahoma (IPEDS 484738); the successor closed too
-C,university-of-phoenix-online-campus,retire,,merged into University of Phoenix-Arizona (IPEDS 484613); the successor has no page
-C,university-of-phoenix-phoenix-hohokam-campus,retire,,merged into University of Phoenix-Arizona (IPEDS 484613); the successor has no page
 C,university-of-phoenix-raleigh-campus,retire,,merged into University of Phoenix-North Carolina (IPEDS 484729); the successor closed too
 C,university-of-phoenix-richmond-campus,retire,,merged into University of Phoenix-Virginia (IPEDS 484765); the successor closed too
-C,university-of-phoenix-sacramento-valley-campus,retire,,merged into University of Phoenix-California (IPEDS 484631); the successor has no page
-C,university-of-phoenix-san-antonio-campus,retire,,merged into University of Phoenix-Texas (IPEDS 484756); the successor has no page
-C,university-of-phoenix-san-diego-campus,retire,,merged into University of Phoenix-California (IPEDS 484631); the successor has no page
 C,university-of-phoenix-savannah-campus,retire,,merged into University of Phoenix-Georgia (IPEDS 484677); the successor closed too
 C,university-of-phoenix-shreveport-bossier,retire,,merged into University of Phoenix-Louisiana (IPEDS 484686); the successor closed too
 C,university-of-phoenix-south-florida-campus,retire,,merged into University of Phoenix-Florida (IPEDS 484668); the successor closed too
-C,university-of-phoenix-southern-arizona-campus,retire,,merged into University of Phoenix-Arizona (IPEDS 484613); the successor has no page
-C,university-of-phoenix-southern-california-campus,retire,,merged into University of Phoenix-California (IPEDS 484631); the successor has no page
 C,university-of-phoenix-southern-colorado-campus,retire,,merged into University of Phoenix-Colorado (IPEDS 484640); the successor closed too
 C,university-of-phoenix-st-louis-campus,retire,,merged into University of Phoenix-Missouri (IPEDS 484701); the successor closed too
 C,university-of-phoenix-tulsa-campus,retire,,merged into University of Phoenix-Oklahoma (IPEDS 484738); the successor closed too

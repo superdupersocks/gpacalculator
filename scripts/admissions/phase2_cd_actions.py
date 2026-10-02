@@ -8,6 +8,9 @@ one row per post to unpublish, with what its addresses answer afterwards (410 Go
 Merged posts whose successor's page is listed under a former name wait for E's identity review and get no row, nor
 does anything in unmatched.csv or unconfirmed.csv. D_KEEP records which page of each duplicate pair stays (checkpoint
 D); change it if Digant picks the other page. scripts/admissions/phase2_cd_live.sh applies the list.
+
+Merged posts that would retire only because their successor has no page here are held (Digant, 2026-10-02 05:58 UTC)
+and go to phase2_c_held.csv with a recommended treatment instead of the action list.
 """
 import csv
 import re
@@ -24,6 +27,9 @@ D_KEEP = {  # IPEDS ID shared by two posts -> the post that stays; the other get
     "487320": "texas-state-technical-college",
 }
 COLS = ["checkpoint", "slug", "action", "target", "reason"]
+HELD_COLS = ["slug", "successor_unitid", "successor_name", "recommendation"]
+HELD_ADVICE = ("keep the page live and unchanged for now; when the fresh data import adds the successor's page, "
+               "301 this one to it and move anything useful across")
 
 
 def read(name):
@@ -46,6 +52,7 @@ def build():
         sys.exit("duplicates.csv no longer matches D_KEEP; update D_KEEP first")
     kept = {s: D_KEEP[u] for u, slugs in pairs.items() for s in slugs}
 
+    held = []
     rows = [["C", r["slug"], "retire", "", f"closed {r['closed_on']} (IPEDS {r['unitid']})"]
             for r in read("closed.csv")]
     for r in read("merged.csv"):
@@ -62,9 +69,10 @@ def build():
         elif t.startswith("301 to "):
             rows.append(["C", r["slug"], "301", r["successor_url"], why])
         elif t.startswith("retire like a closure"):
-            gone = "is no longer listed either" in t
-            rows.append(["C", r["slug"], "retire", "",
-                         why + ("; the successor closed too" if gone else "; the successor has no page")])
+            if "is no longer listed either" in t:
+                rows.append(["C", r["slug"], "retire", "", why + "; the successor closed too"])
+            else:
+                held.append([r["slug"], r["successor_unitid"], r["successor_name"], HELD_ADVICE])
         else:
             sys.exit(f"{r['slug']}: unknown treatment {t!r}")
     for u, slugs in sorted(pairs.items()):
@@ -78,15 +86,17 @@ def build():
     chained = [r[1] for r in rows if r[3] and slug_of(r[3]) in listed]
     if chained:
         sys.exit(f"301s to pages this list also unpublishes: {chained}")
-    return rows
+    return rows, held
 
 
 def main():
-    rows = build()
-    with open(AUDIT / "phase2_cd_actions.csv", "w", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(COLS)
-        w.writerows(rows)
+    rows, held = build()
+    for name, cols, data in (("phase2_cd_actions.csv", COLS, rows), ("phase2_c_held.csv", HELD_COLS, held)):
+        with open(AUDIT / name, "w", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(cols)
+            w.writerows(data)
+    print(f"held: {len(held)}")
     for (cp, action), n in sorted(Counter((r[0], r[2]) for r in rows).items()):
         print(f"{cp} {action}: {n}")
 

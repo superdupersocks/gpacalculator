@@ -6,8 +6,9 @@
 Writes data/admissions/review/:
 - fsa_closed_schools.csv: Federal Student Aid's weekly closed-school file, every school that left the federal aid
   programs by closing, with its OPEID and closing date (opeid, name, address, city, state, zip, country, close_date)
-- ipeds_history.csv: the older IPEDS directory records (HD2002-HD2023) of the colleges the review can't place, one
-  row per stretch of years with the same name, place and OPEID (unitid, first_year, last_year, name, city, state,
+- ipeds_history.csv: the older IPEDS directory records (HD2002-HD2023) of the colleges the review can't place (those
+  the audit names, those whose name fits a page no directory lists by its title, and the colleges they merged into),
+  one row per stretch of years with the same name, place and OPEID (unitid, first_year, last_year, name, city, state,
   opeid, website, closed, newid, deathyr)
 - sources.json: where each came from, when, and its SHA-256
 
@@ -26,6 +27,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 import audit  # noqa: E402
+import phase2_r_review as rv  # noqa: E402
 from fetch import HEADERS, get  # noqa: E402
 
 DATA = Path(__file__).resolve().parents[2] / "data" / "admissions"
@@ -287,12 +289,33 @@ def review_unitids():
     return ids
 
 
-def history(ids):
-    """ipeds_history.csv rows for ids: one per stretch of years with the same name, place and OPEID."""
+def review_keys():
+    """phase2_r_review.page_keys of the pages whose title no IPEDS directory lists (the audit's unmatched pages with
+    no finding), to look for by their slugs too, and in Washington, DC, which the audit missed."""
+    keys = set()
+    with open(DATA / "audit" / "unmatched.csv", newline="", encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if not r["finding"]:
+                keys |= rv.page_keys(r["title"], r["slug"], r["location"])
+    return keys
+
+
+def history(ids, keys=frozenset()):
+    """ipeds_history.csv rows for ids, for the records whose name fits keys (phase2_r_review.record_keys) and for the
+    colleges those merged into (NEWID): one per stretch of years with the same name, place and OPEID."""
     audit.KEEP = tuple(audit.KEEP) + ("OPEID", "WEBADDR")
     hist = audit.load_history(2002, 2023)
+    named = {uid for uid, years in hist.items() for r in years.values()
+             if rv.record_keys(r["INSTNM"], r["CITY"], r["STABBR"]) & keys}
+    todo = sorted(named)
+    while todo:
+        for r in hist.get(todo.pop(), {}).values():
+            n = r["NEWID"].strip() if audit.is_set(r["NEWID"]) else ""
+            if n and n not in named:
+                named.add(n)
+                todo.append(n)
     out = []
-    for uid in sorted(ids & set(hist)):
+    for uid in sorted((ids | named) & set(hist)):
         span = None
         for y in sorted(hist[uid]):
             r = hist[uid][y]
@@ -321,7 +344,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     url, data, rows = fsa()
     write(OUT / "fsa_closed_schools.csv", FSA_COLUMNS, rows)
-    hist = history(review_unitids())
+    hist = history(review_unitids(), review_keys())
     write(OUT / "ipeds_history.csv", HIST_COLUMNS, hist)
     (OUT / "sources.json").write_text(json.dumps({
         "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),

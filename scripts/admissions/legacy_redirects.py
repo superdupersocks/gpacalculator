@@ -227,7 +227,9 @@ def main(argv=None):
             return action, target, names, " ".join(answers), how, "; ".join(notes)
         if len(answers) == 1:
             return None, "", names, " ".join(answers), how, next(iter(answers.values()))[2]
-        return None, "", names, " ".join(answers), how, "several colleges with different answers: " + "; ".join(
+        lead = ("several colleges by that name, none with an answer: " if found == {(None, "")}
+                else "several colleges with different answers: ")
+        return None, "", names, " ".join(answers), how, lead + "; ".join(
             f"{name_of(u)}: {x[0] or 'none'} {x[1] or x[2]}" for u, x in answers.items())
 
     def decide(old):

@@ -56,7 +56,8 @@ Undo: `bash scripts/admissions/phase2_b_live.sh revert <export name>` puts every
 ## B2: cited Common Data Set GPAs
 
 Digant's go for B includes "Replace GPA with verified, cited CDS values wherever available". Run this after B. Commit
-a15c8a7 changes two theme files: a college with `cds_gpa` fields gets an "Average high school GPA" card noted "As
+a15c8a7 changes two theme files (deploy them from 759f5b7, which adds the exact-slug 404 guess to functions.php on top,
+so neither change undoes the other): a college with `cds_gpa` fields gets an "Average high school GPA" card noted "As
 reported by the college, <year>" (plus "weighted" when the average is above 4.0) and a FAQ, in the page and its
 JSON-LD, that states the value with its year and cites the college's own file. Titles and descriptions don't change.
 `data/admissions/audit/phase2_b2_gpa.csv` has the 243 pages whose college published the file on its own site;
@@ -64,14 +65,17 @@ JSON-LD, that states the value with its year and cites the college's own file. T
 links them; two files belong to other colleges). Don't write any CDS value into `average_gpa`.
 
 1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-b2.sql.gz`).
-2. The live copies of the two files must be B's (9a803a3). Stop and report if either differs:
+2. The live copies of the two files must be B's (9a803a3), or already a15c8a7's or 759f5b7's if B2 or the 404 guess
+   fix went out first. Stop and report if a file matches none of them:
    ```
    for f in functions.php single-colleges.php; do
-     SSH "cat WP/wp-content/themes/generatepress-child/$f" | cmp -s - <(git show 9a803a3:child-theme/generatepress-child/$f) \
-       && echo "same    $f" || echo "DIFFERS $f"
+     SSH "cat WP/wp-content/themes/generatepress-child/$f" > /tmp/live-$f
+     for c in 9a803a3 a15c8a7 759f5b7; do
+       git show $c:child-theme/generatepress-child/$f | cmp -s - /tmp/live-$f && echo "live $f = $c"
+     done
    done
    ```
-3. Theme: `bash scripts/deploy_theme.sh a15c8a7 --dry-run --only functions.php,single-colleges.php`. Only those two
+3. Theme: `bash scripts/deploy_theme.sh 759f5b7 --dry-run --only functions.php,single-colleges.php`. Only those two
    files may change. Then the same command without `--dry-run`; note the theme backup name.
 4. Data: `bash scripts/admissions/phase2_b2_live.sh plan` must end "243 rows ready" (report any `SKIP`), then
    `bash scripts/admissions/phase2_b2_live.sh apply`; note the log name.
@@ -124,7 +128,33 @@ publishes the logged pages again and deletes their rules.
 
 ## Old /admission/ addresses
 
-148 old /admission/ addresses that Search Console still shows have no redirect (90 end in a 404). Digant's go covers
-fixing them. The cloud session is building the map (old address -> the college's current page, or 410 for a college
-that is gone) from `data/admissions/redirects/` and the Phase 1 match, with a script like C's; its steps land here.
+Digant's go: "Fix the missing legacy redirects next". `data/admissions/redirects/legacy_redirect_map.csv`, made on
+GitHub by `scripts/admissions/legacy_redirects.py` with the IPEDS directories back to 2002, has 150 old slugs that end
+on a 404 today (or on WordPress's guess, which lands on a 404 for all but one): 41 get a 301 to their college's page
+(slugs that changed, such as alabama-a-and-m-university, and mergers such as the six colleges now part of Dallas
+College, Georgia's 2013-2018 mergers, Purdue Northwest and Berklee), 109 a 410 because IPEDS shows the college, or the
+one it merged into, closed (Argosy, Brown Mackie, Everest, Vatterott, Virginia College, Birmingham-Southern, Wells and
+others). Each rule covers
+`admission/<old>` and `admissions/<old>`. The 112 in `legacy_unresolved.csv` stay as they are, with the reason (no
+college found, a college with no page here yet, or IPEDS shows neither a closing nor a successor);
+`legacy_existing_wrong.csv` is empty: no existing Rank Math redirect sends an old address to another college.
+
+Run this after C and D: some 301s point at pages they keep, and the plan checks each target is published.
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-legacy.sql.gz`).
+2. Dry run: `bash scripts/admissions/legacy_redirects_live.sh plan`. It changes nothing and should end "150 rows
+   ready, 0 already done, 0 skipped". Report every `SKIP` line (a page uses the old slug again, a 301 target that
+   isn't one published page, or an address another active rule answers) before going on.
+3. `bash scripts/admissions/legacy_redirects_live.sh apply`; note the log name it prints. It ends "added N rules, 0
+   already there, N skipped".
+4. Check: `bash scripts/admissions/legacy_redirects_live.sh check` should end "300 addresses checked, 0 wrong" (rows
+   skipped in step 2 show up as WRONG). Then /admission/brookhaven-college/ lands on Dallas College's page
+   (/admissions/el-centro-college/), /admissions/augusta-state-university/ on Augusta University's, and
+   /admission/argosy-university-atlanta/ answers 410. A 410 that becomes a 301 to some other college is WordPress's
+   slug guess: it stops once the exact-slug 404 guess (functions.php from 759f5b7) is live. If anything else
+   breaks: `bash scripts/admissions/legacy_redirects_live.sh revert <log name>`, then report.
+5. Changelog: one row with the number of 301 and 410 rules, the log name and the undo command.
+
+Undo: `bash scripts/admissions/legacy_redirects_live.sh revert <log name>` deletes the rules it added.
+
 Don't switch on Rank Math's inactive regex rule `^admission/(.+)/?$`: it would send renamed colleges to dead addresses.

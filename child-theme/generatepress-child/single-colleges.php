@@ -433,8 +433,13 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                 'icon'        => '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
             ),
         );
+        // Only values the college stated: a blank, "Not applicable" or "Do not know" used to show as "Not Required".
+        $requirements = array_values( array_filter( $requirements, function ( $req ) {
+            return ! in_array( strtolower( trim( (string) $req['value'] ) ), array( '', 'not applicable', 'do not know', 'not reported' ), true );
+        } ) );
         ?>
 
+        <?php if ( $requirements ) : ?>
         <section class="db-card db-requirements">
             <div class="db-card__header">
                 <h2 class="db-card__title">
@@ -465,7 +470,8 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                         if (
                             $value_lower !== 'not required' &&
                             $value_lower !== 'no' &&
-                            $value_lower !== 'neither required nor recommended'
+                            $value_lower !== 'neither required nor recommended' &&
+                            0 !== strpos( $value_lower, 'not considered' )
                         ) {
                             $is_required = true;
                         }
@@ -509,6 +515,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                 <p>Admission requirements may vary by program and applicant type. Always check the official <?php echo esc_html($college_name); ?> admissions page for the most current requirements and deadlines.</p>
             </div>
         </section>
+        <?php endif; ?>
 
         <!-- ============================================
              SECTION 5: CREDIT OPTIONS
@@ -534,8 +541,12 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                 'icon'        => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>',
             ),
         );
+        $credit_options = array_values( array_filter( $credit_options, function ( $credit ) {
+            return '' !== trim( (string) $credit['value'] );
+        } ) );
         ?>
 
+        <?php if ( $credit_options ) : ?>
         <section class="db-card db-credits">
             <div class="db-card__header">
                 <h2 class="db-card__title">
@@ -586,6 +597,7 @@ $has_act = ! empty( $act_rows ) || $has( $average_act_score );
                 <p>Credit policies and limits vary by department. Contact the <?php echo esc_html($college_name); ?> admissions office or registrar for specific credit transfer policies and maximum credit allowances.</p>
             </div>
         </section>
+        <?php endif; ?>
 
         <!-- ============================================
              SECTION 6: FAQ (only questions we can answer with data)

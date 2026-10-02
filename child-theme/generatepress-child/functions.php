@@ -791,8 +791,8 @@ function gpa_college_page_schema($data, $jsonld) {
     if ( $avg_gpa ) {
         $prerequisites[] = 'Average GPA: ' . $avg_gpa;
     }
-    if ( $avg_sat ) {
-        $prerequisites[] = 'Average SAT Score: ' . $avg_sat;
+    if ( is_numeric( trim( (string) $avg_sat ) ) ) {
+        $prerequisites[] = 'Average SAT Score: ' . trim( (string) $avg_sat );
     }
     if ( ! empty($prerequisites) ) {
         $program_schema['programPrerequisites'] = implode('; ', $prerequisites);
@@ -824,7 +824,7 @@ function gpa_college_page_schema($data, $jsonld) {
         );
     }
 
-    if ( $acceptance ) {
+    if ( preg_match( '/\d/', (string) $acceptance ) ) {
         $faq_items[] = array(
             '@type' => 'Question',
             'name'  => 'What is the acceptance rate at ' . $college . '?',
@@ -857,7 +857,7 @@ function gpa_college_page_schema($data, $jsonld) {
         );
     }
 
-    if ( $net_price ) {
+    if ( preg_match( '/\d/', (string) $net_price ) ) {
         $faq_items[] = array(
             '@type' => 'Question',
             'name'  => 'How much does it cost to attend ' . $college . '?',
@@ -943,9 +943,8 @@ function gpa_college_archive_schema($data, $jsonld) {
         'posts_per_page' => $per_page,
         'paged'          => $paged,
         'post_status'    => 'publish',
-        'meta_key'       => 'average_gpa',
-        'orderby'        => 'meta_value_num',
-        'order'          => 'DESC',
+        'orderby'        => 'title',
+        'order'          => 'ASC',
         'no_found_rows'  => true,
         'fields'         => 'ids',
     ));
@@ -976,7 +975,7 @@ function gpa_college_archive_schema($data, $jsonld) {
             '@id'         => $page_url . '#collectionpage',
             'url'         => $page_url,
             'name'        => 'US College Admissions Database',
-            'description' => 'Browse admission requirements, GPA scores, and acceptance rates for 3,700+ US colleges and universities.',
+            'description' => 'Browse admission requirements, acceptance rates and SAT and ACT score ranges for US colleges and universities.',
             'mainEntity'  => array( '@id' => $page_url . '#itemlist' ),
         );
     }
@@ -1101,7 +1100,6 @@ if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
             );
         } elseif ( '' !== $acc ) {
             $options = array(
-                $name . ' Acceptance Rate (' . $acc . ') & GPA Requirements',
                 $name . ' Acceptance Rate (' . $acc . ') & Admissions',
                 $name . ' Acceptance Rate: ' . $acc,
             );
@@ -1942,10 +1940,12 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
                     <span class="db-college-card__stat-label">Acceptance Rate</span>
                     <span class="db-college-card__stat-value <?php echo esc_attr( $acceptance_badge_class ); ?>"><?php echo $acceptance_display; ?></span>
                 </div>
+                <?php if ( '' !== $gpa_formatted ) : ?>
                 <div class="db-college-card__stat">
                     <span class="db-college-card__stat-label">Average GPA</span>
                     <span class="db-college-card__stat-value"><?php echo esc_html( $gpa_display ); ?></span>
                 </div>
+                <?php endif; ?>
             </div>
 
             <div class="db-college-card__test-box db-college-card__test-box--sat">
@@ -2035,7 +2035,7 @@ function gpa_ajax_filter_colleges() {
     $acceptance_rate = isset($_POST['acceptance_rate']) ? sanitize_text_field( wp_unslash( $_POST['acceptance_rate'] ) ) : '';
     $gpa_filter      = isset($_POST['gpa']) ? sanitize_text_field( wp_unslash( $_POST['gpa'] ) ) : '';
     $sat_filter      = isset($_POST['sat']) ? sanitize_text_field( wp_unslash( $_POST['sat'] ) ) : '';
-    $sort            = isset($_POST['sort']) ? sanitize_text_field( wp_unslash( $_POST['sort'] ) ) : 'gpa_desc';
+    $sort            = isset($_POST['sort']) ? sanitize_text_field( wp_unslash( $_POST['sort'] ) ) : 'name_asc';
     $paged           = isset($_POST['page']) ? max( 1, absint($_POST['page']) ) : 1;
     $per_page        = isset($_POST['per_page']) ? max( 1, min( 100, absint($_POST['per_page']) ) ) : 30;
 
@@ -2081,6 +2081,9 @@ function gpa_ajax_filter_colleges() {
             break;
     }
 
+    // GPA filters are off while no GPA is published (a GPA shows only with a college-published source); old
+    // links with ?gpa= or ?filter=top_rated list every college instead of none.
+    $gpa_filter = '';
     switch ( $gpa_filter ) {
         case '3.5_plus':
             $meta_query[] = array( 'key' => 'average_gpa', 'value' => 3.5, 'compare' => '>=', 'type' => 'DECIMAL(3,2)' );
@@ -2107,8 +2110,6 @@ function gpa_ajax_filter_colleges() {
 
     if ( $quick_filter === 'high_acceptance' ) {
         $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 70, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' );
-    } elseif ( $quick_filter === 'top_rated' ) {
-        $meta_query[] = array( 'key' => 'average_gpa', 'value' => 3.7, 'compare' => '>=', 'type' => 'DECIMAL(3,2)' );
     } elseif ( $quick_filter === 'ivy_league' ) {
         $ivy_slugs = array(
             'harvard', 'yale-university', 'princeton-university', 'columbia-university',
@@ -2131,7 +2132,8 @@ function gpa_ajax_filter_colleges() {
         'name_asc'        => array( 'orderby' => 'title', 'order' => 'ASC' ),
         'name_desc'       => array( 'orderby' => 'title', 'order' => 'DESC' ),
     );
-    $sort_cfg = isset( $sort_map[ $sort ] ) ? $sort_map[ $sort ] : $sort_map['gpa_desc'];
+    $sort_map['gpa_desc'] = $sort_map['gpa_asc'] = $sort_map['name_asc']; // no GPA to sort by (see above)
+    $sort_cfg = isset( $sort_map[ $sort ] ) ? $sort_map[ $sort ] : $sort_map['name_asc'];
     foreach ( $sort_cfg as $k => $v ) {
         $args[ $k ] = $v;
     }

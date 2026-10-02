@@ -18,7 +18,7 @@
         acceptance_rate: '',
         gpa: '',
         sat: '',
-        sort: 'gpa_desc',
+        sort: 'name_asc',
         page: 1,
         maxPages: parseInt(gpa_db_ajax.total_pages, 10) || 1,
         totalColleges: parseInt(gpa_db_ajax.total_colleges, 10) || 0,
@@ -112,7 +112,7 @@
         if (state.acceptance_rate) params.set('acceptance', state.acceptance_rate);
         if (state.gpa) params.set('gpa', state.gpa);
         if (state.sat) params.set('sat', state.sat);
-        if (state.sort && state.sort !== 'gpa_desc') params.set('sort', state.sort);
+        if (state.sort && state.sort !== 'name_asc') params.set('sort', state.sort);
 
         var queryString = params.toString();
         var newUrl = window.location.pathname + (queryString ? '?' + queryString : '');
@@ -362,7 +362,7 @@
         state.acceptance_rate = '';
         state.gpa = '';
         state.sat = '';
-        state.sort = 'gpa_desc';
+        state.sort = 'name_asc';
         state.page = 1;
 
         // Reset DOM elements
@@ -371,7 +371,7 @@
         if (acceptanceSelect) acceptanceSelect.value = '';
         if (gpaSelect) gpaSelect.value = '';
         if (satSelect) satSelect.value = '';
-        if (sortSelect) sortSelect.value = 'gpa_desc';
+        if (sortSelect) sortSelect.value = 'name_asc';
 
         setActivePill('all');
         updateURLParams();

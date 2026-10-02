@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 // ============================================
-// Initial query: first 30 colleges sorted by GPA DESC
+// Initial query: first 30 colleges by name (no GPA is published without a college-published source)
 // ============================================
 $paged = 1;
 $per_page = 30;
@@ -24,9 +24,8 @@ $args = array(
     'posts_per_page' => $per_page,
     'paged'          => $paged,
     'post_status'    => 'publish',
-    'meta_key'       => 'average_gpa',
-    'orderby'        => 'meta_value_num',
-    'order'          => 'DESC',
+    'orderby'        => 'title',
+    'order'          => 'ASC',
 );
 
 $college_query = new WP_Query( $args );
@@ -46,7 +45,7 @@ $total_pages = $college_query->max_num_pages;
         <div class="db-archive-hero__overlay"></div>
         <div class="db-archive-hero__content">
             <h1 class="db-archive-hero__title">US College Admissions Database</h1>
-            <p class="db-archive-hero__subtitle">Browse admission requirements, GPA scores, and acceptance rates for 3,700+ colleges and universities</p>
+            <p class="db-archive-hero__subtitle">Browse admission requirements, acceptance rates and SAT and ACT score ranges for US colleges and universities</p>
             <div class="db-archive-hero__stats">
                 <div class="db-archive-hero__stat">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -112,7 +111,6 @@ $total_pages = $college_query->max_num_pages;
             <button class="db-archive-pill" data-filter="public">Public</button>
             <button class="db-archive-pill" data-filter="private">Private</button>
             <button class="db-archive-pill" data-filter="high_acceptance">High Acceptance</button>
-            <button class="db-archive-pill" data-filter="top_rated">Top Rated</button>
         </div>
 
         <!-- ============================================
@@ -152,17 +150,6 @@ $total_pages = $college_query->max_num_pages;
                         </select>
                     </div>
 
-                    <!-- GPA -->
-                    <div class="db-archive-filters__group">
-                        <label class="db-archive-filters__label" for="db-filter-gpa">GPA</label>
-                        <select id="db-filter-gpa" class="db-archive-filters__select" data-filter="gpa">
-                            <option value="">All</option>
-                            <option value="3.5_plus">3.5+</option>
-                            <option value="3.0_3.5">3.0 - 3.5</option>
-                            <option value="under_3.0">Under 3.0</option>
-                        </select>
-                    </div>
-
                     <!-- SAT -->
                     <div class="db-archive-filters__group">
                         <label class="db-archive-filters__label" for="db-filter-sat">SAT</label>
@@ -178,10 +165,9 @@ $total_pages = $college_query->max_num_pages;
                     <div class="db-archive-filters__group">
                         <label class="db-archive-filters__label" for="db-filter-sort">Sort By</label>
                         <select id="db-filter-sort" class="db-archive-filters__select" data-filter="sort">
-                            <option value="gpa_desc">GPA (High to Low)</option>
+                            <option value="name_asc">Name A-Z</option>
                             <option value="acceptance_asc">Acceptance Rate (Low to High)</option>
                             <option value="sat_desc">SAT Score (High to Low)</option>
-                            <option value="name_asc">Name A-Z</option>
                         </select>
                     </div>
                 </div>
@@ -214,14 +200,14 @@ $total_pages = $college_query->max_num_pages;
         <section class="db-archive-intro" aria-labelledby="db-intro-compare">
             <h2 id="db-intro-compare" class="db-archive-intro__title">Compare admission stats</h2>
             <p class="db-archive-intro__text">
-                Each college profile shows acceptance rate, average GPA, and the 25th-75th percentile SAT and ACT score ranges side-by-side. Use the filters above to narrow by ownership, acceptance rate, GPA threshold, or SAT band, then sort to compare schools on a single metric.
+                Each college profile shows its acceptance rate and the 25th-75th percentile SAT and ACT score ranges side-by-side. Use the filters above to narrow by ownership, acceptance rate or SAT band, then sort to compare schools on a single metric.
             </p>
         </section>
 
         <section class="db-archive-intro" aria-labelledby="db-intro-methodology">
             <h2 id="db-intro-methodology" class="db-archive-intro__title">Methodology</h2>
             <p class="db-archive-intro__text">
-                Acceptance rates, score ranges, and enrollment figures are sourced from each institution's most recent Common Data Set and IPEDS submission. Average GPA reflects reported admitted-student data where available. Profiles are refreshed each admissions cycle &mdash; flag any discrepancy and we'll re-check the source.
+                Admissions figures change every cycle. We're moving each profile to figures from the college's own Common Data Set and federal IPEDS data, with the source and year next to every number. Confirm anything important with the college's admissions office.
             </p>
         </section>
 

@@ -1,4 +1,4 @@
-# Live page check, 2026-10-02 17:54 UTC
+# Live page check, 2026-10-02 18:03 UTC
 
 From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_check.py.
 
@@ -730,51 +730,56 @@ From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_che
 ## /admissions/fairfax-university-of-america/
 
 - status 200
-- title: Fairfax University of America Acceptance Rate: 1%
-- description: Fairfax University of America admits just 1% of applicants. It's a private 4-year college in Fairfax, Virginia, with 43 students. See what it takes to get in.
-- og:title: Fairfax University of America Acceptance Rate: 1%
+- title: Fairfax University of America Admission Requirements
+- description: Fairfax University of America is a private 4-year college in Fairfax, Virginia. See admission requirements and credit options.
+- og:title: Fairfax University of America Admission Requirements
 - H1: Fairfax University of America Admissions & Acceptance Rate
-- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, PostalAddress, Question
-  - FAQ: What is the acceptance rate at Fairfax University of America?
-- "Acceptance rate": rfax University of America Admissions & Acceptance Rate Fairfax, Virginia Private 4 Year Acceptance Rate: 1% Enrollment: 43 Admission Scores Fairfax University of Am
+- JSON-LD: 1 parse, 0 don't; types: BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, ListItem, PostalAddress
+- "Acceptance rate": rfax University of America Admissions & Acceptance Rate Fairfax, Virginia Private 4 Year Admission Scores Fairfax University of America does not report SAT or ACT sc
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
 
 ## /admissions/kaplan-university-davenport-campus/
 
 - status 200
 - title: Purdue Global Davenport Campus Admission Requirements
-- description: Purdue Global Davenport Campus is a private 4-year college in Davenport, Iowa, with 30,512 students. See admission requirements and credit options.
+- description: Purdue Global Davenport Campus is a private 4-year college in Davenport, Iowa. See admission requirements and credit options.
 - og:title: Purdue Global Davenport Campus Admission Requirements
 - H1: Purdue Global Davenport Campus Admissions & Acceptance Rate
-- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, PostalAddress, Question
-  - FAQ: What is the acceptance rate at Purdue Global Davenport Campus?
-- "Acceptance rate": ue Global Davenport Campus Admissions & Acceptance Rate Davenport, Iowa Private 4 Year Acceptance Rate: 100% Enrollment: 30,512 Admission Scores Purdue Global Davenp
+- JSON-LD: 1 parse, 0 don't; types: BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, ListItem, PostalAddress
+- "Acceptance rate": ue Global Davenport Campus Admissions & Acceptance Rate Davenport, Iowa Private 4 Year Admission Scores Purdue Global Davenport Campus does not report SAT or ACT sco
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
 
 ## /admissions/wichita-area-technical-college/
 
 - status 200
 - title: Wichita Area Technical College Admission Requirements
-- description: Wichita Area Technical College is a public 2-year college in Wichita, Kansas, with 5,021 students. See its admission requirements and credit options.
+- description: Wichita Area Technical College is a public 2-year college in Wichita, Kansas. See its admission requirements and credit options.
 - og:title: Wichita Area Technical College Admission Requirements
 - H1: Wichita Area Technical College Admissions & Acceptance Rate
-- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
-  - FAQ: What is the acceptance rate at Wichita Area Technical College?
-  - FAQ: How much does it cost to attend Wichita Area Technical College?
-- "Acceptance rate": ita Area Technical College Admissions & Acceptance Rate Wichita, Kansas Public 2 Year Acceptance Rate: 100% Enrollment: 5,021 Key Highlights Net Price $9,211 Admissi
+- JSON-LD: 1 parse, 0 don't; types: BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, ListItem, PostalAddress
+- "Acceptance rate": ita Area Technical College Admissions & Acceptance Rate Wichita, Kansas Public 2 Year Admission Scores Wichita Area Technical College does not report SAT or ACT scor
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
 
 ## /admissions/the-university-of-texas-at-brownsville/
 
 - status 200
 - title: The University of Texas at Brownsville Admissions
-- description: The University of Texas at Brownsville is a public 4-year college in Brownsville, Texas, with 7,648 students. See admission requirements and credit options.
+- description: The University of Texas at Brownsville is a public 4-year college in Brownsville, Texas. See admission requirements and credit options.
 - og:title: The University of Texas at Brownsville Admissions
 - H1: The University of Texas at Brownsville Admissions & Acceptance Rate
-- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
-  - FAQ: What is the acceptance rate at The University of Texas at Brownsville?
-  - FAQ: How much does it cost to attend The University of Texas at Brownsville?
-- "Acceptance rate": ty of Texas at Brownsville Admissions & Acceptance Rate Brownsville, Texas Public 4 Year Acceptance Rate: 100% Enrollment: 7,648 Key Highlights Net Price $5,057 Admi
+- JSON-LD: 1 parse, 0 don't; types: BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, ListItem, PostalAddress
+- "Acceptance rate": ty of Texas at Brownsville Admissions & Acceptance Rate Brownsville, Texas Public 4 Year Admission Scores The University of Texas at Brownsville does not report SAT
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/bacone-college/
+
+- status 200
+- title: Bacone College Admission Requirements & Acceptance Rate
+- description: Bacone College is a private 4-year college in Muskogee, Oklahoma. See admission requirements and credit options.
+- og:title: Bacone College Admission Requirements & Acceptance Rate
+- H1: Bacone College Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, ListItem, PostalAddress
+- "Acceptance rate": one College Bacone College Admissions & Acceptance Rate Muskogee, Oklahoma Private 4 Year Admission Scores Bacone College does not report SAT or ACT scores for admit
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
 
 ## sitemap /sitemap_index.xml colleges

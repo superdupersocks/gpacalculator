@@ -213,6 +213,9 @@ function gpa_asset_ver( $relative_path ) {
     return $mtime ? (string) $mtime : wp_get_theme()->get( 'Version' );
 }
 
+// Load order (design system overhaul): tokens → layout → components → template file
+// (homepage / calculator / content / database) → calculator bundle → calc-theme.css.
+// Template files depend on 'gpa-components' so they always print after it.
 add_action('wp_enqueue_scripts', 'gpa_design_tokens', 5);
 function gpa_design_tokens() {
     wp_enqueue_style(
@@ -221,6 +224,37 @@ function gpa_design_tokens() {
         array('gpa-google-fonts'),
         gpa_asset_ver( 'gpa-design-tokens.css' )
     );
+    wp_enqueue_style(
+        'gpa-layout',
+        get_stylesheet_directory_uri() . '/layout.css',
+        array('gpa-design-tokens'),
+        gpa_asset_ver( 'layout.css' )
+    );
+    wp_enqueue_style(
+        'gpa-components',
+        get_stylesheet_directory_uri() . '/components.css',
+        array('gpa-layout'),
+        gpa_asset_ver( 'components.css' )
+    );
+}
+
+// Calculator bundles (calc-assets/*.css) are enqueued while the content renders, so they print in the
+// footer; calc-theme.css joins that late queue after them.
+add_action('wp_footer', 'gpa_calc_theme_styles', 1);
+function gpa_calc_theme_styles() {
+    $styles = wp_styles();
+    foreach ( $styles->queue as $handle ) {
+        $src = isset( $styles->registered[ $handle ] ) ? (string) $styles->registered[ $handle ]->src : '';
+        if ( false !== strpos( $src, '/calc-assets/' ) ) {
+            wp_enqueue_style(
+                'gpa-calc-theme',
+                get_stylesheet_directory_uri() . '/calc-theme.css',
+                array( $handle ),
+                gpa_asset_ver( 'calc-theme.css' )
+            );
+            return;
+        }
+    }
 }
 
 add_action('wp_enqueue_scripts', 'gpa_homepage_styles');
@@ -229,7 +263,7 @@ function gpa_homepage_styles() {
         wp_enqueue_style(
             'gpa-homepage',
             get_stylesheet_directory_uri() . '/gpa-homepage.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'gpa-homepage.css' )
         );
     }
@@ -241,7 +275,7 @@ function calc_page_styles() {
         wp_enqueue_style(
             'calc-page',
             get_stylesheet_directory_uri() . '/calculator-page.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'calculator-page.css' )
         );
     }
@@ -253,7 +287,7 @@ function gpa_content_styles() {
         wp_enqueue_style(
             'gpa-content',
             get_stylesheet_directory_uri() . '/content-styles.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'content-styles.css' )
         );
     }
@@ -265,7 +299,7 @@ function gpa_database_page_styles() {
         wp_enqueue_style(
             'database-page',
             get_stylesheet_directory_uri() . '/database-page.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'database-page.css' )
         );
     }
@@ -1382,6 +1416,13 @@ if ( ! function_exists( 'gpa_render_breadcrumb' ) ) {
             $trail[] = array( get_the_title(), null );
         } elseif ( is_post_type_archive( 'colleges' ) ) {
             $trail[] = array( 'College Admissions', null );
+        } elseif ( is_singular() && ! is_front_page() ) {
+            // Same trail as the BreadcrumbList schema: Home > parent pages > this page.
+            $post_id = get_queried_object_id();
+            foreach ( gpa_breadcrumb_ancestors( $post_id ) as $ancestor_id ) {
+                $trail[] = array( gpa_breadcrumb_title( $ancestor_id ), get_permalink( $ancestor_id ) );
+            }
+            $trail[] = array( gpa_breadcrumb_title( $post_id ), null );
         } else {
             return;
         }
@@ -1400,6 +1441,39 @@ if ( ! function_exists( 'gpa_render_breadcrumb' ) ) {
         }
         echo '</ol></nav>';
     }
+}
+
+/** Published parent pages of a page, top level first. */
+function gpa_breadcrumb_ancestors( $post_id ) {
+    $ids = array();
+    foreach ( array_reverse( get_post_ancestors( $post_id ) ) as $ancestor_id ) {
+        if ( 'publish' === get_post_status( $ancestor_id ) ) {
+            $ids[] = $ancestor_id;
+        }
+    }
+    return $ids;
+}
+
+function gpa_breadcrumb_title( $post_id ) {
+    return wp_specialchars_decode( wp_strip_all_tags( get_the_title( $post_id ) ), ENT_QUOTES );
+}
+
+/**
+ * Design overhaul phase 4: the breadcrumb sits in the hero, above the H1, on
+ * calculator, content and blog post pages. College pages print their own.
+ */
+add_action( 'generate_before_page_title', 'gpa_hero_breadcrumb' );
+add_action( 'generate_before_entry_title', 'gpa_hero_breadcrumb' );
+function gpa_hero_breadcrumb() {
+    static $done = false;
+    if ( $done || ! is_singular( array( 'page', 'post' ) ) || is_front_page() || ! in_the_loop() || ! is_main_query() ) {
+        return;
+    }
+    if ( is_page() && ! gpa_is_content_hero_page() && ! ( function_exists( 'gpa_is_calculator_tool_page' ) && gpa_is_calculator_tool_page() ) ) {
+        return;
+    }
+    $done = true;
+    gpa_render_breadcrumb();
 }
 
 add_filter( 'rank_math/json_ld', 'gpa_breadcrumb_list_schema', 110, 2 );
@@ -1445,13 +1519,22 @@ function gpa_breadcrumb_list_schema( $data, $jsonld ) {
         );
         $page_url = $admission_url;
     } elseif ( is_singular() ) {
+        $post_id = get_queried_object_id();
+        foreach ( gpa_breadcrumb_ancestors( $post_id ) as $ancestor_id ) {
+            $items[] = array(
+                '@type'    => 'ListItem',
+                'position' => count( $items ) + 1,
+                'name'     => gpa_breadcrumb_title( $ancestor_id ),
+                'item'     => get_permalink( $ancestor_id ),
+            );
+        }
         $items[] = array(
             '@type'    => 'ListItem',
-            'position' => 2,
-            'name'     => get_the_title(),
-            'item'     => get_permalink(),
+            'position' => count( $items ) + 1,
+            'name'     => gpa_breadcrumb_title( $post_id ),
+            'item'     => get_permalink( $post_id ),
         );
-        $page_url = get_permalink();
+        $page_url = get_permalink( $post_id );
     } else {
         return $data;
     }
@@ -1899,7 +1982,7 @@ function gpa_college_archive_shortcode() {
     wp_enqueue_style(
         'database-page',
         get_stylesheet_directory_uri() . '/database-page.css',
-        array( 'gpa-design-tokens' ),
+        array('gpa-components'),
         gpa_asset_ver( 'database-page.css' )
     );
     wp_enqueue_script(
@@ -2701,7 +2784,7 @@ function gpa_is_content_hero_page() {
 
 add_filter( 'body_class', 'gpa_content_hero_band_class', 30 );
 function gpa_content_hero_band_class( $classes ) {
-    if ( gpa_is_content_hero_page() ) {
+    if ( gpa_is_content_hero_page() || is_singular( 'post' ) ) {
         $classes[] = 'gpa-hero-band';
     }
     return $classes;
@@ -3508,6 +3591,130 @@ function gpa_scale_page_nav( $content ) {
  * /admissions/auburn-university/ to auburn-university-at-montgomery. Exact matches keep working.
  */
 add_filter( 'strict_redirect_guess_404_permalink', '__return_true' );
+
+/**
+ * Design overhaul phase 4: logo = "4.0" badge (inline SVG, colors from
+ * layout.css tokens) + live wordmark "GPA Calculator" with "GPA" in the
+ * primary blue. The site title text stays a real link for crawlers.
+ */
+function gpa_logo_badge_svg() {
+	return '<svg class="gpa-logo-badge" viewBox="0 0 36 36" width="36" height="36" aria-hidden="true" focusable="false">'
+		. '<defs><linearGradient id="gpa-logo-grad" x1="0" y1="0" x2="1" y2="1">'
+		. '<stop offset="0" class="gpa-logo-badge__from"/><stop offset="1" class="gpa-logo-badge__to"/>'
+		. '</linearGradient></defs>'
+		. '<rect width="36" height="36" rx="9" fill="url(#gpa-logo-grad)"/>'
+		. '<text x="18" y="23" text-anchor="middle" font-size="14">4.0</text>'
+		. '</svg>';
+}
+
+add_filter( 'generate_logo_output', 'gpa_logo_output', 20, 2 );
+function gpa_logo_output( $output, $logo_url ) {
+	return sprintf(
+		'<div class="site-logo"><a href="%1$s" rel="home" aria-label="%2$s">%3$s</a></div>',
+		esc_url( apply_filters( 'generate_logo_href', home_url( '/' ) ) ),
+		esc_attr( get_bloginfo( 'name', 'display' ) ),
+		gpa_logo_badge_svg()
+	);
+}
+
+add_filter( 'generate_site_title_output', 'gpa_site_title_wordmark', 20 );
+function gpa_site_title_wordmark( $output ) {
+	return preg_replace( '#(rel="home"[^>]*>)\s*GPA\b#', '$1<span class="gpa-wordmark-accent">GPA</span>', $output, 1 );
+}
+
+/**
+ * Design overhaul phase 4: Rank Math FAQ blocks become an accordion with the
+ * first question open. The answers stay in the HTML (and in the FAQ schema);
+ * without JavaScript every answer shows. Styles: components.css section 8.
+ */
+add_action( 'wp_footer', 'gpa_faq_accordion', 30 );
+function gpa_faq_accordion() {
+	if ( is_admin() || ! is_singular() ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	document.querySelectorAll('.entry-content .rank-math-block').forEach(function (block, b) {
+		var items = block.querySelectorAll('.rank-math-list-item');
+		if (!items.length) { return; }
+		items.forEach(function (item, i) {
+			var q = item.querySelector('.rank-math-question'), a = item.querySelector('.rank-math-answer');
+			if (!q || !a) { return; }
+			a.id = a.id || 'gpa-faq-' + b + '-' + i;
+			q.setAttribute('role', 'button');
+			q.setAttribute('tabindex', '0');
+			q.setAttribute('aria-controls', a.id);
+			function set(open) { item.classList.toggle('is-open', open); q.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+			set(i === 0);
+			q.addEventListener('click', function () { set(!item.classList.contains('is-open')); });
+			q.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); set(!item.classList.contains('is-open')); }
+			});
+		});
+		block.classList.add('gpa-faq-ready');
+	});
+})();
+</script>
+	<?php
+}
+
+/**
+ * Design overhaul: "On this page" table of contents under the calculator (or above the first numbered section on
+ * pages without one), listing exactly the H2s that layout.css section 10 numbers, so the numbers always match.
+ * Shown on pages with 4 or more numbered sections; pages that already have a Rank Math TOC block keep theirs.
+ * Built in the browser from the numbered headings, so no page content changes. Styles: layout.css section 11.
+ */
+add_action( 'wp_footer', 'gpa_toc_builder', 31 );
+function gpa_toc_builder() {
+	if ( is_admin() || ! is_singular() || is_front_page() ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	var c = document.querySelector('.entry-content');
+	if (!c || c.querySelector('.wp-block-rank-math-toc-block')) { return; }
+	var toc = document.createElement('div');
+	toc.className = 'wp-block-rank-math-toc-block gpa-toc';
+	toc.id = 'gpa-toc';
+	toc.hidden = true;
+	c.insertBefore(toc, c.firstChild);
+	var heads = [].filter.call(c.querySelectorAll('h2'), function (h) {
+		return /gpa-sec/.test(getComputedStyle(h, '::before').content || '');
+	});
+	if (heads.length < 4) { toc.remove(); return; }
+	var top = function (el) { while (el.parentElement && el.parentElement !== c) { el = el.parentElement; } return el; };
+	var root = c.querySelector('#root, .gpacalc-mount, .frm_forms');
+	var before = root ? top(root).nextElementSibling : top(heads[0]);
+	var used = {};
+	var title = document.createElement('p');
+	title.textContent = 'On this page';
+	var list = document.createElement('ul');
+	heads.forEach(function (h) {
+		if (!h.id) {
+			var base = (h.textContent || 'section').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'section', id = base, n = 2;
+			while (used[id] || document.getElementById(id)) { id = base + '-' + n++; }
+			h.id = id;
+		}
+		used[h.id] = 1;
+		var li = document.createElement('li'), a = document.createElement('a');
+		a.href = '#' + h.id;
+		a.textContent = (h.textContent || '').trim();
+		li.appendChild(a);
+		list.appendChild(li);
+	});
+	var nav = document.createElement('nav');
+	nav.setAttribute('aria-label', 'On this page');
+	nav.appendChild(list);
+	toc.appendChild(title);
+	toc.appendChild(nav);
+	c.insertBefore(toc, before || null);
+	toc.hidden = false;
+})();
+</script>
+	<?php
+}
 
 /**
  * Sitemap pages: break ties on the modified time by ID.

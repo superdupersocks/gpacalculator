@@ -276,3 +276,55 @@ function gpa_register_block_patterns() {
     ));
 
 }
+
+// ============================================
+// Design overhaul phase 4: callout and takeaways block styles, Sources pattern
+// (styles in components.css)
+// ============================================
+add_action('init', 'gpa_register_component_block_styles');
+function gpa_register_component_block_styles() {
+    $styles = array(
+        'gpa-callout-tip'  => 'Tip callout',
+        'gpa-callout-note' => 'Note callout',
+        'gpa-callout-warn' => 'Heads-up callout',
+        'gpa-takeaways'    => 'Key takeaways',
+    );
+    foreach ( array( 'core/group', 'core/paragraph' ) as $block ) {
+        foreach ( $styles as $name => $label ) {
+            if ( 'gpa-takeaways' === $name && 'core/paragraph' === $block ) {
+                continue;
+            }
+            register_block_style( $block, array( 'name' => $name, 'label' => $label ) );
+        }
+    }
+}
+
+add_action('init', 'gpa_register_sources_pattern');
+function gpa_register_sources_pattern() {
+    register_block_pattern('gpa/sources', array(
+        'title'       => 'Sources',
+        'description' => 'End-of-page sources list: title, reviewed/updated line (date from the last update), numbered sources with publisher.',
+        'categories'  => array('gpa-content'),
+        'keywords'    => array('sources', 'citations', 'references'),
+        'content'     => '<!-- wp:group {"className":"gpa-sources"} -->
+<div class="wp-block-group gpa-sources"><!-- wp:paragraph {"className":"gpa-sources__title"} -->
+<p class="gpa-sources__title">Sources</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph {"className":"gpa-sources__meta"} -->
+<p class="gpa-sources__meta">Reviewed by the GPA Calculator team · Updated [gpa_updated_month]</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:list {"ordered":true} -->
+<ol class="wp-block-list"><!-- wp:list-item -->
+<li><a href="https://nces.ed.gov/">Source title</a>Publisher</li>
+<!-- /wp:list-item --></ol>
+<!-- /wp:list --></div>
+<!-- /wp:group -->',
+    ));
+}
+
+/** [gpa_updated_month]: "October 2026", from the post's last update. */
+add_shortcode('gpa_updated_month', function () {
+    return esc_html( get_the_modified_date( 'F Y' ) );
+});

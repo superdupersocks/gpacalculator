@@ -1,7 +1,7 @@
 /************************************************
 Theme Name: GeneratePress Child
 Template: generatepress
-Version: 1.2
+Version: 1.1.1
 Description: Child theme for GPA Calculator site.
 Typography, colors, and spacing defined in
 gpa-design-tokens.css (source of truth: gpa-homepage.css).
@@ -21,12 +21,12 @@ gpa-design-tokens.css (source of truth: gpa-homepage.css).
     letter-spacing: 0.05em !important;
     margin-bottom: 24px !important;
 }
-.content-label-blue { background: #DBEAFE !important; color: #1E40AF !important; }
-.content-label-green { background: #D1FAE5 !important; color: #065F46 !important; }
-.content-label-amber { background: #FEF3C7 !important; color: #92400E !important; }
-.content-label-pink { background: #FCE7F3 !important; color: #9D174D !important; }
-.content-label-teal { background: #CCFBF1 !important; color: #115E59 !important; }
-.content-label-slate { background: #E2E8F0 !important; color: #1E293B !important; }
+.content-label-blue { background: var(--gpa-blue-100) !important; color: var(--gpa-blue-800) !important; }
+.content-label-green { background: var(--gpa-green-100) !important; color: var(--gpa-green-800) !important; }
+.content-label-amber { background: var(--gpa-amber-100) !important; color: var(--gpa-amber-800) !important; }
+.content-label-pink { background: var(--gpa-pink-100) !important; color: var(--gpa-pink-800) !important; }
+.content-label-teal { background: var(--gpa-teal-100) !important; color: var(--gpa-teal-800) !important; }
+.content-label-slate { background: var(--gpa-gray-200) !important; color: var(--gpa-text-strong) !important; }
 
 .content-h2 {
     font-family: var(--gpa-font) !important;
@@ -90,73 +90,27 @@ gpa-design-tokens.css (source of truth: gpa-homepage.css).
   content: none;
 }
 
-/* ============================================
-   5. TABLE
-   ============================================ */
-figure.wp-block-table.content-table {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    margin-bottom: 32px !important;
-    overflow: hidden !important;
-}
-.content-table table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    background: #fff !important;
-    border-radius: 8px !important;
-    overflow: hidden !important;
-    border: 1px solid #E5E7EB !important;
-}
-.content-table thead {
-    background: #2563EB !important;
-}
-.content-table thead th {
-    color: #fff !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    border: none !important;
-}
-.content-table tbody td {
-    font-size: 16px !important;
-    padding: 16px 24px !important;
-    text-align: center !important;
-    color: #1F2937 !important;
-    border-bottom: 1px solid #E5E7EB !important;
-    border-left: none !important;
-    border-right: none !important;
-}
-.content-table tbody tr:hover {
-    background: #F9FAFB !important;
-}
-/* Gray header variant (for example calculations) */
-.content-table-gray thead {
-    background: #F3F4F6 !important;
-}
-.content-table-gray thead th {
-    color: #1F2937 !important;
-}
+/* Tables, formula, result and FAQ blocks: components.css */
 
 /* ============================================
    6. DEFINITION BLOCK
    ============================================ */
 .content-card-definition {
-    background: #EFF6FF !important;
+    background: var(--gpa-tint-blue) !important;
     border-radius: 8px !important;
     padding: 24px !important;
-    border-left: 4px solid #2563EB !important;
+    border-left: 4px solid var(--gpa-primary) !important;
     margin-bottom: 32px !important;
 }
 .content-card-definition .content-card-title {
     font-size: 20px !important;
     font-weight: 700 !important;
-    color: #1E3A8A !important;
+    color: var(--gpa-heading) !important;
     margin-bottom: 8px !important;
 }
 .content-card-definition .content-card-body {
     font-size: 16px !important;
-    color: #374151 !important;
+    color: var(--gpa-text) !important;
     line-height: 1.7 !important;
 }
 
@@ -164,21 +118,21 @@ figure.wp-block-table.content-table {
    7. IMPORTANT NOTE BLOCK
    ============================================ */
 .content-card-note {
-    background: #FFFBEB !important;
+    background: var(--gpa-amber-50) !important;
     border-radius: 12px !important;
     padding: 24px !important;
-    border: 2px solid #FBBF24 !important;
+    border: 2px solid var(--gpa-amber-400) !important;
     margin-bottom: 32px !important;
 }
 .content-card-note .content-card-title {
     font-size: 18px !important;
     font-weight: 600 !important;
-    color: #78350F !important;
+    color: var(--gpa-amber-900) !important;
     margin-bottom: 8px !important;
 }
 .content-card-note .content-card-body {
     font-size: 16px !important;
-    color: #92400E !important;
+    color: var(--gpa-amber-800) !important;
     line-height: 1.7 !important;
 }
 
@@ -186,79 +140,32 @@ figure.wp-block-table.content-table {
    8. TIP BLOCK
    ============================================ */
 .content-card-tip {
-    background: #F0FDF4 !important;
+    background: var(--gpa-green-50) !important;
     border-radius: 12px !important;
     padding: 24px !important;
-    border: 2px solid #4ADE80 !important;
+    border: 2px solid var(--gpa-green-400) !important;
     margin-bottom: 32px !important;
 }
 .content-card-tip .content-card-title {
     font-size: 18px !important;
     font-weight: 600 !important;
-    color: #14532D !important;
+    color: var(--gpa-green-900) !important;
     margin-bottom: 8px !important;
 }
 .content-card-tip .content-card-body {
     font-size: 16px !important;
-    color: #166534 !important;
+    color: var(--gpa-green-800) !important;
     line-height: 1.7 !important;
-}
-
-/* ============================================
-   9. FORMULA BLOCK
-   ============================================ */
-.content-formula {
-    background: #EFF6FF !important;
-    border-radius: 12px !important;
-    padding: 32px !important;
-    border: 1px solid #BFDBFE !important;
-    text-align: center !important;
-    margin-bottom: 32px !important;
-}
-.content-formula p {
-    font-size: 24px !important;
-    font-weight: 700 !important;
-    color: #1D4ED8 !important;
-    line-height: 1.3 !important;
-    margin: 0 !important;
-}
-@media (min-width: 768px) {
-    .content-formula p { font-size: 30px !important; }
-}
-
-/* ============================================
-   10. EXAMPLE CALCULATION BLOCK
-   ============================================ */
-.content-result {
-    background: linear-gradient(to right, #F0FDF4, #EFF6FF) !important;
-    border-radius: 8px !important;
-    padding: 24px !important;
-    border: 2px solid #22C55E !important;
-    text-align: center !important;
-    margin-bottom: 32px !important;
-}
-.content-result p {
-    font-size: 20px !important;
-    color: #374151 !important;
-    margin: 0 !important;
-}
-.content-result-big {
-    font-size: 36px !important;
-    font-weight: 700 !important;
-    color: #15803D !important;
-}
-@media (min-width: 768px) {
-    .content-result-big { font-size: 48px !important; }
 }
 
 /* ============================================
    11. IMAGE WITH CAPTION
    ============================================ */
 .content-image {
-    background: #F3F4F6 !important;
+    background: var(--gpa-gray-100) !important;
     border-radius: 8px !important;
     padding: 32px !important;
-    border: 1px solid #D1D5DB !important;
+    border: 1px solid var(--gpa-border-strong) !important;
     text-align: center !important;
     margin-bottom: 32px !important;
 }
@@ -271,35 +178,8 @@ figure.wp-block-table.content-table {
 .content-image figcaption,
 .content-caption {
     font-size: 16px !important;
-    color: #4B5563 !important;
+    color: var(--gpa-text-secondary) !important;
     font-style: italic !important;
-}
-
-/* ============================================
-   12. FAQ ACCORDION
-   (Rank Math FAQ block â€” same as calculator page)
-   ============================================ */
-.content-faq .rank-math-faq-item,
-.content-faq .wp-block-rank-math-faq-block .rank-math-faq-item {
-    background: #fff !important;
-    border-radius: 8px !important;
-    padding: 32px !important;
-    border: 1px solid #E5E7EB !important;
-    margin-bottom: 24px !important;
-}
-.content-faq .rank-math-question {
-    font-family: var(--gpa-font) !important;
-    font-size: var(--gpa-h4-size) !important;
-    font-weight: var(--gpa-h4-weight) !important;
-    color: var(--gpa-text-heading) !important;
-    margin-bottom: 12px !important;
-}
-.content-faq .rank-math-answer,
-.content-faq .rank-math-answer p {
-    font-family: var(--gpa-font) !important;
-    font-size: var(--gpa-body-size) !important;
-    color: var(--gpa-text-muted) !important;
-    line-height: 1.6 !important;
 }
 
 /* ============================================
@@ -310,14 +190,14 @@ figure.wp-block-table.content-table {
     margin-bottom: 24px !important;
 }
 .content-rel-card {
-    background: #fff !important;
+    background: var(--gpa-surface) !important;
     border-radius: 8px !important;
     padding: 32px !important;
-    border: 1px solid #E5E7EB !important;
+    border: 1px solid var(--gpa-border) !important;
     transition: all 0.3s ease !important;
 }
 .content-rel-card:hover {
-    border-color: #2563EB !important;
+    border-color: var(--gpa-primary) !important;
 }
 .content-rel-icon {
     width: 48px !important;
@@ -329,10 +209,10 @@ figure.wp-block-table.content-table {
     margin-bottom: 16px !important;
     font-size: 24px !important;
 }
-.content-rel-icon-blue { background: #2563EB !important; }
-.content-rel-icon-green { background: #16A34A !important; }
-.content-rel-icon-amber { background: #D97706 !important; }
-.content-rel-icon-purple { background: #7C3AED !important; }
+.content-rel-icon-blue { background: var(--gpa-primary) !important; }
+.content-rel-icon-green { background: var(--gpa-green-600) !important; }
+.content-rel-icon-amber { background: var(--gpa-amber-600) !important; }
+.content-rel-icon-purple { background: var(--gpa-accent) !important; }
 
 .content-rel-title {
     font-family: var(--gpa-font) !important;
@@ -357,10 +237,10 @@ figure.wp-block-table.content-table {
     transition: transform 0.2s ease !important;
 }
 .content-rel-cta a:hover { transform: translateX(4px) !important; }
-.content-rel-cta-blue a { color: #2563EB !important; }
-.content-rel-cta-green a { color: #16A34A !important; }
-.content-rel-cta-amber a { color: #D97706 !important; }
-.content-rel-cta-purple a { color: #7C3AED !important; }
+.content-rel-cta-blue a { color: var(--gpa-primary) !important; }
+.content-rel-cta-green a { color: var(--gpa-green-600) !important; }
+.content-rel-cta-amber a { color: var(--gpa-amber-600) !important; }
+.content-rel-cta-purple a { color: var(--gpa-accent) !important; }
 
 /* ============================================
    SECTION DIVIDERS
@@ -370,26 +250,26 @@ figure.wp-block-table.content-table {
     padding: 24px 32px !important;
     border-radius: 12px !important;
     margin-bottom: 40px !important;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--gpa-black) 10%, transparent) !important;
 }
 .content-section-bar h2 {
     font-family: var(--gpa-font) !important;
     font-size: var(--gpa-h1-size-m) !important;
     font-weight: var(--gpa-h1-weight) !important;
-    color: #fff !important;
+    color: var(--gpa-white) !important;
     line-height: var(--gpa-h1-line) !important;
     margin: 0 !important;
-    -webkit-text-fill-color: #fff !important;
+    -webkit-text-fill-color: var(--gpa-white) !important;
 }
 @media (min-width: 768px) {
     .content-section-bar h2 { font-size: var(--gpa-h1-size) !important; }
 }
-.content-bar-blue { background: linear-gradient(to right, #2563EB, #1D4ED8) !important; }
-.content-bar-green { background: linear-gradient(to right, #16A34A, #15803D) !important; }
-.content-bar-amber { background: linear-gradient(to right, #D97706, #B45309) !important; }
-.content-bar-pink { background: linear-gradient(to right, #DB2777, #BE185D) !important; }
-.content-bar-teal { background: linear-gradient(to right, #0D9488, #0F766E) !important; }
-.content-bar-slate { background: linear-gradient(to right, #334155, #1E293B) !important; }
+.content-bar-blue { background: linear-gradient(to right, var(--gpa-primary), var(--gpa-primary-hover)) !important; }
+.content-bar-green { background: linear-gradient(to right, var(--gpa-green-600), var(--gpa-green-700)) !important; }
+.content-bar-amber { background: linear-gradient(to right, var(--gpa-amber-600), var(--gpa-amber-700)) !important; }
+.content-bar-pink { background: linear-gradient(to right, var(--gpa-pink-600), var(--gpa-pink-700)) !important; }
+.content-bar-teal { background: linear-gradient(to right, var(--gpa-teal-600), var(--gpa-teal-700)) !important; }
+.content-bar-slate { background: linear-gradient(to right, var(--gpa-slate-700), var(--gpa-gray-800)) !important; }
 
 /* ============================================
    RESPONSIVE
@@ -400,10 +280,6 @@ figure.wp-block-table.content-table {
     .content-card-definition,
     .content-card-note,
     .content-card-tip { padding: 20px !important; }
-    .content-formula { padding: 24px !important; }
-    .content-result { padding: 20px !important; }
-    .content-table thead th { padding: 12px !important; font-size: 14px !important; }
-    .content-table tbody td { padding: 12px !important; font-size: 14px !important; }
     .content-rel-card { padding: 24px !important; }
     .content-section-bar { padding: 20px 24px !important; }
     .content-section-bar h2 { font-size: var(--gpa-h1-size-m) !important; }
@@ -425,143 +301,7 @@ figure.wp-block-table.content-table {
     word-wrap: normal !important;
 }
 
-/* ============================================
-   HEADER / NAV - Match Bolt
-   ============================================ */
-.site-header {
-    background: #fff !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
-    border-bottom: 1px solid #E5E7EB !important;
-}
-.site-header .site-title,
-.site-header .site-title a {
-    font-family: "Lexend", "Lexend Fallback", system-ui, sans-serif !important;
-    font-size: 20px !important;
-    font-weight: 700 !important;
-    color: #2563EB !important;
-    text-decoration: none !important;
-}
-.main-navigation a,
-.main-navigation .main-nav a {
-    font-family: "Lexend", "Lexend Fallback", system-ui, sans-serif !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-	
-    color: #4B5563 !important;
-/*     padding: 10px 16px !important; */
-    transition: color 0.2s !important;
-}
-.main-navigation a{
-	color:#4b5563 !important;
-}
-/* ============================================
-   FOOTER - Match Bolt (dark style)
-   ============================================ */
-.site-footer {
-    background:#1f2937 !important;
-    color: #D1D5DB !important;
-    font-family: "Lexend", "Lexend Fallback", system-ui, sans-serif !important;
-}
-.site-footer .footer-widgets {
-    background: #1f2937 !important;
-    padding: 3rem 0 !important;
-}
-.site-footer .footer-widgets .widget {
-    color: #D1D5DB !important;
-}
-.site-footer .footer-widgets .widget-title,
-.site-footer .footer-widgets h2 {
-    font-family: "Lexend", "Lexend Fallback", system-ui, sans-serif !important;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-    font-weight: 600 !important;
-    color: #fff !important;
-    margin-bottom: 16px !important;
-}
-.site-footer .footer-widgets a {
-    color: #D1D5DB !important;
-    font-size: 14px !important;
-    text-decoration: none !important;
-    transition: color 0.2s !important;
-}
-.site-footer .footer-widgets a:hover {
-    color: #fff !important;
-}
-.site-footer .footer-widgets ul {
-    list-style: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-.site-footer .footer-widgets li {
-    margin-bottom: 8px !important;
-    line-height: 20px;
-}
-
-/* Footer Bar */
-.site-footer .footer-bar,
-.site-info {
-    background: #1f2937 !important;
-    border-top: 1px solid #374151 !important;
-    padding: 24px 0 !important;
-    text-align: center !important;
-    color: #9CA3AF !important;
-    font-size: 14px !important;
-}
-.site-info a {
-    color: #9CA3AF !important;
-    text-decoration: none !important;
-}
-
-
-.main-navigation a:hover,
-.main-navigation .main-nav a:hover {
-    color: #111827 !important;
-/*     background: #F9FAFB !important; */
-    border-radius: 8px !important;
-}
-.main-navigation .sub-menu {
-    background: #fff !important;
-    border: 1px solid #E5E7EB !important;
-    border-radius: 12px !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important; 
-    min-width: 260px !important;
-}
-.main-navigation .sub-menu a {
-    font-size: 13px !important; line-height: 1.25rem !important;
-    color: #374151 !important; 
-}
- 
-.main-navigation .sub-menu a:hover {
-    color: #111827 !important;
-    background: #F9FAFB !important;
-	
-}
-
-.home .main-navigation #menu-top-nav   .sub-menu  li  a{
-	display:block !important;
-		padding: 0.625rem !important;  
-	
-}
-.menu-item-has-children .dropdown-menu-toggle{
-	padding-right:0 !important;
-}
-#menu-top-nav{
-	gap:25px;
-}
-.main-navigation .main-nav ul li.menu-item-has-children>a{
-	padding-left:0 !important;
-}
-
-.main-navigation .main-nav ul li a{
-	padding:0 !important;
-}
- .main-navigation #menu-top-nav .sub-menu li a{
-	display: block !important;
-    padding: 0.625rem !important;
-}
-/* .fs-sticky-footer{
-	display:none !important;
-} */
+/* Header, nav and footer: layout.css (sections 8 and 9) */
 
 /* NATIVE LIST SEMANTICS - content-bullets / content-numbered badges removed */
 .gpa-embed select + .absolute.inset-y-0.left-3.flex.items-center.pointer-events-none.text-blue-600 {
@@ -578,40 +318,6 @@ figure.wp-block-table.content-table {
  * :focus-visible so GeneratePress's mouse-focus suppression
  * is left intact.
  * ============================================================ */
-
-/* NAV HOVER v2 */
-@media (min-width: 769px) {
-  .main-navigation .main-nav > ul { column-gap: 4px !important; margin-right: -12px !important; }
-  .main-navigation .main-nav > ul > li > a,
-  .main-navigation .main-nav > ul > li.menu-item-has-children > a {
-    line-height: 38px !important;
-    margin: 11px 0 !important;
-    padding: 0 12px !important;
-    border-radius: 10px !important;
-    transition: background-color .15s ease, color .15s ease;
-  }
-  .main-navigation .main-nav > ul > li > a:hover,
-  .main-navigation .main-nav > ul > li:hover > a,
-  .main-navigation .main-nav > ul > li.sfHover > a {
-    background-color: #f3f4f6 !important;
-    color: #111827 !important;
-  }
-  .main-navigation .main-nav > ul > li.current-menu-item > a,
-  .main-navigation .main-nav > ul > li.current-menu-ancestor > a { color: #6d28d9 !important; }
-
-  .main-navigation .sub-menu { padding: 6px !important; }
-  .main-navigation .main-nav .sub-menu li a {
-    padding: 9px 12px !important;
-    border-radius: 8px !important;
-    background: transparent !important;
-    transition: background-color .12s ease, color .12s ease;
-  }
-  .main-navigation .main-nav .sub-menu li a:hover,
-  .main-navigation .main-nav .sub-menu li a:focus-visible {
-    background-color: #f5f3ff !important;
-    color: #6d28d9 !important;
-  }
-}
 
 .entry-content a:not([class]):hover {
 	text-decoration-thickness: 2px;
@@ -631,7 +337,7 @@ input:focus-visible,
 textarea:focus-visible,
 [role="button"]:focus-visible,
 [tabindex]:focus-visible {
-	outline: 2px solid #2563eb !important;
+	outline: 2px solid var(--gpa-primary) !important;
 	outline-offset: 2px !important;
 }
  
@@ -684,6 +390,8 @@ body.home .entry-content > .wp-block-group {
 	body.page-template-template-calculator .entry-content,
 	body.page-template-template-content .entry-content,
 	body.gpa-template-content .entry-content,
+	body.page-template-gpa-content-page .entry-content,
+	body.single-post .entry-content,
 	body.home .site-content,
 	body.single-colleges .db-container,
 	body.post-type-archive-colleges .db-container {
@@ -700,61 +408,8 @@ html body div.gpa-rail {
 	max-width: 336px !important;
 }
 
-/* 9/24/2026 */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content {
-	max-width: 900px !important;
-	margin-left: auto !important;
-	margin-right: auto !important;
-}
- 
-/* Calculator, tables, media, charts: full 900px */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *, .gpacalc-mount *) {
-	max-width: 100%;
-}
- 
-/* Article text: 800px, centred (ad slots are not text, so they keep 900px) */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6):not(#root *, .gpacalc-mount *) {
-	max-width: 800px !important;
-	margin-left: auto !important;
-	margin-right: auto !important;
-}
- 
-/* Homepage body typography */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
-	font-size: 20px !important;
-	line-height: 34px !important;
-}
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content p:not(#root *, .gpacalc-mount *) {
-	margin-top: 0 !important;
-	margin-bottom: 24px !important;
-}
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content li:not(#root *, .gpacalc-mount *) {
-	margin-bottom: 10px !important;
-}
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *, .gpacalc-mount *) {
-	margin-top: 64px !important;
-	margin-bottom: 16px !important;
-}
- 
-/* Section rhythm */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
-	margin-bottom: 80px !important;
-}
- 
-/* Mobile */
-@media (max-width: 767px) {
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
-		font-size: 18px !important;
-		line-height: 30px !important;
-	}
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content h2:not(#root *, .gpacalc-mount *) {
-		margin-top: 48px !important;
-	}
-	:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
-		margin-bottom: 56px !important;
-	}
-}
- 
+/* Article column, text width, type and section rhythm: layout.css */
+
  /* Give rail slots their size before the ad loads */
 .gpa-rail [id^="gpacalculator-net_siderail"] { min-width: 300px; }
 
@@ -766,27 +421,3 @@ html body div.gpa-rail {
 	justify-content: flex-start;
 }
 
-/* ============================================================
-   SHARED COMPACT HERO (desktop) â€” every calculator and content page
-   Same spacing as the High School GPA page: 28px top, 12px + 8px
-   title-to-subtitle gap, 16px subtitle. Phones keep the standard hero.
-   ============================================================ */
-@media (min-width: 641px) {
-  body.page-template-template-calculator.page-template-template-calculator .entry-header,
-  body.gpa-hero-band.gpa-hero-band .entry-header { padding-top: 28px !important; }
-
-  body.page-template-template-calculator.page-template-template-calculator .entry-header h1.entry-title,
-  body.gpa-hero-band.gpa-hero-band .entry-header h1.entry-title { margin-bottom: 12px !important; }
-
-  body.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro,
-  body.gpa-hero-band.gpa-hero-band .entry-header .rx-hero-intro { margin-top: 8px !important; }
-
-  body.page-template-template-calculator.page-template-template-calculator .entry-header .rx-hero-intro p,
-  body.gpa-hero-band.gpa-hero-band .entry-header .rx-hero-intro p {
-    font-size: 16px !important;
-    line-height: 1.55 !important;
-    max-width: 760px;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
-}

@@ -1404,9 +1404,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 164748,factor_demonstrated_interest,C.718,,no,,,Not Considered,Considered,
 164748,ed_offered,C.2101,,no,,,,No,
 164748,ea_offered,C.2201,,no,,,,Yes,
-173160,applicants,C.116,,no,,,,1988,
-173160,admits,C.117,,no,,,,1766,
-173160,enrolled,C.118,,no,,,,482,
+173160,applicants,C.116,1988,yes,file text + collegedata.fyi (lines by sex added up),,1988,1988,
+173160,admits,C.117,,no,,,1763,1766,
+173160,enrolled,C.118,482,yes,file text + collegedata.fyi (lines by sex added up),,482,482,
 173160,factor_first_generation,C.711,,no,,,,Considered,
 173160,sat_submit_pct,C.901,,no,,,1.5,0.0,
 173160,act_submit_pct,C.902,,no,,,25.8,0.0,
@@ -1423,9 +1423,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 173160,gpa_below_100,C.1129,,no,,,0.0,,
 173160,gpa_avg,C.1201,3.67,yes,"file text, checked",,3.67,,
 173160,gpa_submit_pct,C.1202,100.0,yes,"file text, checked",,100.0,,
-219718,applicants,C.117,,no,,,,1754,1486
-219718,admits,C.118,,no,,,,1540,895
-219718,enrolled,C.119,,no,,,,415,288
+219718,applicants,C.117,,no,"failed check: 1,754 in the CDS but 1,486 in IPEDS for the same fall",,1754,1754,1486
+219718,admits,C.118,,no,"failed check: 1,540 in the CDS but 895 in IPEDS for the same fall",,1540,1540,895
+219718,enrolled,C.119,,no,failed check: 415 in the CDS but 288 in IPEDS for the same fall,,415,415,288
 219718,sat_submit_pct,C.901,,no,,,2.2,,11.0
 219718,act_submit_pct,C.902,,no,,,29.3,,88.0
 219718,sat_comp_p25,C.905,,no,,,,1200,
@@ -2519,6 +2519,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 110592,gpa_submit_pct,C.1202,100.0,yes,form fields,100.0,100.0,100.0,
 110608,applicants,C.117,,no,,,33350,,33005
 110608,admits,C.118,30842,yes,file text + IPEDS same fall,,30842,,30842
+110608,enrolled,C.119,5543,yes,file text + IPEDS same fall (lines by sex added up),,5543,,5543
 110608,waitlist_policy,C.201,,no,,,No,,
 110608,gpa_100_199,C.1128,,no,,,0.0,,
 110608,gpa_below_100,C.1129,,no,,,0.0,,
@@ -6020,8 +6021,8 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 447689,ed_offered,C.2101,,no,,,No,,
 447689,ea_offered,C.2201,,no,,,Yes,,
 139755,applicants,C.116,66881,yes,file text + collegedata.fyi,,66881,66881,
-139755,admits,C.117,8921,yes,file text + collegedata.fyi,,8921,8921,
-139755,enrolled,C.118,4071,yes,file text + collegedata.fyi,,4071,4071,
+139755,admits,C.117,8921,yes,file text + collegedata.fyi (lines by sex added up),,8921,8921,
+139755,enrolled,C.118,4071,yes,file text + collegedata.fyi (lines by sex added up),,4071,4071,
 139755,waitlist_policy,C.201,,no,,,Yes,,
 139755,waitlist_offered,C.202,7651,yes,file text + collegedata.fyi,,7651,7651,
 139755,waitlist_accepted,C.203,4875,yes,file text + collegedata.fyi,,4875,4875,
@@ -7920,9 +7921,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 239017,ed_applicants,C.2106,62,yes,form fields,62,62,62,
 239017,ed_admits,C.2107,45,yes,form fields,45,45,45,
 239017,ea_offered,C.2201,Yes,yes,form fields,Yes,Yes,,
-220613,applicants,C.116,,no,,,,2481,
-220613,admits,C.117,,no,,,,1771,
-220613,enrolled,C.118,,no,,,,589,
+220613,applicants,C.116,2481,yes,file text + collegedata.fyi (lines by sex added up),,2481,2481,
+220613,admits,C.117,1771,yes,file text + collegedata.fyi (lines by sex added up),,1771,1771,
+220613,enrolled,C.118,,no,,,570,589,
 220613,waitlist_policy,C.201,,no,,,No,,
 220613,factor_rigor,C.701,Very Important,yes,file text + collegedata.fyi,,Very Important,Very Important,
 220613,factor_class_rank,C.702,,no,,,Important,Very Important,
@@ -8166,7 +8167,6 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 140252,gpa_below_100,C.1129,,no,,,0.0,,
 140252,gpa_avg,C.1201,3.12,yes,"file text, checked",,3.12,,
 140252,gpa_submit_pct,C.1202,92.92,yes,"file text, checked",,92.92,,
-177940,enrolled,C.119,,no,,,21,,
 177940,waitlist_policy,C.201,,no,,,No,,
 177940,factor_rigor,C.701,,no,,,Considered,,
 177940,factor_class_rank,C.702,,no,,,Not Considered,,
@@ -9969,6 +9969,8 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 187897,factor_work_experience,C.717,Not Considered,yes,file text + collegedata.fyi,,Not Considered,Not Considered,
 187897,factor_demonstrated_interest,C.718,Not Considered,yes,file text + collegedata.fyi,,Not Considered,Not Considered,
 187897,ed_offered,C.2101,,no,,,,No,
+187967,applicants,C.117,,no,,,1110,,
+187967,enrolled,C.119,,no,,,222,,
 187967,waitlist_policy,C.201,,no,,,No,,
 187967,factor_rigor,C.701,,no,,,,Very Important,
 187967,factor_class_rank,C.702,,no,,,,Considered,
@@ -12004,6 +12006,34 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 136950,ed_offered,C.2101,,no,,,,Yes,
 136950,ed_applicants,C.2106,548,yes,file text + collegedata.fyi,,548,548,
 136950,ed_admits,C.2107,222,yes,file text + collegedata.fyi,,222,222,
+152318,applicants,C.117,6097,yes,file text + IPEDS same fall,,6097; lines by sex 6094,955,6097
+152318,admits,C.118,4686,yes,file text + IPEDS same fall,,4686; lines by sex 4684,658,4686
+152318,enrolled,C.119,604,yes,file text + IPEDS same fall,,604,68,604
+152318,waitlist_offered,C.202,,no,,,272,,
+152318,waitlist_accepted,C.203,,no,,,128,,
+152318,waitlist_admitted,C.204,,no,,,11,,
+152318,sat_submit_pct,C.901,,no,,,38.6,6.0,53.0
+152318,act_submit_pct,C.902,19.9,yes,file text + collegedata.fyi,,19.9,19.9,29.0
+152318,sat_comp_p25,C.905,,no,,,,1310,
+152318,sat_comp_p50,C.906,,no,,,,1410,
+152318,sat_comp_p75,C.907,,no,,,,1490,
+152318,sat_erw_p25,C.908,,no,,,,630,650
+152318,sat_erw_p50,C.909,,no,,,,680,690
+152318,sat_erw_p75,C.910,,no,,,,720,730
+152318,sat_math_p25,C.911,,no,,,,660,670
+152318,sat_math_p50,C.912,730,yes,collegedata.fyi + IPEDS same fall,,,730,730
+152318,sat_math_p75,C.913,,no,,,,780,770
+152318,act_comp_p25,C.914,,no,,,,28,29
+152318,act_comp_p50,C.915,32,yes,collegedata.fyi + IPEDS same fall,,,32,32
+152318,act_comp_p75,C.916,,no,,,,33,34
+152318,gpa_4_0,C.1121,,no,,,62.0,,
+152318,gpa_375_399,C.1122,,no,,,24.0,,
+152318,gpa_350_374,C.1123,,no,,,10.0,,
+152318,gpa_325_349,C.1124,,no,,,3.0,,
+152318,gpa_300_324,C.1125,,no,,,1.0,,
+152318,gpa_below_100,C.1129,,no,,,100.0,,
+152318,gpa_avg,C.1201,3.83,yes,file text + collegedata.fyi,,3.83,3.83,
+152318,gpa_submit_pct,C.1202,99.8,yes,"file text, checked",,99.8,,
 184782,applicants,C.116,22410,yes,file text + collegedata.fyi,,22410,22410,
 184782,admits,C.117,17152,yes,file text + collegedata.fyi,,17152,17152,
 184782,enrolled,C.118,3455,yes,file text + collegedata.fyi,,3455,3455,
@@ -15857,9 +15887,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 169716,act_comp_p75,C.916,,no,,,,29,
 169716,gpa_avg,C.1201,,no,,,,3.68,
 169716,ea_offered,C.2201,,no,,,Yes,,
-134130,applicants,C.116,90523,yes,file text + collegedata.fyi,,90523,90523,
-134130,admits,C.117,18403,yes,file text + collegedata.fyi,,18403,18403,
-134130,enrolled,C.118,7619,yes,file text + collegedata.fyi,,7619,7619,
+134130,applicants,C.116,90523,yes,file text + collegedata.fyi (lines by sex added up),,90523,90523,
+134130,admits,C.117,18403,yes,file text + collegedata.fyi (lines by sex added up),,18403,18403,
+134130,enrolled,C.118,7619,yes,file text + collegedata.fyi (lines by sex added up),,7619,7619,
 134130,waitlist_policy,C.201,,no,,,Yes,,
 134130,waitlist_offered,C.202,3196,yes,file text + collegedata.fyi,,3196,3196,
 134130,waitlist_accepted,C.203,2737,yes,file text + collegedata.fyi,,2737,2737,
@@ -15958,6 +15988,9 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 139959,gpa_submit_pct,C.1202,100.0,yes,form fields,100.0,100.0,100.0,
 139959,ed_offered,C.2101,No,yes,form fields,No,No,,
 139959,ea_offered,C.2201,Yes,yes,form fields,Yes,Yes,,
+141574,applicants,C.117,,no,,,19217,,
+141574,admits,C.118,,no,,,13388,,
+141574,enrolled,C.119,,no,,,3056,,
 141574,waitlist_policy,C.201,,no,,,No,,
 141574,factor_rigor,C.701,,no,,,,Very Important,
 141574,factor_class_rank,C.702,,no,,,,Very Important,
@@ -19087,7 +19120,7 @@ unitid,field,question,value,verified,method,form,text,collegedata,ipeds
 138354,ea_offered,C.2201,,no,,,,No,
 141334,applicants,C.116,,no,failed check: admit rate 80% in the CDS but 52% in IPEDS for another fall,,5067,5067,
 141334,admits,C.117,,no,failed check: admit rate 80% in the CDS but 52% in IPEDS for another fall,,4051,4051,
-141334,enrolled,C.118,,no,,,,1612,
+141334,enrolled,C.118,,no,failed check: admit rate 80% in the CDS but 52% in IPEDS for another fall,,1612,1612,
 141334,sat_submit_pct,C.901,,no,,,39.95,95.0,
 141334,act_submit_pct,C.902,17.06,yes,file text + collegedata.fyi,,17.06,17.06,
 141334,sat_comp_p25,C.905,,no,,,,940,

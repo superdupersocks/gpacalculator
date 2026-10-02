@@ -214,11 +214,16 @@ def next_step(why, u, inst, page_of):
     return "check the college's own website: retire it as in checkpoint C if it closed, import it if it's open"
 
 
-def main():
+def institutions():
     inst = {r["unitid"]: r for r in read(DATA / "institutions.csv")}
     for need in ("undergrad_enrollment_source", "net_price_source"):
         if need not in next(iter(inst.values())):
             raise SystemExit(f"institutions.csv has no {need} column: run build.py first")
+    return inst
+
+
+def source_years():
+    """The year each imported figure reports, and the source releases, as the pages label them."""
     src = json.loads((DATA / "field_sources.json").read_text())
     manifest = json.loads((DATA / "manifest.json").read_text())
     scorecard = json.loads((DATA / "scorecard" / "source.json").read_text())
@@ -232,6 +237,12 @@ def main():
     }
     if not years["net_price"]:
         raise SystemExit(f"no academic year in the net price source: {src['net_price']['meaning']!r}")
+    return years
+
+
+def main():
+    inst = institutions()
+    years = source_years()
 
     corrected = {r["slug"]: r for r in read(AUDIT / "corrections.csv")}
     acted = {r["slug"]: r for r in read(AUDIT / "phase2_cd_actions.csv")}

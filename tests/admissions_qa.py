@@ -25,6 +25,8 @@ import cds_pages  # noqa: E402
 import fetch  # noqa: E402
 import match  # noqa: E402
 import phase2_e_import  # noqa: E402
+import phase2_r_review  # noqa: E402
+import phase2_s_pages  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
 fails = []
@@ -576,6 +578,110 @@ eq("E: a branch campus points to the college that reports for it, by UNITID or m
     "301 to Ohio Business College-Sheffield's page, /admissions/ohio-business-college-sheffield/, which has the "
     "federal figures for this campus"])
 
+# After E: pages for the colleges that held pages point to, and the redirects to them
+_s = phase2_s_pages
+_inst = {"168847": {"name": "Baker College", "closed_date": "", "operating": "Yes", "control": "Private not-for-profit",
+                    "opeid": "00229500"},
+         "16884704": {"name": "Baker College of Cadillac", "closed_date": "", "operating": "", "control": "",
+                      "opeid": "00229504"},
+         "484613": {"name": "University of Phoenix-Arizona", "closed_date": "", "operating": "Yes",
+                    "control": "Private for-profit", "opeid": "02088800"},
+         "484631": {"name": "University of Phoenix-California", "closed_date": "", "operating": "No",
+                    "control": "Private for-profit", "opeid": "02088801"},
+         "484710": {"name": "University of Phoenix-Nevada", "closed_date": "06/05/2023", "operating": "",
+                    "control": "Private for-profit", "opeid": "02088802"},
+         "133997": {"name": "Florida Career College-Miami", "closed_date": "", "operating": "",
+                    "control": "Private for-profit", "opeid": "02186200"},
+         "203720": {"name": "Ohio Business College-Sheffield", "closed_date": "", "operating": "Yes",
+                    "control": "Private for-profit", "opeid": "02158500"},
+         "501211": {"name": "Ohio Business College-Columbus", "closed_date": "", "operating": "", "control": "",
+                    "opeid": "02158507"}}
+eq("S: a merged college's page goes to its successor's new page, Phoenix's small state units to the one Phoenix page; "
+   "a closed or non-operating successor retires it; Fortis keeps its page under its new IPEDS ID",
+   [_s.c_action({"slug": slug, "successor_unitid": u}, _inst, {}) for slug, u in (
+       ("baker-college-of-owosso", "168847"), ("university-of-phoenix-san-diego-campus", "484631"),
+       ("university-of-phoenix-las-vegas-campus", "484710"), ("florida-career-college-clearwater", "133997"),
+       ("fortis-institute", "494436"))],
+   [("301", "168847"), ("301", "484613"),
+    ("retire", "merged into University of Phoenix-Nevada, which closed 06/05/2023 (IPEDS)"),
+    ("retire", "merged into Florida Career College-Miami, which College Scorecard (June 2026) doesn't list as "
+               "operating"),
+    ("rematch", "494436")])
+eq("S/M: a branch campus goes to the college that reports for it, when that college has or gets a page",
+   [_s.e_action({"why": w, "unitid": u}, _inst, {"203720": "ohio-business-college-sheffield"}) for w, u in (
+       (_why, "16884704"), (_why, "501211"), ("open in IPEDS 2024 but missing from College Scorecard", "203720"))],
+   ["168847", "203720", ""])
+_pages, _s.PAGES = _s.PAGES, {"166027": ("harvard-new", "Harvard New")}
+_rows = dict(full_rows)
+_rows.update({"16602701": dict(full_rows["166027"], control="", opeid="00215501"), "100751": full_rows["100751"]})
+_new, _srows, _act = _s.build([], [{"slug": "harvard-extension", "why": _why, "unitid": "16602701"}], _rows, {},
+                              _years)
+_s.PAGES = _pages
+eq("S: each new page gets E's fields, and its campuses a 301 to it",
+   (_new, [(r["slug"], r["post_title"], r["ipeds_unitid"], r["acceptance_rate"]) for r in _srows],
+    [(a["checkpoint"], a["slug"], a["action"], a["target"]) for a in _act]),
+   ([{"slug": "harvard-new", "post_title": "Harvard New"}], [("harvard-new", "Harvard New", "166027", "3.6%")],
+    [("S", "harvard-extension", "301", "https://gpacalculator.net/admissions/harvard-new/")]))
+
+# Identity review of the pages E left unchanged
+_r = phase2_r_review
+_older = ("IPEDS HD2002-HD2013: DeVry University-Utah (UNITID 448877), Sandy, UT; deleted from IPEDS 2013 (DEATHYR); "
+          "merged into UNITID 482644 (NEWID) | IPEDS HD2013-HD2015: DeVry University-Utah (UNITID 482644), Sandy, UT; "
+          "closed 06/01/2015 (CLOSEDAT, HD2015); deleted from IPEDS 2015 (DEATHYR)")
+_two = ("IPEDS HD2002-HD2005: Medvance Institute (UNITID 415011), Baton Rouge, LA; closed 12/31/2004 (CLOSEDAT, HD2005)"
+        " | IPEDS HD2002-HD2023: Fortis College-Baton Rouge (UNITID 439738), Baton Rouge, LA")
+eq("R: the audit's older records parse, and a NEWID chain leads to one college or, with two colleges, to none",
+   ([(s["unitid"], s["last"], s["closed"], s["newid"]) for s in _r.segments(_older)],
+    _r.chain_end(_r.segments(_older)), _r.chain_end(_r.segments(_two))),
+   ([("448877", 2013, "", "482644"), ("482644", 2015, "06/01/2015", "")], "482644", ""))
+_rm = {"method": "review", "unitid": "", "ipeds_name": ""}
+eq("R: which college a page names now: renamed, merged, a NEWID chain that closed, a near-exact name; none when it "
+   "left IPEDS or was never in it",
+   [_r.identity(slug, f, o, {"merged-one": {"successor_unitid": "231165", "successor_name": "Vermont State University"}},
+                m)[0] for slug, f, o, m in (
+       ("old-name", "renamed: same name, city and state as UNITID 188438, now SUNY Adirondack", "", _rm),
+       ("merged-one", "", "", _rm),
+       ("devry-utah", "ambiguous: 2 colleges carried this name in this city", _older, _rm),
+       ("typo", "", "", {"method": "fuzzy", "unitid": "180878", "ipeds_name": "Bryan College of Health Sciences"}),
+       ("gone", "left IPEDS: last listed in HD2016, no closing date recorded", "", _rm),
+       ("never", "", "", _rm))],
+   ["188438", "231165", "482644", "180878", "", ""])
+_ri = {"129367": {"name": "Connecticut State Community College", "closed_date": "", "operating": "Yes",
+                  "control": "Public", "level": "2-year", "opeid": "00163500"},
+       "150987": {"name": "Ivy Tech Community College", "closed_date": "", "operating": "Yes", "control": "Public",
+                  "level": "2-year", "opeid": "00932400"},
+       "15098713": {"name": "Ivy Tech Community College-Bloomington", "closed_date": "", "operating": "Yes",
+                    "control": "", "level": "", "opeid": "00932413"},
+       "1": {"name": "Closed U", "closed_date": "05/01/2020", "operating": "", "control": "Public", "level": "4-year",
+             "opeid": "1"},
+       "2": {"name": "Has Page U", "closed_date": "", "operating": "Yes", "control": "Public", "level": "4-year",
+             "opeid": "2"},
+       "3": {"name": "Gone U", "closed_date": "", "operating": "No", "control": "Public", "level": "4-year",
+             "opeid": "3"},
+       "4": {"name": "Unlisted U", "closed_date": "", "operating": "", "control": "Public", "level": "4-year",
+             "opeid": "4"},
+       "5": {"name": "Renamed U", "closed_date": "", "operating": "Yes", "control": "Public", "level": "4-year",
+             "opeid": "5"}}
+eq("R: outcomes: a new N page, an S page (also for a campus S's college reports for), IPEDS's closing date, an "
+   "existing page, Scorecard's not-operating or missing flag, and E's import",
+   [_r.outcome("x", u, _ri, {"2": "has-page"}, {"150987": "ivy-tech-community-college"})[:3] for u in (
+       "129367", "150987", "15098713", "1", "2", "3", "4", "5", "9")],
+   [("301", "N", "129367"), ("301", "P", "150987"), ("301", "P", "150987"), ("retire", "R", ""), ("301", "R", "2"),
+    ("hold", "", ""), ("hold", "", ""), ("import", "R", ""), ("hold", "", "")])
+_rmatch = {s: {"title": s.title(), "location": "X, Y", "method": "review", "unitid": "", "ipeds_name": ""}
+           for s in ("a-college", "a-college-too", "ats-institute-of-technology", "b-college")}
+_rrows, _rimp = _r.review(sorted(_rmatch), {
+    "a-college": {"finding": "renamed: same name, city and state as UNITID 5, now Renamed U", "older_ipeds": ""},
+    "a-college-too": {"finding": "renamed: same name, city and state as UNITID 5, now Renamed U", "older_ipeds": ""},
+    "ats-institute-of-technology": {"finding": "renamed: same name, city and state as UNITID 5, now Renamed U",
+                                    "older_ipeds": ""},
+    "b-college": {"finding": "renamed: same name, city and state as UNITID 2, now Has Page U", "older_ipeds": ""}},
+    {}, _rmatch, _ri, {"2": "has-page"}, {})
+eq("R: two pages confirmed as one college both wait; a manual hold stays; a college with a page gets the 301",
+   ([(r["slug"], r["outcome"], r["target"]) for r in _rrows], _rimp),
+   ([("a-college", "hold", ""), ("a-college-too", "hold", ""), ("ats-institute-of-technology", "hold", ""),
+     ("b-college", "301", "https://gpacalculator.net/admissions/has-page/")], {}))
+
 # CDS files on another college's website aren't this college's (same-named colleges)
 _web = {"219718": {"name": "Bethel University", "website": "www.bethelu.edu/"},
         "173160": {"name": "Bethel University", "website": "https://www.bethel.edu"},
@@ -639,6 +745,38 @@ eq("CDS pages: addresses with spaces or accents are sent percent-encoded, escape
    ["https://www.x.edu/facet/docs/FACET%20Effort%20Overview.pptx", "https://www.x.edu/a%20b/caf%C3%A9/",
     "https://www.x.edu/p?a=1&b=c%20d"])
 
+
+# A page counts where it ends up after redirects: on the college's site, cited there, its links read from there
+_moved = cds_pages.Crawler(10)
+_moved.robots = {h: _crawl.robots["www.example.edu"] for h in ("www.example.edu", "www.elsewhere.org")}
+_moved_to = {"https://www.example.edu/": "https://www.example.edu/home/",
+             "https://www.example.edu/ir/": "https://www.elsewhere.org/ir/"}
+_moved_site = {"https://www.example.edu/": '<a href="ir-office/">Institutional Research</a> <a href="/ir/">IR</a>',
+               "https://www.example.edu/home/ir-office/": '<a href="https://drive.google.com/file/d/'
+                                                         '1cb-7QPm2EL_CSJP4lw1RN1qLEKfHiQiF/view">CDS 2024-25</a>',
+               "https://www.example.edu/ir/": _site["https://www.example.edu/offices/ir/cds/"]}
+
+
+def _moved_get(url, check=True, limit=0):
+    _moved.final[url] = _moved_to.get(url, url)
+    return _moved_site.get(url, "").encode() or None
+
+
+_moved.get = _moved_get
+_row2, _ = _moved.find({**_drive, "name": "Example College"}, "www.example.edu")
+_moved_site["https://www.example.edu/"] = '<a href="/ir/">IR</a>'
+_row3, _ = _moved.find({**_drive, "name": "Example College"}, "www.example.edu")
+eq("CDS pages: a redirected page is read and cited at its final address, and only if that is on the college's site",
+   (_row2["page_url"], _row3), ("https://www.example.edu/home/ir-office/", None))
+eq("CDS pages: the SHA-256 to match is the copy cds.py read, else the archive copy's name",
+   [cds_pages.tokens(s)["sha256"][:4] for s in ({**_drive, "read_sha256": "cd" * 32}, _drive)], ["cdcd", "abab"])
+eq("CDS: a Google Sheets export (new bytes on every download) is read from the archived copy first",
+   [[k for k, _ in cds.copies(s)] for s in (
+       {"source_url": "https://doc-00-60-sheets.googleusercontent.com/export/x/y/1/2/*/z?format=xlsx",
+        "archive_url": "https://a/b"},
+       {"source_url": "https://drive.usercontent.google.com/download?id=x", "archive_url": "https://a/b"},
+       {"source_url": "https://www.x.edu/cds.pdf", "archive_url": ""})],
+   [["archive_url", "source_url"], ["source_url", "archive_url"], ["source_url"]])
 
 def _refuse(*a, **k):
     raise __import__("http.client").client.InvalidURL("URL can't contain control characters")

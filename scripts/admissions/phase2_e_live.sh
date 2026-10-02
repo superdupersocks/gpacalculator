@@ -3,9 +3,12 @@
 # scripts/admissions/phase2_e_import.py) into each confidently matched college post. Deploy the theme's E files
 # first (college-data.php reads these fields and shows each value's source and year).
 #
-#   bash scripts/admissions/phase2_e_live.sh plan          dry run on the server: what each field would change
-#   bash scripts/admissions/phase2_e_live.sh apply         write the fields, print the log name
-#   bash scripts/admissions/phase2_e_live.sh revert <log>  put every logged field back as it was
+#   bash scripts/admissions/phase2_e_live.sh plan [<csv>]   dry run on the server: what each field would change
+#   bash scripts/admissions/phase2_e_live.sh apply [<csv>]  write the fields, print the log name
+#   bash scripts/admissions/phase2_e_live.sh revert <log>   put every logged field back as it was
+#
+# <csv> is another file with the import's columns (data/admissions/audit/phase2_s_pages.csv); the default is the
+# import above.
 #
 # Each apply writes its log (the old value of every field it changes) to ~/backups/ on the server and
 # ~/gpacalculator-backups/ on this Mac. Take a database backup first and log each run in docs/LIVE_CHANGELOG.md.
@@ -20,6 +23,9 @@ SCP=(scp -q -i "$KEY" -o IdentitiesOnly=yes)
 LOCAL="$HOME/gpacalculator-backups"
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 ROWS="$REPO/data/admissions/audit/phase2_e_import.csv"
+if [[ "${1:-}" == plan || "${1:-}" == apply ]] && [[ -n "${2:-}" ]]; then
+  ROWS="$(cd "$(dirname "$2")" && pwd)/$(basename "$2")"
+fi
 PHP="$REPO/scripts/admissions/phase2_e_live.php"
 
 case "${1:-}" in

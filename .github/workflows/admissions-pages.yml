@@ -1,0 +1,39 @@
+name: Admissions page check
+# Reads the live pages listed in data/admissions/live_checks/pages.txt (read-only GETs, scripts/page_check.py) and
+# commits what each shows to data/admissions/live_checks/report.md: titles, structured data, the GPA and acceptance
+# cards, and flags for what the admissions cleanup removes. Runs on GitHub because the cloud sessions can't reach the
+# site. Changes nothing on the site.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/page_check.py'
+      - 'data/admissions/live_checks/pages.txt'
+      - '.github/workflows/admissions-pages.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-pages-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/page_check.py data/admissions/live_checks/pages.txt data/admissions/live_checks/report.md
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions/live_checks/report.md
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/.
+          git commit -m "Record what the live admissions pages show [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

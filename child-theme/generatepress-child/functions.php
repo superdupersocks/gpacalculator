@@ -2195,15 +2195,17 @@ function gpa_ajax_filter_colleges() {
         );
     }
 
+    // "Under N%" skips colleges with no rate: an empty acceptance_rate (open admission, not reported, or emptied by
+    // the E import for want of a source) casts to 0 and would otherwise count as the most selective.
     switch ( $acceptance_rate ) {
         case 'under_10':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 10, 'compare' => '<', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => array( 0.01, 10 - 0.01 ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(5,2)' );
             break;
         case 'under_25':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 25, 'compare' => '<', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => array( 0.01, 25 - 0.01 ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(5,2)' );
             break;
         case 'under_50':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 50, 'compare' => '<', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => array( 0.01, 50 - 0.01 ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(5,2)' );
             break;
         case 'over_50':
             $meta_query[] = array(
@@ -2229,6 +2231,8 @@ function gpa_ajax_filter_colleges() {
             break;
     }
 
+    // "Under 1200" skips colleges with no SAT figure, as "Under N%" does above: an empty average_sat_score (not
+    // reported, or emptied by the E import for want of a source) casts to 0.
     switch ( $sat_filter ) {
         case '1400_plus':
             $meta_query[] = array( 'key' => 'average_sat_score', 'value' => 1400, 'compare' => '>=', 'type' => 'NUMERIC' );
@@ -2237,7 +2241,7 @@ function gpa_ajax_filter_colleges() {
             $meta_query[] = array( 'key' => 'average_sat_score', 'value' => array( 1200, 1400 ), 'compare' => 'BETWEEN', 'type' => 'NUMERIC' );
             break;
         case 'under_1200':
-            $meta_query[] = array( 'key' => 'average_sat_score', 'value' => 1200, 'compare' => '<', 'type' => 'NUMERIC' );
+            $meta_query[] = array( 'key' => 'average_sat_score', 'value' => array( 1, 1199 ), 'compare' => 'BETWEEN', 'type' => 'NUMERIC' );
             break;
     }
 

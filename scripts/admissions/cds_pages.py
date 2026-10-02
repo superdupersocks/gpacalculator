@@ -1,6 +1,7 @@
 """Find the college's own web page that links to its Common Data Set (CDS) file when the file sits elsewhere.
 
-    python3 scripts/admissions/cds_pages.py [--sources CSV] [--institutions CSV] [--out CSV] [--max-pages 40]
+    python3 scripts/admissions/cds_pages.py [--sources CSV] [--institutions CSV] [--files CSV] [--out CSV]
+                                            [--max-pages 40]
 
 Digant's rule (2026-10-02): a CDS file on Google Drive, Sheets, SharePoint or another host counts only when the
 college's own website links to it, and the value then cites that page. For each college in cds_sources.csv whose
@@ -9,8 +10,10 @@ institutional-research addresses, then links that mention the Common Data Set or
 --max-pages) and looks for the file:
 
 - a Google file ID (Drive or Sheets) or the file's own path on a CDN, written in the page; or
-- a link to that year's CDS whose download has the same SHA-256 as the copy cds.py read (the archive copy is named
-  by its hash), for hosts whose download links don't name the file (Box).
+- a link to that year's CDS whose download has the same SHA-256 as the copy cds.py read (cds_files.csv; else the
+  archive copy, which is named by its hash): the college publishes those exact bytes itself.
+
+A page counts only where it ends up on the college's website after any redirect, and is cited at that address.
 
 Writes data/admissions/cds_pages.csv, one row per college found: the page, the link on it and how it matched.
 The run log lists the colleges not found with the pages read. Honors robots.txt.
@@ -104,7 +107,8 @@ def on_site(url, dom):
 
 def tokens(src):
     """What identifies the file in a page that links it: its Google ID, else its path on the CDN (the last two
-    segments, with and without URL encoding); plus the SHA-256 that names the archive copy."""
+    segments, with and without URL encoding); plus the SHA-256 of the copy cds.py read (src["read_sha256"]), else
+    the one that names the archive copy."""
     url = src["source_url"]
     out = {"google": "", "paths": [], "sha256": ""}
     if "google" in host(url):
@@ -116,7 +120,7 @@ def tokens(src):
             tail = "/".join(segs[-2:])
             out["paths"] = sorted({tail, urllib.parse.unquote(tail), urllib.parse.quote(urllib.parse.unquote(tail))})
     name = (src.get("archive_url") or "").rsplit("/", 1)[-1].split(".")[0]
-    out["sha256"] = name if re.fullmatch(r"[0-9a-f]{64}", name) else ""
+    out["sha256"] = src.get("read_sha256") or (name if re.fullmatch(r"[0-9a-f]{64}", name) else "")
     return out
 
 
@@ -170,7 +174,7 @@ def download_url(u):
 
 class Crawler:
     def __init__(self, max_pages):
-        self.max_pages, self.robots, self.last = max_pages, {}, {}
+        self.max_pages, self.robots, self.last, self.final = max_pages, {}, {}, {}
 
     def allowed(self, url):
         h = host(url)
@@ -196,6 +200,7 @@ class Crawler:
             req = urllib.request.Request(fetchable(url), headers={k: v for k, v in HEADERS.items() if k != "Referer"})
             with urllib.request.urlopen(req, timeout=20) as r:
                 data = r.read(limit + 1)
+                self.final[url] = r.geturl()  # where any redirects ended
         except Exception:  # any address that can't be read (bad URL, refused, timed out, cut off) is just skipped
             return None
         if len(data) > limit:
@@ -240,14 +245,16 @@ class Crawler:
                 continue
             seen.add(url)
             body = self.get(url)
-            if not body or b"<" not in body[:2000]:
+            page = self.final.get(url, url)
+            if not body or b"<" not in body[:2000] or not on_site(page, dom):
                 continue
+            seen.add(page)
             read += 1
             html = body.decode("utf-8", "ignore")
-            page_links = links(html, url)
+            page_links = links(html, page)
             hit = found_in(html, page_links, tok)
             if hit:
-                return self.row(src, url, hit[0], hit[1]), read
+                return self.row(src, page, hit[0], hit[1]), read
             if tok["sha256"]:
                 for u in cds_links(page_links, src["cds_year"])[:4]:
                     if u in tried:
@@ -255,7 +262,7 @@ class Crawler:
                     tried.add(u)
                     data = self.get(download_url(u), check=False, limit=30_000_000)
                     if data and hashlib.sha256(data).hexdigest() == tok["sha256"]:
-                        return self.row(src, url, u, "same file (SHA-256)"), read
+                        return self.row(src, page, u, "same file (SHA-256)"), read
             for u, text in page_links:
                 if u in seen or not on_site(u, dom) or FILE_LINK.search(u) or NOT_PAGE.search(u):
                     continue
@@ -291,6 +298,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--sources", default=str(OUT / "cds_sources.csv"))
     ap.add_argument("--institutions", default=str(OUT / "institutions.csv"))
+    ap.add_argument("--files", default=str(OUT / "cds_files.csv"))
     ap.add_argument("--out", default=str(OUT / "cds_pages.csv"))
     ap.add_argument("--max-pages", type=int, default=40)
     ap.add_argument("--workers", type=int, default=8)
@@ -298,8 +306,11 @@ def main(argv=None):
     inst = {r["unitid"]: r for r in csv.DictReader(open(a.institutions, encoding="utf-8"))}
     sites = {u: r["website"] for u, r in inst.items()}
     by_site = college_sites(inst)
+    read_sha = {r["unitid"]: r["sha256"] for r in csv.DictReader(open(a.files, encoding="utf-8"))} \
+        if os.path.exists(a.files) else {}
     # Files on another college's website are that college's (cds.py doesn't use them), so no page can make them count
-    todo = [s for s in csv.DictReader(open(a.sources, encoding="utf-8"))
+    todo = [{**s, "read_sha256": read_sha.get(s["unitid"], "")}
+            for s in csv.DictReader(open(a.sources, encoding="utf-8"))
             if needs_page(s, sites.get(s["unitid"], "")) and not elsewhere(s, inst, by_site)]
     crawler = Crawler(a.max_pages)
     rows, missing = [], []

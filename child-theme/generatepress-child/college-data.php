@@ -994,9 +994,11 @@ if ( ! function_exists( 'gpa_render_college_card' ) ) {
 }
 
 if ( ! function_exists( 'gpa_college_hub_title' ) ) {
-    // The hub's title and description (search results and social cards), from its live count.
+    // The hub's title and description (search results and social cards), from its live count. The hub's own pages
+    // (/admissions/page/2/ and on) add their number to the title.
     function gpa_college_hub_title() {
-        return 'College Admissions Database: Acceptance Rates, SAT & ACT';
+        $paged = function_exists( 'gpa_college_hub_paged' ) ? gpa_college_hub_paged() : 1;
+        return 'College Admissions Database: Acceptance Rates, SAT & ACT' . ( $paged > 1 ? ' – Page ' . $paged : '' );
     }
     function gpa_college_hub_description() {
         $s = gpa_college_hub_stats();
@@ -1022,4 +1024,117 @@ if ( ! function_exists( 'gpa_college_hub_title' ) ) {
             echo "\n" . '<meta name="description" content="' . esc_attr( gpa_college_hub_description() ) . '" />' . "\n";
         }
     }, 1 );
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Admissions Phase 4: what search engines get. The hub's own pages list the colleges in order, 30 a page, each with
+ * a link to the next, so every college page is a link away from the hub; the pages whose figures are under review
+ * stay out of search and the sitemap until their figures are verified; the structured data's site nodes.
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+if ( ! function_exists( 'gpa_college_hub_per_page' ) ) {
+    // Colleges per page: the hub's first list, each /admissions/page/N/ and every "Show more colleges" request.
+    function gpa_college_hub_per_page() {
+        return 30;
+    }
+
+    // Which of the hub's pages this is (1 on /admissions/ and everywhere else).
+    function gpa_college_hub_paged() {
+        return is_post_type_archive( 'colleges' ) ? max( 1, (int) get_query_var( 'paged' ) ) : 1;
+    }
+
+    // The address of the hub's page N.
+    function gpa_college_hub_page_url( $n ) {
+        $hub = get_post_type_archive_link( 'colleges' );
+        $hub = $hub ? $hub : home_url( '/admissions/' );
+        return $n > 1 ? user_trailingslashit( trailingslashit( $hub ) . 'page/' . (int) $n ) : $hub;
+    }
+
+    // The hub's own pages take the finder's order and page size, so /admissions/page/N/ lists colleges 30(N-1)+1 to
+    // 30N by name and the pages after the last one are 404s.
+    function gpa_college_hub_main_query( $query ) {
+        if ( is_admin() || ! $query->is_main_query() || ! $query->is_post_type_archive( 'colleges' ) ) {
+            return;
+        }
+        $query->set( 'posts_per_page', gpa_college_hub_per_page() );
+        $query->set( 'orderby', 'title' );
+        $query->set( 'order', 'ASC' );
+    }
+    add_action( 'pre_get_posts', 'gpa_college_hub_main_query' );
+}
+
+if ( ! function_exists( 'gpa_college_under_review' ) ) {
+    // A page that says "Figures under review": no verified federal figures yet (Phase 2, checkpoint H).
+    function gpa_college_under_review( $post_id ) {
+        return 'colleges' === get_post_type( $post_id ) && null === gpa_college_fresh( $post_id );
+    }
+
+    // Kept out of search until its figures are verified; its links still count.
+    function gpa_college_under_review_robots( $robots ) {
+        if ( is_singular( 'colleges' ) && gpa_college_under_review( get_queried_object_id() ) ) {
+            $robots['index']  = 'noindex';
+            $robots['follow'] = 'follow';
+        }
+        return $robots;
+    }
+    add_filter( 'rank_math/frontend/robots', 'gpa_college_under_review_robots', 20 );
+
+    // ...and out of the colleges sitemap.
+    function gpa_college_under_review_sitemap( $url, $type, $post ) {
+        if ( 'post' === $type && $post instanceof WP_Post && gpa_college_under_review( $post->ID ) ) {
+            return false;
+        }
+        return $url;
+    }
+    add_filter( 'rank_math/sitemap/entry', 'gpa_college_under_review_sitemap', 20, 3 );
+}
+
+if ( ! function_exists( 'gpa_college_schema_site' ) ) {
+    /**
+     * The site's WebSite and Organization nodes, as Rank Math prints them on the other pages: adds whichever the graph
+     * lacks (Rank Math leaves both off college pages) and the logo when the Organization has none (the hub's).
+     */
+    function gpa_college_schema_site( array $data ) {
+        $site    = untrailingslashit( home_url() );
+        $org_id  = $site . '/#organization';
+        $name    = class_exists( '\RankMath\Helper' ) ? (string) \RankMath\Helper::get_settings( 'titles.knowledgegraph_name' ) : '';
+        $name    = '' !== $name ? $name : get_bloginfo( 'name' );
+        $logo    = class_exists( '\RankMath\Helper' ) ? (string) \RankMath\Helper::get_settings( 'titles.knowledgegraph_logo' ) : '';
+        $logo    = '' !== $logo ? $logo : (string) get_site_icon_url( 512 );
+        $org_key = $site_key = null;
+        foreach ( $data as $key => $node ) {
+            if ( is_array( $node ) && isset( $node['@type'] ) ) {
+                if ( in_array( 'Organization', (array) $node['@type'], true ) && null === $org_key ) {
+                    $org_key = $key;
+                } elseif ( in_array( 'WebSite', (array) $node['@type'], true ) && null === $site_key ) {
+                    $site_key = $key;
+                }
+            }
+        }
+        if ( null === $org_key ) {
+            $org_key          = 'publisher';
+            $data[ $org_key ] = array( '@type' => 'Organization', '@id' => $org_id, 'name' => $name );
+        }
+        if ( empty( $data[ $org_key ]['logo'] ) && '' !== $logo ) {
+            $data[ $org_key ]['logo'] = array(
+                '@type'      => 'ImageObject',
+                '@id'        => $site . '/#logo',
+                'url'        => $logo,
+                'contentUrl' => $logo,
+                'caption'    => $name,
+                'inLanguage' => get_bloginfo( 'language' ),
+            );
+        }
+        if ( null === $site_key ) {
+            $data['WebSite'] = array(
+                '@type'      => 'WebSite',
+                '@id'        => $site . '/#website',
+                'url'        => $site,
+                'name'       => $name,
+                'publisher'  => array( '@id' => isset( $data[ $org_key ]['@id'] ) ? $data[ $org_key ]['@id'] : $org_id ),
+                'inLanguage' => get_bloginfo( 'language' ),
+            );
+        }
+        return $data;
+    }
 }

@@ -767,7 +767,6 @@ function gpa_college_page_schema($data, $jsonld) {
     $location   = get_field('location', $post_id);
     $avg_gpa    = get_field('average_gpa', $post_id);
     $avg_sat    = get_field('average_sat_score', $post_id);
-    $net_price  = get_field('net_price', $post_id);
     $sat_range  = get_field('sat_range', $post_id);
     $act_range  = get_field('act_range', $post_id);
     $acceptance = get_field('acceptance_rate', $post_id);
@@ -813,9 +812,13 @@ function gpa_college_page_schema($data, $jsonld) {
     }
     unset($entity);
 
+    // Admissions Phase 4: the page (a WebPage, and the FAQPage when it has questions) is about the college; the site's
+    // WebSite and Organization as on every other page. No "Admissions" EducationalOccupationalProgram (that type is a
+    // course of study), and the college's url isn't this page's.
     foreach ($data as $key => $value) {
         if ( is_array($value) && isset($value['@type']) ) {
-            if ( in_array($value['@type'], array('CollegeOrUniversity', 'EducationalOccupationalProgram'), true) ) {
+            $types = (array) $value['@type'];
+            if ( array_intersect( $types, array( 'CollegeOrUniversity', 'EducationalOccupationalProgram', 'WebPage', 'FAQPage' ) ) ) {
                 unset($data[$key]);
             }
         }
@@ -825,8 +828,13 @@ function gpa_college_page_schema($data, $jsonld) {
         '@type' => 'CollegeOrUniversity',
         '@id'   => $page_url . '#college',
         'name'  => $college,
-        'url'   => $page_url,
     );
+    // The name the page gives as "formerly ..." (Phase 3 names)
+    $former = trim( (string) get_post_meta( $post_id, 'former_name', true ) );
+    if ( '' !== $former && $former !== $college ) {
+        $college_schema['alternateName'] = $former;
+    }
+    $college_schema['mainEntityOfPage'] = array( '@id' => $page_url . '#webpage' );
 
     if ( $location ) {
         $parts = array_map('trim', explode(',', $location));
@@ -894,40 +902,6 @@ function gpa_college_page_schema($data, $jsonld) {
 
     $data['CollegeOrUniversity'] = $college_schema;
 
-    $program_schema = array(
-        '@type' => 'EducationalOccupationalProgram',
-        '@id'   => $page_url . '#program',
-        'name'  => $college . ' Admissions',
-        'provider' => array(
-            '@type' => 'CollegeOrUniversity',
-            '@id'   => $page_url . '#college',
-        ),
-    );
-
-    $prerequisites = array();
-    if ( $avg_gpa ) {
-        $prerequisites[] = 'Average GPA: ' . $avg_gpa;
-    }
-    if ( is_numeric( trim( (string) $avg_sat ) ) ) {
-        $prerequisites[] = 'Average SAT Score: ' . trim( (string) $avg_sat );
-    }
-    if ( ! empty($prerequisites) ) {
-        $program_schema['programPrerequisites'] = implode('; ', $prerequisites);
-    }
-
-    if ( $net_price ) {
-        $price_clean = preg_replace('/[^0-9.]/', '', $net_price);
-        if ( $price_clean !== '' ) {
-            $program_schema['estimatedCost'] = array(
-                '@type'    => 'MonetaryAmount',
-                'currency' => 'USD',
-                'value'    => $price_clean,
-            );
-        }
-    }
-
-    $data['EducationalOccupationalProgram'] = $program_schema;
-
     // The same questions and answers as the page's FAQ section (college-data.php), as plain text
     $faq_items = array();
     foreach ( ( function_exists( 'gpa_college_faqs' ) ? gpa_college_faqs( $post_id ) : array() ) as $faq ) {
@@ -941,15 +915,26 @@ function gpa_college_page_schema($data, $jsonld) {
         );
     }
 
-    if ( ! empty($faq_items) ) {
-        $data['FAQPage'] = array(
-            '@type'      => 'FAQPage',
-            '@id'        => $page_url . '#faq',
-            'mainEntity' => $faq_items,
-        );
+    // The page: its description comes from the meta description (gpa_schema_final_walk())
+    $site      = untrailingslashit( home_url() );
+    $page_node = array(
+        '@type'         => $faq_items ? array( 'WebPage', 'FAQPage' ) : 'WebPage',
+        '@id'           => $page_url . '#webpage',
+        'url'           => $page_url,
+        'name'          => function_exists( 'gpa_college_seo_build_title' ) ? gpa_college_seo_build_title( $post_id ) : $college,
+        'isPartOf'      => array( '@id' => $site . '/#website' ),
+        'about'         => array( '@id' => $page_url . '#college' ),
+        'breadcrumb'    => array( '@id' => $page_url . '#breadcrumb' ),
+        'datePublished' => get_post_time( 'c', true, $post_id ),
+        'dateModified'  => get_post_modified_time( 'c', true, $post_id ),
+        'inLanguage'    => get_bloginfo( 'language' ),
+    );
+    if ( $faq_items ) {
+        $page_node['mainEntity'] = $faq_items;
     }
+    $data['WebPage'] = $page_node;
 
-    return $data;
+    return function_exists( 'gpa_college_schema_site' ) ? gpa_college_schema_site( $data ) : $data;
 }
 
 add_filter('rank_math/json_ld', 'gpa_college_archive_schema', 99, 2);
@@ -1007,7 +992,7 @@ function gpa_college_archive_schema($data, $jsonld) {
     if ( ! $archive_url ) {
         $archive_url = home_url( '/admissions/' );
     }
-    $per_page    = 30;
+    $per_page    = function_exists( 'gpa_college_hub_per_page' ) ? gpa_college_hub_per_page() : 30;
     $paged       = max(1, (int) get_query_var('paged'));
     $page_url    = $paged > 1 ? trailingslashit($archive_url) . 'page/' . $paged . '/' : $archive_url;
 
@@ -1034,26 +1019,41 @@ function gpa_college_archive_schema($data, $jsonld) {
         $position++;
     }
 
+    // Admissions Phase 4: one page node, Rank Math's CollectionPage (#webpage), with the description and this page's
+    // colleges as its main entity; numberOfItems counts the whole list, of which this page shows its 30.
+    $page_key = null;
+    foreach ( $data as $key => $value ) {
+        if ( is_array( $value ) && isset( $value['@type'] ) && array_intersect( (array) $value['@type'], array( 'CollectionPage', 'WebPage' ) ) ) {
+            $page_key = $key;
+            break;
+        }
+    }
+    if ( null === $page_key ) {
+        $page_key          = 'CollectionPage';
+        $data[ $page_key ] = array(
+            '@type'      => 'CollectionPage',
+            '@id'        => $page_url . '#webpage',
+            'url'        => $page_url,
+            'name'       => function_exists( 'gpa_college_hub_title' ) ? gpa_college_hub_title() : 'US College Admissions Database',
+            'isPartOf'   => array( '@id' => untrailingslashit( home_url() ) . '/#website' ),
+            'inLanguage' => get_bloginfo( 'language' ),
+        );
+    }
+    $data[ $page_key ]['description'] = function_exists( 'gpa_college_hub_description' ) ? gpa_college_hub_description() : 'Browse admission requirements, acceptance rates and SAT and ACT score ranges for US colleges and universities.';
+    $data[ $page_key ]['breadcrumb']  = array( '@id' => $archive_url . '#breadcrumb' );
+
     if ( ! empty( $item_list_elements ) ) {
         $data['ItemList'] = array(
             '@type'           => 'ItemList',
             '@id'             => $page_url . '#itemlist',
             'url'             => $page_url,
-            'numberOfItems'   => count( $item_list_elements ),
+            'numberOfItems'   => (int) wp_count_posts( 'colleges' )->publish,
             'itemListElement' => $item_list_elements,
         );
-
-        $data['CollectionPage'] = array(
-            '@type'       => 'CollectionPage',
-            '@id'         => $page_url . '#collectionpage',
-            'url'         => $page_url,
-            'name'        => 'US College Admissions Database',
-            'description' => function_exists( 'gpa_college_hub_description' ) ? gpa_college_hub_description() : 'Browse admission requirements, acceptance rates and SAT and ACT score ranges for US colleges and universities.',
-            'mainEntity'  => array( '@id' => $page_url . '#itemlist' ),
-        );
+        $data[ $page_key ]['mainEntity'] = array( '@id' => $page_url . '#itemlist' );
     }
 
-    return $data;
+    return function_exists( 'gpa_college_schema_site' ) ? gpa_college_schema_site( $data ) : $data;
 }
 
 add_filter('rank_math/opengraph/type', 'gpa_college_og_type');

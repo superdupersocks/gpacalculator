@@ -4,21 +4,23 @@
  *
  * Printed by the /admissions/ hub (archive-colleges.php), where it rises into the hero like a calculator card, and by
  * the [gpa_college_archive] shortcode. The search bar has its own Search button and three example searches; the
- * list searches as you type too. Builds the first page of results itself, one gpa_render_college_card() card per
- * college (college-data.php) under the legend of the difficulty levels, and gives database-ajax.js its settings; the
- * ids are the ones that script looks for.
+ * list searches as you type too. Builds the first page of results itself (on /admissions/page/N/, that page's), one
+ * gpa_render_college_card() card per college (college-data.php) under the legend of the difficulty levels, and gives
+ * database-ajax.js its settings; the ids are the ones that script looks for.
  * The caller enqueues database-ajax.js and admissions.css.
  *
  * @package GeneratePress Child
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-// First page: 30 colleges by name (the AJAX handler, gpa_ajax_filter_colleges(), serves the rest)
-$per_page      = 30;
+// The first list: 30 colleges by name, or on the hub's own pages (/admissions/page/N/) that page's 30 (the AJAX
+// handler, gpa_ajax_filter_colleges(), serves the rest)
+$per_page      = function_exists( 'gpa_college_hub_per_page' ) ? gpa_college_hub_per_page() : 30;
+$paged         = function_exists( 'gpa_college_hub_paged' ) ? gpa_college_hub_paged() : 1;
 $college_query = new WP_Query( array(
 	'post_type'      => 'colleges',
 	'posts_per_page' => $per_page,
-	'paged'          => 1,
+	'paged'          => $paged,
 	'post_status'    => 'publish',
 	'orderby'        => 'title',
 	'order'          => 'ASC',
@@ -99,7 +101,7 @@ $stats          = gpa_college_hub_stats();
 	</div>
 
 	<div class="gpa-hub__count" id="db-results-count" aria-live="polite">
-		Showing <span id="db-showing-count"><?php echo esc_html( min( $per_page, $total_colleges ) ); ?></span> of <span id="db-total-count"><?php echo esc_html( number_format( $total_colleges ) ); ?></span> colleges
+		Showing <span id="db-showing-count"><?php echo esc_html( $college_query->post_count ); ?></span> of <span id="db-total-count"><?php echo esc_html( number_format( $total_colleges ) ); ?></span> colleges
 	</div>
 
 	<div class="gpa-hub__legend">
@@ -134,11 +136,17 @@ $stats          = gpa_college_hub_stats();
 	</div>
 
 	<?php if ( $total_pages > 1 ) : ?>
-	<div class="gpa-hub__more-wrap" id="db-load-more-wrap">
-		<button class="gpa-hub__load" id="db-load-more-btn" type="button" data-page="1" data-max-pages="<?php echo esc_attr( $total_pages ); ?>">
+	<div class="gpa-hub__more-wrap" id="db-load-more-wrap"<?php echo $paged >= $total_pages ? ' style="display:none;"' : ''; ?>>
+		<?php
+		// On the hub, a link to its next page, which the script loads in place: search engines follow it to every
+		// college. In the [gpa_college_archive] shortcode, and on the hub's last page, a button.
+		$next_url = is_post_type_archive( 'colleges' ) && $paged < $total_pages && function_exists( 'gpa_college_hub_page_url' ) ? gpa_college_hub_page_url( $paged + 1 ) : '';
+		$attrs    = 'class="gpa-hub__load" id="db-load-more-btn" data-page="' . esc_attr( $paged ) . '" data-max-pages="' . esc_attr( $total_pages ) . '"';
+		echo '' !== $next_url ? '<a ' . $attrs . ' href="' . esc_url( $next_url ) . '">' : '<button ' . $attrs . ' type="button">'; // escaped above
+		?>
 			<span class="db-archive-load-more__text">Show more colleges</span>
 			<span class="db-archive-load-more__spinner" style="display:none;">Loading…</span>
-		</button>
+		<?php echo '' !== $next_url ? '</a>' : '</button>'; ?>
 	</div>
 	<?php endif; ?>
 
@@ -154,6 +162,7 @@ wp_localize_script( 'database-ajax', 'gpa_db_ajax', array(
 	'ajax_url'       => admin_url( 'admin-ajax.php' ),
 	'nonce'          => wp_create_nonce( 'gpa_db_filter_nonce' ),
 	'per_page'       => $per_page,
+	'page'           => $paged,
 	'total_colleges' => $total_colleges,
 	'total_pages'    => $total_pages,
 ) );

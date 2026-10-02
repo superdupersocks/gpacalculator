@@ -648,6 +648,10 @@ body.post-type-archive-colleges .gpa-hub {
 }
 .gpa-hub .gpa-hub__load:hover { background: var(--gpa-blue-100); color: var(--gpa-link); }
 .gpa-hub .gpa-hub__load:disabled { opacity: 0.7; cursor: default; }
+/* On the hub it's a link to the next page (the script loads it in place) */
+.gpa-hub a.gpa-hub__load,
+.gpa-hub a.gpa-hub__load:hover,
+.gpa-hub a.gpa-hub__load:focus { display: inline-flex; align-items: center; text-decoration: none; }
 .gpa-hub__empty {
     padding: 32px 16px;
     border: 1px solid var(--gpa-border);

@@ -2,8 +2,9 @@
  * College Database AJAX - Filtering, Search, Pagination
  * Vanilla JS (no jQuery dependency)
  *
- * Expects: gpa_db_ajax.ajax_url, gpa_db_ajax.nonce, gpa_db_ajax.per_page,
- *          gpa_db_ajax.total_colleges, gpa_db_ajax.total_pages
+ * Expects: gpa_db_ajax.ajax_url, gpa_db_ajax.nonce, gpa_db_ajax.per_page, gpa_db_ajax.page (the hub page the list
+ *          starts on: /admissions/page/N/ lists that page's colleges), gpa_db_ajax.total_colleges,
+ *          gpa_db_ajax.total_pages
  */
 (function () {
     'use strict';
@@ -19,7 +20,7 @@
         gpa: '',
         sat: '',
         sort: 'name_asc',
-        page: 1,
+        page: parseInt(gpa_db_ajax.page, 10) || 1,
         maxPages: parseInt(gpa_db_ajax.total_pages, 10) || 1,
         totalColleges: parseInt(gpa_db_ajax.total_colleges, 10) || 0,
         showingCount: 0,
@@ -118,7 +119,9 @@
         if (state.sort && state.sort !== 'name_asc') params.set('sort', state.sort);
 
         var queryString = params.toString();
-        var newUrl = window.location.pathname + (queryString ? '?' + queryString : '');
+        // A search or filter starts the list over, so it belongs to the hub itself, not to /admissions/page/N/
+        var path = window.location.pathname.replace(/page\/\d+\/?$/, '');
+        var newUrl = path + (queryString ? '?' + queryString : '');
 
         window.history.replaceState(null, '', newUrl);
     }
@@ -532,9 +535,10 @@
         noResultsReset.addEventListener('click', resetAllFilters);
     }
 
-    // --- Load more button ---
+    // --- Load more: on the hub a link to its next page, loaded here in place ---
     if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', function () {
+        loadMoreBtn.addEventListener('click', function (e) {
+            e.preventDefault();
             if (state.loadingMore) return;
             if (state.page >= state.maxPages) return;
 

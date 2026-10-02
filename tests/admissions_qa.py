@@ -624,10 +624,36 @@ _site = {"https://www.example.edu/": '<a href="/about/">About</a> <a href="/offi
 _crawl = cds_pages.Crawler(10)
 _crawl.robots = {h: __import__("urllib.robotparser").robotparser.RobotFileParser() for h in ("www.example.edu",)}
 _crawl.robots["www.example.edu"].parse([])
-_crawl.get = lambda url, check=True, limit=0: _site.get(url, "").encode() or None
+_site["https://www.example.edu/"] = '<a href="/ir/IR Overview.pptx">Institutional research overview</a> ' \
+    + _site["https://www.example.edu/"]
+_asked = []
+_crawl.get = lambda url, check=True, limit=0: _asked.append(url) or _site.get(url, "").encode() or None
 _row, _read = _crawl.find({**_drive, "name": "Example College"}, "www.example.edu")
 eq("CDS pages: the crawl follows institutional-research and CDS links to the page that links the file",
    (_row["page_url"], _row["match"], _read), ("https://www.example.edu/offices/ir/cds/", "Google file ID", 3))
+eq("CDS pages: the crawl doesn't open documents as pages",
+   [u for u in _asked if "pptx" in u.lower()], [])
+eq("CDS pages: addresses with spaces or accents are sent percent-encoded, escapes kept",
+   [cds_pages.fetchable(u) for u in ("https://www.x.edu/facet/docs/FACET Effort Overview.pptx",
+                                     "https://www.x.edu/a%20b/caf\u00e9/ ", "https://www.x.edu/p?a=1&b=c d")],
+   ["https://www.x.edu/facet/docs/FACET%20Effort%20Overview.pptx", "https://www.x.edu/a%20b/caf%C3%A9/",
+    "https://www.x.edu/p?a=1&b=c%20d"])
+
+
+def _refuse(*a, **k):
+    raise __import__("http.client").client.InvalidURL("URL can't contain control characters")
+
+
+_urlopen, cds_pages.urllib.request.urlopen = cds_pages.urllib.request.urlopen, _refuse
+try:
+    _got = cds_pages.Crawler(5).get("https://www.example.edu/x", check=False)
+finally:
+    cds_pages.urllib.request.urlopen = _urlopen
+_boom = cds_pages.Crawler(5)
+_boom.find = lambda src, website: 1 / 0
+eq("CDS pages: an address that can't be read is skipped, and an error in one college's search ends only that one",
+   (_got, cds_pages.find_safely(_boom, _drive, "www.example.edu")),
+   (None, (None, 0, "ZeroDivisionError: division by zero")))
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

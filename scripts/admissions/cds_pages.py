@@ -23,7 +23,6 @@ import os
 import re
 import sys
 import time
-import urllib.error
 import urllib.parse
 import urllib.request
 import urllib.robotparser
@@ -48,6 +47,9 @@ CDS_WORDS = re.compile(r"common[\s_-]*data[\s_-]*set|\bcds\b|/cds[/_-]", re.I)
 IR_WORDS = re.compile(r"institutional[\s_-]*(research|effectiveness|analytics|data|planning)|\b(oir|irp|oira|ir)\b|"
                       r"fact[\s_-]*book|facts|/data\b", re.I)
 FILE_LINK = re.compile(r"\.(pdf|xlsx?|docx?)(\?|$)|drive\.google|docs\.google|box\.com|sharepoint|1drv", re.I)
+# Links to documents and media, which the crawl doesn't read as pages.
+NOT_PAGE = re.compile(r"\.(pdf|xlsx?|xlsm|docx?|pptx?|csv|txt|rtf|od[tsp]|zip|jpe?g|png|gif|svg|webp|mp[34]|mov|"
+                      r"ics|xml|json)(\?|$)", re.I)
 GOOGLE_ID = re.compile(r"(?:[?&]id=|/d/|/\*/)([\w-]{25,})")
 
 
@@ -118,6 +120,12 @@ def tokens(src):
     return out
 
 
+def fetchable(url):
+    """The address with the characters a request can't carry (spaces, other control characters, non-ASCII)
+    percent-encoded, as a browser sends it; existing %XX escapes stay as they are."""
+    return urllib.parse.quote(url.strip(), safe=":/?#[]@!$&'()*+,;=%~")
+
+
 def found_in(html, page_links, tok):
     """(link, how) when the page names the file, else None."""
     if tok["google"] and tok["google"] in html:
@@ -184,11 +192,11 @@ class Crawler:
         if wait > 0:
             time.sleep(wait)
         self.last[h] = time.time()
-        req = urllib.request.Request(url, headers={k: v for k, v in HEADERS.items() if k != "Referer"})
         try:
+            req = urllib.request.Request(fetchable(url), headers={k: v for k, v in HEADERS.items() if k != "Referer"})
             with urllib.request.urlopen(req, timeout=20) as r:
                 data = r.read(limit + 1)
-        except (urllib.error.URLError, TimeoutError, ConnectionError, ValueError, OSError):
+        except Exception:  # any address that can't be read (bad URL, refused, timed out, cut off) is just skipped
             return None
         if len(data) > limit:
             return None
@@ -249,7 +257,7 @@ class Crawler:
                     if data and hashlib.sha256(data).hexdigest() == tok["sha256"]:
                         return self.row(src, url, u, "same file (SHA-256)"), read
             for u, text in page_links:
-                if u in seen or not on_site(u, dom) or FILE_LINK.search(u):
+                if u in seen or not on_site(u, dom) or FILE_LINK.search(u) or NOT_PAGE.search(u):
                     continue
                 both = f"{text} {u}"
                 if CDS_WORDS.search(both):
@@ -263,6 +271,14 @@ class Crawler:
         return {"unitid": src["unitid"], "name": src["name"], "cds_year": src["cds_year"],
                 "file_url": src["source_url"], "page_url": page, "link_url": link, "match": how,
                 "checked_on": date.today().isoformat()}
+
+
+def find_safely(crawler, src, website):
+    """crawler.find, with an error that stops one college's search reported instead of ending the run."""
+    try:
+        return crawler.find(src, website) + ("",)
+    except Exception as e:
+        return None, 0, f"{type(e).__name__}: {e}"[:200]
 
 
 def needs_page(src, website):
@@ -288,11 +304,12 @@ def main(argv=None):
     crawler = Crawler(a.max_pages)
     rows, missing = [], []
     with ThreadPoolExecutor(a.workers) as pool:
-        for src, (row, read) in zip(todo, pool.map(lambda s: crawler.find(s, sites[s["unitid"]]), todo)):
+        for src, (row, read, err) in zip(todo, pool.map(lambda s: find_safely(crawler, s, sites[s["unitid"]]), todo)):
             if row:
                 rows.append(row)
             else:
-                missing.append(f"{src['name']} ({src['cds_year']}, {host(src['source_url'])}): {read} pages read")
+                missing.append(f"{src['name']} ({src['cds_year']}, {host(src['source_url'])}): {read} pages read"
+                               + (f"; stopped by {err}" if err else ""))
     rows.sort(key=lambda r: r["name"])
     write_csv(Path(a.out), rows, COLUMNS)
     print(f"{len(todo)} colleges whose CDS file is off their website: page found for {len(rows)}, "

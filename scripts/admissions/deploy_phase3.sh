@@ -4,14 +4,14 @@
 #
 #   bash scripts/admissions/deploy_phase3.sh [--dry-run]
 #
-# Runs `scripts/deploy_theme.sh b0a7b8c --only <the seven files below>` only while every one of those files on the
-# live site is a version b0a7b8c already contains (any earlier commit of that file on this branch, which merges the
+# Runs `scripts/deploy_theme.sh aae50f9 --only <the seven files below>` only while every one of those files on the
+# live site is a version aae50f9 already contains (any earlier commit of that file on this branch, which merges the
 # design branch) or isn't there yet (admissions.css). A live file this branch has never had, e.g. a newer
 # functions.php from a later design deploy, stops it without changing the site: deploying over it would undo that
 # deploy. The other theme files (the design overhaul's CSS) stay as they are live.
 set -euo pipefail
 
-COMMIT="b0a7b8c"
+COMMIT="aae50f9"
 FILES="admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js"
 HOST="master_rfzfmbbwze@67.205.161.226"
 KEY="$HOME/.ssh/gpacalculator_cloudways"

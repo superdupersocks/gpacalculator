@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-02T01:43:47+00:00",
+  "fetched_at": "2026-10-02T01:46:33+00:00",
   "files": {
     "ipeds_hd": {
       "url": "https://nces.ed.gov/ipeds/datacenter/data/HD2024.zip",
@@ -131,6 +131,12 @@
       "bytes": 1290324,
       "sha256": "e5c2197f55fb3f8853b866cde05d6d0be167c37480f9d0825ff4b7d60aaf5f6e",
       "year": 2024
+    },
+    "scorecard": {
+      "url": "https://collegescorecard.ed.gov/data/ (Most-Recent-Cohorts-Institution_06102026.zip, downloaded by hand)",
+      "bytes": 23559465,
+      "sha256": "f56a181b000ca4914e924c16b6b81dcc656e25aeb2ac68ab7d271ac0f29ffd58",
+      "member": "Most-Recent-Cohorts-Institution.csv"
     }
   },
   "ipeds_years": {
@@ -148,6 +154,5 @@
     "year": 2024,
     "tablesdoc": "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx",
     "access": "https://nces.ed.gov/ipeds/tablefiles/zipfiles/IPEDS_2024-25_Provisional.zip"
-  },
-  "scorecard_missing": "HTTP Error 403: Forbidden"
+  }
 }

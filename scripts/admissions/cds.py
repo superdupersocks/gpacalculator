@@ -893,6 +893,40 @@ def assign(readings, ipeds):
     return skip
 
 
+def site(url):
+    """A link's host without "www.": "https://www.bethel.edu/x" -> "bethel.edu"."""
+    url = (url or "").strip()
+    if not url:
+        return ""
+    return re.sub(r"^www\d*\.", "", (urlparse(url if "://" in url else "https://" + url).hostname or "").lower())
+
+
+def sites(ipeds):
+    """{website host: {unitid}} for every college in institutions.csv."""
+    out = defaultdict(set)
+    for u, r in ipeds.items():
+        s = site(r.get("website"))
+        if s:
+            out[s].add(u)
+    return out
+
+
+def elsewhere(src, ipeds, by_site):
+    """The names of the colleges whose own website holds this file (the longest matching host), or [] when it is
+    on this college's site or on no college's (Google Drive, a CDN). Same-named colleges get each other's files:
+    the index gave Bethel University in Tennessee the file on bethel.edu, Bethel University Minnesota's."""
+    host = site(src.get("source_url"))
+    mine = site((ipeds.get(src["unitid"]) or {}).get("website"))
+    if not host or (mine and (host == mine or host.endswith("." + mine))):
+        return []
+    parts = host.split(".")
+    for k in range(len(parts) - 1):
+        owners = by_site.get(".".join(parts[k:]))
+        if owners:
+            return [] if src["unitid"] in owners else sorted(ipeds[u]["name"] for u in owners)
+    return []
+
+
 # ---- running it ----------------------------------------------------------------------------------------------
 
 def explain(readings, skip):
@@ -957,10 +991,14 @@ def main(argv=None):
     def note(src, why):
         review.append({"unitid": src["unitid"], "name": src["name"], "cds_year": src["cds_year"],
                        "file_url": src["source_url"], "field": "", "problem": why})
-    usable = []
+    usable, by_site = [], sites(ipeds)
     for src in sources:
+        other = elsewhere(src, ipeds, by_site)
         if urlparse(src["source_url"]).netloc.lower().endswith("commondataset.org"):
             note(src, "not this college's CDS: a commondataset.org document")
+        elif other:
+            note(src, f"not this college's CDS: the file is on {site(src['source_url'])}, the website of "
+                      + ", ".join(other[:3]) + (" and others" if len(other) > 3 else ""))
         else:
             usable.append(src)
     readings = {}

@@ -575,5 +575,18 @@ eq("E: a branch campus points to the college that reports for it, by UNITID or m
     "301 to Ohio Business College-Sheffield's page, /admissions/ohio-business-college-sheffield/, which has the "
     "federal figures for this campus"])
 
+# CDS files on another college's website aren't this college's (same-named colleges)
+_web = {"219718": {"name": "Bethel University", "website": "www.bethelu.edu/"},
+        "173160": {"name": "Bethel University", "website": "https://www.bethel.edu"},
+        "190512": {"name": "CUNY Bernard M Baruch College", "website": "www.baruch.cuny.edu"},
+        "190600": {"name": "CUNY Hunter College", "website": "www.hunter.cuny.edu"}}
+_bs = cds.sites(_web)
+eq("CDS: a file on another college's website is not used; its own site, a subdomain or Drive is fine",
+   [cds.elsewhere({"unitid": u, "source_url": url}, _web, _bs) for u, url in (
+       ("219718", "https://www.bethel.edu/ir/cds-2425.xlsx"), ("173160", "https://www.bethel.edu/ir/cds-2425.xlsx"),
+       ("219718", "https://ir.bethelu.edu/cds.pdf"), ("190512", "https://drive.usercontent.google.com/x"),
+       ("190512", "https://www.hunter.cuny.edu/cds.pdf"))],
+   [["Bethel University"], [], [], [], ["CUNY Hunter College"]])
+
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

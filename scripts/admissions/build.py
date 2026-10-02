@@ -85,6 +85,8 @@ EXTRA_MEASURES = {
                             ("grant or scholarship",)),
 }
 COST += list(EXTRA_MEASURES)
+# Which source supplied each row's value of the measures that fall back to College Scorecard.
+MEASURE_SOURCES = [f"{col}_source" for col in MEASURES]
 
 
 class Data:
@@ -300,13 +302,20 @@ def build_row(d, uid, admcon, credits):
                 break
         return None if v is None else (int(round(v)) if kind == "int" else round(v / scale, 4))
 
-    row["undergrad_enrollment"] = measure("undergrad_enrollment") or num(d.sv(uid, "UGDS"), "int")
-    row["tuition_in_state"] = measure("tuition_in_state") or num(d.sv(uid, "TUITIONFEE_IN"), "int")
-    row["tuition_out_of_state"] = measure("tuition_out_of_state") or num(d.sv(uid, "TUITIONFEE_OUT"), "int")
-    row["net_price"] = measure("net_price") or num(d.sv(uid, "NPT4_PUB") or d.sv(uid, "NPT4_PRIV"), "int")
-    gr, ret = measure("grad_rate", "rate", 100), measure("retention_rate", "rate", 100)
-    row["grad_rate"] = gr if gr is not None else num(d.sv(uid, "C150_4") or d.sv(uid, "C150_L4"))
-    row["retention_rate"] = ret if ret is not None else num(d.sv(uid, "RET_FT4") or d.sv(uid, "RET_FTL4"))
+    def pick(col, ipeds, scorecard):
+        # IPEDS first, else College Scorecard (whose year can differ); {col}_source says which one a row used.
+        for src, v in (("IPEDS", ipeds), ("College Scorecard", scorecard)):
+            if v is not None:
+                row[col], row[f"{col}_source"] = v, src
+                return
+        row[col], row[f"{col}_source"] = None, None
+
+    pick("undergrad_enrollment", measure("undergrad_enrollment"), num(d.sv(uid, "UGDS"), "int"))
+    pick("tuition_in_state", measure("tuition_in_state"), num(d.sv(uid, "TUITIONFEE_IN"), "int"))
+    pick("tuition_out_of_state", measure("tuition_out_of_state"), num(d.sv(uid, "TUITIONFEE_OUT"), "int"))
+    pick("net_price", measure("net_price"), num(d.sv(uid, "NPT4_PUB") or d.sv(uid, "NPT4_PRIV"), "int"))
+    pick("grad_rate", measure("grad_rate", "rate", 100), num(d.sv(uid, "C150_4") or d.sv(uid, "C150_L4")))
+    pick("retention_rate", measure("retention_rate", "rate", 100), num(d.sv(uid, "RET_FT4") or d.sv(uid, "RET_FTL4")))
     row["median_earnings_10yr"] = num(d.sv(uid, "MD_EARN_WNE_P10"), "int")
     row["median_debt"] = num(d.sv(uid, "GRAD_DEBT_MDN"), "int")
     row["pell_share"], row["federal_loan_share"] = num(d.sv(uid, "PCTPELL")), num(d.sv(uid, "PCTFLOAN"))
@@ -322,6 +331,8 @@ def check(d, row):
             if row.get(c) is not None:
                 d.dropped.append((row["unitid"], c, row[c], reason))
                 row[c] = None
+                if f"{c}_source" in row:
+                    row[f"{c}_source"] = None
 
     for part, (lo, hi) in TEST_PARTS.items():
         cols = [f"{TEST_NAMES[part]}_p{q}" for q in (25, 50, 75)]
@@ -387,6 +398,8 @@ def sources(d, admcon, credits):
         "pell_share": (sc, "PCTPELL", None, "Share of undergraduates with a Pell grant, 0-1"),
         "federal_loan_share": (sc, "PCTFLOAN", None, "Share of undergraduates with a federal loan, 0-1"),
     }
+    for col in MEASURES:
+        s[f"{col}_source"] = ("", "", None, f"IPEDS or College Scorecard: which one supplied this row's {col}")
     for part in TEST_PARTS:
         for q in (25, 50, 75):
             s[f"{TEST_NAMES[part]}_p{q}"] = (f"IPEDS ADM{y} (else Scorecard)", f"{part}{q}", y,
@@ -447,7 +460,7 @@ def main(argv=None):
     rows = [build_row(d, uid, admcon, credits) for uid in sorted(ids, key=int)]
     order = [c for c, _ in ADMCON_KEYWORDS if c in admcon]
     order += [c for c, _ in CREDITS_KEYWORDS if c in credits]
-    columns = IDENTITY + ADMISSIONS + TESTS + order + COST
+    columns = IDENTITY + ADMISSIONS + TESTS + order + COST + MEASURE_SOURCES
     write_csv(out / "institutions.csv", rows, columns)
     src = sources(d, admcon, credits)
     write_json(out / "field_sources.json", {c: src[c] for c in columns})

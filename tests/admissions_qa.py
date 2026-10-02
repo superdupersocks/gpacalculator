@@ -71,6 +71,10 @@ with tempfile.TemporaryDirectory() as tmp:
     eq("Alabama grad rate falls back to Scorecard when IPEDS is empty", a["grad_rate"], "0.72")
     eq("Alabama imputed retention dropped, Scorecard fallback", a["retention_rate"], "0.87")
     eq("Alabama public net price", a["net_price"], "21500")
+    eq("each fallback measure names its source", (h["undergrad_enrollment_source"], a["grad_rate_source"],
+                                                  a["retention_rate_source"], a["net_price_source"]),
+       ("IPEDS", "College Scorecard", "College Scorecard", "IPEDS"))
+    eq("suppressed earnings have no source column", "median_earnings_10yr_source" in a, False)
 
     s = rows["888001"]
     eq("Scorecard-only row uses Scorecard admissions", (s["admissions_source"], s["admit_rate"]),

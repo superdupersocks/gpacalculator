@@ -11,11 +11,11 @@ surviving pages before its four 301s. C retires the verified closures and redire
 pages in `data/admissions/audit/phase2_c_held.csv` and everything still under review stay unchanged. Individual pages
 within that scope need no further approval; report counts and exceptions.
 
-Done: S, M, P and N (17:30-17:37 UTC, Digant's "go S, M, P and N"). The design overhaul's theme deploy (17:38 UTC,
-56c8f98 on `claude/design-system-overhaul-xkzbf0`) shipped functions.php with the hub filter fixes and the sitemap
-tie-break, so "Hub filters and sitemap order" needs only its checks, no deploy. Still to run, each after its own
-backup: "B2, second list", then R (both within the 05:58 go). Any later admissions theme change must be built on the
-design branch (or a branch that merges it), or its deploy reverts the design.
+Done: S, M, P and N (17:30-17:37 UTC, Digant's "go S, M, P and N") and "B2, second list" (17:44). The design
+overhaul's theme deploy (17:38 UTC, 56c8f98 on `claude/design-system-overhaul-xkzbf0`) shipped functions.php with the
+hub filter fixes and the sitemap tie-break, so "Hub filters and sitemap order" needs only its checks, no deploy.
+Digant's "go r go h" (17:48 UTC) approves the last two, each after its own backup: R, then H. Any later admissions
+theme change must be built on the design branch (or a branch that merges it), or its deploy reverts the design.
 
 `SSH` below means `ssh -i ~/.ssh/gpacalculator_cloudways -o IdentitiesOnly=yes master_rfzfmbbwze@67.205.161.226`, and
 `WP` is `applications/xwnzegvpyy/public_html` on the server.
@@ -272,8 +272,10 @@ If Digant approves only part of it, run only that part: S needs the new pages (s
 
 ## Identity review: fresh figures for 229 more pages, 78 closed colleges retired, 3 merged ones redirected (R)
 
-Within the go of 05:58, on E's and C's terms: it kept the 399 live pages without a confident match unchanged pending
-review, and `scripts/admissions/phase2_r_review.py` is that review (`data/admissions/audit/phase2_r_review.csv` has
+Approved: Digant's "go r go h" (2026-10-02 17:48 UTC) answered the thread's question of 17:46 ("reply go R to apply
+the identity review. 229 pages get fresh federal figures, 78 closed colleges retire and 3 pages redirect to their
+college's existing page"). It is also within the go of 05:58, on E's and C's terms: that go kept the 399 live pages
+without a confident match unchanged pending review, and `scripts/admissions/phase2_r_review.py` is that review (`data/admissions/audit/phase2_r_review.csv` has
 every page, the college it is now and why). It uses the audit's own evidence: a college whose exact name, city and
 state an older IPEDS directory gives to a UNITID that IPEDS 2024 still lists under a new name (Adirondack Community
 College is SUNY Adirondack), or a chain of UNITIDs linked by IPEDS's NEWID. A page whose title no directory lists gets
@@ -312,6 +314,35 @@ N below run on Digant's approvals of 17:11 and 17:17.
    If anything breaks: `bash scripts/admissions/phase2_cd_live.sh revert <R log>`, then
    `bash scripts/admissions/phase2_e_live.sh revert <log>`.
 5. Changelog: one row for the 229 pages' fields and one for R, each with its undo.
+
+## H: empty the old figures on the 53 pages still under review (approved 17:48)
+
+Approved: Digant's "go r go h" (2026-10-02 17:48 UTC) answered the thread's question of 17:46 ("go H would blank the
+old, unsourced figures on the 53 pages still under review until each is checked, so Fairfax University's 1% acceptance
+rate stops topping the "lowest acceptance" sort. The pages stay up.").
+
+The 50 pages R leaves unchanged (`hold` in `phase2_r_review.csv`) and the 3 whose match the audit corrected
+(`phase2_e_held.csv`: Baton Rouge College, Miller Motte College, Wichita Area Technical College) still show the
+figures they had before Phase 2, with no source or year: Fairfax University of America's 1% acceptance rate, 30,512
+students at Kaplan University's Davenport campus, a 100% acceptance rate on 43 of them. H applies E's rule (a field
+with no fresh value is emptied, never left with the old one) to these pages now: `data/admissions/audit/phase2_h_blank.csv`
+(made by `scripts/admissions/phase2_h_blank.py`) empties every field E manages except `location` and `owning`, which
+say where the college is and what kind it is. The pages stay published; the template hides empty fields and asks only
+the FAQ questions it has data for. When a page's review settles which college it is, an import fills it as E did. No
+page is in any other checkpoint's list.
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-h.sql.gz`). Run after R.
+2. `bash scripts/admissions/phase2_e_live.sh plan data/admissions/audit/phase2_h_blank.csv` must end "53 posts would
+   change, 0 already match, 0 skipped", and every field line must read added 0, replaced 0 (acceptance_rate emptied 49,
+   enrollment emptied 51). Report any `SKIP` and go on without it. Then the same command with `apply`; it ends
+   "updated 53 posts (1313 fields), skipped 0" (the count from the October 1 export) and names the log.
+3. Check: /admissions/fairfax-university-of-america/ answers 200 and shows no acceptance rate and no enrollment, and its
+   title has no "(1%)"; /admissions/kaplan-university-davenport-campus/ no longer shows 30,512;
+   /admissions/wichita-area-technical-college/ shows no acceptance rate; on /admissions/, the lowest-acceptance sort
+   no longer starts with Fairfax University of America and "Under 10%" no longer lists it. On each page the JSON-LD
+   parses and Freestar tags are present.
+   If anything breaks: `bash scripts/admissions/phase2_e_live.sh revert <log name>`, then report.
+4. Changelog: one row for the 53 pages' fields with the undo, `bash scripts/admissions/phase2_e_live.sh revert <log name>`.
 
 ## P: 16 more pages into S's new pages (with S, approved 17:11)
 

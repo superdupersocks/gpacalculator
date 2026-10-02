@@ -407,19 +407,18 @@ body.single-post :is(.site-content, .content-area, .site-main, .inside-article) 
 	padding-left: 0 !important;
 	padding-right: 0 !important;
 }
-@media (min-width: 1260px) {
-	body.page-template-template-calculator .entry-content,
-	body.page-template-template-content .entry-content,
-	body.gpa-template-content .entry-content,
-	body.page-template-gpa-content-page .entry-content,
-	body.single-post .entry-content,
-	body.home .site-content,
-	body.single-colleges .db-container,
-	body.post-type-archive-colleges .db-container {
-		width: min(800px, 100%) !important;
-		margin-left: auto !important;
-		margin-right: auto !important;
-	}
+/* <1260px: 800px column, no rails; 1260-1349: 800px column, 160px rails */
+body.page-template-template-calculator .entry-content,
+body.page-template-template-content .entry-content,
+body.gpa-template-content .entry-content,
+body.page-template-gpa-content-page .entry-content,
+body.single-post .entry-content,
+body.home .site-content,
+body.single-colleges .db-container,
+body.post-type-archive-colleges .db-container {
+	width: min(800px, 100%) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
 }
 @media (min-width: 1350px) {
 	body.page-template-template-calculator .entry-content,

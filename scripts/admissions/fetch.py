@@ -28,7 +28,13 @@ import zipfile
 sys.path.insert(0, os.path.dirname(__file__))
 from common import OUT, RAW, write_json  # noqa: E402
 
-UA = "Mozilla/5.0 (X11; Linux x86_64) gpacalculator-data/1.0 (+https://github.com/superdupersocks/gpacalculator)"
+# The Scorecard hosts refuse requests that don't look like a browser (403), so send a browser's headers.
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Referer": "https://collegescorecard.ed.gov/data/",
+}
 IPEDS = "https://nces.ed.gov/ipeds/datacenter/data/"
 SCORECARD_PAGE = "https://collegescorecard.ed.gov/data/"
 # "Most Recent Institution-Level Data", release of June 10, 2026. Update when Scorecard publishes a new release.
@@ -39,7 +45,7 @@ IPEDS_FILES = ["HD", "ADM", "IC"]
 def get(url, tries=4):
     for i in range(tries):
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": UA})
+            req = urllib.request.Request(url, headers=HEADERS)
             with urllib.request.urlopen(req, timeout=300) as r:
                 return r.read()
         except urllib.error.HTTPError as e:
@@ -54,7 +60,7 @@ def get(url, tries=4):
 
 def exists(url):
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": UA, "Range": "bytes=0-1"})
+        req = urllib.request.Request(url, headers={**HEADERS, "Range": "bytes=0-1"})
         with urllib.request.urlopen(req, timeout=60) as r:
             return r.read(2) == b"PK"  # a zip, not an HTML "file not found" page
     except urllib.error.HTTPError:

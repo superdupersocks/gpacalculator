@@ -544,5 +544,41 @@
     "variable": "NPIS452 / NPT452",
     "year": 2023,
     "meaning": "Average net price (income over 110,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "undergrad_enrollment_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's undergrad_enrollment"
+  },
+  "tuition_in_state_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's tuition_in_state"
+  },
+  "tuition_out_of_state_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's tuition_out_of_state"
+  },
+  "net_price_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's net_price"
+  },
+  "grad_rate_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's grad_rate"
+  },
+  "retention_rate_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's retention_rate"
   }
 }

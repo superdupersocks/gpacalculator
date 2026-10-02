@@ -81,7 +81,7 @@ Admissions block source: none 4,588, IPEDS ADM 1,956
 | req_legacy | 1,956 (30%) | 1,745 (62%) |
 | life_experience_credit | 5,893 (90%) | 2,770 (99%) |
 | ap_credit | 5,893 (90%) | 2,770 (99%) |
-| undergrad_enrollment | 5,585 (85%) | 2,493 (89%) |
+| undergrad_enrollment | 5,847 (89%) | 2,755 (99%) |
 | tuition_in_state | 3,697 (56%) | 2,359 (84%) |
 | tuition_out_of_state | 3,697 (56%) | 2,359 (84%) |
 | net_price | 5,335 (82%) | 2,328 (83%) |
@@ -101,6 +101,12 @@ Admissions block source: none 4,588, IPEDS ADM 1,956
 | net_price_48_75k | 4,260 (65%) | 2,108 (75%) |
 | net_price_75_110k | 3,685 (56%) | 2,006 (72%) |
 | net_price_110k_plus | 3,259 (50%) | 1,868 (67%) |
+| undergrad_enrollment_source | 5,847 (89%) | 2,755 (99%) |
+| tuition_in_state_source | 3,697 (56%) | 2,359 (84%) |
+| tuition_out_of_state_source | 3,697 (56%) | 2,359 (84%) |
+| net_price_source | 5,335 (82%) | 2,328 (83%) |
+| grad_rate_source | 5,217 (80%) | 2,284 (82%) |
+| retention_rate_source | 4,948 (76%) | 2,074 (74%) |
 
 ## Imputed IPEDS values left out
 

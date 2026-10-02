@@ -19,9 +19,9 @@ A closure counts as confirmed only with a closing date (CLOSEDAT). An inactive f
 Scorecard's not-operating flag (CURROPER) alone also fits a campus that changed owner or merged, and a college
 that merely dropped out of IPEDS may have left federal aid and still teach, so those stay unconfirmed. Older
 directories confirm an identity only on an exact name in the same state and city. Phase 1's matches are checked
-the same way: a post whose exact name and city IPEDS gave to another college, never to the matched one, is
-reassigned to that college, and so is a post matched in another city when IPEDS lists the same name plus the
-post's city. Changes nothing on the site.
+the same way: a post whose exact name and city IPEDS gave to another college, never to the matched one or to a
+record that merged into it or now reports under it, is reassigned to that college, and so is a post matched in
+another city when IPEDS lists the same name plus the post's city. Changes nothing on the site.
 """
 import argparse
 import csv
@@ -221,6 +221,22 @@ def by_city(p, cur_idx, skip=""):
     return next(iter(hits)) if len(hits) == 1 else ""
 
 
+def parent(uid):
+    """IPEDS numbers a campus reported under its parent as the parent's UNITID plus two digits."""
+    return uid[:6] if len(uid) == 8 else uid
+
+
+def linked(u, uid, hist, current):
+    """Whether the older record u is the matched college uid itself in another form: a record that merged into
+    it (or into its parent), or the earlier record of a campus IPEDS now lists under a parent, in the same city."""
+    succ = successor(u, hist, current)
+    if succ and {uid, parent(uid)} & ({succ[0]} | set(succ[2])):
+        return True
+    if parent(uid) != uid and u in hist:
+        return last_seen(hist[u])[1]["CITY"].lower() == (current.get(uid, {}).get("city") or "").lower()
+    return False
+
+
 def recheck(m, p, idx, hist, current, cur_idx):
     """Phase 1's match checked against every name IPEDS has used: (unitid, evidence) of the college the post
     really names, or None when the match stands."""
@@ -229,7 +245,7 @@ def recheck(m, p, idx, hist, current, cur_idx):
     name = norm_name(html.unescape(p["title"]))
     same_city, elsewhere = older_hits(p, idx, hist)
     ours = uid in same_city + elsewhere or bool({name, strip_campus(name)} & current_names(rec))
-    if not ours and len(same_city) == 1:
+    if not ours and len(same_city) == 1 and not linked(same_city[0], uid, hist, current):
         u = same_city[0]
         return u, f"{describe(u, hist)}; IPEDS never listed UNITID {uid} under this name"
     if (rec.get("city") or "").lower() != p["city"].lower():

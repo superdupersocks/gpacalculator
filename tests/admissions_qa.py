@@ -440,7 +440,9 @@ _hist = {"100": {2015: _hd("100", "Old Tech Institute", "Akron", "OH"),
          "910": {2022: _hd("910", "South Valley College", "Dover", "DE")},
          "930": {2014: _hd("930", "Old Campus", "Ames", "IA", NEWID="940", DEATHYR="2015")},
          "940": {2014: _hd("940", "State Branch", "Ames", "IA"),
-                 2016: _hd("940", "State Branch", "Ames", "IA", CLOSEDAT="06/30/2016")}}
+                 2016: _hd("940", "State Branch", "Ames", "IA", CLOSEDAT="06/30/2016")},
+         "950": {2014: _hd("950", "River Tech-Waco", "Waco", "TX", NEWID="960", DEATHYR="2015")},
+         "970": {2011: _hd("970", "Hill College-Bloominton", "Bloomington", "IN")}}
 
 
 def _c(uid, name, city, st="", **kw):
@@ -458,7 +460,9 @@ _cur = {"300": _c("300", "Big University", "Erie"),
         "870": _c("870", "Brand College-Lakeside", "Lakeside", "NC", alias="Brand College"),
         "880": _c("880", "Brand College-Hilltop", "Hilltop", "NC"),
         "890": _c("890", "Maybe College", "Reno", "NV", active="Yes", operating="No"),
-        "910": _c("910", "Valley State College", "Dover", "DE")}
+        "910": _c("910", "Valley State College", "Dover", "DE"),
+        "960": _c("960", "River Tech", "Waco", "TX"),
+        "98000101": _c("98000101", "Hill College-Bloomington", "Bloomington", "IN")}
 _rows = [("old-tech", "Old Tech Institute", "Akron", "OH", "none", ""),
          ("gone", "Gone College", "Erie", "PA", "none", ""),
          ("quiet", "Quiet School", "Boise", "ID", "review", ""),
@@ -478,7 +482,10 @@ _rows = [("old-tech", "Old Tech Institute", "Akron", "OH", "none", ""),
          ("north-valley", "North Valley College", "Dover", "DE", "none", ""),
          ("south-valley", "South Valley College", "Dover", "DE", "review", ""),
          ("brand-college-2", "Brand College", "Hilltop", "NC", "review", ""),
-         ("old-campus", "Old Campus", "Ames", "IA", "none", "")]
+         ("old-campus", "Old Campus", "Ames", "IA", "none", ""),
+         ("river-tech", "River Tech", "Waco", "TX", "exact", "960"),
+         ("river-tech-waco", "River Tech Waco", "Waco", "TX", "renamed", "960"),
+         ("hill-bloominton", "Hill College Bloominton", "Bloomington", "IN", "fuzzy", "98000101")]
 _posts = [{"slug": s, "title": t, "url": f"https://gpacalculator.net/admissions/{s}/", "city": c, "state": st,
            "fields": {"location": f"{c}, {st}", "enrollment": "100" if s == "still" else ""}}
           for s, t, c, st, _, _ in _rows]
@@ -491,7 +498,7 @@ eq("audit: closed posts need a closing date, from an older directory or the curr
 eq("audit: merged posts go to the successor's page, a page pending review, or retire with the successor",
    [(r["slug"], r["successor_unitid"], r["treatment"].split(" once")[0]) for r in _a["merged"]],
    [("gone", "300", f"301 to {_url}big-u/"), ("absorbed", "300", f"301 to {_url}big-u/"),
-    ("chain-north", "820", f"301 to {_url}chain-south/"), ("north-valley", "910", f"301 to {_url}south-valley/"),
+    ("north-valley", "910", f"301 to {_url}south-valley/"),
     ("old-campus", "940", "retire like a closure: State Branch is no longer listed either")])
 eq("audit: unmatched posts keep what IPEDS shows, left alone",
    [(r["slug"], r["finding"].split(":")[0], r["treatment"]) for r in _a["unmatched"]],
@@ -502,14 +509,16 @@ eq("audit: unmatched posts keep what IPEDS shows, left alone",
 eq("audit: a name-plus-city finding names the post already holding that IPEDS ID",
    _a["unmatched"][-1]["finding"], "name plus city: IPEDS lists UNITID 880 as Brand College-Hilltop; also the IPEDS "
    "ID of brand-college")
-eq("audit: an old NEWID on a college still listed is ignored; its two posts are duplicates",
-   [(r["slug"], r["filled_fields"]) for r in _a["duplicates"]], [("still", 2), ("still-2", 1)])
+eq("audit: posts named for a campus record that merged into the college stay matched, as duplicates",
+   [(r["slug"], r["filled_fields"]) for r in _a["duplicates"]],
+   [("still", 2), ("still-2", 1), ("chain-north", 1), ("chain-south", 1), ("river-tech", 1), ("river-tech-waco", 1)])
 eq("audit: a not-operating flag without a closing date stays unconfirmed",
    [r["slug"] for r in _a["unconfirmed"]], ["maybe"])
+eq("audit: a campus now reported under a parent keeps its match to the campus record",
+   "hill-bloominton" in {r["slug"] for k in ("closed", "merged", "unmatched", "corrections") for r in _a[k]}, False)
 eq("audit: Phase 1 matches that IPEDS names contradict are reassigned",
    [(r["slug"], r["phase1_unitid"], r["unitid"], r["outcome"]) for r in _a["corrections"]],
-   [("chain-north", "820", "810", "no longer listed: now in merged.csv"),
-    ("capital-college", "840", "830", "no longer listed: now in unmatched.csv"),
+   [("capital-college", "840", "830", "no longer listed: now in unmatched.csv"),
     ("plains-atc", "860", "850", "matched to this college instead"),
     ("brand-college", "870", "880", "matched to this college instead")])
 

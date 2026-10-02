@@ -153,6 +153,23 @@ Undo: `bash scripts/admissions/phase2_e_live.sh revert <log name>` puts every ch
 the import added; `bash scripts/deploy_theme.sh --revert <theme backup>` restores the theme files (the new
 college-data.php stays on the server, unused: the restored functions.php doesn't load it).
 
+## Hub filters: skip colleges with no figure (after E)
+
+E emptied 1,245 unsourced acceptance rates and every SAT average without a fresh source. The hub's "Under 10%",
+"Under 25%" and "Under 50%" filters and its SAT "Under 1200" filter read an empty value as 0, so they listed those
+colleges ("Under 10%" showed 1,335). Commits 623589d (acceptance rate) and 5b5018f (SAT) fix both; functions.php is the
+only file that differs from af793b4. Digant runs the deploy from Terminal, since this session's permissions block
+deploy_theme.sh. "B2, second list" below doesn't wait for it.
+
+1. Digant: `git pull && bash scripts/deploy_theme.sh 5b5018f --only functions.php`, then he types "deployed".
+2. Check: the live functions.php is 5b5018f's
+   (`SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show 5b5018f:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`).
+   On /admissions/, "Under 10%" lists only colleges with a rate under 10% (about 30), "Under 1200" only colleges with
+   an SAT figure under 1200, and the other filters, the sorts and Load More work as before; a profile and a calculator
+   page load with Freestar tags.
+3. Changelog: one row with the undo, `bash scripts/deploy_theme.sh --revert <theme backup>` (puts af793b4's
+   functions.php back).
+
 ## B2, second list: GPAs cited on the college's own page
 
 Run after E (E's Harvard title check expects Harvard without a GPA; if this runs first, that title reads "Harvard
@@ -170,8 +187,10 @@ script never removes a value). 72 GPAs still wait in `phase2_b2_gpa_pending.csv`
 found linking the file.
 
 1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-b2-second.sql.gz`).
-2. No theme change. The live functions.php must be af793b4's (from B step 4 or E step 2); stop and report otherwise:
-   `SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show af793b4:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`
+2. No theme change. The live functions.php must be af793b4's (from B step 4 or E step 2), or 5b5018f's once the hub
+   filter fix above is deployed; stop and report otherwise:
+   `for c in af793b4 5b5018f; do SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show $c:child-theme/generatepress-child/functions.php) && echo "same as $c"; done`
+   (no output means it differs from both)
 3. Data: `bash scripts/admissions/phase2_b2_live.sh plan` must end "25 rows would change, 242 already match, 0
    skipped" (report any `SKIP`), then `bash scripts/admissions/phase2_b2_live.sh apply`; it ends "applied 25, already
    matched 242, skipped 0" and names the log. It writes only fields that change.

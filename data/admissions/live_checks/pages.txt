@@ -1,5 +1,5 @@
 # Pages read by scripts/page_check.py (admissions-pages.yml). Edit the stage line to run the check again.
-# stage: after the af793b4 theme deploy (2026-10-02 14:41 UTC), before B's data step
+# stage: after E's import (2026-10-02 14:49 UTC), before the hub filter fix and B2's second list
 /admissions/harvard/
 /admissions/abilene-christian-university/
 /admissions/clark-atlanta-university/

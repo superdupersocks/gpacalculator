@@ -46,6 +46,13 @@ body {
     margin-right: auto !important;
 }
 
+/* When the column narrows for the side rails (760px at 1440px wide), keep 40px of white either side of the text */
+@media (min-width: 941px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+        max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
+    }
+}
+
 /* ---------- 2. Article text ---------- */
 :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
     font-size: var(--gpa-body-size) !important;

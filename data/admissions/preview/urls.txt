@@ -1,8 +1,17 @@
 # Live pages saved by admissions-snapshot.yml (scripts/design/snapshot.py) for Phase 3 previews. Edit to take a new snapshot.
-# taken for: Phase 3 "before" screenshots and the page chrome around the local template renders (2026-10-02)
+# taken for: Phase 3 "before" screenshots and the page chrome around the local template renders (2026-10-02);
+# the content page and calculator page show the design system the new templates follow
 https://gpacalculator.net/admissions/
 https://gpacalculator.net/admissions/harvard/
 https://gpacalculator.net/admissions/miami-university/
 https://gpacalculator.net/admissions/lone-star-college-system/
 https://gpacalculator.net/admissions/fairfax-university-of-america/
 https://gpacalculator.net/admissions/pitt/
+https://gpacalculator.net/admissions/caltech/
+https://gpacalculator.net/admissions/ucla/
+https://gpacalculator.net/admissions/duke/
+https://gpacalculator.net/admissions/adams-state-college/
+https://gpacalculator.net/admissions/hardin-simmons-university/
+https://gpacalculator.net/admissions/bacone-college/
+https://gpacalculator.net/gpa-scale/3-8-gpa/
+https://gpacalculator.net/college-gpa-calculator/

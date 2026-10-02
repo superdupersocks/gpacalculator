@@ -62,6 +62,9 @@ def mirror_markup(html, slug, pages_dir, theme):
     if "function gpa_faq_accordion" in php:
         js = re.search(r"function gpa_faq_accordion\(\).*?(<script>.*?</script>)", php, re.S).group(1)
         html = html.replace("</body>", js + "</body>", 1)
+    if "function gpa_toc_builder" in php and slug != "home":
+        js = re.search(r"function gpa_toc_builder\(\).*?(<script>.*?</script>)", php, re.S).group(1)
+        html = html.replace("</body>", js + "</body>", 1)
     body = re.search(r'<body[^>]*class="([^"]*)"', html)
     classes = body.group(1).split() if body else []
     if "gpa_hero_breadcrumb" in php and slug != "home" and "single-colleges" not in classes:

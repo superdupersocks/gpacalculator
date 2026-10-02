@@ -330,6 +330,30 @@ html .gpa-breadcrumb a.gpa-breadcrumb__link:hover {
     margin: 0 auto;
     padding: 16px 16px 0;
 }
+/* College pages: lay it over the top of their hero, like the other pages
+   (centred on the /admissions/ hub, left-aligned in a college's hero card) */
+html body .db-archive-page,
+html body .db-college-profile { position: relative; }
+html body .db-archive-page > .gpa-breadcrumb,
+html body .db-college-profile > .gpa-breadcrumb {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+html body .db-archive-page > .gpa-breadcrumb { top: 0; padding: 22px 24px 0; }
+html body .db-archive-page > .gpa-breadcrumb .gpa-breadcrumb__list { justify-content: center; }
+html body .db-archive-page > .db-archive-hero { padding-top: 100px !important; }
+html body .db-college-profile > .gpa-breadcrumb { top: 0; padding: 22px 33px 0; }
+html body .db-college-profile > .db-hero { padding-top: 36px !important; }
+@media (max-width: 768px) {
+    html body .db-archive-page > .gpa-breadcrumb { padding: 18px 16px 0; }
+    html body .db-archive-page > .db-archive-hero { padding-top: 72px !important; }
+    html body .db-college-profile > .gpa-breadcrumb { padding: 18px 25px 0; }
+    html body .db-college-profile > .db-hero { padding-top: 32px !important; }
+}
 /* In the hero: centred, above the title */
 .entry-header .gpa-breadcrumb {
     margin: 0 auto 16px;
@@ -563,20 +587,26 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 :is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content h2:not(#root *, .gpacalc-mount *, .wp-block-rank-math-toc-block *, .gpa-sources *, .widget *, .rx-sec:is([id*="faq" i], :has(.rx-faq, .rank-math-block, .rx-rel)) *, .gpa-no-number, [id*="faq" i], [id*="fa-q" i], [id*="related" i], [id*="keep-planning" i], [id*="sources" i]):not(:has(+ .rank-math-block, + .wp-block-rank-math-faq-block, + .rx-rel, + p.rx-sub + .rx-rel, + .wp-block-spacer + .rx-rel, + p.rx-sub + .wp-block-spacer + .rx-rel))::before,
 body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa-no-number, [id*="faq" i], [id*="fa-q" i], [id*="related" i], [id*="sources" i]):not(:has(+ .rank-math-block, + .wp-block-rank-math-faq-block))::before {
     content: counter(gpa-sec, decimal-leading-zero);
-    display: inline;
-    position: static;
-    width: auto;
-    height: auto;
-    background: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: -4px;
+    width: 40px;
+    height: 40px;
     margin-right: 14px;
+    border-radius: 10px;
+    background: var(--gpa-tint-indigo);
     color: var(--gpa-accent);
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
+    line-height: 1;
     letter-spacing: 0;
-    vertical-align: baseline;
+    font-variant-numeric: tabular-nums;
+    vertical-align: middle;
 }
 @media (max-width: 768px) {
-    :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-content h2::before { font-size: 16px; }
+    :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-content h2::before { width: 32px; height: 32px; margin-right: 12px; border-radius: 8px; font-size: 15px; top: -3px; }
 }
 /* A heading block made flex by older rules would split the number from the text */
 :is(body.page-template-template-calculator, body.gpa-hero-band) #primary #main .entry-content h2.rx-h2 { display: block !important; }
@@ -625,12 +655,20 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
     content: counter(gpa-toc, decimal-leading-zero);
     position: static;
     flex: none;
-    width: auto;
-    height: auto;
-    background: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--gpa-tint-indigo);
     color: var(--gpa-accent);
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
 }
+#page .entry-content .wp-block-rank-math-toc-block li { align-items: center; }
 #page .entry-content .wp-block-rank-math-toc-block li:has(> a:is([href*="faq" i], [href*="fa-q" i], [href*="related" i], [href*="keep-planning" i], [href*="sources" i])) {
     display: none;
 }

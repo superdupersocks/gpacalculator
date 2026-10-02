@@ -3660,6 +3660,63 @@ function gpa_faq_accordion() {
 }
 
 /**
+ * Design overhaul: "On this page" table of contents under the calculator (or above the first numbered section on
+ * pages without one), listing exactly the H2s that layout.css section 10 numbers, so the numbers always match.
+ * Shown on pages with 4 or more numbered sections; pages that already have a Rank Math TOC block keep theirs.
+ * Built in the browser from the numbered headings, so no page content changes. Styles: layout.css section 11.
+ */
+add_action( 'wp_footer', 'gpa_toc_builder', 31 );
+function gpa_toc_builder() {
+	if ( is_admin() || ! is_singular() || is_front_page() ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	var c = document.querySelector('.entry-content');
+	if (!c || c.querySelector('.wp-block-rank-math-toc-block')) { return; }
+	var toc = document.createElement('div');
+	toc.className = 'wp-block-rank-math-toc-block gpa-toc';
+	toc.id = 'gpa-toc';
+	toc.hidden = true;
+	c.insertBefore(toc, c.firstChild);
+	var heads = [].filter.call(c.querySelectorAll('h2'), function (h) {
+		return /gpa-sec/.test(getComputedStyle(h, '::before').content || '');
+	});
+	if (heads.length < 4) { toc.remove(); return; }
+	var top = function (el) { while (el.parentElement && el.parentElement !== c) { el = el.parentElement; } return el; };
+	var root = c.querySelector('#root, .gpacalc-mount, .frm_forms');
+	var before = root ? top(root).nextElementSibling : top(heads[0]);
+	var used = {};
+	var title = document.createElement('p');
+	title.textContent = 'On this page';
+	var list = document.createElement('ul');
+	heads.forEach(function (h) {
+		if (!h.id) {
+			var base = (h.textContent || 'section').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'section', id = base, n = 2;
+			while (used[id] || document.getElementById(id)) { id = base + '-' + n++; }
+			h.id = id;
+		}
+		used[h.id] = 1;
+		var li = document.createElement('li'), a = document.createElement('a');
+		a.href = '#' + h.id;
+		a.textContent = (h.textContent || '').trim();
+		li.appendChild(a);
+		list.appendChild(li);
+	});
+	var nav = document.createElement('nav');
+	nav.setAttribute('aria-label', 'On this page');
+	nav.appendChild(list);
+	toc.appendChild(title);
+	toc.appendChild(nav);
+	c.insertBefore(toc, before || null);
+	toc.hidden = false;
+})();
+</script>
+	<?php
+}
+
+/**
  * Sitemap pages: break ties on the modified time by ID.
  *
  * Rank Math pages each post-type sitemap with "ORDER BY p.post_modified DESC LIMIT n OFFSET m" and offers no filter

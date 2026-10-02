@@ -3082,7 +3082,22 @@ if ( ! function_exists( 'get_field' ) ) {
 	}
 }
 
-// 24/SEP/2026 — updated 27/SEP/2026: side rails V5 + jQuery UI removal on calculator pages
+// Side rails V6 (2026-10-02): tiered rails that match the Freestar siderail size mapping and the column tiers in style.css.
+
+/**
+ * Freestar placements for the side rails: segment 1 always, segment 2 on tall pages (rail height >= 1300px).
+ * Freestar's sizeMapping (fsdata.json v158, checked 2026-10-02): siderail_left_1/2/3 use the target tiers
+ * (1260 = 160x600/120x600, 1350 = up to 300 wide, 1440 = up to 336 wide); siderail_right_1/2/3 still use
+ * 1000/1349/1439/1440, which would request 300px ads into 160px rails at 1260-1349. So the right rail uses left_3.
+ * When Freestar corrects right_1/right_2, switch the right rail with this one line:
+ *     'right' => array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_right_2' ),
+ */
+function gpa_rail_placements() {
+	return array(
+		'left'  => array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_2' ),
+		'right' => array( 'gpacalculator-net_siderail_left_3' ),
+	);
+}
 
 add_action( 'wp_footer', 'gpa_freestar_siderails', 20 );
 function gpa_freestar_siderails() {
@@ -3096,49 +3111,55 @@ function gpa_freestar_siderails() {
 			. '<script data-cfasync="false" type="text/javascript">freestar.config.enabled_slots.push({ placementName: "' . esc_js( $id ) . '", slotId: "' . esc_js( $id ) . '" });</script>'
 			. '</div>';
 	};
-	// Side-rail containers only: the V5 script requests these ads when the rails are actually visible.
-	$rail = function ( $id, $size ) {
-		return '<div align="center" data-freestar-ad="' . esc_attr( $size ) . '" id="' . esc_attr( $id ) . '"></div>';
-	};
+	$placements = gpa_rail_placements();
 
-	echo "\n<!-- Freestar side rails (GPA_RAILS_V5) -->\n";
-	echo '<div class="gpa-rail gpa-rail--left"><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_2', '__300x600' )
-		. '</div></div></div>' . "\n";
-	echo '<div class="gpa-rail gpa-rail--right"><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_1', '__336x600' )
-		. '</div></div><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_3', '__300x600' )
-		. '</div></div></div>' . "\n";
+	echo "\n<!-- Freestar side rails (GPA_RAILS_V6) -->\n";
+	foreach ( array( 'left', 'right' ) as $side ) {
+		echo '<div class="gpa-rail gpa-rail--' . $side . '">';
+		foreach ( $placements[ $side ] as $id ) {
+			echo '<div class="gpa-rail__seg"><div class="gpa-rail__sticky"><div align="center" id="' . esc_attr( $id ) . '"></div></div></div>';
+		}
+		echo "</div>\n";
+	}
 // echo "\n<!-- Tag ID: gpacalculator-net_kargo_spotlight -->\n" . $tag( 'gpacalculator-net_kargo_spotlight', '' ) . "\n";
 	?>
 <script data-cfasync="false">
 (function () {
-	var L = document.querySelector('.gpa-rail--left'), R = document.querySelector('.gpa-rail--right');
-	if (!L || !R) { return; }
-	var s1 = R.children[0], s2 = R.children[1], GAP = 20, EDGE = 8, body = document.body;
-	var mq = window.matchMedia('(min-width: 1024px)');
+	var PLACEMENTS = <?php echo wp_json_encode( $placements ); ?>; // edit in gpa_rail_placements() (functions.php)
+	// Same breakpoints as GPA_COLUMN_TIERS in style.css and the siderail size mapping.
+	var TIERS = [
+		{ w: 336, mq: window.matchMedia('(min-width: 1440px)') },
+		{ w: 300, mq: window.matchMedia('(min-width: 1350px)') },
+		{ w: 160, mq: window.matchMedia('(min-width: 1260px)') }
+	];
+	var GAP_MIN = 20, GAP_MAX = 56, EDGE = 8, SEG2_MIN = 1300, AD_H = 600;
+	var rails = { left: document.querySelector('.gpa-rail--left'), right: document.querySelector('.gpa-rail--right') };
+	if (!rails.left || !rails.right) { return; }
+	var body = document.body;
 	var header = document.querySelector('.entry-header');
 	var siteHeader = document.querySelector('.site-header');
 	var footer = document.querySelector('.site-footer');
 	var heroes = ['.gpa-hero', '.db-hero', '.db-archive-hero'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
 	var cols = ['.db-container', '.entry-content', '#content'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
-	var afterExtra = null, state = '', raf = 0, t = 0, adsRequested = false;
+	var afterExtra = null, state = '', raf = 0, t = 0, requested = {}, curTier = null, tierSent = false;
 
-	// READ phase only — no style writes in here.
-	function measure() {
+	function tierNow() {
+		for (var i = 0; i < TIERS.length; i++) { if (TIERS[i].mq.matches) { return TIERS[i].w; } }
+		return 0;
+	}
+
+	// READ phase only.
+	function measure(w) {
 		var de = document.documentElement, vw = de.clientWidth, y = window.pageYOffset, c = null, r, i;
 		for (i = 0; i < cols.length; i++) {
 			r = cols[i].getBoundingClientRect();
 			if (r.width && r.width < vw - 100) { c = r; break; }
 		}
 		if (!c) { return null; }
-		var m = Math.min(c.left, vw - c.right);
-		if (m < 300 + GAP + EDGE) { return null; }
 		var b = 0;
 		if (header) {
 			r = header.getBoundingClientRect();
-			if (afterExtra === null) { // ::after geometry is static CSS — read it once
+			if (afterExtra === null) {
 				var cs = getComputedStyle(header, '::after');
 				afterExtra = cs.position === 'absolute' ? (parseFloat(cs.top) || 0) + (parseFloat(cs.height) || 0) : 0;
 			}
@@ -3147,45 +3168,71 @@ function gpa_freestar_siderails() {
 		for (i = 0; i < heroes.length; i++) {
 			r = heroes[i].getBoundingClientRect();
 			if (r.height) { b = Math.max(b, r.bottom + y); }
-	}
+		}
 		if (!b && siteHeader) { b = siteHeader.getBoundingClientRect().bottom + y; }
 		var top = b + 24;
-		var bottom = footer ? footer.getBoundingClientRect().top + y - 24 : de.scrollHeight - 24;
-		var h = Math.max(620, bottom - top), wide = m >= 336 + GAP + EDGE;
+		// Stop 24px above the bottom in-content ad (never beside it), else above the footer.
+		var stop = document.getElementById('gpacalculator-net_incontent_bottom') || footer;
+		var bottom = stop ? stop.getBoundingClientRect().top + y - 24 : de.scrollHeight - 24;
+		var h = bottom - top;
+		if (h < AD_H) { return null; }
+		// Space beside the column: the rail must fit at its tier width, with at least GAP_MIN to the column and EDGE to the screen edge.
+		var gl = Math.min(GAP_MAX, c.left - EDGE - w), gr = Math.min(GAP_MAX, vw - c.right - EDGE - w);
 		return {
-			top: Math.round(top), h: Math.round(h), wide: wide,
-			l: Math.round(window.pageXOffset + Math.min((c.left - 300) / 2, c.left - GAP - 300)),
-			r: Math.round(window.pageXOffset + Math.max(c.right + (vw - c.right - (wide ? 336 : 300)) / 2, c.right + GAP))
+			top: Math.round(top), h: Math.round(h), two: h >= SEG2_MIN,
+			left: gl >= GAP_MIN ? Math.round(window.pageXOffset + c.left - gl - w) : null,
+			right: gr >= GAP_MIN ? Math.round(window.pageXOffset + c.right + gr) : null
 		};
 	}
-	function requestAds(p) {
-		if (adsRequested || !window.freestar) { return; }
-		adsRequested = true;
-		var ids = ['gpacalculator-net_siderail_right_2'];
-		if (p.wide) { ids.push('gpacalculator-net_siderail_right_1'); }
-		if (!p.wide || p.h >= 1300) { ids.push('gpacalculator-net_siderail_right_3'); }
-		var slots = ids.map(function (id) { return { placementName: id, slotId: id }; });
-		freestar.queue.push(function () { freestar.newAdSlots(slots); });
+
+	function want(side, p) { // placement ids a rail should hold now
+		if (!p || p[side] === null) { return []; }
+		return PLACEMENTS[side].slice(0, p.two ? 2 : 1);
+	}
+	function sync(ids) { // request newly shown slots, delete hidden ones
+		var add = ids.filter(function (id) { return !requested[id]; });
+		var del = Object.keys(requested).filter(function (id) { return ids.indexOf(id) < 0; });
+		if (!window.freestar || (!add.length && !del.length)) { return; }
+		add.forEach(function (id) { requested[id] = 1; });
+		del.forEach(function (id) { delete requested[id]; });
+		freestar.queue.push(function () {
+			if (del.length) { freestar.deleteAdSlots(del); }
+			if (add.length) { freestar.newAdSlots(add.map(function (id) { return { placementName: id, slotId: id }; })); }
+		});
+	}
+	function sendTier(w) {
+		if (tierSent) { return; }
+		tierSent = true;
+		var tier = w ? String(w) : 'none';
+		if (window.gtag) { gtag('event', 'rail_tier', { tier: tier }); }
+		else { (window.dataLayer = window.dataLayer || []).push(['event', 'rail_tier', { tier: tier }]); }
 	}
 
-	// WRITE phase — only runs when something actually changed.
+	// WRITE phase.
 	function apply() {
 		raf = 0;
-		var p = mq.matches ? measure() : null;
-		var key = p ? [p.top, p.h, p.wide, p.l, p.r].join() : 'off';
+		var w = tierNow();
+		sendTier(w);
+		if (curTier !== null && w !== curTier) { sync([]); } // tier changed: drop every slot, re-request for the new tier
+		curTier = w;
+		var p = w ? measure(w) : null;
+		var key = p ? [w, p.top, p.h, p.two, p.left, p.right].join() : 'off';
 		if (key === state) { return; }
 		state = key;
-		if (!p) { body.classList.remove('gpa-rails-on'); return; }
-		s1.style.display = p.wide ? '' : 'none';
-		s2.style.display = (!p.wide || p.h >= 1300) ? '' : 'none';
-		L.style.top = R.style.top = p.top + 'px';
-		L.style.height = R.style.height = p.h + 'px';
-		L.style.width = '300px';
-		R.style.width = (p.wide ? 336 : 300) + 'px';
-		L.style.left = p.l + 'px';
-		R.style.left = p.r + 'px';
-		body.classList.add('gpa-rails-on');
-		requestAds(p);
+		var ids = [];
+		['left', 'right'].forEach(function (side) {
+			var el = rails[side], show = !!(p && p[side] !== null);
+			el.style.display = show ? 'flex' : 'none';
+			if (!show) { return; }
+			el.style.setProperty('--gpa-rail-w', w + 'px');
+			el.style.top = p.top + 'px';
+			el.style.height = p.h + 'px';
+			el.style.left = p[side] + 'px';
+			[].forEach.call(el.children, function (seg, i) { seg.style.display = (i === 0 || p.two) ? '' : 'none'; });
+			ids = ids.concat(want(side, p));
+		});
+		body.classList.toggle('gpa-rails-on', !!p && (p.left !== null || p.right !== null));
+		sync(ids);
 	}
 
 	function schedule() { if (!raf) { raf = requestAnimationFrame(apply); } }
@@ -3194,10 +3241,11 @@ function gpa_freestar_siderails() {
 	schedule();
 	window.addEventListener('resize', later, { passive: true });
 	window.addEventListener('load', schedule);
-	if (mq.addEventListener) { mq.addEventListener('change', schedule); }
+	TIERS.forEach(function (x) { if (x.mq.addEventListener) { x.mq.addEventListener('change', schedule); } });
 	if (window.ResizeObserver) {
 		var ro = new ResizeObserver(later);
-		cols.concat(heroes, header ? [header] : []).forEach(function (el) { ro.observe(el); });
+		cols.concat(heroes, header ? [header] : [], footer ? [footer] : []).forEach(function (el) { ro.observe(el); });
+		ro.observe(document.body);
 	}
 })();
 </script>

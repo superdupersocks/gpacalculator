@@ -289,7 +289,7 @@ def shortcode_mount_tests(s, R):
     page.wait_for_selector(".gpacalc-mount .calc")
     R.check("shortcode: both mounts rendered", page.locator(".gpacalc-mount > .calc").count(), 2)
     R.check("shortcode: scoped styles apply", page.evaluate(
-        "getComputedStyle(document.querySelector('.gpacalc-mount .calc-card')).borderTopLeftRadius"), "24px")
+        "getComputedStyle(document.querySelector('.gpacalc-mount .calc-card')).borderTopLeftRadius"), "16px")
     first = page.locator(".gpacalc-mount").first
     first.locator("[aria-label='Category 1 score']").fill("42/50")
     R.check("shortcode: live result", first.locator(".calc-score").inner_text().strip(), "84%")
@@ -308,8 +308,12 @@ def token_tests(s, R):
         const c = document.querySelector('#root .calc');
         return { color: getComputedStyle(b).color, font: getComputedStyle(c).fontFamily.split(',')[0].trim(),
                  radius: getComputedStyle(document.querySelector('#root .calc-card')).borderTopLeftRadius }; }"""
-    want = {"color": "rgb(124, 58, 237)", "font": "Inter", "radius": "24px"}
+    # With the theme: the design system's calculator tokens (primary blue, Lexend, 16px cards).
+    # Without it: the calculator's own built-in fallbacks.
+    wants = {"": {"color": "rgb(37, 99, 235)", "font": "Lexend", "radius": "16px"},
+             "?tokens=off": {"color": "rgb(124, 58, 237)", "font": "Inter", "radius": "24px"}}
     for label, qs in [("theme tokens", ""), ("no theme tokens (fallbacks)", "?tokens=off")]:
+        want = wants[qs]
         ctx = s.context()
         page = s.page(ctx, PAGE.replace(".html", f".html{qs}"))
         page.wait_for_selector("#root .calc")
@@ -330,7 +334,8 @@ def visual_tests(s, R):
         ctx = s.context(reduced_motion="no-preference", **kw)
         page = s.page(ctx, PAGE)
         page.wait_for_selector("#root .calc")
-        R.check(f"{name}: Inter loaded", page.evaluate("document.fonts.check('800 16px Inter')"), True)
+        page.evaluate("document.fonts.ready")
+        R.check(f"{name}: Lexend loaded", page.evaluate("document.fonts.check('800 16px Lexend')"), True)
         page.screenshot(path=str(ARTIFACTS / f"starter-{name}-empty.png"), full_page=False)
         fill_rows(page, [("Homework", "92", "20"), ("Quizzes", "42/50", "30"), ("Midterm", "B+", "25"), ("Labs", "95", "25")])
         page.wait_for_timeout(900)  # count-up

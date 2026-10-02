@@ -346,6 +346,12 @@ def sources(d, admcon, credits):
         s[col] = (f"IPEDS ADM{y}", var, y, d.dicts["adm"]["vars"][var]["title"])
     for col, var in credits.items():
         s[col] = (f"IPEDS IC{yi}", var, yi, d.dicts["ic"]["vars"][var]["title"])
+    # Tables from an IPEDS provisional release (newer than the complete data files) say so in their source.
+    prov = {k for k in IPEDS_KEYS if d.manifest.get("files", {}).get(f"ipeds_{k}", {}).get("release") == "provisional"}
+    for k, v in s.items():
+        m = re.match(r"IPEDS ([A-Z_]+?) ?\d{4}", v[0])
+        if m and m.group(1).lower() in prov:
+            s[k] = (v[0].replace(m.group(0), m.group(0) + " provisional release", 1),) + v[1:]
     return {k: dict(zip(("source", "variable", "year", "meaning"), v)) for k, v in s.items()}
 
 

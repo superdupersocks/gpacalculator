@@ -15,6 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts" / "admissions"))
 import build  # noqa: E402
+import cds  # noqa: E402
+import fetch  # noqa: E402
 import match  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
@@ -106,6 +108,71 @@ with tempfile.TemporaryDirectory() as tmp:
     eq("IPEDS-only build keeps admissions and cost", (h["admit_rate"], h["tuition_in_state"]), ("0.0364", "59320"))
     eq("IPEDS-only build leaves Scorecard columns empty", (h["median_earnings_10yr"], h["accreditor"]), ("", ""))
     eq("IPEDS-only universe", sorted(rows), ["100751", "166027", "999001", "999003"])
+
+# Common Data Set parsing: the three-column C11 table (total column wins) and C12 split across lines.
+CDS_TEXT = """C11 Percentage of all enrolled, degree-seeking, first-time, first-year (freshman) students ...
+Score Included Score Not Included Total All Students
+Percent who had GPA of 4.0 60.10% 70.00% 65.06%
+Percent who had GPA between 3.75 and 3.99 25.00% 20.00% 22.50%
+Percent who had GPA between 3.50 and 3.74 10.00% 6.00% 8.00%
+Percent who had GPA between 3.25 and 3.49 3.00% 2.00% 2.50%
+Percent who had GPA between 3.00 and 3.24 1.00% 1.00% 1.00%
+Percent who had GPA between 2.50 and 2.99 0.90% 1.00% 0.94%
+Percent who had GPA between 2.0 and 2.49 0% 0% 0%
+Percent who had GPA between 1.0 and 1.99 0% 0% 0%
+Percent who had GPA below 1.0 0% 0% 0%
+C12 Average high school GPA of all degree-seeking, first-time, first-year (freshman) students who submitted
+GPA: 4.18
+Percent of total first-time, first-year (freshman) students who submitted high school GPA: 82%"""
+g = cds.parse(CDS_TEXT)
+eq("CDS C12 average and submit %", (g.get("gpa_avg"), g.get("gpa_submit_pct")), (4.18, 82.0))
+eq("CDS C11 total column", (g.get("gpa_4_0"), g.get("gpa_250_299"), g.get("gpa_below_100")), (65.06, 0.94, 0.0))
+eq("CDS bands add up", cds.check(g), [])
+g = cds.parse("C11\nPercent who had GPA of 4.0 0.4\nPercent who had GPA between 3.75 and 3.99 0.6\nC12")
+eq("CDS Excel fractions become percents", (cds.check(g), g["gpa_4_0"]), ([], 40.0))
+g = {"gpa_avg": 39.2}
+eq("CDS impossible average flagged", cds.check(g), ["average GPA 39.2 outside 1-5"])
+
+# IPEDS provisional release: the newest Tablesdoc on the Access page, its titles and labels per table, and
+# sources marked as provisional.
+page = ('<a href="/ipeds/tablefiles/tableDocs/IPEDS202324Tablesdoc.xlsx">2023-24</a>'
+        '<a href="https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx">2024-25</a>')
+eq("newest release on the Access page", fetch.newest_release(page),
+   (2024, "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx"))
+eq("no release on the page", fetch.newest_release("<html></html>"), (None, None))
+import io  # noqa: E402
+import openpyxl  # noqa: E402
+wb = openpyxl.Workbook()
+ws = wb.active
+ws.title = "Tables24"
+ws.append(["TableName", "TableTitle"])
+ws.append(["ADM2024", "Admissions"])
+ws = wb.create_sheet("vartable24")
+ws.append(["TableName", "varName", "varTitle", "DataType"])
+ws.append(["ADM2024", "applcn", "Applicants total", "N"])
+ws.append(["ADM2024", "ADMCON7", "Admission test scores", "N"])
+ws = wb.create_sheet("valuesets24")
+ws.append(["TableName", "varName", "Codevalue", "valueLabel"])
+ws.append(["ADM2024", "ADMCON7", 1.0, "Required"])
+buf = io.BytesIO()
+wb.save(buf)
+doc = fetch.parse_tablesdoc(buf.getvalue())
+eq("Tablesdoc titles per table", doc["ADM2024"]["vars"]["APPLCN"]["title"], "Applicants total")
+eq("Tablesdoc code labels", doc["ADM2024"]["codes"]["ADMCON7"], {"1": "Required"})
+with tempfile.TemporaryDirectory() as tmp:
+    tmp = Path(tmp)
+    shutil.copytree(FIX, tmp / "fix")
+    mf = tmp / "fix" / "manifest.json"
+    m = json.loads(mf.read_text())
+    m.setdefault("files", {})["ipeds_adm"] = {"release": "provisional"}
+    m["files"]["ipeds_drvgr"] = {"release": "provisional"}
+    mf.write_text(json.dumps(m))
+    build.main(["--raw", str(tmp / "fix" / "raw"), "--out", str(tmp)])
+    src = json.loads((tmp / "field_sources.json").read_text())
+    eq("provisional ADM source marked", src["applicants"]["source"], "IPEDS ADM2024 provisional release")
+    eq("provisional measure source marked", src["grad_rate"]["source"],
+       "IPEDS DRVGR 2024 provisional release (else Scorecard)")
+    eq("complete-file source unmarked", src["name"]["source"], "IPEDS HD2024")
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

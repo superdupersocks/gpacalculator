@@ -147,7 +147,7 @@ function cd_api_ready() {
 	if ( ! class_exists( '\RankMath\Helper' ) || ! \RankMath\Helper::is_module_active( 'redirections' ) ) {
 		$missing[] = "Rank Math's Redirections module is off";
 	}
-	foreach ( array( 'from', 'add_source', 'add_destination', 'set_header_code', 'save' ) as $m ) {
+	foreach ( array( 'from', 'add_source', 'add_destination', 'save' ) as $m ) {
 		if ( ! method_exists( Redirection::class, $m ) ) {
 			$missing[] = "RankMath\\Redirections\\Redirection::$m is missing";
 		}
@@ -204,14 +204,14 @@ function cd_apply( $file, $checkpoint, $log ) {
 		$addresses = array( 'admissions/' . $row['slug'], 'admission/' . $row['slug'] );
 		$before    = wp_list_pluck( cd_rules_on( $addresses ), 'id' );
 		$code      = 'retire' === $row['action'] ? 410 : 301;
-		$rule      = Redirection::from( array( 'header_code' => $code ) );
+		// Rank Math 1.0.279 has no set_header_code(); from() keeps the code in the rule's data and DB::add() stores it.
+		$rule      = Redirection::from( array( 'header_code' => $code, 'status' => 'active' ) );
 		foreach ( $sources as $s ) {
 			$rule->add_source( $s, 'exact' );
 		}
 		if ( 301 === $code ) {
 			$rule->add_destination( $row['target'] );
 		}
-		$rule->set_header_code( $code );
 		$rid = (int) $rule->save();
 		if ( ! $rid ) {
 			WP_CLI::warning( "skipped {$row['slug']}: Rank Math didn't save the redirect" );

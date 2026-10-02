@@ -24,7 +24,8 @@
         totalColleges: parseInt(gpa_db_ajax.total_colleges, 10) || 0,
         showingCount: 0,
         loading: false,
-        loadingMore: false
+        loadingMore: false,
+        queued: false
     };
 
     // ============================================
@@ -32,6 +33,8 @@
     // ============================================
     var searchInput       = document.getElementById('db-search-input');
     var searchSpinner     = document.getElementById('db-search-spinner');
+    var searchButton      = document.getElementById('db-search-btn');
+    var searchExamples    = document.getElementById('db-search-examples');
     var quickPills        = document.getElementById('db-quick-pills');
     var filtersToggle     = document.getElementById('db-filters-toggle');
     var filtersPanel      = document.getElementById('db-filters-panel');
@@ -233,7 +236,12 @@
     // AJAX Request: Filter/Search Colleges
     // ============================================
     function fetchColleges(append) {
-        if (state.loading) return;
+        if (state.loading) {
+            // A search or filter change made while a request is out runs when it returns, so the list always
+            // matches what was typed last
+            if (!append) state.queued = true;
+            return;
+        }
         state.loading = true;
 
         var params = buildParams();
@@ -319,6 +327,12 @@
             } else {
                 console.error('Database AJAX request failed:', xhr.status);
             }
+
+            if (state.queued) {
+                state.queued = false;
+                state.page = 1;
+                fetchColleges(false);
+            }
         };
 
         xhr.send(body);
@@ -385,6 +399,8 @@
     // --- Search input with debounce ---
     if (searchInput) {
         searchInput.addEventListener('input', debounce(function () {
+            // Already searched (Enter, the Search button or an example)
+            if (searchInput.value.trim() === state.search) return;
             state.search = searchInput.value.trim();
             triggerFilter();
         }, 300));
@@ -396,6 +412,30 @@
                 state.search = searchInput.value.trim();
                 triggerFilter();
             }
+        });
+    }
+
+    // --- Search button: searches now; with nothing typed, puts the cursor in the box ---
+    if (searchInput && searchButton) {
+        searchButton.addEventListener('click', function () {
+            var value = searchInput.value.trim();
+            if (!value && !state.search) {
+                searchInput.focus();
+                return;
+            }
+            state.search = value;
+            triggerFilter();
+        });
+    }
+
+    // --- Example searches under the bar ---
+    if (searchInput && searchExamples) {
+        searchExamples.addEventListener('click', function (e) {
+            var example = e.target.closest('[data-search]');
+            if (!example) return;
+            searchInput.value = example.getAttribute('data-search');
+            state.search = searchInput.value;
+            triggerFilter();
         });
     }
 
@@ -429,8 +469,9 @@
     if (filtersToggle && filtersPanel) {
         filtersToggle.addEventListener('click', function () {
             var isVisible = filtersPanel.style.display !== 'none';
-            filtersPanel.style.display = isVisible ? 'none' : 'block';
+            filtersPanel.style.display = isVisible ? 'none' : 'grid';
             filtersToggle.classList.toggle('db-archive-filters__toggle--active', !isVisible);
+            filtersToggle.setAttribute('aria-expanded', String(!isVisible));
         });
     }
 

@@ -46,10 +46,15 @@ body {
     margin-right: auto !important;
 }
 
-/* When the column narrows for the side rails (760px at 1440px wide), keep 40px of white either side of the text */
-@media (min-width: 941px) {
-    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(.entry-content, .rx-sec, .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+/* Text inset: 40px of white either side of the text from 641px up, 20px on phones */
+@media (min-width: 641px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
         max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
+    }
+}
+@media (max-width: 640px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+        max-width: min(var(--gpa-text-max), calc(100% - 40px)) !important;
     }
 }
 
@@ -88,7 +93,7 @@ body {
    Spacer blocks touching a header are ignored, so the editor can't break the rhythm. */
 
 /* Space ABOVE the header: on the pill if there is one, otherwise on the H2 */
-#primary #main .entry-content :is(p.rx-eyebrow, h2:not(p.rx-eyebrow + h2, p.rx-eyebrow + .wp-block-spacer + h2)):not(:first-child):not(#root *) { margin-top: var(--gpa-hdr-above) !important; }
+#primary #main .entry-content :is(p.rx-eyebrow, h2:not(p.rx-eyebrow + h2, p.rx-eyebrow + .wp-block-spacer + h2)):not(:first-child):not(#root *) { margin-top: var(--gpa-sec-gap) !important; }
 /* ...a header that only has a spacer above it still starts its block */
 #primary #main .entry-content .wp-block-spacer:first-child + :is(p.rx-eyebrow, h2) { margin-top: 0 !important; }
 /* ...old React calculators carry their own bottom padding */
@@ -117,7 +122,7 @@ body {
 /* A header that is the first thing in its card/section gets no top margin */
 #primary #main .entry-content :is(.rx-sec, .rx-card) > :is(p.rx-eyebrow, h2):first-child { margin-top: 0 !important; }
 /* The section right after the calculator sits the standard header distance below it */
-#primary #main .entry-content > #root + .rx-sec { margin-top: var(--gpa-hdr-above) !important; }
+#primary #main .entry-content > #root + .rx-sec { margin-top: var(--gpa-sec-gap) !important; }
 #primary #main .entry-content > #root + .rx-sec > .rx-card:first-child { padding-top: 0 !important; }
 
 /* Headers are left-aligned on content templates (the hero stays centred).

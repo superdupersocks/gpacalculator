@@ -1,7 +1,7 @@
 /************************************************
 Theme Name: GeneratePress Child
 Template: generatepress
-Version: 1.1.1
+Version: 1.1.2
 Description: Child theme for GPA Calculator site.
 Typography, colors, and spacing defined in
 gpa-design-tokens.css (source of truth: gpa-homepage.css).
@@ -357,7 +357,8 @@ body.gpa-rails-on .gpa-rail { display: flex; }
 }
 .gpa-rail__sticky {
 	position: sticky;
-	top: 90px;
+	/* short screens: keep the whole 600px ad in view (the site header is not sticky) */
+	top: clamp(8px, calc(100vh - 608px), 90px);
 	pointer-events: auto;
 }
 .gpa-rail [id^="gpacalculator-net_siderail"] {
@@ -367,8 +368,8 @@ body.gpa-rails-on .gpa-rail { display: flex; }
 /* Kargo spotlight is auto-sized by Freestar */
 #gpacalculator-net_kargo_spotlight { min-height: 0 !important; }
  
-/* Never on tablet / mobile */
-@media (max-width: 1023px) {
+/* No rails below 1260px (Freestar siderail size mapping: tier 0 = none) */
+@media (max-width: 1259px) {
 	.gpa-rail { display: none !important; }
 }
 
@@ -383,9 +384,54 @@ body.home .entry-content > .wp-block-group {
 }
 
 @media (min-width: 1560px) {
-  body.home .site-content { max-width: 900px !important; }
+  body.home .site-content { max-width: 800px !important; }
 }
 
+/* Full-bleed hero/band backgrounds use 100vw/50vw, which is 17px wider than the page under a classic
+   scrollbar: clip them at the page box (overflow-x: clip keeps sticky and fixed positioning working). */
+#page.site { overflow-x: clip; }
+
+/* GPA_COLUMN_TIERS (2026-10-02): the white column narrows so the Freestar side rails fit.
+   Same breakpoints as the rails script (GPA_RAILS_V6) and the siderail size mapping:
+   >=1440 336px rails, 1350-1439 300px rails, 1260-1349 160px rails, <1260 no rails.
+   Widths are % of a full-width parent (never 100vw), so a classic scrollbar can't push a rail into the column. */
+body.page-template-template-calculator :is(.site-content, .content-area, .site-main, .inside-article),
+body.page-template-template-content :is(.site-content, .content-area, .site-main, .inside-article),
+body.gpa-template-content :is(.site-content, .content-area, .site-main, .inside-article),
+body.page-template-gpa-content-page :is(.site-content, .content-area, .site-main, .inside-article),
+body.single-post :is(.site-content, .content-area, .site-main, .inside-article) {
+	max-width: 100% !important;
+	width: 100% !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+/* <1260px: 800px column, no rails; 1260-1349: 800px column, 160px rails */
+body.page-template-template-calculator .entry-content,
+body.page-template-template-content .entry-content,
+body.gpa-template-content .entry-content,
+body.page-template-gpa-content-page .entry-content,
+body.single-post .entry-content,
+body.home .site-content,
+body.single-colleges .db-container,
+body.post-type-archive-colleges .db-container {
+	width: min(800px, 100%) !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+@media (min-width: 1350px) {
+	body.page-template-template-calculator .entry-content,
+	body.page-template-template-content .entry-content,
+	body.gpa-template-content .entry-content,
+	body.page-template-gpa-content-page .entry-content,
+	body.single-post .entry-content,
+	body.home .site-content,
+	body.single-colleges .db-container,
+	body.post-type-archive-colleges .db-container {
+		width: min(800px, calc(100% - 656px)) !important;
+	}
+}
 @media (min-width: 1440px) {
 	body.page-template-template-calculator .entry-content,
 	body.page-template-template-content .entry-content,
@@ -395,23 +441,22 @@ body.home .entry-content > .wp-block-group {
 	body.home .site-content,
 	body.single-colleges .db-container,
 	body.post-type-archive-colleges .db-container {
-		width: min(100%, calc(100vw - 680px)) !important;
-		margin-left: auto !important;
-		margin-right: auto !important;
+		width: min(800px, calc(100% - 728px)) !important;
 	}
 }
+
  
 /* College templates force width:100% on page elements, which was
    stretching the rails to full screen width. Keep rails their own size. */
 html body div.gpa-rail {
-	width: max-content !important;
-	max-width: 336px !important;
+	width: var(--gpa-rail-w, 300px) !important;
+	max-width: none !important;
 }
 
 /* Article column, text width, type and section rhythm: layout.css */
 
  /* Give rail slots their size before the ad loads */
-.gpa-rail [id^="gpacalculator-net_siderail"] { min-width: 300px; }
+.gpa-rail [id^="gpacalculator-net_siderail"] { min-width: var(--gpa-rail-w, 300px); }
 
 /* Rail ads: pin the ad to the top of its slot instead of floating mid-slot */
 .gpa-rail [id^="gpacalculator-net_siderail"] {

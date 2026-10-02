@@ -1,5 +1,5 @@
 {
- "taken_utc": "2026-10-02 19:37",
+ "taken_utc": "2026-10-02 22:35",
  "pages": {
   "admissions": "https://gpacalculator.net/admissions/",
   "admissions__harvard": "https://gpacalculator.net/admissions/harvard/",
@@ -14,8 +14,12 @@
   "admissions__hardin-simmons-university": "https://gpacalculator.net/admissions/hardin-simmons-university/",
   "admissions__bacone-college": "https://gpacalculator.net/admissions/bacone-college/",
   "gpa-scale__3-8-gpa": "https://gpacalculator.net/gpa-scale/3-8-gpa/",
-  "college-gpa-calculator": "https://gpacalculator.net/college-gpa-calculator/"
+  "college-gpa-calculator": "https://gpacalculator.net/college-gpa-calculator/",
+  "admissions__wilkes-university": "https://gpacalculator.net/admissions/wilkes-university/",
+  "admissions__agnes-scott": "https://gpacalculator.net/admissions/agnes-scott/",
+  "admissions__calvin": "https://gpacalculator.net/admissions/calvin/",
+  "admissions__uiuc": "https://gpacalculator.net/admissions/uiuc/"
  },
  "skipped": [],
- "files": 35
+ "files": 36
 }

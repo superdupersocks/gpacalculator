@@ -1,0 +1,626 @@
+old_url	status	location	redirect_by	final_url	final_status	hops	same_college_today	lands_there
+https://gpacalculator.net/admission/auburn-university/	301	https://gpacalculator.net/admissions/auburn/	Rank Math	https://gpacalculator.net/admissions/auburn/	200	1	https://gpacalculator.net/admissions/auburn/	yes
+https://gpacalculator.net/admission/harvard-university/	301	https://gpacalculator.net/admissions/harvard/	Rank Math	https://gpacalculator.net/admissions/harvard/	200	1	https://gpacalculator.net/admissions/harvard/	yes
+https://gpacalculator.net/admission/texas-tech-university/	301	https://gpacalculator.net/admissions/texas-tech/	Rank Math	https://gpacalculator.net/admissions/texas-tech/	200	1	https://gpacalculator.net/admissions/texas-tech/	yes
+https://gpacalculator.net/admission/university-of-california-berkeley/	301	https://gpacalculator.net/admissions/uc-berkeley/	Rank Math	https://gpacalculator.net/admissions/uc-berkeley/	200	1	https://gpacalculator.net/admissions/uc-berkeley/	yes
+https://gpacalculator.net/admission/university-of-north-carolina-at-chapel-hill/	301	https://gpacalculator.net/admissions/unc/	Rank Math	https://gpacalculator.net/admissions/unc/	200	1	https://gpacalculator.net/admissions/unc/	yes
+https://gpacalculator.net/admission/university-of-michigan-ann-arbor/	301	https://gpacalculator.net/admissions/michigan/	Rank Math	https://gpacalculator.net/admissions/michigan/	200	1		
+https://gpacalculator.net/admission/stanford-university/	301	https://gpacalculator.net/admissions/stanford/	Rank Math	https://gpacalculator.net/admissions/stanford/	200	1	https://gpacalculator.net/admissions/stanford/	yes
+https://gpacalculator.net/admission/clemson-university/	301	https://gpacalculator.net/admissions/clemson/	Rank Math	https://gpacalculator.net/admissions/clemson/	200	1	https://gpacalculator.net/admissions/clemson/	yes
+https://gpacalculator.net/admission/university-of-notre-dame/	301	https://gpacalculator.net/admissions/notre-dame/	Rank Math	https://gpacalculator.net/admissions/notre-dame/	200	1	https://gpacalculator.net/admissions/notre-dame/	yes
+https://gpacalculator.net/admission/university-of-maryland-college-park/	301	https://gpacalculator.net/admissions/umd/	Rank Math	https://gpacalculator.net/admissions/umd/	200	1	https://gpacalculator.net/admissions/umd/	yes
+https://gpacalculator.net/admission/the-university-of-texas-at-austin/	301	https://gpacalculator.net/admissions/ut-austin/	Rank Math	https://gpacalculator.net/admissions/ut-austin/	200	1	https://gpacalculator.net/admissions/ut-austin/	yes
+https://gpacalculator.net/admission/university-of-georgia/	301	https://gpacalculator.net/admissions/georgia/	Rank Math	https://gpacalculator.net/admissions/georgia/	200	1	https://gpacalculator.net/admissions/georgia/	yes
+https://gpacalculator.net/admission/new-york-university/	301	https://gpacalculator.net/admissions/nyu/	Rank Math	https://gpacalculator.net/admissions/nyu/	200	1	https://gpacalculator.net/admissions/nyu/	yes
+https://gpacalculator.net/admission/stony-brook-university/	301	https://gpacalculator.net/admissions/stony-brook/	Rank Math	https://gpacalculator.net/admissions/stony-brook/	200	1	https://gpacalculator.net/admissions/stony-brook/	yes
+https://gpacalculator.net/admission/miami-university-oxford/	301	https://gpacalculator.net/admissions/miami-university/	Rank Math	https://gpacalculator.net/admissions/miami-university/	200	1		
+https://gpacalculator.net/admission/yale-university/	301	https://gpacalculator.net/admissions/yale/	Rank Math	https://gpacalculator.net/admissions/yale/	200	1	https://gpacalculator.net/admissions/yale/	yes
+https://gpacalculator.net/admission/rice-university/	301	https://gpacalculator.net/admissions/rice/	Rank Math	https://gpacalculator.net/admissions/rice/	200	1	https://gpacalculator.net/admissions/rice/	yes
+https://gpacalculator.net/admission/princeton-university/	301	https://gpacalculator.net/admissions/princeton/	Rank Math	https://gpacalculator.net/admissions/princeton/	200	1	https://gpacalculator.net/admissions/princeton/	yes
+https://gpacalculator.net/admission/duke-university/	301	https://gpacalculator.net/admissions/duke/	Rank Math	https://gpacalculator.net/admissions/duke/	200	1	https://gpacalculator.net/admissions/duke/	yes
+https://gpacalculator.net/admission/northeastern-university/	301	https://gpacalculator.net/admissions/northeastern/	Rank Math	https://gpacalculator.net/admissions/northeastern/	200	1	https://gpacalculator.net/admissions/northeastern/	yes
+https://gpacalculator.net/admission/university-of-florida/	301	https://gpacalculator.net/admissions/florida/	Rank Math	https://gpacalculator.net/admissions/florida/	200	1	https://gpacalculator.net/admissions/florida/	yes
+https://gpacalculator.net/admission/university-of-delaware/	301	https://gpacalculator.net/admissions/delaware/	Rank Math	https://gpacalculator.net/admissions/delaware/	200	1	https://gpacalculator.net/admissions/delaware/	yes
+https://gpacalculator.net/admission/texas-a-m-university-college-station/	301	https://gpacalculator.net/admissions/texas-a-and-m-university-college-station/	Rank Math	https://gpacalculator.net/admissions/texas-a-and-m-university-college-station/	200	1		
+https://gpacalculator.net/admission/north-carolina-state-university-at-raleigh/	301	https://gpacalculator.net/admissions/nc-state/	Rank Math	https://gpacalculator.net/admissions/nc-state/	200	1	https://gpacalculator.net/admissions/nc-state/	yes
+https://gpacalculator.net/admission/university-of-southern-california/	301	https://gpacalculator.net/admissions/usc/	Rank Math	https://gpacalculator.net/admissions/usc/	200	1	https://gpacalculator.net/admissions/usc/	yes
+https://gpacalculator.net/admission/university-of-washington-seattle-campus/	301	https://gpacalculator.net/admissions/washington/	Rank Math	https://gpacalculator.net/admissions/washington/	200	1	https://gpacalculator.net/admissions/washington/	yes
+https://gpacalculator.net/admission/university-of-north-carolina-wilmington/	301	https://gpacalculator.net/admissions/university-of-north-carolina-at-wilmington/	Rank Math	https://gpacalculator.net/admissions/university-of-north-carolina-at-wilmington/	200	1		
+https://gpacalculator.net/admission/brigham-young-university-provo/	301	https://gpacalculator.net/admissions/byu/	Rank Math	https://gpacalculator.net/admissions/byu/	200	1	https://gpacalculator.net/admissions/byu/	yes
+https://gpacalculator.net/admission/george-washington-university/	301	https://gpacalculator.net/admissions/george-washington/	Rank Math	https://gpacalculator.net/admissions/george-washington/	200	1	https://gpacalculator.net/admissions/george-washington/	yes
+https://gpacalculator.net/admission/villanova-university/	301	https://gpacalculator.net/admissions/villanova/	Rank Math	https://gpacalculator.net/admissions/villanova/	200	1	https://gpacalculator.net/admissions/villanova/	yes
+https://gpacalculator.net/admission/university-of-wisconsin-madison/	301	https://gpacalculator.net/admissions/wisconsin/	Rank Math	https://gpacalculator.net/admissions/wisconsin/	200	1	https://gpacalculator.net/admissions/wisconsin/	yes
+https://gpacalculator.net/admission/carnegie-mellon-university/	301	https://gpacalculator.net/admissions/carnegie-mellon/	Rank Math	https://gpacalculator.net/admissions/carnegie-mellon/	200	1	https://gpacalculator.net/admissions/carnegie-mellon/	yes
+https://gpacalculator.net/admission/tufts-university/	301	https://gpacalculator.net/admissions/tufts/	Rank Math	https://gpacalculator.net/admissions/tufts/	200	1	https://gpacalculator.net/admissions/tufts/	yes
+https://gpacalculator.net/admission/university-of-pittsburgh-pittsburgh-campus/	301	https://gpacalculator.net/admissions/pitt/	Rank Math	https://gpacalculator.net/admissions/pitt/	429	1	https://gpacalculator.net/admissions/pitt/	no
+https://gpacalculator.net/admission/embry-riddle-aeronautical-university-daytona-beach/	301	https://gpacalculator.net/admissions/embry-riddle/	Rank Math	https://gpacalculator.net/admission/embry-riddle-aeronautical-university-daytona-beach/	429	0	https://gpacalculator.net/admissions/embry-riddle/	no
+https://gpacalculator.net/admission/emory-university/	429			https://gpacalculator.net/admission/emory-university/	429	0	https://gpacalculator.net/admissions/emory/	no
+https://gpacalculator.net/admission/columbia-university-in-the-city-of-new-york/	429			https://gpacalculator.net/admission/columbia-university-in-the-city-of-new-york/	429	0	https://gpacalculator.net/admissions/columbia/	no
+https://gpacalculator.net/admission/university-of-minnesota-twin-cities/	429			https://gpacalculator.net/admission/university-of-minnesota-twin-cities/	429	0		
+https://gpacalculator.net/admission/san-diego-state-university/	429			https://gpacalculator.net/admission/san-diego-state-university/	429	0	https://gpacalculator.net/admissions/san-diego-state/	no
+https://gpacalculator.net/admission/brown-university/	429			https://gpacalculator.net/admission/brown-university/	429	0	https://gpacalculator.net/admissions/brown/	no
+https://gpacalculator.net/admission/appalachian-state-university/	429			https://gpacalculator.net/admission/appalachian-state-university/	429	0	https://gpacalculator.net/admissions/appalachian-state/	no
+https://gpacalculator.net/admission/georgetown-university/	429			https://gpacalculator.net/admission/georgetown-university/	429	0	https://gpacalculator.net/admissions/georgetown/	no
+https://gpacalculator.net/admission/cornell-university/	429			https://gpacalculator.net/admission/cornell-university/	429	0	https://gpacalculator.net/admissions/cornell/	no
+https://gpacalculator.net/admission/university-of-pennsylvania/	429			https://gpacalculator.net/admission/university-of-pennsylvania/	429	0	https://gpacalculator.net/admissions/upenn/	no
+https://gpacalculator.net/admission/florida-gulf-coast-university/	429			https://gpacalculator.net/admission/florida-gulf-coast-university/	429	0	https://gpacalculator.net/admissions/florida-gulf-coast/	no
+https://gpacalculator.net/admission/lehigh-university/	429			https://gpacalculator.net/admission/lehigh-university/	429	0	https://gpacalculator.net/admissions/lehigh/	no
+https://gpacalculator.net/admission/university-of-california-los-angeles/	429			https://gpacalculator.net/admission/university-of-california-los-angeles/	429	0	https://gpacalculator.net/admissions/ucla/	no
+https://gpacalculator.net/admission/florida-international-university/	429			https://gpacalculator.net/admission/florida-international-university/	429	0	https://gpacalculator.net/admissions/florida-international/	no
+https://gpacalculator.net/admission/case-western-reserve-university/	429			https://gpacalculator.net/admission/case-western-reserve-university/	429	0	https://gpacalculator.net/admissions/case-western/	no
+https://gpacalculator.net/admission/colgate-university/	429			https://gpacalculator.net/admission/colgate-university/	429	0	https://gpacalculator.net/admissions/colgate/	no
+https://gpacalculator.net/admission/the-university-of-alabama/	429			https://gpacalculator.net/admission/the-university-of-alabama/	429	0	https://gpacalculator.net/admissions/alabama/	no
+https://gpacalculator.net/admission/the-university-of-texas-at-dallas/	429			https://gpacalculator.net/admission/the-university-of-texas-at-dallas/	429	0	https://gpacalculator.net/admissions/ut-dallas/	no
+https://gpacalculator.net/admission/mercer-university/	429			https://gpacalculator.net/admission/mercer-university/	429	0	https://gpacalculator.net/admissions/mercer/	no
+https://gpacalculator.net/admission/the-university-of-tennessee-knoxville/	429			https://gpacalculator.net/admission/the-university-of-tennessee-knoxville/	429	0		
+https://gpacalculator.net/admission/vanderbilt-university/	429			https://gpacalculator.net/admission/vanderbilt-university/	429	0	https://gpacalculator.net/admissions/vanderbilt/	no
+https://gpacalculator.net/admission/ohio-state-university-main-campus/	429			https://gpacalculator.net/admission/ohio-state-university-main-campus/	429	0		
+https://gpacalculator.net/admission/liu-post/	429			https://gpacalculator.net/admission/liu-post/	429	0		
+https://gpacalculator.net/admission/california-polytechnic-state-university-san-luis-obispo/	429			https://gpacalculator.net/admission/california-polytechnic-state-university-san-luis-obispo/	429	0	https://gpacalculator.net/admissions/cal-poly-slo/	no
+https://gpacalculator.net/admission/university-of-chicago/	429			https://gpacalculator.net/admission/university-of-chicago/	429	0	https://gpacalculator.net/admissions/chicago/	no
+https://gpacalculator.net/admission/bradley-university/	429			https://gpacalculator.net/admission/bradley-university/	429	0	https://gpacalculator.net/admissions/bradley/	no
+https://gpacalculator.net/admission/university-of-illinois-at-urbana-champaign/	429			https://gpacalculator.net/admission/university-of-illinois-at-urbana-champaign/	429	0	https://gpacalculator.net/admissions/uiuc/	no
+https://gpacalculator.net/admission/university-of-california-irvine/	429			https://gpacalculator.net/admission/university-of-california-irvine/	429	0	https://gpacalculator.net/admissions/uc-irvine/	no
+https://gpacalculator.net/admission/depaul-university/	429			https://gpacalculator.net/admission/depaul-university/	429	0	https://gpacalculator.net/admissions/depaul/	no
+https://gpacalculator.net/admission/embry-riddle-aeronautical-uni-daytona-beach/	429			https://gpacalculator.net/admission/embry-riddle-aeronautical-uni-daytona-beach/	429	0		
+https://gpacalculator.net/admission/university-of-iowa/	429			https://gpacalculator.net/admission/university-of-iowa/	429	0	https://gpacalculator.net/admissions/iowa/	no
+https://gpacalculator.net/admission/north-carolina-a-t-state-university/	429			https://gpacalculator.net/admission/north-carolina-a-t-state-university/	429	0		
+https://gpacalculator.net/admission/nova-southeastern-university/	429			https://gpacalculator.net/admission/nova-southeastern-university/	429	0	https://gpacalculator.net/admissions/nova-southeastern/	no
+https://gpacalculator.net/admission/brandeis-university/	429			https://gpacalculator.net/admission/brandeis-university/	429	0	https://gpacalculator.net/admissions/brandeis/	no
+https://gpacalculator.net/admission/butler-university/	429			https://gpacalculator.net/admission/butler-university/	429	0	https://gpacalculator.net/admissions/butler/	no
+https://gpacalculator.net/admission/loyola-marymount-university/	429			https://gpacalculator.net/admission/loyola-marymount-university/	429	0	https://gpacalculator.net/admissions/loyola-marymount/	no
+https://gpacalculator.net/admission/university-of-california-davis/	429			https://gpacalculator.net/admission/university-of-california-davis/	429	0	https://gpacalculator.net/admissions/uc-davis/	no
+https://gpacalculator.net/admission/university-of-california-riverside/	429			https://gpacalculator.net/admission/university-of-california-riverside/	429	0	https://gpacalculator.net/admissions/uc-riverside/	no
+https://gpacalculator.net/admission/university-of-california-santa-barbara/	429			https://gpacalculator.net/admission/university-of-california-santa-barbara/	429	0	https://gpacalculator.net/admissions/uc-santa-barbara/	no
+https://gpacalculator.net/admission/belmont-university/	429			https://gpacalculator.net/admission/belmont-university/	429	0	https://gpacalculator.net/admissions/belmont/	no
+https://gpacalculator.net/admission/university-of-california-san-francisco/	429			https://gpacalculator.net/admission/university-of-california-san-francisco/	429	0	https://gpacalculator.net/admissions/uc-san-francisco/	no
+https://gpacalculator.net/admission/creighton-university/	429			https://gpacalculator.net/admission/creighton-university/	429	0	https://gpacalculator.net/admissions/creighton/	no
+https://gpacalculator.net/admission/the-university-of-texas-health-science-center-at-houston/	429			https://gpacalculator.net/admission/the-university-of-texas-health-science-center-at-houston/	429	0		
+https://gpacalculator.net/admission/northwestern-university/	429			https://gpacalculator.net/admission/northwestern-university/	429	0	https://gpacalculator.net/admissions/northwestern/	no
+https://gpacalculator.net/admission/denison-university/	429			https://gpacalculator.net/admission/denison-university/	429	0	https://gpacalculator.net/admissions/denison/	no
+https://gpacalculator.net/admission/christopher-newport-university/	429			https://gpacalculator.net/admission/christopher-newport-university/	429	0	https://gpacalculator.net/admissions/christopher-newport/	no
+https://gpacalculator.net/admission/louisiana-state-university-and-agricultural-mechanical-college/	429			https://gpacalculator.net/admission/louisiana-state-university-and-agricultural-mechanical-college/	429	0		
+https://gpacalculator.net/admission/roger-williams-university-school-of-law/	429			https://gpacalculator.net/admission/roger-williams-university-school-of-law/	429	0		
+https://gpacalculator.net/admission/university-of-california-san-diego/	429			https://gpacalculator.net/admission/university-of-california-san-diego/	429	0	https://gpacalculator.net/admissions/uc-san-diego/	no
+https://gpacalculator.net/admission/university-of-north-florida/	429			https://gpacalculator.net/admission/university-of-north-florida/	429	0	https://gpacalculator.net/admissions/north-florida/	no
+https://gpacalculator.net/admission/california-state-university-fullerton/	429			https://gpacalculator.net/admission/california-state-university-fullerton/	429	0	https://gpacalculator.net/admissions/csu-fullerton/	no
+https://gpacalculator.net/admission/samford-university/	429			https://gpacalculator.net/admission/samford-university/	429	0	https://gpacalculator.net/admissions/samford/	no
+https://gpacalculator.net/admission/johns-hopkins-university/	429			https://gpacalculator.net/admission/johns-hopkins-university/	429	0	https://gpacalculator.net/admissions/johns-hopkins/	no
+https://gpacalculator.net/admission/kingston-university/	429			https://gpacalculator.net/admission/kingston-university/	429	0		
+https://gpacalculator.net/admission/university-of-alabama-system-office/	429			https://gpacalculator.net/admission/university-of-alabama-system-office/	429	0		
+https://gpacalculator.net/admission/texas-state-university-san-marcos/	429			https://gpacalculator.net/admission/texas-state-university-san-marcos/	429	0		
+https://gpacalculator.net/admission/taylor-university/	429			https://gpacalculator.net/admission/taylor-university/	429	0	https://gpacalculator.net/admissions/taylor/	no
+https://gpacalculator.net/admission/university-of-dayton/	429			https://gpacalculator.net/admission/university-of-dayton/	429	0	https://gpacalculator.net/admissions/dayton/	no
+https://gpacalculator.net/admission/willamette-university/	429			https://gpacalculator.net/admission/willamette-university/	429	0	https://gpacalculator.net/admissions/willamette/	no
+https://gpacalculator.net/admission/university-of-san-diego/	429			https://gpacalculator.net/admission/university-of-san-diego/	429	0	https://gpacalculator.net/admissions/san-diego/	no
+https://gpacalculator.net/admission/michigan-technological-university/	429			https://gpacalculator.net/admission/michigan-technological-university/	429	0	https://gpacalculator.net/admissions/michigan-tech/	no
+https://gpacalculator.net/admission/st-bonaventure-university/	429			https://gpacalculator.net/admission/st-bonaventure-university/	429	0		
+https://gpacalculator.net/admission/valparaiso-university/	429			https://gpacalculator.net/admission/valparaiso-university/	429	0	https://gpacalculator.net/admissions/valparaiso/	no
+https://gpacalculator.net/admission/duquesne-university/	429			https://gpacalculator.net/admission/duquesne-university/	429	0	https://gpacalculator.net/admissions/duquesne/	no
+https://gpacalculator.net/admission/university-of-north-texas-health-science-center/	429			https://gpacalculator.net/admission/university-of-north-texas-health-science-center/	429	0		
+https://gpacalculator.net/admission/washington-university-in-st-louis/	429			https://gpacalculator.net/admission/washington-university-in-st-louis/	429	0	https://gpacalculator.net/admissions/washu/	no
+https://gpacalculator.net/admission/golden-gate-university-san-francisco/	429			https://gpacalculator.net/admission/golden-gate-university-san-francisco/	429	0		
+https://gpacalculator.net/admission/michigan-state-university-college-of-law/	429			https://gpacalculator.net/admission/michigan-state-university-college-of-law/	429	0		
+https://gpacalculator.net/admission/virginia-polytechnic-institute-and-state-university/	429			https://gpacalculator.net/admission/virginia-polytechnic-institute-and-state-university/	429	0		
+https://gpacalculator.net/admission/california-polytechnic-state-uni-san-luis-obispo/	429			https://gpacalculator.net/admission/california-polytechnic-state-uni-san-luis-obispo/	429	0		
+https://gpacalculator.net/admission/washington-and-lee-university/	429			https://gpacalculator.net/admission/washington-and-lee-university/	429	0	https://gpacalculator.net/admissions/washington-and-lee/	no
+https://gpacalculator.net/admission/palm-beach-atlantic-university/	429			https://gpacalculator.net/admission/palm-beach-atlantic-university/	429	0		
+https://gpacalculator.net/admission/saint-louis-university/	429			https://gpacalculator.net/admission/saint-louis-university/	429	0		
+https://gpacalculator.net/admission/ohio-state-uni-agricultural-technical-institute/	429			https://gpacalculator.net/admission/ohio-state-uni-agricultural-technical-institute/	429	0		
+https://gpacalculator.net/admission/university-of-texas-southwestern-medical-center/	429			https://gpacalculator.net/admission/university-of-texas-southwestern-medical-center/	429	0		
+https://gpacalculator.net/admission/itt-technical-institute-university-park/	429			https://gpacalculator.net/admission/itt-technical-institute-university-park/	429	0		
+https://gpacalculator.net/admission/clarkson-university/	429			https://gpacalculator.net/admission/clarkson-university/	429	0	https://gpacalculator.net/admissions/clarkson/	no
+https://gpacalculator.net/admission/the-texas-am-university-system-office/	429			https://gpacalculator.net/admission/the-texas-am-university-system-office/	429	0		
+https://gpacalculator.net/admission/depauw-university/	429			https://gpacalculator.net/admission/depauw-university/	429	0	https://gpacalculator.net/admissions/depauw/	no
+https://gpacalculator.net/admission/illinois-wesleyan-university/	429			https://gpacalculator.net/admission/illinois-wesleyan-university/	429	0	https://gpacalculator.net/admissions/illinois-wesleyan/	no
+https://gpacalculator.net/admission/university-of-massachusetts-amherst/	429			https://gpacalculator.net/admission/university-of-massachusetts-amherst/	429	0	https://gpacalculator.net/admissions/umass-amherst/	no
+https://gpacalculator.net/admission/francis-marion-university/	429			https://gpacalculator.net/admission/francis-marion-university/	429	0	https://gpacalculator.net/admissions/francis-marion/	no
+https://gpacalculator.net/admission/colorado-christian-university/	429			https://gpacalculator.net/admission/colorado-christian-university/	429	0	https://gpacalculator.net/admissions/colorado-christian/	no
+https://gpacalculator.net/admission/university-of-maine-system-central-office/	429			https://gpacalculator.net/admission/university-of-maine-system-central-office/	429	0		
+https://gpacalculator.net/admission/oregon-health-science-university/	429			https://gpacalculator.net/admission/oregon-health-science-university/	429	0	https://gpacalculator.net/admissions/oregon-health-and-science-university/	no
+https://gpacalculator.net/admission/the-university-of-tennessee-chattanooga/	429			https://gpacalculator.net/admission/the-university-of-tennessee-chattanooga/	429	0		
+https://gpacalculator.net/admission/south-university-west-palm-beach/	429			https://gpacalculator.net/admission/south-university-west-palm-beach/	429	0		
+https://gpacalculator.net/admission/franciscan-university-of-steubenville/	429			https://gpacalculator.net/admission/franciscan-university-of-steubenville/	429	0	https://gpacalculator.net/admissions/franciscan/	no
+https://gpacalculator.net/admission/university-of-phoenix-phoenix-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-phoenix-campus/	429	0		
+https://gpacalculator.net/admission/embry-riddle-aeronautical-university-prescott/	429			https://gpacalculator.net/admission/embry-riddle-aeronautical-university-prescott/	429	0	https://gpacalculator.net/admissions/embry-riddle-prescott/	no
+https://gpacalculator.net/admission/saint-thomas-university/	429			https://gpacalculator.net/admission/saint-thomas-university/	429	0		
+https://gpacalculator.net/admission/transylvania-university/	429			https://gpacalculator.net/admission/transylvania-university/	429	0	https://gpacalculator.net/admissions/transylvania/	no
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-great-valley/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-great-valley/	429	0		
+https://gpacalculator.net/admission/university-of-alabama-in-huntsville/	429			https://gpacalculator.net/admission/university-of-alabama-in-huntsville/	429	0		
+https://gpacalculator.net/admission/winthrop-university/	429			https://gpacalculator.net/admission/winthrop-university/	429	0	https://gpacalculator.net/admissions/winthrop/	no
+https://gpacalculator.net/admission/university-of-alabama-at-birmingham/	429			https://gpacalculator.net/admission/university-of-alabama-at-birmingham/	429	0	https://gpacalculator.net/admissions/uab/	no
+https://gpacalculator.net/admission/texas-tech-university-system-administration/	429			https://gpacalculator.net/admission/texas-tech-university-system-administration/	429	0		
+https://gpacalculator.net/admission/st-andrews-university/	429			https://gpacalculator.net/admission/st-andrews-university/	429	0		
+https://gpacalculator.net/admission/concordia-university-nebraska/	429			https://gpacalculator.net/admission/concordia-university-nebraska/	429	0		
+https://gpacalculator.net/admission/university-of-st-thomas-3/	429			https://gpacalculator.net/admission/university-of-st-thomas-3/	429	0		
+https://gpacalculator.net/admission/the-university-of-texas-medical-branch/	429			https://gpacalculator.net/admission/the-university-of-texas-medical-branch/	429	0		
+https://gpacalculator.net/admission/north-greenville-university/	429			https://gpacalculator.net/admission/north-greenville-university/	429	0	https://gpacalculator.net/admissions/north-greenville/	no
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-indiana/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-indiana/	429	0		
+https://gpacalculator.net/admission/allied-american-university/	429			https://gpacalculator.net/admission/allied-american-university/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-illinois/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-illinois/	429	0		
+https://gpacalculator.net/admission/university-of-tulsa/	429			https://gpacalculator.net/admission/university-of-tulsa/	429	0	https://gpacalculator.net/admissions/tulsa/	no
+https://gpacalculator.net/admission/university-of-cincinnati-blue-ash-college/	429			https://gpacalculator.net/admission/university-of-cincinnati-blue-ash-college/	429	0		
+https://gpacalculator.net/admission/utah-state-uni-regional-campuses-and-distance-education/	429			https://gpacalculator.net/admission/utah-state-uni-regional-campuses-and-distance-education/	429	0		
+https://gpacalculator.net/admission/truman-state-university/	429			https://gpacalculator.net/admission/truman-state-university/	429	0	https://gpacalculator.net/admissions/truman-state/	no
+https://gpacalculator.net/admission/midwestern-university-downers-grove/	429			https://gpacalculator.net/admission/midwestern-university-downers-grove/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-university-penn-state-great-valley/	429			https://gpacalculator.net/admission/pennsylvania-state-university-penn-state-great-valley/	429	0		
+https://gpacalculator.net/admission/rosalind-franklin-university-of-medicine-and-science/	429			https://gpacalculator.net/admission/rosalind-franklin-university-of-medicine-and-science/	429	0	https://gpacalculator.net/admissions/rosalind-franklin-university/	no
+https://gpacalculator.net/admission/liu-brooklyn/	429			https://gpacalculator.net/admission/liu-brooklyn/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-mont-alto/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-mont-alto/	429	0		
+https://gpacalculator.net/admission/south-university-the-art-institute-of-dallas/	429			https://gpacalculator.net/admission/south-university-the-art-institute-of-dallas/	429	0		
+https://gpacalculator.net/admission/liu-university-center-campus/	429			https://gpacalculator.net/admission/liu-university-center-campus/	429	0		
+https://gpacalculator.net/admission/the-university-of-texas-md-anderson-cancer-center/	429			https://gpacalculator.net/admission/the-university-of-texas-md-anderson-cancer-center/	429	0	https://gpacalculator.net/admissions/md-anderson-cancer-center/	no
+https://gpacalculator.net/admission/missouri-university-of-science-and-technology/	429			https://gpacalculator.net/admission/missouri-university-of-science-and-technology/	429	0	https://gpacalculator.net/admissions/missouri-st/	no
+https://gpacalculator.net/admission/university-of-south-carolina-beaufort/	429			https://gpacalculator.net/admission/university-of-south-carolina-beaufort/	429	0	https://gpacalculator.net/admissions/sc-beaufort/	no
+https://gpacalculator.net/admission/hollins-university/	429			https://gpacalculator.net/admission/hollins-university/	429	0	https://gpacalculator.net/admissions/hollins/	no
+https://gpacalculator.net/admission/georgia-college-state-university/	429			https://gpacalculator.net/admission/georgia-college-state-university/	429	0		
+https://gpacalculator.net/admission/arizona-state-university-tempe/	429			https://gpacalculator.net/admission/arizona-state-university-tempe/	429	0		
+https://gpacalculator.net/admission/university-of-california-hastings-college-of-law/	429			https://gpacalculator.net/admission/university-of-california-hastings-college-of-law/	429	0		
+https://gpacalculator.net/admission/university-of-south-florida-sarasota-manatee/	429			https://gpacalculator.net/admission/university-of-south-florida-sarasota-manatee/	429	0		
+https://gpacalculator.net/admission/virginia-polytechnic-institute-and-state-uni/	429			https://gpacalculator.net/admission/virginia-polytechnic-institute-and-state-uni/	429	0		
+https://gpacalculator.net/admission/marian-university-3/	429			https://gpacalculator.net/admission/marian-university-3/	429	0		
+https://gpacalculator.net/admission/university-of-alabama-at-huntsville/	429			https://gpacalculator.net/admission/university-of-alabama-at-huntsville/	429	0	https://gpacalculator.net/admissions/uah/	no
+https://gpacalculator.net/admission/colorado-state-university-system-office/	429			https://gpacalculator.net/admission/colorado-state-university-system-office/	429	0		
+https://gpacalculator.net/admission/purdue-university-north-central-campus/	429			https://gpacalculator.net/admission/purdue-university-north-central-campus/	429	0		
+https://gpacalculator.net/admission/chatham-university/	429			https://gpacalculator.net/admission/chatham-university/	429	0	https://gpacalculator.net/admissions/chatham/	no
+https://gpacalculator.net/admission/augusta-state-university/	429			https://gpacalculator.net/admission/augusta-state-university/	429	0		
+https://gpacalculator.net/admission/drury-university/	429			https://gpacalculator.net/admission/drury-university/	429	0	https://gpacalculator.net/admissions/drury/	no
+https://gpacalculator.net/admission/cedarville-university/	429			https://gpacalculator.net/admission/cedarville-university/	429	0	https://gpacalculator.net/admissions/cedarville/	no
+https://gpacalculator.net/admission/southern-university-board-and-system/	429			https://gpacalculator.net/admission/southern-university-board-and-system/	429	0		
+https://gpacalculator.net/admission/governors-state-university/	429			https://gpacalculator.net/admission/governors-state-university/	429	0	https://gpacalculator.net/admissions/governors-state/	no
+https://gpacalculator.net/admission/strayer-university-texas/	429			https://gpacalculator.net/admission/strayer-university-texas/	429	0		
+https://gpacalculator.net/admission/university-of-maryland-baltimore-county/	429			https://gpacalculator.net/admission/university-of-maryland-baltimore-county/	429	0	https://gpacalculator.net/admissions/umbc/	no
+https://gpacalculator.net/admission/oklahoma-state-university-institute-of-technology/	429			https://gpacalculator.net/admission/oklahoma-state-university-institute-of-technology/	429	0		
+https://gpacalculator.net/admission/philadelphia-university/	429			https://gpacalculator.net/admission/philadelphia-university/	429	0		
+https://gpacalculator.net/admission/fairleigh-dickinson-uni-metropolitan-campus/	429			https://gpacalculator.net/admission/fairleigh-dickinson-uni-metropolitan-campus/	429	0		
+https://gpacalculator.net/admission/kansas-state-university/	429			https://gpacalculator.net/admission/kansas-state-university/	429	0	https://gpacalculator.net/admissions/kansas-state/	no
+https://gpacalculator.net/admission/argosy-university-denver/	429			https://gpacalculator.net/admission/argosy-university-denver/	429	0		
+https://gpacalculator.net/admission/our-lady-of-the-lake-university/	429			https://gpacalculator.net/admission/our-lady-of-the-lake-university/	429	0		
+https://gpacalculator.net/admission/southern-polytechnic-state-university/	429			https://gpacalculator.net/admission/southern-polytechnic-state-university/	429	0		
+https://gpacalculator.net/admission/university-of-south-florida-polytechnic/	429			https://gpacalculator.net/admission/university-of-south-florida-polytechnic/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-schuylkill/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-schuylkill/	429	0		
+https://gpacalculator.net/admission/texas-a-m-international-university/	429			https://gpacalculator.net/admission/texas-a-m-international-university/	429	0		
+https://gpacalculator.net/admission/ottawa-university-jeffersonville/	429			https://gpacalculator.net/admission/ottawa-university-jeffersonville/	429	0		
+https://gpacalculator.net/admission/trine-university-south-bend-regional-campus/	429			https://gpacalculator.net/admission/trine-university-south-bend-regional-campus/	429	0		
+https://gpacalculator.net/admission/kettering-university/	429			https://gpacalculator.net/admission/kettering-university/	429	0	https://gpacalculator.net/admissions/kettering/	no
+https://gpacalculator.net/admission/ohio-northern-university/	429			https://gpacalculator.net/admission/ohio-northern-university/	429	0	https://gpacalculator.net/admissions/ohio-northern/	no
+https://gpacalculator.net/admission/university-of-dallas/	429			https://gpacalculator.net/admission/university-of-dallas/	429	0	https://gpacalculator.net/admissions/dallas/	no
+https://gpacalculator.net/admission/argosy-university-atlanta/	429			https://gpacalculator.net/admission/argosy-university-atlanta/	429	0		
+https://gpacalculator.net/admission/university-of-illinois-university-administration/	429			https://gpacalculator.net/admission/university-of-illinois-university-administration/	429	0		
+https://gpacalculator.net/admission/des-moines-university-osteopathic-medical-center/	429			https://gpacalculator.net/admission/des-moines-university-osteopathic-medical-center/	429	0		
+https://gpacalculator.net/admission/union-university/	429			https://gpacalculator.net/admission/union-university/	429	0	https://gpacalculator.net/admissions/union/	no
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-pa/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-pa/	429	0		
+https://gpacalculator.net/admission/university-of-south-florida-st-petersburg/	429			https://gpacalculator.net/admission/university-of-south-florida-st-petersburg/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-colorado/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-colorado/	429	0		
+https://gpacalculator.net/admission/saint-louis-university-main-campus/	429			https://gpacalculator.net/admission/saint-louis-university-main-campus/	429	0	https://gpacalculator.net/admissions/saint-louis/	no
+https://gpacalculator.net/admission/john-f-kennedy-university/	429			https://gpacalculator.net/admission/john-f-kennedy-university/	429	0		
+https://gpacalculator.net/admission/lincoln-university-3/	429			https://gpacalculator.net/admission/lincoln-university-3/	429	0		
+https://gpacalculator.net/admission/the-uni-of-texas-m-d-anderson-cancer-center/	429			https://gpacalculator.net/admission/the-uni-of-texas-m-d-anderson-cancer-center/	429	0		
+https://gpacalculator.net/admission/rosalind-franklin-uni-of-medicine-and-science/	429			https://gpacalculator.net/admission/rosalind-franklin-uni-of-medicine-and-science/	429	0		
+https://gpacalculator.net/admission/oregon-university-system/	429			https://gpacalculator.net/admission/oregon-university-system/	429	0		
+https://gpacalculator.net/admission/johnson-wales-university-online/	429			https://gpacalculator.net/admission/johnson-wales-university-online/	429	0		
+https://gpacalculator.net/admission/northcentral-university/	429			https://gpacalculator.net/admission/northcentral-university/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-michigan/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-michigan/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-harrisburg/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-harrisburg/	429	0		
+https://gpacalculator.net/admission/northwestern-polytechnic-university/	429			https://gpacalculator.net/admission/northwestern-polytechnic-university/	429	0		
+https://gpacalculator.net/admission/martin-university/	429			https://gpacalculator.net/admission/martin-university/	429	0		
+https://gpacalculator.net/admission/bethel-university/	429			https://gpacalculator.net/admission/bethel-university/	429	0	https://gpacalculator.net/admissions/bethel-university-mn,bethel-university-tn/	no
+https://gpacalculator.net/admission/university-of-mississippi-medical-center/	429			https://gpacalculator.net/admission/university-of-mississippi-medical-center/	429	0		
+https://gpacalculator.net/admission/the-dickinson-school-of-law-of-the-pennsylvania-state-uni/	429			https://gpacalculator.net/admission/the-dickinson-school-of-law-of-the-pennsylvania-state-uni/	429	0		
+https://gpacalculator.net/admission/holy-names-university/	429			https://gpacalculator.net/admission/holy-names-university/	429	0		
+https://gpacalculator.net/admission/uni-of-the-dc-david-a-clarke-school-of-law/	429			https://gpacalculator.net/admission/uni-of-the-dc-david-a-clarke-school-of-law/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-brandywine/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-brandywine/	429	0		
+https://gpacalculator.net/admission/university-system-of-maryland/	429			https://gpacalculator.net/admission/university-system-of-maryland/	429	0		
+https://gpacalculator.net/admission/oklahoma-city-university/	429			https://gpacalculator.net/admission/oklahoma-city-university/	429	0	https://gpacalculator.net/admissions/oklahoma-city/	no
+https://gpacalculator.net/admission/university-of-north-texas-system/	429			https://gpacalculator.net/admission/university-of-north-texas-system/	429	0		
+https://gpacalculator.net/admission/university-of-sioux-falls/	429			https://gpacalculator.net/admission/university-of-sioux-falls/	429	0	https://gpacalculator.net/admissions/sioux-falls/	no
+https://gpacalculator.net/admission/armstrong-atlantic-state-university/	429			https://gpacalculator.net/admission/armstrong-atlantic-state-university/	429	0		
+https://gpacalculator.net/admission/a-t-still-university-of-health-sciences/	429			https://gpacalculator.net/admission/a-t-still-university-of-health-sciences/	429	0	https://gpacalculator.net/admissions/a-t-still-university/	no
+https://gpacalculator.net/admission/pennsylvania-state-university-penn-state-fayette-eberly/	429			https://gpacalculator.net/admission/pennsylvania-state-university-penn-state-fayette-eberly/	429	0		
+https://gpacalculator.net/admission/university-of-louisiana-at-monroe/	429			https://gpacalculator.net/admission/university-of-louisiana-at-monroe/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-erie-behrend-college/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-erie-behrend-college/	429	0		
+https://gpacalculator.net/admission/ottawa-university-kansas-city/	429			https://gpacalculator.net/admission/ottawa-university-kansas-city/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-new-jersey/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-new-jersey/	429	0		
+https://gpacalculator.net/admission/university-of-virginia-main-campus/	429			https://gpacalculator.net/admission/university-of-virginia-main-campus/	429	0	https://gpacalculator.net/admissions/virginia/	no
+https://gpacalculator.net/admission/long-island-university-university-center-campus/	429			https://gpacalculator.net/admission/long-island-university-university-center-campus/	429	0		
+https://gpacalculator.net/admission/everest-university-largo/	429			https://gpacalculator.net/admission/everest-university-largo/	429	0		
+https://gpacalculator.net/admission/ashford-university/	429			https://gpacalculator.net/admission/ashford-university/	429	0		
+https://gpacalculator.net/admission/lincoln-university/	429			https://gpacalculator.net/admission/lincoln-university/	429	0	https://gpacalculator.net/admissions/lincoln-university-mo,lincoln-university-ca/	no
+https://gpacalculator.net/admission/midwestern-university-glendale/	429			https://gpacalculator.net/admission/midwestern-university-glendale/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-utah/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-utah/	429	0		
+https://gpacalculator.net/admission/strayer-university-georgia/	429			https://gpacalculator.net/admission/strayer-university-georgia/	429	0		
+https://gpacalculator.net/admission/international-technological-university/	429			https://gpacalculator.net/admission/international-technological-university/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-oklahoma/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-oklahoma/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-fayette-eberly-campus/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-fayette-eberly-campus/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-texas/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-texas/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-baton-rouge-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-baton-rouge-campus/	429	0		
+https://gpacalculator.net/admission/west-texas-a-m-university/	429			https://gpacalculator.net/admission/west-texas-a-m-university/	429	0		
+https://gpacalculator.net/admission/south-university%CB%86virginia-beach/	429			https://gpacalculator.net/admission/south-university%CB%86virginia-beach/	429	0		
+https://gpacalculator.net/admission/argosy-university-washington-d-c/	429			https://gpacalculator.net/admission/argosy-university-washington-d-c/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-minneapolisst-paul-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-minneapolisst-paul-campus/	429	0		
+https://gpacalculator.net/admission/st-marys-seminary-university/	429			https://gpacalculator.net/admission/st-marys-seminary-university/	429	0	https://gpacalculator.net/admissions/st-marys-seminary-and-university/	no
+https://gpacalculator.net/admission/strayer-university-district-of-columbia/	429			https://gpacalculator.net/admission/strayer-university-district-of-columbia/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-greater-allegheny/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-greater-allegheny/	429	0		
+https://gpacalculator.net/admission/argosy-university-washington-dc/	429			https://gpacalculator.net/admission/argosy-university-washington-dc/	429	0		
+https://gpacalculator.net/admission/north-georgia-college-state-university/	429			https://gpacalculator.net/admission/north-georgia-college-state-university/	429	0		
+https://gpacalculator.net/admission/antioch-university-new-england/	429			https://gpacalculator.net/admission/antioch-university-new-england/	429	0		
+https://gpacalculator.net/admission/liu-riverhead/	429			https://gpacalculator.net/admission/liu-riverhead/	429	0		
+https://gpacalculator.net/admission/cardinal-stritch-university/	429			https://gpacalculator.net/admission/cardinal-stritch-university/	429	0		
+https://gpacalculator.net/admission/university-of-wisconsin-extension/	429			https://gpacalculator.net/admission/university-of-wisconsin-extension/	429	0		
+https://gpacalculator.net/admission/university-of-the-district-of-columbia-david-a-clarke-school-of-law/	429			https://gpacalculator.net/admission/university-of-the-district-of-columbia-david-a-clarke-school-of-law/	429	0		
+https://gpacalculator.net/admission/oklahoma-state-uni-center-for-health-sciences/	429			https://gpacalculator.net/admission/oklahoma-state-uni-center-for-health-sciences/	429	0		
+https://gpacalculator.net/admission/great-falls-college-montana-state-university/	429			https://gpacalculator.net/admission/great-falls-college-montana-state-university/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-florida/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-florida/	429	0		
+https://gpacalculator.net/admission/john-brown-university/	429			https://gpacalculator.net/admission/john-brown-university/	429	0	https://gpacalculator.net/admissions/john-brown/	no
+https://gpacalculator.net/admission/texas-a-m-university-system-office/	429			https://gpacalculator.net/admission/texas-a-m-university-system-office/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-wilkes-barre/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-wilkes-barre/	429	0		
+https://gpacalculator.net/admission/polytechnic-university-of-puerto-rico-miami/	429			https://gpacalculator.net/admission/polytechnic-university-of-puerto-rico-miami/	429	0		
+https://gpacalculator.net/admission/strayer-university-louisiana/	429			https://gpacalculator.net/admission/strayer-university-louisiana/	429	0		
+https://gpacalculator.net/admission/patten-university/	429			https://gpacalculator.net/admission/patten-university/	429	0		
+https://gpacalculator.net/admission/argosy-university-hawaii/	429			https://gpacalculator.net/admission/argosy-university-hawaii/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-nc/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-nc/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-tennessee/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-tennessee/	429	0		
+https://gpacalculator.net/admission/mountain-state-university/	429			https://gpacalculator.net/admission/mountain-state-university/	429	0		
+https://gpacalculator.net/admission/university-of-wisconsin-colleges/	429			https://gpacalculator.net/admission/university-of-wisconsin-colleges/	429	0		
+https://gpacalculator.net/admission/kennesaw-state-university-kennesaw-georgia/	429			https://gpacalculator.net/admission/kennesaw-state-university-kennesaw-georgia/	429	0		
+https://gpacalculator.net/admission/strayer-university-global-region/	429			https://gpacalculator.net/admission/strayer-university-global-region/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-minnesota/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-minnesota/	429	0		
+https://gpacalculator.net/admission/university-of-north-carolina-system-office/	429			https://gpacalculator.net/admission/university-of-north-carolina-system-office/	429	0		
+https://gpacalculator.net/admission/everest-university-jacksonville/	429			https://gpacalculator.net/admission/everest-university-jacksonville/	429	0		
+https://gpacalculator.net/admission/texas-lutheran-university/	429			https://gpacalculator.net/admission/texas-lutheran-university/	429	0	https://gpacalculator.net/admissions/texas-lutheran/	no
+https://gpacalculator.net/admission/itt-technical-institute-bradenton/	429			https://gpacalculator.net/admission/itt-technical-institute-bradenton/	429	0		
+https://gpacalculator.net/admission/western-state-college-of-law-at-argosy-university/	429			https://gpacalculator.net/admission/western-state-college-of-law-at-argosy-university/	429	0		
+https://gpacalculator.net/admission/southern-illinois-university-systems-office/	429			https://gpacalculator.net/admission/southern-illinois-university-systems-office/	429	0		
+https://gpacalculator.net/admission/strayer-university-north-carolina/	429			https://gpacalculator.net/admission/strayer-university-north-carolina/	429	0		
+https://gpacalculator.net/admission/spalding-university/	429			https://gpacalculator.net/admission/spalding-university/	429	0	https://gpacalculator.net/admissions/spalding/	no
+https://gpacalculator.net/admission/widener-university-harrisburg-campus/	429			https://gpacalculator.net/admission/widener-university-harrisburg-campus/	429	0		
+https://gpacalculator.net/admission/helena-college-university-of-montana/	429			https://gpacalculator.net/admission/helena-college-university-of-montana/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-oklahoma/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-oklahoma/	429	0		
+https://gpacalculator.net/admission/liu-brentwood/	429			https://gpacalculator.net/admission/liu-brentwood/	429	0		
+https://gpacalculator.net/admission/everest-university-north-orlando/	429			https://gpacalculator.net/admission/everest-university-north-orlando/	429	0		
+https://gpacalculator.net/admission/ai-miami-international-uni-of-art-and-design/	429			https://gpacalculator.net/admission/ai-miami-international-uni-of-art-and-design/	429	0		
+https://gpacalculator.net/admission/aspen-university/	429			https://gpacalculator.net/admission/aspen-university/	429	0		
+https://gpacalculator.net/admission/everest-university-lakeland/	429			https://gpacalculator.net/admission/everest-university-lakeland/	429	0		
+https://gpacalculator.net/admission/long-island-university-rockland-campus/	429			https://gpacalculator.net/admission/long-island-university-rockland-campus/	429	0		
+https://gpacalculator.net/admission/argosy-university-seattle/	429			https://gpacalculator.net/admission/argosy-university-seattle/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-richmond-virginia-beach-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-richmond-virginia-beach-campus/	429	0		
+https://gpacalculator.net/admission/university-of-wisconsin-system-administration/	429			https://gpacalculator.net/admission/university-of-wisconsin-system-administration/	429	0		
+https://gpacalculator.net/admission/bethany-university/	429			https://gpacalculator.net/admission/bethany-university/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-missouri/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-missouri/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-georgia/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-georgia/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-lehigh-valley/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-lehigh-valley/	429	0		
+https://gpacalculator.net/admission/upstate-medical-university/	429			https://gpacalculator.net/admission/upstate-medical-university/	429	0		
+https://gpacalculator.net/admission/university-of-management-and-technology/	429			https://gpacalculator.net/admission/university-of-management-and-technology/	429	0		
+https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-los-angeles/	429			https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-los-angeles/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-washington/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-washington/	429	0		
+https://gpacalculator.net/admission/antioch-university-phd-program-in-leadership-and-change/	429			https://gpacalculator.net/admission/antioch-university-phd-program-in-leadership-and-change/	429	0		
+https://gpacalculator.net/admission/argosy-university-phoenix-online-division/	429			https://gpacalculator.net/admission/argosy-university-phoenix-online-division/	429	0		
+https://gpacalculator.net/admission/argosy-university-schaumburg/	429			https://gpacalculator.net/admission/argosy-university-schaumburg/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-minnesota/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-minnesota/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-wisconsin/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-wisconsin/	429	0		
+https://gpacalculator.net/admission/south-university-virginia-beach/	429			https://gpacalculator.net/admission/south-university-virginia-beach/	429	0		
+https://gpacalculator.net/admission/whitworth-university-adult-degree-programs/	429			https://gpacalculator.net/admission/whitworth-university-adult-degree-programs/	429	0		
+https://gpacalculator.net/admission/globe-university-wausau/	429			https://gpacalculator.net/admission/globe-university-wausau/	429	0		
+https://gpacalculator.net/admission/devry-university-administrative-office/	429			https://gpacalculator.net/admission/devry-university-administrative-office/	429	0		
+https://gpacalculator.net/admission/fontbonne-university/	429			https://gpacalculator.net/admission/fontbonne-university/	429	0		
+https://gpacalculator.net/admission/argosy-university-nashville/	429			https://gpacalculator.net/admission/argosy-university-nashville/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-maryland/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-maryland/	429	0		
+https://gpacalculator.net/admission/bergin-university-of-canine-studies/	429			https://gpacalculator.net/admission/bergin-university-of-canine-studies/	429	0		
+https://gpacalculator.net/admission/south-university-savannah/	429			https://gpacalculator.net/admission/south-university-savannah/	429	0		
+https://gpacalculator.net/admission/liu-hudson-at-westchester/	429			https://gpacalculator.net/admission/liu-hudson-at-westchester/	429	0		
+https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-san-francisco/	429			https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-san-francisco/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-michigan/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-michigan/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-north-carolina/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-north-carolina/	429	0		
+https://gpacalculator.net/admission/montana-state-uni-great-falls-college-of-technology/	429			https://gpacalculator.net/admission/montana-state-uni-great-falls-college-of-technology/	429	0		
+https://gpacalculator.net/admission/strayer-university-south-carolina/	429			https://gpacalculator.net/admission/strayer-university-south-carolina/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-maryland/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-maryland/	429	0		
+https://gpacalculator.net/admission/resurrection-university/	429			https://gpacalculator.net/admission/resurrection-university/	429	0		
+https://gpacalculator.net/admission/union-institute-and-university/	429			https://gpacalculator.net/admission/union-institute-and-university/	429	0		
+https://gpacalculator.net/admission/uni-of-arkansas-community-college-batesville/	429			https://gpacalculator.net/admission/uni-of-arkansas-community-college-batesville/	429	0		
+https://gpacalculator.net/admission/argosy-university-san-francisco-bay-area/	429			https://gpacalculator.net/admission/argosy-university-san-francisco-bay-area/	429	0		
+https://gpacalculator.net/admission/broadview-university-boise/	429			https://gpacalculator.net/admission/broadview-university-boise/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-indiana/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-indiana/	429	0		
+https://gpacalculator.net/admission/university-of-antelope-valley/	429			https://gpacalculator.net/admission/university-of-antelope-valley/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-delaware-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-delaware-campus/	429	0		
+https://gpacalculator.net/admission/south-university-off-campus-programs/	429			https://gpacalculator.net/admission/south-university-off-campus-programs/	429	0		
+https://gpacalculator.net/admission/strayer-university-pennsylvania/	429			https://gpacalculator.net/admission/strayer-university-pennsylvania/	429	0		
+https://gpacalculator.net/admission/everest-university-orange-park/	429			https://gpacalculator.net/admission/everest-university-orange-park/	429	0		
+https://gpacalculator.net/admission/globe-university%CB%86wausau/	429			https://gpacalculator.net/admission/globe-university%CB%86wausau/	429	0		
+https://gpacalculator.net/admission/marian-university-wi/	429			https://gpacalculator.net/admission/marian-university-wi/	429	0		
+https://gpacalculator.net/admission/southern-university-and-a-and-m-college/	429			https://gpacalculator.net/admission/southern-university-and-a-and-m-college/	429	0		
+https://gpacalculator.net/admission/argosy-university-twin-cities/	429			https://gpacalculator.net/admission/argosy-university-twin-cities/	429	0		
+https://gpacalculator.net/admission/university-of-california-system-administration-central-office/	429			https://gpacalculator.net/admission/university-of-california-system-administration-central-office/	429	0		
+https://gpacalculator.net/admission/university-of-new-hampshire-school-of-law/	429			https://gpacalculator.net/admission/university-of-new-hampshire-school-of-law/	429	0		
+https://gpacalculator.net/admission/cairn-university-langhorne/	429			https://gpacalculator.net/admission/cairn-university-langhorne/	429	0		
+https://gpacalculator.net/admission/south-university-richmond/	429			https://gpacalculator.net/admission/south-university-richmond/	429	0		
+https://gpacalculator.net/admission/uni-of-montana-helena-college-of-technology/	429			https://gpacalculator.net/admission/uni-of-montana-helena-college-of-technology/	429	0		
+https://gpacalculator.net/admission/university-of-houston-system-administration/	429			https://gpacalculator.net/admission/university-of-houston-system-administration/	429	0		
+https://gpacalculator.net/admission/husson-university-bangor-maine/	429			https://gpacalculator.net/admission/husson-university-bangor-maine/	429	0		
+https://gpacalculator.net/admission/virginia-college-in-charleston/	429			https://gpacalculator.net/admission/virginia-college-in-charleston/	429	0		
+https://gpacalculator.net/admission/kansas-city-university-of-medicine-and-biosciences/	429			https://gpacalculator.net/admission/kansas-city-university-of-medicine-and-biosciences/	429	0		
+https://gpacalculator.net/admission/anderson-university-in/	429			https://gpacalculator.net/admission/anderson-university-in/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-illinois/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-illinois/	429	0		
+https://gpacalculator.net/admission/long-island-university-westchester-campus/	429			https://gpacalculator.net/admission/long-island-university-westchester-campus/	429	0		
+https://gpacalculator.net/admission/the-university-of-west-los-angeles/	429			https://gpacalculator.net/admission/the-university-of-west-los-angeles/	429	0		
+https://gpacalculator.net/admission/university-of-medicine-and-dentistry-of-new-jersey/	429			https://gpacalculator.net/admission/university-of-medicine-and-dentistry-of-new-jersey/	429	0		
+https://gpacalculator.net/admission/university-system-of-maryland-research-centers/	429			https://gpacalculator.net/admission/university-system-of-maryland-research-centers/	429	0		
+https://gpacalculator.net/admission/the-dickinson-school-of-law-of-the-pennsylvania-state-university/	429			https://gpacalculator.net/admission/the-dickinson-school-of-law-of-the-pennsylvania-state-university/	429	0		
+https://gpacalculator.net/admission/argosy-university-san-diego/	429			https://gpacalculator.net/admission/argosy-university-san-diego/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-oregon/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-oregon/	429	0		
+https://gpacalculator.net/admission/southern-california-university-soma/	429			https://gpacalculator.net/admission/southern-california-university-soma/	429	0		
+https://gpacalculator.net/admission/antioch-uni-phd-program-in-leadership-and-change/	429			https://gpacalculator.net/admission/antioch-uni-phd-program-in-leadership-and-change/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-ohio/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-ohio/	429	0		
+https://gpacalculator.net/admission/strayer-university-florida/	429			https://gpacalculator.net/admission/strayer-university-florida/	429	0		
+https://gpacalculator.net/admission/university-of-massachusetts-medical-school-worcester/	429			https://gpacalculator.net/admission/university-of-massachusetts-medical-school-worcester/	429	0		
+https://gpacalculator.net/admission/antioch-university-system-administration/	429			https://gpacalculator.net/admission/antioch-university-system-administration/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-new-jersey/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-new-jersey/	429	0		
+https://gpacalculator.net/admission/south-university-columbia/	429			https://gpacalculator.net/admission/south-university-columbia/	429	0		
+https://gpacalculator.net/admission/central-methodist-university-college-of-graduate-and-extended-studies/	429			https://gpacalculator.net/admission/central-methodist-university-college-of-graduate-and-extended-studies/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-missouri/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-missouri/	429	0		
+https://gpacalculator.net/admission/south-university-novi/	429			https://gpacalculator.net/admission/south-university-novi/	429	0		
+https://gpacalculator.net/admission/south-university-savannah-online/	429			https://gpacalculator.net/admission/south-university-savannah-online/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-lafayette-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-lafayette-campus/	429	0		
+https://gpacalculator.net/admission/omaha-school-of-massage-and-healthcare-of-herzing-university/	429			https://gpacalculator.net/admission/omaha-school-of-massage-and-healthcare-of-herzing-university/	429	0		
+https://gpacalculator.net/admission/strayer-university-kentucky/	429			https://gpacalculator.net/admission/strayer-university-kentucky/	429	0		
+https://gpacalculator.net/admission/strayer-university-utah/	429			https://gpacalculator.net/admission/strayer-university-utah/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-utah/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-utah/	429	0		
+https://gpacalculator.net/admission/argosy-university-sarasota/	429			https://gpacalculator.net/admission/argosy-university-sarasota/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-virginia/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-virginia/	429	0		
+https://gpacalculator.net/admission/globe-university-green-bay/	429			https://gpacalculator.net/admission/globe-university-green-bay/	429	0		
+https://gpacalculator.net/admission/strayer-university-tennessee/	429			https://gpacalculator.net/admission/strayer-university-tennessee/	429	0		
+https://gpacalculator.net/admission/the-kings-college/	429			https://gpacalculator.net/admission/the-kings-college/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-ohio/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-ohio/	429	0		
+https://gpacalculator.net/admission/strayer-university-virginia/	429			https://gpacalculator.net/admission/strayer-university-virginia/	429	0		
+https://gpacalculator.net/admission/uni-of-medicine-and-dentistry-of-new-jersey/	429			https://gpacalculator.net/admission/uni-of-medicine-and-dentistry-of-new-jersey/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-hawaii-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-hawaii-campus/	429	0		
+https://gpacalculator.net/admission/louisiana-state-university-health-sciences-center-new-orleans/	429			https://gpacalculator.net/admission/louisiana-state-university-health-sciences-center-new-orleans/	429	0		
+https://gpacalculator.net/admission/the-uni-of-texas-health-science-center-at-houston/	429			https://gpacalculator.net/admission/the-uni-of-texas-health-science-center-at-houston/	429	0		
+https://gpacalculator.net/admission/argosy-university-salt-lake-city/	429			https://gpacalculator.net/admission/argosy-university-salt-lake-city/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-kentucky/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-kentucky/	429	0		
+https://gpacalculator.net/admission/argosy-university-inland-empire/	429			https://gpacalculator.net/admission/argosy-university-inland-empire/	429	0		
+https://gpacalculator.net/admission/south-university-the-art-institute-of-fort-worth/	429			https://gpacalculator.net/admission/south-university-the-art-institute-of-fort-worth/	429	0		
+https://gpacalculator.net/admission/argosy-university-dallas/	429			https://gpacalculator.net/admission/argosy-university-dallas/	429	0		
+https://gpacalculator.net/admission/everest-university-brandon/	429			https://gpacalculator.net/admission/everest-university-brandon/	429	0		
+https://gpacalculator.net/admission/the-university-of-the-arts/	429			https://gpacalculator.net/admission/the-university-of-the-arts/	429	0		
+https://gpacalculator.net/admission/uni-of-massachusetts-medical-school-worcester/	429			https://gpacalculator.net/admission/uni-of-massachusetts-medical-school-worcester/	429	0		
+https://gpacalculator.net/admission/university-of-alaska-system-of-higher-education/	429			https://gpacalculator.net/admission/university-of-alaska-system-of-higher-education/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-florida/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-florida/	429	0		
+https://gpacalculator.net/admission/south-university%CB%86savannah-online/	429			https://gpacalculator.net/admission/south-university%CB%86savannah-online/	429	0		
+https://gpacalculator.net/admission/south-university-accelerated-graduate-programs/	429			https://gpacalculator.net/admission/south-university-accelerated-graduate-programs/	429	0		
+https://gpacalculator.net/admission/university-system-of-new-hampshire-system-office/	429			https://gpacalculator.net/admission/university-system-of-new-hampshire-system-office/	429	0		
+https://gpacalculator.net/admission/cossatot-community-college-of-the-uni-of-arkansas/	429			https://gpacalculator.net/admission/cossatot-community-college-of-the-uni-of-arkansas/	429	0		
+https://gpacalculator.net/admission/strayer-university-west-virginia/	429			https://gpacalculator.net/admission/strayer-university-west-virginia/	429	0		
+https://gpacalculator.net/admission/globe-university-eau-claire/	429			https://gpacalculator.net/admission/globe-university-eau-claire/	429	0		
+https://gpacalculator.net/admission/phillips-community-college-of-the-uni-of-arkansas/	429			https://gpacalculator.net/admission/phillips-community-college-of-the-uni-of-arkansas/	429	0		
+https://gpacalculator.net/admission/uni-of-arkansas-community-college-morrilton/	429			https://gpacalculator.net/admission/uni-of-arkansas-community-college-morrilton/	429	0		
+https://gpacalculator.net/admission/strayer-university-maryland/	429			https://gpacalculator.net/admission/strayer-university-maryland/	429	0		
+https://gpacalculator.net/admission/strayer-university-mississippi/	429			https://gpacalculator.net/admission/strayer-university-mississippi/	429	0		
+https://gpacalculator.net/admission/ellis-university/	429			https://gpacalculator.net/admission/ellis-university/	429	0		
+https://gpacalculator.net/admission/luther-rice-university-seminary/	429			https://gpacalculator.net/admission/luther-rice-university-seminary/	429	0		
+https://gpacalculator.net/admission/university-of-oklahoma-health-sciences-center/	429			https://gpacalculator.net/admission/university-of-oklahoma-health-sciences-center/	429	0		
+https://gpacalculator.net/admission/prairie-view-a-and-m-university/	429			https://gpacalculator.net/admission/prairie-view-a-and-m-university/	429	0		
+https://gpacalculator.net/admission/southern-wesleyan-university/	429			https://gpacalculator.net/admission/southern-wesleyan-university/	429	0	https://gpacalculator.net/admissions/southern-wesleyan/	no
+https://gpacalculator.net/admission/morrison-university/	429			https://gpacalculator.net/admission/morrison-university/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-colorado/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-colorado/	429	0		
+https://gpacalculator.net/admission/everest-university-tampa/	429			https://gpacalculator.net/admission/everest-university-tampa/	429	0		
+https://gpacalculator.net/admission/louisiana-state-university-system-office/	429			https://gpacalculator.net/admission/louisiana-state-university-system-office/	429	0		
+https://gpacalculator.net/admission/southern-illinois-university-system-office/	429			https://gpacalculator.net/admission/southern-illinois-university-system-office/	429	0		
+https://gpacalculator.net/admission/strayer-university-ohio/	429			https://gpacalculator.net/admission/strayer-university-ohio/	429	0		
+https://gpacalculator.net/admission/globe-university-woodbury/	429			https://gpacalculator.net/admission/globe-university-woodbury/	429	0		
+https://gpacalculator.net/admission/kansas-city-uni-of-medicine-and-biosciences/	429			https://gpacalculator.net/admission/kansas-city-uni-of-medicine-and-biosciences/	429	0		
+https://gpacalculator.net/admission/liu-hudson-at-rockland/	429			https://gpacalculator.net/admission/liu-hudson-at-rockland/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-worthington-scranton/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-worthington-scranton/	429	0		
+https://gpacalculator.net/admission/university-of-missouri-systems-office/	429			https://gpacalculator.net/admission/university-of-missouri-systems-office/	429	0		
+https://gpacalculator.net/admission/colorado-heights-university/	429			https://gpacalculator.net/admission/colorado-heights-university/	429	0		
+https://gpacalculator.net/admission/strayer-university-new-jersey/	429			https://gpacalculator.net/admission/strayer-university-new-jersey/	429	0		
+https://gpacalculator.net/admission/richland-college/	429			https://gpacalculator.net/admission/richland-college/	429	0		
+https://gpacalculator.net/admission/texas-a-and-m-university-galveston/	429			https://gpacalculator.net/admission/texas-a-and-m-university-galveston/	429	0		
+https://gpacalculator.net/admission/the-boston-conservatory/	429			https://gpacalculator.net/admission/the-boston-conservatory/	429	0		
+https://gpacalculator.net/admission/purdue-university-calumet-campus/	429			https://gpacalculator.net/admission/purdue-university-calumet-campus/	429	0		
+https://gpacalculator.net/admission/shorter-uni-college-of-adult-professional-programs/	429			https://gpacalculator.net/admission/shorter-uni-college-of-adult-professional-programs/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-nevada/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-nevada/	429	0		
+https://gpacalculator.net/admission/new-layout-test-page/	429			https://gpacalculator.net/admission/new-layout-test-page/	429	0		
+https://gpacalculator.net/admission/dowling-college/	429			https://gpacalculator.net/admission/dowling-college/	429	0		
+https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-orange-county/	429			https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-orange-county/	429	0		
+https://gpacalculator.net/admission/american-intercontinental-uni-south-florida/	429			https://gpacalculator.net/admission/american-intercontinental-uni-south-florida/	429	0		
+https://gpacalculator.net/admission/globe-university-madison-east/	429			https://gpacalculator.net/admission/globe-university-madison-east/	429	0		
+https://gpacalculator.net/admission/northwestern-college-il/	429			https://gpacalculator.net/admission/northwestern-college-il/	429	0		
+https://gpacalculator.net/admission/st-luke-university/	429			https://gpacalculator.net/admission/st-luke-university/	429	0		
+https://gpacalculator.net/admission/strayer-university-alabama/	429			https://gpacalculator.net/admission/strayer-university-alabama/	429	0		
+https://gpacalculator.net/admission/texas-a-and-m-university-corpus-christi/	429			https://gpacalculator.net/admission/texas-a-and-m-university-corpus-christi/	429	0		
+https://gpacalculator.net/admission/brookhaven-college/	429			https://gpacalculator.net/admission/brookhaven-college/	429	0		
+https://gpacalculator.net/admission/strayer-university-delaware/	429			https://gpacalculator.net/admission/strayer-university-delaware/	429	0		
+https://gpacalculator.net/admission/university-of-arkansas-system-office/	429			https://gpacalculator.net/admission/university-of-arkansas-system-office/	429	0		
+https://gpacalculator.net/admission/university-of-the-rockies/	429			https://gpacalculator.net/admission/university-of-the-rockies/	429	0		
+https://gpacalculator.net/admission/concordia-college-new-york/	429			https://gpacalculator.net/admission/concordia-college-new-york/	429	0		
+https://gpacalculator.net/admission/wells-college/	429			https://gpacalculator.net/admission/wells-college/	429	0		
+https://gpacalculator.net/admission/globe-university-sioux-falls/	429			https://gpacalculator.net/admission/globe-university-sioux-falls/	429	0		
+https://gpacalculator.net/admission/oklahoma-state-uni-institute-of-technology-okmulgee/	429			https://gpacalculator.net/admission/oklahoma-state-uni-institute-of-technology-okmulgee/	429	0		
+https://gpacalculator.net/admission/becker-college/	429			https://gpacalculator.net/admission/becker-college/	429	0		
+https://gpacalculator.net/admission/bethel-university-3/	429			https://gpacalculator.net/admission/bethel-university-3/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-arizona/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-arizona/	429	0		
+https://gpacalculator.net/admission/johnson-and-wales-university-providence/	429			https://gpacalculator.net/admission/johnson-and-wales-university-providence/	429	0		
+https://gpacalculator.net/admission/globe-university%CB%86green-bay/	429			https://gpacalculator.net/admission/globe-university%CB%86green-bay/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-shreveport-bossier-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-shreveport-bossier-campus/	429	0		
+https://gpacalculator.net/admission/cornish-college-of-the-arts/	429			https://gpacalculator.net/admission/cornish-college-of-the-arts/	429	0		
+https://gpacalculator.net/admission/argosy-university-phoenix/	429			https://gpacalculator.net/admission/argosy-university-phoenix/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-oregon/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-oregon/	429	0		
+https://gpacalculator.net/admission/polytechnic-uni-of-puerto-rico-miami-campus/	429			https://gpacalculator.net/admission/polytechnic-uni-of-puerto-rico-miami-campus/	429	0		
+https://gpacalculator.net/admission/south-university-montgomery/	429			https://gpacalculator.net/admission/south-university-montgomery/	429	0		
+https://gpacalculator.net/admission/university-of-nebraska-central-administration-system-office/	429			https://gpacalculator.net/admission/university-of-nebraska-central-administration-system-office/	429	0		
+https://gpacalculator.net/admission/alabama-a-and-m-university/	429			https://gpacalculator.net/admission/alabama-a-and-m-university/	429	0		
+https://gpacalculator.net/admission/saint-augustine-college/	429			https://gpacalculator.net/admission/saint-augustine-college/	429	0		
+https://gpacalculator.net/admission/texas-a-and-m-university-kingsville/	429			https://gpacalculator.net/admission/texas-a-and-m-university-kingsville/	429	0		
+https://gpacalculator.net/admission/ashland-uni-dwight-schar-college-of-nursing/	429			https://gpacalculator.net/admission/ashland-uni-dwight-schar-college-of-nursing/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-california/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-california/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-wisconsin/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-wisconsin/	429	0		
+https://gpacalculator.net/admission/high-school-gpa-guide/	429			https://gpacalculator.net/admission/high-school-gpa-guide/	429	0		
+https://gpacalculator.net/admission/long-island-university-brentwood-campus/	429			https://gpacalculator.net/admission/long-island-university-brentwood-campus/	429	0		
+https://gpacalculator.net/admission/louisiana-state-uni-health-sciences-center-shreveport/	429			https://gpacalculator.net/admission/louisiana-state-uni-health-sciences-center-shreveport/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-new-kensington/	429			https://gpacalculator.net/admission/pennsylvania-state-uni-penn-state-new-kensington/	429	0		
+https://gpacalculator.net/admission/salus-university/	429			https://gpacalculator.net/admission/salus-university/	429	0		
+https://gpacalculator.net/admission/johnson-and-wales-university-charlotte/	429			https://gpacalculator.net/admission/johnson-and-wales-university-charlotte/	429	0		
+https://gpacalculator.net/admission/brandman-university/	429			https://gpacalculator.net/admission/brandman-university/	429	0		
+https://gpacalculator.net/admission/globe-university-la-crosse/	429			https://gpacalculator.net/admission/globe-university-la-crosse/	429	0		
+https://gpacalculator.net/admission/louisiana-state-uni-and-agricultural-mechanical-college/	429			https://gpacalculator.net/admission/louisiana-state-uni-and-agricultural-mechanical-college/	429	0		
+https://gpacalculator.net/admission/university-of-hawaii-system-office/	429			https://gpacalculator.net/admission/university-of-hawaii-system-office/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-detroit-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-detroit-campus/	429	0		
+https://gpacalculator.net/admission/the-college-of-saint-rose/	429			https://gpacalculator.net/admission/the-college-of-saint-rose/	429	0		
+https://gpacalculator.net/admission/national-american-uni-colorado-springs-south/	429			https://gpacalculator.net/admission/national-american-uni-colorado-springs-south/	429	0		
+https://gpacalculator.net/admission/western-state-university-college-of-law-argosy/	429			https://gpacalculator.net/admission/western-state-university-college-of-law-argosy/	429	0		
+https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-san-diego/	429			https://gpacalculator.net/admission/fashion-institute-of-design-and-merchandising-san-diego/	429	0		
+https://gpacalculator.net/admission/north-georgia-college-and-state-university/	429			https://gpacalculator.net/admission/north-georgia-college-and-state-university/	429	0		
+https://gpacalculator.net/admission/texas-a-and-m-university-texarkana/	429			https://gpacalculator.net/admission/texas-a-and-m-university-texarkana/	429	0		
+https://gpacalculator.net/admission/argosy-university-los-angeles/	429			https://gpacalculator.net/admission/argosy-university-los-angeles/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-arizona/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-arizona/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-virginia/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-virginia/	429	0		
+https://gpacalculator.net/admission/globe-university-madison-west/	429			https://gpacalculator.net/admission/globe-university-madison-west/	429	0		
+https://gpacalculator.net/admission/birmingham-southern-college/	429			https://gpacalculator.net/admission/birmingham-southern-college/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-akron/	429			https://gpacalculator.net/admission/brown-mackie-college-akron/	429	0		
+https://gpacalculator.net/admission/cedar-valley-college/	429			https://gpacalculator.net/admission/cedar-valley-college/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-blaine/	429			https://gpacalculator.net/admission/minnesota-school-of-business-blaine/	429	0		
+https://gpacalculator.net/admission/triangle-tech-inc-dubois/	429			https://gpacalculator.net/admission/triangle-tech-inc-dubois/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-tennessee/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-tennessee/	429	0		
+https://gpacalculator.net/admission/globe-university-appleton/	429			https://gpacalculator.net/admission/globe-university-appleton/	429	0		
+https://gpacalculator.net/admission/uni-of-nebraska-central-administration-system-office/	429			https://gpacalculator.net/admission/uni-of-nebraska-central-administration-system-office/	429	0		
+https://gpacalculator.net/admission/florida-career-college-miami/	429			https://gpacalculator.net/admission/florida-career-college-miami/	429	0		
+https://gpacalculator.net/admission/marlboro-college/	429			https://gpacalculator.net/admission/marlboro-college/	429	0		
+https://gpacalculator.net/admission/the-college-of-new-rochelle/	429			https://gpacalculator.net/admission/the-college-of-new-rochelle/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-california/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-california/	429	0		
+https://gpacalculator.net/admission/independence-university/	429			https://gpacalculator.net/admission/independence-university/	429	0		
+https://gpacalculator.net/admission/louisiana-state-university-health-sciences-center-shreveport/	429			https://gpacalculator.net/admission/louisiana-state-university-health-sciences-center-shreveport/	429	0		
+https://gpacalculator.net/admission/philadelphia-biblical-university-langhorne/	429			https://gpacalculator.net/admission/philadelphia-biblical-university-langhorne/	429	0		
+https://gpacalculator.net/admission/strayer-university-arkansas/	429			https://gpacalculator.net/admission/strayer-university-arkansas/	429	0		
+https://gpacalculator.net/admission/the-university-of-texas-system-office/	429			https://gpacalculator.net/admission/the-university-of-texas-system-office/	429	0		
+https://gpacalculator.net/admission/university-of-louisiana-system-administration/	429			https://gpacalculator.net/admission/university-of-louisiana-system-administration/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-cincinnati/	429			https://gpacalculator.net/admission/brown-mackie-college-cincinnati/	429	0		
+https://gpacalculator.net/admission/eastfield-college/	429			https://gpacalculator.net/admission/eastfield-college/	429	0		
+https://gpacalculator.net/admission/macon-state-college/	429			https://gpacalculator.net/admission/macon-state-college/	429	0		
+https://gpacalculator.net/admission/middle-georgia-technical-college/	429			https://gpacalculator.net/admission/middle-georgia-technical-college/	429	0		
+https://gpacalculator.net/admission/south-georgia-college/	429			https://gpacalculator.net/admission/south-georgia-college/	429	0		
+https://gpacalculator.net/admission/north-lake-college/	429			https://gpacalculator.net/admission/north-lake-college/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-kentucky/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-kentucky/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-texas/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-texas/	429	0		
+https://gpacalculator.net/admission/georgia-health-sciences-university/	429			https://gpacalculator.net/admission/georgia-health-sciences-university/	429	0		
+https://gpacalculator.net/admission/national-american-uni-ellsworth-afb-extension/	429			https://gpacalculator.net/admission/national-american-uni-ellsworth-afb-extension/	429	0		
+https://gpacalculator.net/admission/pennsylvania-state-university-college-of-medicine/	429			https://gpacalculator.net/admission/pennsylvania-state-university-college-of-medicine/	429	0		
+https://gpacalculator.net/admission/university-of-colorado-system-office/	429			https://gpacalculator.net/admission/university-of-colorado-system-office/	429	0		
+https://gpacalculator.net/admission/cazenovia-college/	429			https://gpacalculator.net/admission/cazenovia-college/	429	0		
+https://gpacalculator.net/admission/newbury-college-brookline/	429			https://gpacalculator.net/admission/newbury-college-brookline/	429	0		
+https://gpacalculator.net/admission/nyack-college/	429			https://gpacalculator.net/admission/nyack-college/	429	0		
+https://gpacalculator.net/admission/paier-college-of-art-inc/	429			https://gpacalculator.net/admission/paier-college-of-art-inc/	429	0		
+https://gpacalculator.net/admission/pittsburgh-technical-institute/	429			https://gpacalculator.net/admission/pittsburgh-technical-institute/	429	0		
+https://gpacalculator.net/admission/wheelock-college/	429			https://gpacalculator.net/admission/wheelock-college/	429	0		
+https://gpacalculator.net/admission/argosy-university-orange-county/	429			https://gpacalculator.net/admission/argosy-university-orange-county/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-georgia/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-georgia/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-pennsylvania/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-pennsylvania/	429	0		
+https://gpacalculator.net/admission/south-university%CB%86richmond/	429			https://gpacalculator.net/admission/south-university%CB%86richmond/	429	0		
+https://gpacalculator.net/admission/trine-uni-regionalnon-traditional-campuses/	429			https://gpacalculator.net/admission/trine-uni-regionalnon-traditional-campuses/	429	0		
+https://gpacalculator.net/admission/university-of-phoenix-knoxville-campus/	429			https://gpacalculator.net/admission/university-of-phoenix-knoxville-campus/	429	0		
+https://gpacalculator.net/admission/american-academy-of-dramatic-arts-los-angeles/	429			https://gpacalculator.net/admission/american-academy-of-dramatic-arts-los-angeles/	429	0		
+https://gpacalculator.net/admission/armstrong-state-university/	429			https://gpacalculator.net/admission/armstrong-state-university/	429	0		
+https://gpacalculator.net/admission/baptist-bible-college-and-seminary/	429			https://gpacalculator.net/admission/baptist-bible-college-and-seminary/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-miami/	429			https://gpacalculator.net/admission/brown-mackie-college-miami/	429	0		
+https://gpacalculator.net/admission/florida-christian-college/	429			https://gpacalculator.net/admission/florida-christian-college/	429	0		
+https://gpacalculator.net/admission/limestone-college/	429			https://gpacalculator.net/admission/limestone-college/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-richfield/	429			https://gpacalculator.net/admission/minnesota-school-of-business-richfield/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-shakopee/	429			https://gpacalculator.net/admission/minnesota-school-of-business-shakopee/	429	0		
+https://gpacalculator.net/admission/mount-ida-college/	429			https://gpacalculator.net/admission/mount-ida-college/	429	0		
+https://gpacalculator.net/admission/the-new-england-institute-of-art/	429			https://gpacalculator.net/admission/the-new-england-institute-of-art/	429	0		
+https://gpacalculator.net/admission/triangle-tech-inc-greensburg/	429			https://gpacalculator.net/admission/triangle-tech-inc-greensburg/	429	0		
+https://gpacalculator.net/admission/triangle-tech-inc-sunbury/	429			https://gpacalculator.net/admission/triangle-tech-inc-sunbury/	429	0		
+https://gpacalculator.net/admission/virginia-college-sc/	429			https://gpacalculator.net/admission/virginia-college-sc/	429	0		
+https://gpacalculator.net/admission/argosy-university-chicago/	429			https://gpacalculator.net/admission/argosy-university-chicago/	429	0		
+https://gpacalculator.net/admission/argosy-university-tampa/	429			https://gpacalculator.net/admission/argosy-university-tampa/	429	0		
+https://gpacalculator.net/admission/everest-university-south-orlando/	429			https://gpacalculator.net/admission/everest-university-south-orlando/	429	0		
+https://gpacalculator.net/admission/louisiana-state-uni-health-sciences-center-new-orleans/	429			https://gpacalculator.net/admission/louisiana-state-uni-health-sciences-center-new-orleans/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-albuquerque/	429			https://gpacalculator.net/admission/brown-mackie-college-albuquerque/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-merrillville/	429			https://gpacalculator.net/admission/brown-mackie-college-merrillville/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-north-canton/	429			https://gpacalculator.net/admission/brown-mackie-college-north-canton/	429	0		
+https://gpacalculator.net/admission/goddard-college/	429			https://gpacalculator.net/admission/goddard-college/	429	0		
+https://gpacalculator.net/admission/harrison-college/	429			https://gpacalculator.net/admission/harrison-college/	429	0		
+https://gpacalculator.net/admission/johnson-and-wales-university-denver/	429			https://gpacalculator.net/admission/johnson-and-wales-university-denver/	429	0		
+https://gpacalculator.net/admission/johnson-and-wales-university-north-miami/	429			https://gpacalculator.net/admission/johnson-and-wales-university-north-miami/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-moorhead/	429			https://gpacalculator.net/admission/minnesota-school-of-business-moorhead/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-waite-park/	429			https://gpacalculator.net/admission/minnesota-school-of-business-waite-park/	429	0		
+https://gpacalculator.net/admission/mountain-view-college/	429			https://gpacalculator.net/admission/mountain-view-college/	429	0		
+https://gpacalculator.net/admission/new-england-college-of-business/	429			https://gpacalculator.net/admission/new-england-college-of-business/	429	0		
+https://gpacalculator.net/admission/northland-college/	429			https://gpacalculator.net/admission/northland-college/	429	0		
+https://gpacalculator.net/admission/southern-vermont-college/	429			https://gpacalculator.net/admission/southern-vermont-college/	429	0		
+https://gpacalculator.net/admission/vatterott-college-kansas-city/	429			https://gpacalculator.net/admission/vatterott-college-kansas-city/	429	0		
+https://gpacalculator.net/admission/vatterott-college-tulsa/	429			https://gpacalculator.net/admission/vatterott-college-tulsa/	429	0		
+https://gpacalculator.net/admission/virginia-college-la/	429			https://gpacalculator.net/admission/virginia-college-la/	429	0		
+https://gpacalculator.net/admission/waycross-college/	429			https://gpacalculator.net/admission/waycross-college/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-indianapolis/	429			https://gpacalculator.net/admission/brown-mackie-college-indianapolis/	429	0		
+https://gpacalculator.net/admission/california-state-university-chancellors-office/	429			https://gpacalculator.net/admission/california-state-university-chancellors-office/	429	0		
+https://gpacalculator.net/admission/central-methodist-uni-college-of-graduate-studies/	429			https://gpacalculator.net/admission/central-methodist-uni-college-of-graduate-studies/	429	0		
+https://gpacalculator.net/admission/globe-university%CB%86madison-west/	429			https://gpacalculator.net/admission/globe-university%CB%86madison-west/	429	0		
+https://gpacalculator.net/admission/long-island-university-riverhead-campus/	429			https://gpacalculator.net/admission/long-island-university-riverhead-campus/	429	0		
+https://gpacalculator.net/admission/omaha-school-of-massage-and-healthcare-of-herzing-uni/	429			https://gpacalculator.net/admission/omaha-school-of-massage-and-healthcare-of-herzing-uni/	429	0		
+https://gpacalculator.net/admission/university-of-massachusetts-central-office/	429			https://gpacalculator.net/admission/university-of-massachusetts-central-office/	429	0		
+https://gpacalculator.net/admission/university-of-missouri-system-office/	429			https://gpacalculator.net/admission/university-of-missouri-system-office/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-atlanta/	429			https://gpacalculator.net/admission/brown-mackie-college-atlanta/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-fort-wayne/	429			https://gpacalculator.net/admission/brown-mackie-college-fort-wayne/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-kansas-city/	429			https://gpacalculator.net/admission/brown-mackie-college-kansas-city/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-louisville/	429			https://gpacalculator.net/admission/brown-mackie-college-louisville/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-michigan-city/	429			https://gpacalculator.net/admission/brown-mackie-college-michigan-city/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-quad-cities/	429			https://gpacalculator.net/admission/brown-mackie-college-quad-cities/	429	0		
+https://gpacalculator.net/admission/harrison-college-elkhart/	429			https://gpacalculator.net/admission/harrison-college-elkhart/	429	0		
+https://gpacalculator.net/admission/harrison-college-evansville/	429			https://gpacalculator.net/admission/harrison-college-evansville/	429	0		
+https://gpacalculator.net/admission/island-drafting-and-technical-institute/	429			https://gpacalculator.net/admission/island-drafting-and-technical-institute/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-lakeville/	429			https://gpacalculator.net/admission/minnesota-school-of-business-lakeville/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-plymouth/	429			https://gpacalculator.net/admission/minnesota-school-of-business-plymouth/	429	0		
+https://gpacalculator.net/admission/non-traditional-campuses/	429			https://gpacalculator.net/admission/non-traditional-campuses/	429	0		
+https://gpacalculator.net/admission/northwestern-college-southwestern-campus/	429			https://gpacalculator.net/admission/northwestern-college-southwestern-campus/	429	0		
+https://gpacalculator.net/admission/ohio-business-college-sandusky/	429			https://gpacalculator.net/admission/ohio-business-college-sandusky/	429	0		
+https://gpacalculator.net/admission/stevens-henager-college-murray/	429			https://gpacalculator.net/admission/stevens-henager-college-murray/	429	0		
+https://gpacalculator.net/admission/texas-a-and-m-university-commerce/	429			https://gpacalculator.net/admission/texas-a-and-m-university-commerce/	429	0		
+https://gpacalculator.net/admission/triangle-tech-inc-bethlehem/	429			https://gpacalculator.net/admission/triangle-tech-inc-bethlehem/	429	0		
+https://gpacalculator.net/admission/triangle-tech-inc-erie/	429			https://gpacalculator.net/admission/triangle-tech-inc-erie/	429	0		
+https://gpacalculator.net/admission/triangle-tech-inc-pittsburgh/	429			https://gpacalculator.net/admission/triangle-tech-inc-pittsburgh/	429	0		
+https://gpacalculator.net/admission/vatterott-college-berkeley/	429			https://gpacalculator.net/admission/vatterott-college-berkeley/	429	0		
+https://gpacalculator.net/admission/vatterott-college-saint-joseph/	429			https://gpacalculator.net/admission/vatterott-college-saint-joseph/	429	0		
+https://gpacalculator.net/admission/vatterott-college-springfield/	429			https://gpacalculator.net/admission/vatterott-college-springfield/	429	0		
+https://gpacalculator.net/admission/vatterott-college-sunset-hills/	429			https://gpacalculator.net/admission/vatterott-college-sunset-hills/	429	0		
+https://gpacalculator.net/admission/vatterott-college-wichita/	429			https://gpacalculator.net/admission/vatterott-college-wichita/	429	0		
+https://gpacalculator.net/admission/virginia-college-biloxi/	429			https://gpacalculator.net/admission/virginia-college-biloxi/	429	0		
+https://gpacalculator.net/admission/virginia-college-birmingham/	429			https://gpacalculator.net/admission/virginia-college-birmingham/	429	0		
+https://gpacalculator.net/admission/virginia-college-jacksonville/	429			https://gpacalculator.net/admission/virginia-college-jacksonville/	429	0		
+https://gpacalculator.net/admission/virginia-college-montgomery/	429			https://gpacalculator.net/admission/virginia-college-montgomery/	429	0		
+https://gpacalculator.net/admission/antioch-university-midwest/	429			https://gpacalculator.net/admission/antioch-university-midwest/	429	0		
+https://gpacalculator.net/admission/central-methodist-uni-college-of-liberal-arts-sciences/	429			https://gpacalculator.net/admission/central-methodist-uni-college-of-liberal-arts-sciences/	429	0		
+https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-nevada/	429			https://gpacalculator.net/admission/devry-unis-keller-graduate-school-of-management-nevada/	429	0		
+https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-washington/	429			https://gpacalculator.net/admission/devry-universitys-keller-graduate-school-of-management-washington/	429	0		
+https://gpacalculator.net/admission/everest-university-melbourne/	429			https://gpacalculator.net/admission/everest-university-melbourne/	429	0		
+https://gpacalculator.net/admission/everest-university-pompano-beach/	429			https://gpacalculator.net/admission/everest-university-pompano-beach/	429	0		
+https://gpacalculator.net/admission/the-uni-of-texas-health-science-center-at-san-antonio/	429			https://gpacalculator.net/admission/the-uni-of-texas-health-science-center-at-san-antonio/	429	0		
+https://gpacalculator.net/admission/bay-state-college/	429			https://gpacalculator.net/admission/bay-state-college/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-birmingham/	429			https://gpacalculator.net/admission/brown-mackie-college-birmingham/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-findlay/	429			https://gpacalculator.net/admission/brown-mackie-college-findlay/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-salina/	429			https://gpacalculator.net/admission/brown-mackie-college-salina/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-san-antonio/	429			https://gpacalculator.net/admission/brown-mackie-college-san-antonio/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-tucson/	429			https://gpacalculator.net/admission/brown-mackie-college-tucson/	429	0		
+https://gpacalculator.net/admission/brown-mackie-college-tulsa/	429			https://gpacalculator.net/admission/brown-mackie-college-tulsa/	429	0		
+https://gpacalculator.net/admission/career-point-college-ok/	429			https://gpacalculator.net/admission/career-point-college-ok/	429	0		
+https://gpacalculator.net/admission/eastern-gateway-community-college/	429			https://gpacalculator.net/admission/eastern-gateway-community-college/	429	0		
+https://gpacalculator.net/admission/globe-institute-of-technology/	429			https://gpacalculator.net/admission/globe-institute-of-technology/	429	0		
+https://gpacalculator.net/admission/green-mountain-college/	429			https://gpacalculator.net/admission/green-mountain-college/	429	0		
+https://gpacalculator.net/admission/harrison-college-columbus/	429			https://gpacalculator.net/admission/harrison-college-columbus/	429	0		
+https://gpacalculator.net/admission/harrison-college-indianapolis-east/	429			https://gpacalculator.net/admission/harrison-college-indianapolis-east/	429	0		
+https://gpacalculator.net/admission/harrison-college-lafayette/	429			https://gpacalculator.net/admission/harrison-college-lafayette/	429	0		
+https://gpacalculator.net/admission/harrison-college-terre-haute/	429			https://gpacalculator.net/admission/harrison-college-terre-haute/	429	0		
+https://gpacalculator.net/admission/keiser-career-college-jacksonville/	429			https://gpacalculator.net/admission/keiser-career-college-jacksonville/	429	0		
+https://gpacalculator.net/admission/lecole-culinaire-mo/	429			https://gpacalculator.net/admission/lecole-culinaire-mo/	429	0		
+https://gpacalculator.net/admission/long-island-business-institute/	429			https://gpacalculator.net/admission/long-island-business-institute/	429	0		
+https://gpacalculator.net/admission/middle-georgia-college/	429			https://gpacalculator.net/admission/middle-georgia-college/	429	0		
+https://gpacalculator.net/admission/minnesota-school-of-business-rochester/	429			https://gpacalculator.net/admission/minnesota-school-of-business-rochester/	429	0		
+https://gpacalculator.net/admission/stevens-henager-college-of-business-provo/	429			https://gpacalculator.net/admission/stevens-henager-college-of-business-provo/	429	0		
+https://gpacalculator.net/admission/stevens-henager-college-ogden/	429			https://gpacalculator.net/admission/stevens-henager-college-ogden/	429	0		
+https://gpacalculator.net/admission/stevens-henager-college/	429			https://gpacalculator.net/admission/stevens-henager-college/	429	0		
+https://gpacalculator.net/admission/vatterott-college-des-moines/	429			https://gpacalculator.net/admission/vatterott-college-des-moines/	429	0		
+https://gpacalculator.net/admission/vatterott-college-joplin/	429			https://gpacalculator.net/admission/vatterott-college-joplin/	429	0		
+https://gpacalculator.net/admission/vatterott-college-quincy/	429			https://gpacalculator.net/admission/vatterott-college-quincy/	429	0		
+https://gpacalculator.net/admission/virginia-college-augusta/	429			https://gpacalculator.net/admission/virginia-college-augusta/	429	0		
+https://gpacalculator.net/admission/virginia-college-austin/	429			https://gpacalculator.net/admission/virginia-college-austin/	429	0		
+https://gpacalculator.net/admission/virginia-college-mobile/	429			https://gpacalculator.net/admission/virginia-college-mobile/	429	0		
+https://gpacalculator.net/admission/virginia-college-va/	429			https://gpacalculator.net/admission/virginia-college-va/	429	0		

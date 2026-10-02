@@ -62,6 +62,9 @@ Undo: `bash scripts/admissions/phase2_b_live.sh revert <export name>` puts every
 
 ## B2: cited Common Data Set GPAs
 
+Data done 2026-10-02 06:27 (243 pages); its theme part ships with B step 4. The more GPAs found since then go in with
+"B2, second list" below, after E.
+
 Digant's go for B includes "Replace GPA with verified, cited CDS values wherever available". Run this after B. Commit
 a15c8a7 changes two theme files (deploy them from 759f5b7, which adds the exact-slug 404 guess to functions.php on top,
 so neither change undoes the other): a college with `cds_gpa` fields gets an "Average high school GPA" card noted "As
@@ -149,6 +152,42 @@ uncertain matches and the 371 unmatched pages aren't in the file either.
 Undo: `bash scripts/admissions/phase2_e_live.sh revert <log name>` puts every changed field back and removes the ones
 the import added; `bash scripts/deploy_theme.sh --revert <theme backup>` restores the theme files (the new
 college-data.php stays on the server, unused: the restored functions.php doesn't load it).
+
+## B2, second list: GPAs cited on the college's own page
+
+Run after E (E's Harvard title check expects Harvard without a GPA; if this runs first, that title reads "Harvard
+University Average GPA & Acceptance Rate (3.6%)" instead). Digant's rule for CDS files on Google Drive, Sheets or
+other hosts: use one only if the college's own website links to it, and cite that page. `scripts/admissions/cds_pages.py`
+(run by the Admissions CDS workflow) searched each such college's website and found the page that links the file by its
+Google file ID or its path, or links a file on the college's own site with exactly the bytes the GPA was read from
+(SHA-256; many Drive and Sheets addresses in the CDS index are copies of a file the college publishes itself). Each
+page is in `data/admissions/cds_pages.csv` with the link on it and how it matched.
+
+`data/admissions/audit/phase2_b2_gpa.csv` now has 267 rows: the 242 already live, unchanged, and 25 new ones citing the
+college's page (Harvard 4.22 weighted, Stanford 3.94, Penn 3.9, Michigan State 3.74 and 21 more). Central College left
+the list: the GPA in its new 2025–26 file couldn't be confirmed, so its page keeps the 2024–25 value already live (the
+script never removes a value). 72 GPAs still wait in `phase2_b2_gpa_pending.csv`: no page on the college's own site was
+found linking the file.
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-b2-second.sql.gz`).
+2. No theme change. The live functions.php must be af793b4's (from B step 4 or E step 2); stop and report otherwise:
+   `SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show af793b4:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`
+3. Data: `bash scripts/admissions/phase2_b2_live.sh plan` must end "25 rows would change, 242 already match, 0
+   skipped" (report any `SKIP`), then `bash scripts/admissions/phase2_b2_live.sh apply`; it ends "applied 25, already
+   matched 242, skipped 0" and names the log. It writes only fields that change.
+4. Check:
+   - /admissions/harvard/: the GPA card shows 4.22 "As reported by the college, 2025–26 (weighted)"; the FAQ "What is
+     the average high school GPA at Harvard University?" gives 4.22 and links "Harvard University Common Data Set
+     2025–26" to https://oira.harvard.edu/common-data-set/; title "Harvard University Average GPA & Acceptance Rate
+     (3.6%)"; the meta description carries no GPA figure.
+   - /admissions/stanford/ (3.94, 2025–26, https://irds.stanford.edu/data-findings/cds), /admissions/upenn/ (3.9,
+     2025–26, https://ira.upenn.edu/penn-numbers/common-data-set) and /admissions/csu-fullerton/ (3.434, 2024–25): same.
+   - /admissions/central-college/ still shows 3.56 (2024–25); /admissions/chicago/ (still waiting) shows no GPA.
+   - On each: the JSON-LD parses and its FAQPage has the GPA question; Freestar tags present.
+   If anything breaks: `bash scripts/admissions/phase2_b2_live.sh revert <log name>`, then report.
+5. Changelog: one row for the 25 pages' fields with the undo command.
+
+Undo: `bash scripts/admissions/phase2_b2_live.sh revert <log name>` removes the 25 pages' GPA fields.
 
 ## C and D: retire closed colleges, redirect merged ones and duplicates
 

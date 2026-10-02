@@ -467,6 +467,24 @@
     "year": null,
     "meaning": "Median earnings 10 years after entry, USD"
   },
+  "median_debt": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "GRAD_DEBT_MDN",
+    "year": null,
+    "meaning": "Median federal loan debt of completers, USD"
+  },
+  "pell_share": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "PCTPELL",
+    "year": null,
+    "meaning": "Share of undergraduates with a Pell grant, 0-1"
+  },
+  "federal_loan_share": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "PCTFLOAN",
+    "year": null,
+    "meaning": "Share of undergraduates with a federal loan, 0-1"
+  },
   "tuition_in_district": {
     "source": "IPEDS IC_AY 2023",
     "variable": "CHG1AY3",

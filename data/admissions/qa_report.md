@@ -88,6 +88,9 @@ Admissions block source: none 4,045, IPEDS ADM 1,956
 | grad_rate | 5,217 (87%) | 2,284 (82%) |
 | retention_rate | 4,947 (82%) | 2,073 (74%) |
 | median_earnings_10yr | 0 (0%) | 0 (0%) |
+| median_debt | 0 (0%) | 0 (0%) |
+| pell_share | 0 (0%) | 0 (0%) |
+| federal_loan_share | 0 (0%) | 0 (0%) |
 | tuition_in_district | 3,410 (57%) | 2,343 (84%) |
 | room_board_on_campus | 1,958 (33%) | 1,726 (62%) |
 | books_supplies | 3,329 (55%) | 2,282 (82%) |

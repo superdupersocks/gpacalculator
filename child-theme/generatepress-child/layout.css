@@ -127,9 +127,10 @@ body {
     .university-gpa-intro { margin-bottom: 28px; }
 }
 /* Homepage hero on phones (replaced by the shared hero in phase 4) */
+/* "html body" because gpa-homepage.css loads after this file (Simple CSS used to load last) */
 @media (max-width: 767px) {
-    .gpa-hero { padding: 28px 16px !important; }
-    .gpa-hero-title { margin-bottom: 12px !important; }
-    .gpa-hero-sub { font-size: 15px; line-height: 1.4 !important; margin: 6px 0 14px !important; }
-    .gpa-hero-title, .gpa-hero-sub { padding-left: 16px !important; padding-right: 16px !important; }
+    html body .gpa-hero { padding: 28px 16px !important; }
+    html body .gpa-hero-title { margin-bottom: 12px !important; }
+    html body .gpa-hero-sub { font-size: 15px; line-height: 1.4 !important; margin: 6px 0 14px !important; }
+    html body :is(.gpa-hero-title, .gpa-hero-sub) { padding-left: 16px !important; padding-right: 16px !important; }
 }

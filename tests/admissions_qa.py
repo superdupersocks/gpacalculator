@@ -25,6 +25,7 @@ import cds_pages  # noqa: E402
 import fetch  # noqa: E402
 import match  # noqa: E402
 import phase2_e_import  # noqa: E402
+import phase2_s_pages  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
 fails = []
@@ -575,6 +576,51 @@ eq("E: a branch campus points to the college that reports for it, by UNITID or m
    ["leave unchanged until Baker College (UNITID 168847) has a page here, then 301 to it",
     "301 to Ohio Business College-Sheffield's page, /admissions/ohio-business-college-sheffield/, which has the "
     "federal figures for this campus"])
+
+# After E: pages for the colleges that held pages point to, and the redirects to them
+_s = phase2_s_pages
+_inst = {"168847": {"name": "Baker College", "closed_date": "", "operating": "Yes", "control": "Private not-for-profit",
+                    "opeid": "00229500"},
+         "16884704": {"name": "Baker College of Cadillac", "closed_date": "", "operating": "", "control": "",
+                      "opeid": "00229504"},
+         "484613": {"name": "University of Phoenix-Arizona", "closed_date": "", "operating": "Yes",
+                    "control": "Private for-profit", "opeid": "02088800"},
+         "484631": {"name": "University of Phoenix-California", "closed_date": "", "operating": "No",
+                    "control": "Private for-profit", "opeid": "02088801"},
+         "484710": {"name": "University of Phoenix-Nevada", "closed_date": "06/05/2023", "operating": "",
+                    "control": "Private for-profit", "opeid": "02088802"},
+         "133997": {"name": "Florida Career College-Miami", "closed_date": "", "operating": "",
+                    "control": "Private for-profit", "opeid": "02186200"},
+         "203720": {"name": "Ohio Business College-Sheffield", "closed_date": "", "operating": "Yes",
+                    "control": "Private for-profit", "opeid": "02158500"},
+         "501211": {"name": "Ohio Business College-Columbus", "closed_date": "", "operating": "", "control": "",
+                    "opeid": "02158507"}}
+eq("S: a merged college's page goes to its successor's new page, Phoenix's small state units to the one Phoenix page; "
+   "a closed or non-operating successor retires it; Fortis keeps its page under its new IPEDS ID",
+   [_s.c_action({"slug": slug, "successor_unitid": u}, _inst, {}) for slug, u in (
+       ("baker-college-of-owosso", "168847"), ("university-of-phoenix-san-diego-campus", "484631"),
+       ("university-of-phoenix-las-vegas-campus", "484710"), ("florida-career-college-clearwater", "133997"),
+       ("fortis-institute", "494436"))],
+   [("301", "168847"), ("301", "484613"),
+    ("retire", "merged into University of Phoenix-Nevada, which closed 06/05/2023 (IPEDS)"),
+    ("retire", "merged into Florida Career College-Miami, which College Scorecard (June 2026) doesn't list as "
+               "operating"),
+    ("rematch", "494436")])
+eq("S/M: a branch campus goes to the college that reports for it, when that college has or gets a page",
+   [_s.e_action({"why": w, "unitid": u}, _inst, {"203720": "ohio-business-college-sheffield"}) for w, u in (
+       (_why, "16884704"), (_why, "501211"), ("open in IPEDS 2024 but missing from College Scorecard", "203720"))],
+   ["168847", "203720", ""])
+_pages, _s.PAGES = _s.PAGES, {"166027": ("harvard-new", "Harvard New")}
+_rows = dict(full_rows)
+_rows.update({"16602701": dict(full_rows["166027"], control="", opeid="00215501"), "100751": full_rows["100751"]})
+_new, _srows, _act = _s.build([], [{"slug": "harvard-extension", "why": _why, "unitid": "16602701"}], _rows, {},
+                              _years)
+_s.PAGES = _pages
+eq("S: each new page gets E's fields, and its campuses a 301 to it",
+   (_new, [(r["slug"], r["post_title"], r["ipeds_unitid"], r["acceptance_rate"]) for r in _srows],
+    [(a["checkpoint"], a["slug"], a["action"], a["target"]) for a in _act]),
+   ([{"slug": "harvard-new", "post_title": "Harvard New"}], [("harvard-new", "Harvard New", "166027", "3.6%")],
+    [("S", "harvard-extension", "301", "https://gpacalculator.net/admissions/harvard-new/")]))
 
 # CDS files on another college's website aren't this college's (same-named colleges)
 _web = {"219718": {"name": "Bethel University", "website": "www.bethelu.edu/"},

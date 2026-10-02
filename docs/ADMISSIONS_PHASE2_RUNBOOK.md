@@ -104,7 +104,7 @@ Undo: `bash scripts/admissions/phase2_b2_live.sh revert <log name>` puts every f
 ## E: fresh federal data on the confidently matched pages
 
 Digant's go (05:58) ends: "Fix the missing legacy redirects next, then prioritize importing the fresh data and
-finishing the template." His terms for E (04:35): confidently matched posts get the verified Phase 1 values with
+finishing the template." Digant's terms for E (04:35): confidently matched posts get the verified Phase 1 values with
 their sources and reporting years, uncertain matches are reviewed separately, and the template must support the new
 fields and labels before the import. Run E after B (its theme deploy and its data step).
 
@@ -161,7 +161,7 @@ colleges ("Under 10%" showed 1,335). Commits 623589d (acceptance rate) and 5b501
 only file that differs from af793b4. Digant runs the deploy from Terminal, since this session's permissions block
 deploy_theme.sh. "B2, second list" below doesn't wait for it.
 
-1. Digant: `git pull && bash scripts/deploy_theme.sh 5b5018f --only functions.php`, then he types "deployed".
+1. Digant runs `git pull && bash scripts/deploy_theme.sh 5b5018f --only functions.php` and types "deployed".
 2. Check: the live functions.php is 5b5018f's
    (`SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show 5b5018f:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`).
    On /admissions/, "Under 10%" lists only colleges with a rate under 10% (about 30), "Under 1200" only colleges with
@@ -207,6 +207,42 @@ found linking the file.
 5. Changelog: one row for the 25 pages' fields with the undo command.
 
 Undo: `bash scripts/admissions/phase2_b2_live.sh revert <log name>` removes the 25 pages' GPA fields.
+
+## Held pages: six new college pages, and redirects to them (S) and to parent colleges (M)
+
+Waits for Digant's word in this thread: the go of 05:58 held these pages. C held 25 merged colleges' pages because the
+college they merged into has no page here, and E held 27 branch campuses whose parent college reports for them.
+`scripts/admissions/phase2_s_pages.py` builds from those two lists:
+
+- six new pages (`data/admissions/audit/phase2_s_new.csv`), each with E's fresh fields (`phase2_s_pages.csv`): Baker
+  College, University of Phoenix (its Arizona unit, which reports for the online university), Commonwealth University
+  of Pennsylvania, Ivy Tech Community College, Illinois Eastern Community Colleges and Minnesota North College. The same
+  file has E's fields for /admissions/fortis-institute/, the same Cookeville campus under its new IPEDS ID (494436);
+- checkpoint S (`phase2_s_actions.csv`): 32 pages 301 to those six, and 3 retire (410) because the college they merged
+  into closed (University of Phoenix-Nevada) or isn't operating (Florida Career College-Miami);
+- checkpoint M (same file): 16 branch campuses 301 to their parent college's existing page (Georgia Military College,
+  Bryant & Stratton, Delaware Tech, Ohio Business College, San Diego State, South College, University of Maine).
+
+If Digant approves only part of it, run only that part: S needs the new pages (steps 2 and 4), M stands alone (step 5).
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-s.sql.gz`).
+2. New pages: `bash scripts/admissions/phase2_s_live.sh plan` must end "6 pages would be added, 0 skipped" (report any
+   `SKIP`: a post or a redirect already uses that address), then `bash scripts/admissions/phase2_s_live.sh apply`. It
+   ends "added 6, skipped 0" and names the log. Each page is published with all its fields in one insert.
+3. Fortis Institute: `bash scripts/admissions/phase2_e_live.sh plan data/admissions/audit/phase2_s_pages.csv` must end
+   "1 posts would change, 6 already match, 0 skipped"; then the same command with `apply`.
+4. S: `bash scripts/admissions/phase2_cd_live.sh plan S` must end "35 rows ready, 0 fields to copy" (report any `SKIP`),
+   then `apply S` and `check S` ("70 addresses checked, 0 wrong").
+5. M: the same with `M`: "16 rows ready, 0 fields to copy", then `apply M` and `check M` ("32 addresses checked, 0
+   wrong").
+6. Check: /admissions/baker-college/ shows 82% for fall 2024 with SAT 500–600 and 460–560;
+   /admissions/university-of-phoenix/, /admissions/ivy-tech-community-college/ and /admissions/fortis-institute/ show
+   Open Admission and their 2024–25 requirements; on each new page the JSON-LD parses, its FAQPage questions are the
+   page's FAQ and Freestar tags are present; /admissions/ loads and its high-acceptance filter lists the new
+   open-admission colleges.
+   If anything breaks, undo in reverse order: `bash scripts/admissions/phase2_cd_live.sh revert <M log>`, then the S
+   log, `bash scripts/admissions/phase2_e_live.sh revert <log>`, `bash scripts/admissions/phase2_s_live.sh revert <log>`.
+7. Changelog: one row each for the new pages, Fortis's fields, S and M, each with its undo.
 
 ## C and D: retire closed colleges, redirect merged ones and duplicates
 

@@ -32,12 +32,16 @@ whose numbers it matches. collegedata.fyi's counts take part in that check only 
 they hang together.
 
 Writes data/admissions/cds_values.csv (published values, one row per college, with the CDS year and the source
-URL on the college's site for citations), cds_provenance.csv (every reading of every value) and cds_review.csv
-(files not used or not readable, and values whose readings disagree). Needs pypdf, openpyxl and pdftotext
-(poppler-utils; without it PDFs are read with pypdf, which often separates labels from their values).
+URL on the college's site for citations), cds_provenance.csv (every reading of every value), cds_review.csv
+(files not used or not readable, and values whose readings disagree) and cds_files.csv (which copy of each file
+was read and its SHA-256, so cds_pages.py can tell whether a link on the college's site serves those exact bytes).
+A Google Sheets export is made afresh on every download, so for one of those the archived copy is read first.
+Needs pypdf, openpyxl and pdftotext (poppler-utils; without it PDFs are read with pypdf, which often separates
+labels from their values).
 """
 import argparse
 import csv
+import hashlib
 import html
 import io
 import json
@@ -950,13 +954,21 @@ def fetch(url):
     return get(url, tries=2, timeout=60)
 
 
+def copies(src):
+    """The copies of a file to try, in order: the college's link, then the archived copy; the archived copy first
+    when the link is a Google Sheets export, which is made afresh (different bytes) on every download."""
+    first, second = ("source_url", "archive_url")
+    if "sheets.googleusercontent.com" in urlparse(src.get("source_url") or "").netloc and src.get("archive_url"):
+        first, second = second, first
+    return [(k, src[k]) for k in (first, second) if src.get(k)]
+
+
 def read_one(src):
     """Downloads the college's file (else the archived copy) and reads it; a file that can't be read (an HTML
-    page instead of the workbook, say) falls through to the next copy."""
+    page instead of the workbook, say) falls through to the next copy. Also returns which copy was read and the
+    SHA-256 of its bytes."""
     err = "no file"
-    for url in (src.get("source_url"), src.get("archive_url")):
-        if not url:
-            continue
+    for which, url in copies(src):
         try:
             data = fetch(url)
         except Exception as e:
@@ -966,10 +978,13 @@ def read_one(src):
             err = f"{url}: empty file"
             continue
         try:
-            return src, form_fields(data), parse(text_of(data, src.get("format", ""))), ""
+            read = {"unitid": src["unitid"], "name": src["name"], "cds_year": src["cds_year"],
+                    "read": "archived copy" if which == "archive_url" else "link",
+                    "sha256": hashlib.sha256(data).hexdigest()}
+            return src, form_fields(data), parse(text_of(data, src.get("format", ""))), "", read
         except Exception as e:
             err = f"could not read file: {e}"[:200]
-    return src, None, None, err
+    return src, None, None, err, None
 
 
 def main(argv=None):
@@ -1001,9 +1016,11 @@ def main(argv=None):
                       + ", ".join(other[:3]) + (" and others" if len(other) > 3 else ""))
         else:
             usable.append(src)
-    readings = {}
+    readings, files = {}, []
     with ThreadPoolExecutor(a.workers) as pool:
-        for src, form, text, err in pool.map(read_one, usable):
+        for src, form, text, err, read in pool.map(read_one, usable):
+            if read:
+                files.append(read)
             if err:
                 note(src, err)
                 form, text = {}, {}
@@ -1027,6 +1044,8 @@ def main(argv=None):
     write_csv(out / "cds_provenance.csv", prov,
               ["unitid", "field", "question", "value", "verified", "method", "form", "text", "collegedata", "ipeds"])
     write_csv(out / "cds_review.csv", review, ["unitid", "name", "cds_year", "file_url", "field", "problem"])
+    write_csv(out / "cds_files.csv", sorted(files, key=lambda r: (r["name"], r["unitid"])),
+              ["unitid", "name", "cds_year", "read", "sha256"])
     have = defaultdict(int)
     for r in rows:
         for col in r:

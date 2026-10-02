@@ -640,6 +640,38 @@ eq("CDS pages: addresses with spaces or accents are sent percent-encoded, escape
     "https://www.x.edu/p?a=1&b=c%20d"])
 
 
+# A page counts where it ends up after redirects: on the college's site, cited there, its links read from there
+_moved = cds_pages.Crawler(10)
+_moved.robots = {h: _crawl.robots["www.example.edu"] for h in ("www.example.edu", "www.elsewhere.org")}
+_moved_to = {"https://www.example.edu/": "https://www.example.edu/home/",
+             "https://www.example.edu/ir/": "https://www.elsewhere.org/ir/"}
+_moved_site = {"https://www.example.edu/": '<a href="ir-office/">Institutional Research</a> <a href="/ir/">IR</a>',
+               "https://www.example.edu/home/ir-office/": '<a href="https://drive.google.com/file/d/'
+                                                         '1cb-7QPm2EL_CSJP4lw1RN1qLEKfHiQiF/view">CDS 2024-25</a>',
+               "https://www.example.edu/ir/": _site["https://www.example.edu/offices/ir/cds/"]}
+
+
+def _moved_get(url, check=True, limit=0):
+    _moved.final[url] = _moved_to.get(url, url)
+    return _moved_site.get(url, "").encode() or None
+
+
+_moved.get = _moved_get
+_row2, _ = _moved.find({**_drive, "name": "Example College"}, "www.example.edu")
+_moved_site["https://www.example.edu/"] = '<a href="/ir/">IR</a>'
+_row3, _ = _moved.find({**_drive, "name": "Example College"}, "www.example.edu")
+eq("CDS pages: a redirected page is read and cited at its final address, and only if that is on the college's site",
+   (_row2["page_url"], _row3), ("https://www.example.edu/home/ir-office/", None))
+eq("CDS pages: the SHA-256 to match is the copy cds.py read, else the archive copy's name",
+   [cds_pages.tokens(s)["sha256"][:4] for s in ({**_drive, "read_sha256": "cd" * 32}, _drive)], ["cdcd", "abab"])
+eq("CDS: a Google Sheets export (new bytes on every download) is read from the archived copy first",
+   [[k for k, _ in cds.copies(s)] for s in (
+       {"source_url": "https://doc-00-60-sheets.googleusercontent.com/export/x/y/1/2/*/z?format=xlsx",
+        "archive_url": "https://a/b"},
+       {"source_url": "https://drive.usercontent.google.com/download?id=x", "archive_url": "https://a/b"},
+       {"source_url": "https://www.x.edu/cds.pdf", "archive_url": ""})],
+   [["archive_url", "source_url"], ["source_url", "archive_url"], ["source_url"]])
+
 def _refuse(*a, **k):
     raise __import__("http.client").client.InvalidURL("URL can't contain control characters")
 

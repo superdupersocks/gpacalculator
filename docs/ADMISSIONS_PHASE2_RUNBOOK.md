@@ -153,30 +153,32 @@ Undo: `bash scripts/admissions/phase2_e_live.sh revert <log name>` puts every ch
 the import added; `bash scripts/deploy_theme.sh --revert <theme backup>` restores the theme files (the new
 college-data.php stays on the server, unused: the restored functions.php doesn't load it).
 
-## Hub filters: skip colleges with no figure (after E)
+## Hub filters and sitemap order: one functions.php deploy (after E)
 
 E emptied 1,245 unsourced acceptance rates and every SAT average without a fresh source. The hub's "Under 10%",
 "Under 25%" and "Under 50%" filters and its SAT "Under 1200" filter read an empty value as 0, so they listed those
-colleges ("Under 10%" showed 1,335). Commits 623589d (acceptance rate) and 5b5018f (SAT) fix both; functions.php is the
-only file that differs from af793b4. Digant runs the deploy from Terminal, since this session's permissions block
-deploy_theme.sh. "B2, second list" below doesn't wait for it.
+colleges ("Under 10%" showed 1,335). Commits 623589d (acceptance rate) and 5b5018f (SAT) fix both. c5061f1 adds the
+sitemap tie-break: Rank Math pages each sitemap by modified time alone, which thousands of colleges share from the bulk
+imports, so its pages overlapped (2 colleges listed twice, 2 never); a `query` filter adds the post ID as a tie-break
+to that one statement. functions.php is the only file that differs from af793b4. Digant runs the deploy from Terminal,
+since this session's permissions block deploy_theme.sh. "B2, second list" below doesn't wait for it.
 
-The design overhaul's theme (PR #4, branch `claude/design-system-overhaul-xkzbf0`) already includes this fix and also
-changes functions.php, so `deploy_theme.sh 5b5018f --only functions.php` after it would undo the design changes.
-`scripts/admissions/deploy_hub_filters.sh` deploys only while the live functions.php is still af793b4's, and says
-"nothing to do" when 5b5018f's or a later version with both filter fixes is live.
+The design overhaul's theme (PR #4, branch `claude/design-system-overhaul-xkzbf0`) already includes the filter fix but
+not yet the tie-break, and also changes functions.php, so deploying c5061f1's functions.php after it would undo the
+design changes. `scripts/admissions/deploy_hub_filters.sh` deploys c5061f1's functions.php only while the live one is
+af793b4's or 5b5018f's, says "nothing to do" when c5061f1's (or a later version with both filter fixes and the
+tie-break) is live, and stops without changing anything when a later version lacks the tie-break.
 
-1. Digant runs `git pull && bash scripts/admissions/deploy_hub_filters.sh` (or the earlier
-   `deploy_theme.sh 5b5018f --only functions.php`, only while the design overhaul's theme isn't live) and types
-   "deployed".
-2. Check: the live functions.php is 5b5018f's
-   (`SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show 5b5018f:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`).
-   DIFFERS is right only when the script said a later deploy already shipped the fix (check that `docs/LIVE_CHANGELOG.md`
-   on the design branch lists that deploy); then skip the changelog row in step 3.
+1. Digant runs `git pull && bash scripts/admissions/deploy_hub_filters.sh` and types "deployed".
+2. Check: the live functions.php is c5061f1's
+   (`SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show c5061f1:child-theme/generatepress-child/functions.php) && echo same || echo DIFFERS`).
+   DIFFERS is right only when the script said a later deploy already shipped both fixes (check that `docs/LIVE_CHANGELOG.md`
+   on that branch lists the deploy); then skip the changelog row in step 3.
    On /admissions/, "Under 10%" lists only colleges with a rate under 10% (about 30), "Under 1200" only colleges with
    an SAT figure under 1200, and the other filters, the sorts and Load More work as before; a profile and a calculator
-   page load with Freestar tags.
-3. Changelog: one row with the undo, `bash scripts/deploy_theme.sh --revert <theme backup>` (puts af793b4's
+   page load with Freestar tags. Rebuild Rank Math's sitemap cache, then the college sitemap pages together list every
+   published college exactly once.
+3. Changelog: one row with the undo, `bash scripts/deploy_theme.sh --revert <theme backup>` (puts the earlier
    functions.php back; only while no later theme deploy has replaced functions.php).
 
 ## B2, second list: GPAs cited on the college's own page
@@ -196,9 +198,9 @@ script never removes a value). 72 GPAs still wait in `phase2_b2_gpa_pending.csv`
 found linking the file.
 
 1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-b2-second.sql.gz`).
-2. No theme change. The live functions.php must be af793b4's (from B step 4 or E step 2), or 5b5018f's once the hub
-   filter fix above is deployed; stop and report otherwise:
-   `for c in af793b4 5b5018f; do SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show $c:child-theme/generatepress-child/functions.php) && echo "same as $c"; done`
+2. No theme change. The live functions.php must be af793b4's (from B step 4 or E step 2), or c5061f1's (or 5b5018f's)
+   once the deploy above has run; stop and report otherwise:
+   `for c in af793b4 5b5018f c5061f1; do SSH "cat WP/wp-content/themes/generatepress-child/functions.php" | cmp -s - <(git show $c:child-theme/generatepress-child/functions.php) && echo "same as $c"; done`
    (no output means it differs from both)
 3. Data: `bash scripts/admissions/phase2_b2_live.sh plan` must end "25 rows would change, 242 already match, 0
    skipped" (report any `SKIP`), then `bash scripts/admissions/phase2_b2_live.sh apply`; it ends "applied 25, already
@@ -217,11 +219,14 @@ found linking the file.
 
 Undo: `bash scripts/admissions/phase2_b2_live.sh revert <log name>` removes the 25 pages' GPA fields.
 
-## Held pages: six new college pages, and redirects to them (S) and to parent colleges (M)
+## Held pages: six new college pages, and redirects to them (S) and to parent colleges (M) (approved 17:11)
 
-Digant's "yes to both" (2026-10-02 17:11 UTC) approves the two decisions asked at 15:22, S and M below (P runs
-with S). The go of 05:58 had held these pages: C held 25 merged colleges' pages because the college they merged
-into has no page here, and E held 27 branch campuses whose parent college reports for them.
+Approved: Digant's "yes to both" (2026-10-02 17:11 UTC) answered the thread's question of 15:22 ("Two decisions, and I
+recommend yes to both: 1. Add pages for six colleges ... 2. Redirect 16 branch-campus pages to their parent college's
+page"), so S and M below run, and P with S. The Mac first read it as the template list's Auburn and sitemap items; the
+/admissions/ old-address fix it ran at 17:14 is within the 05:58 go's legacy redirects either way. The go of 05:58 had
+held these pages: C held 25 merged colleges' pages because the college they merged into has no page here, and E held 27
+branch campuses whose parent college reports for them.
 `scripts/admissions/phase2_s_pages.py` builds from those two lists:
 
 - six new pages (`data/admissions/audit/phase2_s_new.csv`), each with E's fresh fields (`phase2_s_pages.csv`): Baker
@@ -271,7 +276,7 @@ College Scorecard doesn't list, retires when Federal Student Aid's closed-school
 OPEID IPEDS gave it (same state), else by its name, city and state (`data/admissions/review/`, downloaded on GitHub by
 `review_sources.py`; FSA's list of 2026-09-27, 23,006 schools). So does a campus IPEDS folded into another college
 when FSA lists the campus itself closed (Purdue Global's Hagerstown campus, 2019). Runs after "B2, second list"; P and
-N below wait for Digant's word.
+N below run on Digant's approvals of 17:11 and 17:17.
 
 1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-r.sql.gz`).
 2. Fresh figures: `bash scripts/admissions/phase2_e_live.sh plan data/admissions/audit/phase2_r_import.csv` must end
@@ -297,7 +302,7 @@ N below wait for Digant's word.
    `bash scripts/admissions/phase2_e_live.sh revert <log>`.
 5. Changelog: one row for the 229 pages' fields and one for R, each with its undo.
 
-## P: 16 more pages into S's new pages (with S)
+## P: 16 more pages into S's new pages (with S, approved 17:11)
 
 Runs right after "Held pages" step 4, only if Digant approves S: redirects of the same kind, to the same six pages,
 that the identity review found. Ivy Tech's nine regional pages and its Bloomington page go to Ivy Tech Community
@@ -309,10 +314,11 @@ College and Olney Central College to Illinois Eastern Community Colleges.
    checked, 0 wrong").
 2. Changelog: one row with its undo, `bash scripts/admissions/phase2_cd_live.sh revert <P log>`.
 
-## N: pages for nine colleges formed by mergers, and 37 redirects to them (waits for Digant's word)
+## N: pages for nine colleges formed by mergers, and 37 redirects to them (approved 17:17)
 
-Digant's "yes to both" (17:11) answered the two decisions asked at 15:22; whether it covers N too is asked in the
-thread. Run N only after Digant's own yes to it there.
+Approved: Digant's "yes merge them" (2026-10-02 17:17 UTC) answered the thread's question of 17:15 ("Did your yes
+include the merger pages from my 16:00 message? ... Yes (recommended): nine new pages, such as Pennsylvania Western
+University, with 37 older pages redirecting to them").
 
 Like S: several of our pages now report to IPEDS as one college that has no page here. Connecticut State Community
 College (12 former colleges), Metropolitan Community College-Kansas City (5), Vermont State University (4), Purdue

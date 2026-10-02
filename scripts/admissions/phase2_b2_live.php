@@ -5,11 +5,12 @@
  * cds_gpa_source_url), which the theme labels "as reported by the college" with the year and cites in the FAQ.
  * scripts/admissions/phase2_b2_live.sh pipes this file to `wp eval-file -` with one of:
  *
- *   plan   <gpa.csv>            dry run: the post each row would update and what its fields hold now
- *   apply  <gpa.csv> <log.tsv>  write the fields, logging what each held before it is written
+ *   plan   <gpa.csv>            dry run: the post each row would update and what its changing fields hold now
+ *   apply  <gpa.csv> <log.tsv>  write the fields that change, logging what each held before it is written
  *   revert <log.tsv>            put every logged field back as it was, newest first
  *
- * A row is skipped, and reported, unless exactly one published college post has its slug.
+ * A row is skipped, and reported, unless exactly one published college post has its slug. A field is written only
+ * when its value changes, so running apply again with a longer list writes only the new and changed rows.
  */
 
 const B2_FIELDS = array( 'cds_gpa', 'cds_gpa_year', 'cds_gpa_submit_pct', 'cds_gpa_basis', 'cds_gpa_source_url' );
@@ -49,25 +50,47 @@ function b2_post( $slug ) {
 	return array( (int) $found[0]->ID, '' );
 }
 
+// The fields of one row that would change on its post: field => [ exists, old value, new value ].
+function b2_changes( $id, $row ) {
+	$out = array();
+	foreach ( B2_FIELDS as $f ) {
+		$exists = metadata_exists( 'post', $id, $f );
+		$old    = (string) get_post_meta( $id, $f, true );
+		$new    = (string) $row[ $f ];
+		if ( ( $exists && $old === $new ) || ( ! $exists && '' === $new ) ) {
+			continue;
+		}
+		$out[ $f ] = array( $exists, $old, $new );
+	}
+	return $out;
+}
+
 function b2_plan( $file ) {
-	$ok = 0;
+	$ready   = 0;
+	$same    = 0;
+	$skipped = 0;
 	foreach ( b2_rows( $file ) as $row ) {
 		list( $id, $why ) = b2_post( $row['slug'] );
 		if ( ! $id ) {
 			WP_CLI::log( "SKIP {$row['slug']}: $why" );
+			++$skipped;
+			continue;
+		}
+		$changes = b2_changes( $id, $row );
+		if ( ! $changes ) {
+			++$same;
 			continue;
 		}
 		$now = array();
-		foreach ( B2_FIELDS as $f ) {
-			$v = (string) get_post_meta( $id, $f, true );
-			if ( '' !== $v ) {
-				$now[] = "$f=$v";
+		foreach ( $changes as $f => $c ) {
+			if ( '' !== $c[1] ) {
+				$now[] = "$f={$c[1]}";
 			}
 		}
-		++$ok;
+		++$ready;
 		WP_CLI::log( "ok   {$row['slug']} (post $id): GPA {$row['cds_gpa']}, {$row['cds_gpa_year']}" . ( $now ? ' [now: ' . implode( ', ', $now ) . ']' : '' ) );
 	}
-	WP_CLI::log( "$ok rows ready" );
+	WP_CLI::log( "$ready rows would change, $same already match, $skipped skipped" );
 }
 
 function b2_apply( $file, $log ) {
@@ -76,6 +99,7 @@ function b2_apply( $file, $log ) {
 		WP_CLI::error( "can't write $log" );
 	}
 	$done    = 0;
+	$same    = 0;
 	$skipped = 0;
 	foreach ( b2_rows( $file ) as $row ) {
 		list( $id, $why ) = b2_post( $row['slug'] );
@@ -84,19 +108,24 @@ function b2_apply( $file, $log ) {
 			++$skipped;
 			continue;
 		}
-		foreach ( B2_FIELDS as $f ) {
+		$changes = b2_changes( $id, $row );
+		foreach ( $changes as $f => $c ) {
 			$was = array(
-				'exists' => metadata_exists( 'post', $id, $f ),
-				'value'  => (string) get_post_meta( $id, $f, true ),
+				'exists' => $c[0],
+				'value'  => $c[1],
 			);
 			fwrite( $fh, implode( "\t", array( $row['slug'], $id, $f, wp_json_encode( $was ) ) ) . "\n" );
 			fflush( $fh );
-			update_post_meta( $id, $f, (string) $row[ $f ] );
+			update_post_meta( $id, $f, wp_slash( $c[2] ) );
 		}
-		++$done;
+		if ( $changes ) {
+			++$done;
+		} else {
+			++$same;
+		}
 	}
 	fclose( $fh );
-	WP_CLI::log( "applied $done, skipped $skipped; log $log" );
+	WP_CLI::log( "applied $done, already matched $same, skipped $skipped; log $log" );
 }
 
 function b2_revert( $log ) {
@@ -113,7 +142,7 @@ function b2_revert( $log ) {
 			continue;
 		}
 		if ( $was['exists'] ) {
-			update_post_meta( (int) $id, $f, $was['value'] );
+			update_post_meta( (int) $id, $f, wp_slash( (string) $was['value'] ) );
 		} else {
 			delete_post_meta( (int) $id, $f );
 		}

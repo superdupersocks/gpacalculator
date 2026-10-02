@@ -8,7 +8,7 @@ page loads is served from DIR instead (the "after"), and the stylesheets a phase
 same order functions.php enqueues them. Ads, analytics and other third-party requests are blocked in both,
 so ad slots show empty. Google Fonts load normally.
 """
-import argparse, mimetypes, os, re, sys, urllib.parse
+import argparse, hashlib, mimetypes, os, re, sys, urllib.parse, urllib.request
 from playwright.sync_api import sync_playwright
 
 THEME_PATH = "/wp-content/themes/generatepress-child/"
@@ -21,6 +21,23 @@ def theme_link(name, theme):
     handle = {"layout.css": "gpa-layout", "components.css": "gpa-components", "calc-theme.css": "gpa-calc-theme"}[name]
     return (f"<link rel='stylesheet' id='{handle}-css' href='https://gpacalculator.net{THEME_PATH}{name}?ver={ver}' "
             "media='all' />")
+
+
+FONT_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
+
+
+def font_file(url, cache):
+    """Google Fonts CSS and font files, fetched once with Python and kept in a local cache (the browser's own
+    connection through the sandbox proxy is unreliable for them)."""
+    os.makedirs(cache, exist_ok=True)
+    path = os.path.join(cache, hashlib.sha1(url.encode()).hexdigest())
+    if not os.path.exists(path):
+        req = urllib.request.Request(url, headers={"User-Agent": FONT_UA})
+        with urllib.request.urlopen(req, timeout=30) as r, open(path + ".tmp", "wb") as f:
+            f.write(r.read())
+        os.replace(path + ".tmp", path)
+    with open(path, "rb") as f:
+        return f.read()
 
 
 def transform(html, theme):
@@ -53,7 +70,10 @@ def main():
     def handle(route, slug):
         u = urllib.parse.urlsplit(route.request.url)
         if u.netloc in ("fonts.googleapis.com", "fonts.gstatic.com"):
-            return route.continue_()
+            body = font_file(route.request.url, os.path.join(a.snapshot, ".font-cache"))
+            ctype = "text/css" if u.netloc == "fonts.googleapis.com" else "font/woff2"
+            return route.fulfill(status=200, content_type=ctype, body=body,
+                                 headers={"Access-Control-Allow-Origin": "*"})
         if not u.netloc.endswith("gpacalculator.net"):
             return route.abort()
         path = urllib.parse.unquote(u.path)
@@ -84,10 +104,20 @@ def main():
                 ctx = browser.new_context(viewport={"width": w, "height": h}, ignore_https_errors=True,
                                           device_scale_factor=1, is_mobile=w < 768, has_touch=w < 768)
                 page = ctx.new_page()
-                page.route("**/*", lambda route, s=slug: handle(route, s))
+                def safe(route, _request=None, s=slug):
+                    try:
+                        handle(route, s)
+                    except Exception as e:  # noqa: BLE001
+                        print("route error", route.request.url[:90], e, file=sys.stderr)
+                        route.abort()
+                page.route("**/*", safe)
                 page.goto("https://gpacalculator.net/" + ("" if slug == "home" else slug.replace("__", "/") + "/"),
-                          wait_until="load", timeout=60000)
-                page.wait_for_timeout(1200)
+                          wait_until="domcontentloaded", timeout=60000)
+                try:
+                    page.wait_for_load_state("load", timeout=15000)
+                except Exception:  # noqa: BLE001 - a slow third-party file shouldn't stop the run
+                    pass
+                page.wait_for_timeout(1500)
                 shot = os.path.join(a.out, f"{slug}-{size}.png")
                 page.screenshot(path=shot, full_page=a.full)
                 hscroll = page.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth")

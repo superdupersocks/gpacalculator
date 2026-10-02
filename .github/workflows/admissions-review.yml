@@ -1,0 +1,39 @@
+name: Admissions review sources
+# Downloads what the identity review (scripts/admissions/phase2_r_review.py) needs from ed.gov, which the cloud
+# sessions can't reach: Federal Student Aid's weekly closed-school file and the older IPEDS directory records of the
+# colleges under review (scripts/admissions/review_sources.py). Commits them to data/admissions/review/. Changes
+# nothing on the site.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/admissions/review_sources.py'
+      - '.github/workflows/admissions-review.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-review-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install openpyxl xlrd
+      - run: python scripts/admissions/review_sources.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions/review
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/.
+          git commit -m "Refresh the admissions review sources [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

@@ -1,0 +1,8 @@
+/* ============================================================
+   components.css — content blocks for every template (design system overhaul)
+   Loads on every page, after layout.css and before the template stylesheet.
+   Holds: quote, table, callouts, formula, takeaways, lists, FAQ,
+   related-tool cards, step cards, sources.
+   Colors and sizes come only from var(--gpa-*) tokens.
+   Phase 1 (2026-10-02): file created and enqueued; rules arrive in phase 4.
+   ============================================================ */

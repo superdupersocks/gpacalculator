@@ -40,6 +40,136 @@
     line-gap-override: 0%;
 }
 
+/* ============================================================
+   COLOR TOKENS (design system overhaul, 2026-10-02)
+   Three layers. Only layer 1 holds raw colors; everything else in the
+   theme and the calculators reads layers 2 and 3. To re-color the whole
+   site, edit layer 1.
+   ============================================================ */
+:root {
+    /* 1. BRAND PALETTE — edit here to re-color everything */
+    --gpa-blue-50:   #EFF6FF;
+    --gpa-blue-100:  #DBEAFE;
+    --gpa-blue-200:  #BFDBFE;
+    --gpa-blue-300:  #93C5FD;
+    --gpa-blue-500:  #3B82F6;
+    --gpa-blue-600:  #2563EB;
+    --gpa-blue-700:  #1D4ED8;
+    --gpa-blue-900:  #1E3A8A;
+    --gpa-blue-950:  #172554;
+    --gpa-indigo-50:  #EEF2FF;
+    --gpa-indigo-200: #C7D2FE;
+    --gpa-indigo-700: #4338CA;
+    --gpa-white:     #FFFFFF;
+    --gpa-gray-25:   #F9FAFB;
+    --gpa-gray-50:   #F7F7FB;
+    --gpa-gray-100:  #F3F4F6;
+    --gpa-gray-200:  #E5E7EB;
+    --gpa-gray-300:  #D1D5DB;
+    --gpa-gray-400:  #9CA3AF;
+    --gpa-gray-500:  #6B7280;
+    --gpa-gray-600:  #475569;
+    --gpa-gray-700:  #374151;
+    --gpa-gray-900:  #111827;
+    --gpa-slate-400: #94A3B8;
+    --gpa-slate-500: #64748B;
+    --gpa-slate-700: #334155;
+    --gpa-green-50:  #F0FDF4;
+    --gpa-green-700: #15803D;
+    --gpa-amber-50:  #FFFBEB;
+    --gpa-amber-200: #FDE68A;
+    --gpa-amber-700: #B45309;
+    --gpa-amber-800: #92400E;
+    --gpa-orange-50:  #FFF7ED;
+    --gpa-orange-700: #C2410C;
+    --gpa-red-50:    #FEF2F2;
+    --gpa-red-700:   #B91C1C;
+
+    /* 2. SITE ROLES */
+    --gpa-primary:        var(--gpa-blue-600);
+    --gpa-primary-hover:  var(--gpa-blue-700);
+    --gpa-accent:         var(--gpa-indigo-700);
+    --gpa-heading:        var(--gpa-blue-900);
+    --gpa-text-strong:    var(--gpa-gray-900);
+    --gpa-text:           var(--gpa-gray-700);
+    --gpa-text-secondary: var(--gpa-gray-600);
+    --gpa-text-muted:     var(--gpa-gray-500);
+    --gpa-border:         var(--gpa-gray-200);
+    --gpa-border-strong:  var(--gpa-gray-300);
+    --gpa-divider:        var(--gpa-gray-100);
+    --gpa-page-bg:        var(--gpa-gray-50);
+    --gpa-surface:        var(--gpa-white);
+    --gpa-surface-subtle: var(--gpa-gray-25);
+    --gpa-tint-blue:      var(--gpa-blue-50);
+    --gpa-tint-indigo:    var(--gpa-indigo-50);
+    --gpa-link:           var(--gpa-blue-700);
+    --gpa-link-underline: var(--gpa-blue-300);
+    --gpa-gradient-brand: linear-gradient(135deg, var(--gpa-blue-600) 0%, var(--gpa-indigo-700) 100%);
+    --gpa-hero-bg:
+        radial-gradient(900px 260px at 30% 0%, rgba(255,255,255,0.75), rgba(255,255,255,0) 70%),
+        radial-gradient(700px 300px at 85% 110%, rgba(59,130,246,0.20), rgba(59,130,246,0) 70%),
+        linear-gradient(160deg, #D6E6FF 0%, #DCE6FF 60%, #E0E5FF 100%);
+    --gpa-hero-title:     var(--gpa-heading);
+    --gpa-hero-text:      var(--gpa-slate-700);
+    --gpa-breadcrumb-sep: var(--gpa-slate-400);
+    --gpa-breadcrumb-current: var(--gpa-slate-500);
+    --gpa-footer-bg:      var(--gpa-blue-950);
+    --gpa-footer-text:    var(--gpa-white);
+    --gpa-footer-link:    var(--gpa-blue-200);
+    --gpa-footer-accent:  var(--gpa-blue-300);
+    --gpa-footer-line:    rgba(191,219,254,0.2);
+    --gpa-focus-ring:     var(--gpa-primary);
+
+    /* 3. CALCULATOR ROLES */
+    --gpa-calc-bg:           var(--gpa-surface);
+    --gpa-calc-border:       var(--gpa-indigo-200);
+    --gpa-calc-shadow:       0 2px 4px rgba(30,58,138,0.06), 0 16px 40px rgba(30,58,138,0.14);
+    --gpa-calc-input-border: var(--gpa-border);
+    --gpa-calc-focus:        var(--gpa-primary);
+    --gpa-calc-add-bg:       var(--gpa-tint-blue);
+    --gpa-calc-add-border:   var(--gpa-blue-300);
+    --gpa-calc-add-text:     var(--gpa-blue-700);
+    --gpa-calc-result-bg:    linear-gradient(135deg, var(--gpa-blue-50) 0%, var(--gpa-indigo-50) 100%);
+    --gpa-calc-result-line:  var(--gpa-indigo-200);
+    --gpa-calc-result-label: var(--gpa-accent);
+    --gpa-calc-result-value: var(--gpa-heading);
+    --gpa-calc-cta-bg:       var(--gpa-gradient-brand);
+
+    /* Status: calculator results and callouts only, never decoration */
+    --gpa-success: var(--gpa-green-700);
+    --gpa-warning: var(--gpa-amber-700);
+    --gpa-danger:  var(--gpa-red-700);
+
+    /* Grade bands (GPA scale table): text on a light tint */
+    --gpa-band-a: var(--gpa-green-700);   --gpa-band-a-bg: var(--gpa-green-50);
+    --gpa-band-b: var(--gpa-blue-700);    --gpa-band-b-bg: var(--gpa-blue-50);
+    --gpa-band-c: var(--gpa-amber-700);   --gpa-band-c-bg: var(--gpa-amber-50);
+    --gpa-band-d: var(--gpa-orange-700);  --gpa-band-d-bg: var(--gpa-orange-50);
+    --gpa-band-f: var(--gpa-red-700);     --gpa-band-f-bg: var(--gpa-red-50);
+
+    /* OLD NAMES — aliases so files not yet migrated keep working.
+       Remove each one once nothing references it. */
+    --gpa-primary-dark:  var(--gpa-primary-hover);
+    --gpa-primary-light: var(--gpa-blue-500);
+    --gpa-success-dark:  var(--gpa-green-700);
+    --gpa-warning-dark:  var(--gpa-amber-700);
+    --gpa-purple:        var(--gpa-accent);
+    --gpa-text-heading:  var(--gpa-text-strong);
+    --gpa-text-body:     var(--gpa-text);
+    --gpa-text-light:    var(--gpa-gray-400);
+    --gpa-bg-white:      var(--gpa-surface);
+    --gpa-bg-gray-50:    var(--gpa-surface-subtle);
+    --gpa-bg-gray-100:   var(--gpa-gray-100);
+    --gpa-bg-dark:       var(--gpa-gray-900);
+    --gpa-border-dark:   var(--gpa-border-strong);
+    --gpa-border-focus:  var(--gpa-focus-ring);
+    /* gpacalculator-manager plugin calculator names (theme 1.2, not live yet) */
+    --gpa-calc-brand-1:  var(--gpa-primary);
+    --gpa-calc-brand-2:  var(--gpa-accent);
+    --gpa-calc-tint:     var(--gpa-tint-indigo);
+    --gpa-calc-ink:      var(--gpa-heading);
+}
+
 :root {
     /* ---- Font ---- */
     /* "Lexend Fallback" sits between Lexend and the system stack so the
@@ -72,40 +202,6 @@
     --gpa-small-size: 14px;
     --gpa-body-weight: 400;
     --gpa-body-line: 1.7;
-
-    /* ---- Colors: brand ---- */
-    --gpa-primary: #2563EB;
-    --gpa-primary-dark: #1D4ED8;
-    --gpa-primary-light: #3B82F6;
-    --gpa-success: #16A34A;
-    --gpa-success-dark: #15803D;
-    --gpa-warning: #D97706;
-    --gpa-warning-dark: #B45309;
-    --gpa-danger: #DC2626;
-    /* Grade bands (GPA scale table): text on a light tint */
-    --gpa-band-a: #15803D;   --gpa-band-a-bg: #F0FDF4;
-    --gpa-band-b: #1D4ED8;   --gpa-band-b-bg: #EFF6FF;
-    --gpa-band-c: #B45309;   --gpa-band-c-bg: #FFFBEB;
-    --gpa-band-d: #C2410C;   --gpa-band-d-bg: #FFF7ED;
-    --gpa-band-f: #B91C1C;   --gpa-band-f-bg: #FEF2F2;
-    --gpa-purple: #9333EA;
-
-    /* ---- Colors: text ---- */
-    --gpa-text-heading: #111827;
-    --gpa-text-body: #374151;
-    --gpa-text-muted: #6B7280;
-    --gpa-text-light: #9CA3AF;
-
-    /* ---- Colors: surface ---- */
-    --gpa-bg-white: #FFFFFF;
-    --gpa-bg-gray-50: #F9FAFB;
-    --gpa-bg-gray-100: #F3F4F6;
-    --gpa-bg-dark: #111827;
-
-    /* ---- Borders ---- */
-    --gpa-border: #E5E7EB;
-    --gpa-border-dark: #D1D5DB;
-    --gpa-border-focus: #2563EB;
 
     /* ---- Spacing ---- */
     --gpa-section-py: 80px;
@@ -142,21 +238,11 @@
     --gpa-btn-font-size: 16px;
     --gpa-btn-font-weight: 600;
 
-    /* ---- Calculators (gpacalculator-manager plugin) ----
-       Calculator look (Grade Calculator v3 reference build). The plugin's calculator
-       core reads these with built-in fallbacks, and also reads the neutrals above
-       (--gpa-text-body, --gpa-text-muted, --gpa-text-light, --gpa-border,
-       --gpa-border-dark, --gpa-bg-white, --gpa-bg-gray-50, --gpa-radius-md,
-       --gpa-radius-pill). Change a value here to restyle every calculator. */
-    --gpa-calc-brand-1: #7c3aed;
-    --gpa-calc-brand-2: #4f46e5;
-    --gpa-calc-tint: #f5f3ff;
-    --gpa-calc-focus: rgba(124, 58, 237, 0.28);
-    --gpa-calc-ink: #1e1b4b;
-    --gpa-calc-font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --gpa-calc-radius-card: 24px;
-    --gpa-calc-shadow: 0 10px 40px -12px rgba(79, 70, 229, 0.25), 0 2px 6px rgba(30, 27, 75, 0.06);
-    --gpa-calc-shadow-pop: 0 12px 32px -8px rgba(30, 27, 75, 0.3);
+
+    /* ---- Calculators: shape (colors are in the calculator roles above) ---- */
+    --gpa-calc-font: var(--gpa-font);
+    --gpa-calc-radius-card: 16px;
+    --gpa-calc-shadow-pop: 0 12px 32px -8px rgba(30,58,138,0.3);
 }
 
 /* ============================================

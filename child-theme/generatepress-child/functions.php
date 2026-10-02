@@ -213,6 +213,9 @@ function gpa_asset_ver( $relative_path ) {
     return $mtime ? (string) $mtime : wp_get_theme()->get( 'Version' );
 }
 
+// Load order (design system overhaul): tokens → layout → components → template file
+// (homepage / calculator / content / database) → calculator bundle → calc-theme.css.
+// Template files depend on 'gpa-components' so they always print after it.
 add_action('wp_enqueue_scripts', 'gpa_design_tokens', 5);
 function gpa_design_tokens() {
     wp_enqueue_style(
@@ -221,6 +224,37 @@ function gpa_design_tokens() {
         array('gpa-google-fonts'),
         gpa_asset_ver( 'gpa-design-tokens.css' )
     );
+    wp_enqueue_style(
+        'gpa-layout',
+        get_stylesheet_directory_uri() . '/layout.css',
+        array('gpa-design-tokens'),
+        gpa_asset_ver( 'layout.css' )
+    );
+    wp_enqueue_style(
+        'gpa-components',
+        get_stylesheet_directory_uri() . '/components.css',
+        array('gpa-layout'),
+        gpa_asset_ver( 'components.css' )
+    );
+}
+
+// Calculator bundles (calc-assets/*.css) are enqueued while the content renders, so they print in the
+// footer; calc-theme.css joins that late queue after them.
+add_action('wp_footer', 'gpa_calc_theme_styles', 1);
+function gpa_calc_theme_styles() {
+    $styles = wp_styles();
+    foreach ( $styles->queue as $handle ) {
+        $src = isset( $styles->registered[ $handle ] ) ? (string) $styles->registered[ $handle ]->src : '';
+        if ( false !== strpos( $src, '/calc-assets/' ) ) {
+            wp_enqueue_style(
+                'gpa-calc-theme',
+                get_stylesheet_directory_uri() . '/calc-theme.css',
+                array( $handle ),
+                gpa_asset_ver( 'calc-theme.css' )
+            );
+            return;
+        }
+    }
 }
 
 add_action('wp_enqueue_scripts', 'gpa_homepage_styles');
@@ -229,7 +263,7 @@ function gpa_homepage_styles() {
         wp_enqueue_style(
             'gpa-homepage',
             get_stylesheet_directory_uri() . '/gpa-homepage.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'gpa-homepage.css' )
         );
     }
@@ -241,7 +275,7 @@ function calc_page_styles() {
         wp_enqueue_style(
             'calc-page',
             get_stylesheet_directory_uri() . '/calculator-page.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'calculator-page.css' )
         );
     }
@@ -253,7 +287,7 @@ function gpa_content_styles() {
         wp_enqueue_style(
             'gpa-content',
             get_stylesheet_directory_uri() . '/content-styles.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'content-styles.css' )
         );
     }
@@ -265,7 +299,7 @@ function gpa_database_page_styles() {
         wp_enqueue_style(
             'database-page',
             get_stylesheet_directory_uri() . '/database-page.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'database-page.css' )
         );
     }
@@ -1899,7 +1933,7 @@ function gpa_college_archive_shortcode() {
     wp_enqueue_style(
         'database-page',
         get_stylesheet_directory_uri() . '/database-page.css',
-        array( 'gpa-design-tokens' ),
+        array('gpa-components'),
         gpa_asset_ver( 'database-page.css' )
     );
     wp_enqueue_script(

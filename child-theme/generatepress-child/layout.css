@@ -1,0 +1,8 @@
+/* ============================================================
+   layout.css — page frame for every template (design system overhaul)
+   Loads on every page, right after gpa-design-tokens.css.
+   Holds: page background, content column, hero, nav, footer, section
+   header spacing (moved from Simple CSS), breadcrumb, table of contents.
+   Colors and sizes come only from var(--gpa-*) tokens.
+   Phase 1 (2026-10-02): file created and enqueued; rules arrive in phases 3–4.
+   ============================================================ */

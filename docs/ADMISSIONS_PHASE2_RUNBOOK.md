@@ -10,7 +10,10 @@ time. Log every live change in `docs/LIVE_CHANGELOG.md` with its undo, push, and
 ## B: stop publishing unsupported GPA, standards and competition claims and the hotlinked photos
 
 Code: commit 9a803a3 (five theme files). Data: `scripts/admissions/phase2_b_live.sh` blanks `average_gpa`,
-`admission_standards`, `applicant_competition` and `img_url` on every college post, after saving their values.
+`admission_standards`, `applicant_competition` and `img_url` on every college post, after saving their values. No
+college post's body text or excerpt mentions a GPA, those labels or collegesimply (checked in the October 1 export in
+`data/colleges/`) and none has its own Rank Math title, description or schema, so checkpoint A's open content scan
+isn't needed.
 
 1. Database backup, as in checkpoint A: `SSH 'cd WP && wp db export - | gzip > ~/backups/gpacalculator-<UTC date-time>-pre-admissions-b.sql.gz'`,
    then `gunzip -t`, the dump ends with "-- Dump completed", copy it to `~/gpacalculator-backups/`, SHA-256 matches.
@@ -45,5 +48,24 @@ Undo: `bash scripts/admissions/phase2_b_live.sh revert <export name>` puts every
 
 ## C and D: retire closed colleges, redirect merged ones and duplicates
 
-Lists: `data/admissions/audit/` (closed.csv, merged.csv, duplicates.csv). Runs with
-`scripts/admissions/phase2_cd_live.php`, dry run first. If that script isn't in the repo yet, wait for it.
+The list is `data/admissions/audit/phase2_cd_actions.csv`, made by `scripts/admissions/phase2_cd_actions.py` from the
+audit lists: C has 312 pages to retire (410 Gone) and 40 to redirect (301), D has 4 to redirect. Each go covers only
+its own checkpoint's rows. Five C rows redirect to the pages D keeps; if Digant's go for D keeps other pages, change
+`D_KEEP` in `phase2_cd_actions.py`, rerun it, commit, and only then run C or D. `scripts/admissions/phase2_cd_live.sh`
+does the rest; each rule covers the page's /admissions/ address and its old /admission/ one.
+
+1. Database backup as in B, step 1 (`...-pre-admissions-c.sql.gz` or `-d`).
+2. Dry run: `bash scripts/admissions/phase2_cd_live.sh plan C` (or `D`). It changes nothing. Every row should read
+   `ok`. Report any `SKIP` row and any "active non-exact rule" line before going on. Compare the printed sample of
+   how an existing /admission/ rule stores its source with the new rules (`admission/<slug>`, no domain, no slashes);
+   stop and report if the existing ones look different.
+3. `bash scripts/admissions/phase2_cd_live.sh apply C` (or `D`). Note the log name it prints.
+4. Check: `bash scripts/admissions/phase2_cd_live.sh check C` (or `D`) must end in "0 wrong". Then /admissions/ and
+   the colleges sitemap no longer list those pages (the sitemap can take a few minutes), a page that receives a 301
+   (e.g. /admissions/south-louisiana-community-college/) loads, and ads show. If anything breaks:
+   `bash scripts/admissions/phase2_cd_live.sh revert <log name>`, then report.
+5. Changelog: one row per checkpoint with the number of pages unpublished, 410 and 301 rules, the log name and the
+   undo command.
+
+Undo: `bash scripts/admissions/phase2_cd_live.sh revert <log name>` publishes the logged pages again and deletes their
+rules.

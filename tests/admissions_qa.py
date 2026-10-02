@@ -431,13 +431,34 @@ _hist = {"100": {2015: _hd("100", "Old Tech Institute", "Akron", "OH"),
          "200": {2018: _hd("200", "Gone College", "Erie", "PA", NEWID="300")},
          "300": {2018: _hd("300", "Big University", "Erie", "PA")},
          "400": {2019: _hd("400", "Quiet School", "Boise", "ID")},
-         "500": {2012: _hd("500", "Still Here College", "Mesa", "AZ", NEWID="999")}}
-_cur = {"300": {"unitid": "300", "name": "Big University", "city": "Erie", "merged_into": ""},
-        "500": {"unitid": "500", "name": "Still Here College", "city": "Mesa", "merged_into": "", "active": "Yes",
-                "operating": "Yes"},
-        "600": {"unitid": "600", "name": "Shut College", "city": "Troy", "merged_into": "",
-                "closed_date": "05/11/2024", "active": "No"},
-        "700": {"unitid": "700", "name": "Absorbed College", "city": "Erie", "merged_into": "300", "active": "No"}}
+         "500": {2012: _hd("500", "Still Here College", "Mesa", "AZ", NEWID="999")},
+         "810": {2018: _hd("810", "Chain Institute-North", "Kent", "OH", NEWID="820", DEATHYR="2019")},
+         "820": {2018: _hd("820", "Chain Institute", "Kent", "OH")},
+         "830": {2013: _hd("830", "Capital College", "Salem", "OR")},
+         "850": {2017: _hd("850", "Plains Area Technical College", "Topeka", "KS")},
+         "900": {2022: _hd("900", "North Valley College", "Dover", "DE", NEWID="910", DEATHYR="2023")},
+         "910": {2022: _hd("910", "South Valley College", "Dover", "DE")},
+         "930": {2014: _hd("930", "Old Campus", "Ames", "IA", NEWID="940", DEATHYR="2015")},
+         "940": {2014: _hd("940", "State Branch", "Ames", "IA"),
+                 2016: _hd("940", "State Branch", "Ames", "IA", CLOSEDAT="06/30/2016")}}
+
+
+def _c(uid, name, city, st="", **kw):
+    return {"unitid": uid, "name": name, "city": city, "state": st, "merged_into": "", **kw}
+
+
+_cur = {"300": _c("300", "Big University", "Erie"),
+        "500": _c("500", "Still Here College", "Mesa", active="Yes", operating="Yes"),
+        "600": _c("600", "Shut College", "Troy", closed_date="05/11/2024", active="No"),
+        "700": _c("700", "Absorbed College", "Erie", merged_into="300", active="No"),
+        "820": _c("820", "Chain Institute", "Kent", "OH"),
+        "840": _c("840", "Capital Community College", "Salem", "OR"),
+        "850": _c("850", "Plains State Tech", "Topeka", "KS"),
+        "860": _c("860", "Plains Technical Institute", "Topeka", "KS"),
+        "870": _c("870", "Brand College-Lakeside", "Lakeside", "NC", alias="Brand College"),
+        "880": _c("880", "Brand College-Hilltop", "Hilltop", "NC"),
+        "890": _c("890", "Maybe College", "Reno", "NV", active="Yes", operating="No"),
+        "910": _c("910", "Valley State College", "Dover", "DE")}
 _rows = [("old-tech", "Old Tech Institute", "Akron", "OH", "none", ""),
          ("gone", "Gone College", "Erie", "PA", "none", ""),
          ("quiet", "Quiet School", "Boise", "ID", "review", ""),
@@ -445,24 +466,52 @@ _rows = [("old-tech", "Old Tech Institute", "Akron", "OH", "none", ""),
          ("still", "Still Here College", "Mesa", "AZ", "exact", "500"),
          ("still-2", "Still Here College Mesa", "Mesa", "AZ", "fuzzy", "500"),
          ("shut", "Shut College", "Troy", "NY", "exact", "600"),
-         ("absorbed", "Absorbed College", "Erie", "PA", "exact", "700")]
+         ("absorbed", "Absorbed College", "Erie", "PA", "exact", "700"),
+         ("chain-north", "Chain Institute North", "Kent", "OH", "renamed", "820"),
+         ("chain-south", "Chain Institute South", "Kent", "OH", "renamed", "820"),
+         ("capital-college", "Capital College", "Salem", "OR", "renamed", "840"),
+         ("capital-cc", "Capital Community College", "Salem", "OR", "exact", "840"),
+         ("plains-atc", "Plains Area Technical College", "Topeka", "KS", "renamed", "860"),
+         ("brand-college", "Brand College", "Hilltop", "NC", "alias", "870"),
+         ("brand-college-lakeside", "Brand College Lakeside", "Lakeside", "NC", "exact", "870"),
+         ("maybe", "Maybe College", "Reno", "NV", "exact", "890"),
+         ("north-valley", "North Valley College", "Dover", "DE", "none", ""),
+         ("south-valley", "South Valley College", "Dover", "DE", "review", ""),
+         ("brand-college-2", "Brand College", "Hilltop", "NC", "review", ""),
+         ("old-campus", "Old Campus", "Ames", "IA", "none", "")]
 _posts = [{"slug": s, "title": t, "url": f"https://gpacalculator.net/admissions/{s}/", "city": c, "state": st,
            "fields": {"location": f"{c}, {st}", "enrollment": "100" if s == "still" else ""}}
           for s, t, c, st, _, _ in _rows]
 _matches = [{"slug": s, "title": t, "location": f"{c}, {st}", "method": m, "unitid": u, "candidates": ""}
             for s, t, c, st, m, u in _rows]
-_closed, _merged, _unmatched, _dups = audit.classify(_posts, _matches, _cur, _hist)
-eq("audit: closed posts, from an older directory's closing date and from the current flags",
-   [(r["slug"], r["closed_on"]) for r in _closed], [("old-tech", "12/31/2016"), ("shut", "05/11/2024")])
-eq("audit: merged posts point to the successor's page",
-   [(r["slug"], r["successor_unitid"], r["treatment"]) for r in _merged],
-   [("gone", "300", "301 to https://gpacalculator.net/admissions/big-u/"),
-    ("absorbed", "300", "301 to https://gpacalculator.net/admissions/big-u/")])
-eq("audit: a college that only left IPEDS stays unconfirmed",
-   [(r["slug"], r["finding"].split(":")[0], r["treatment"]) for r in _unmatched],
-   [("quiet", "left IPEDS", "leave unchanged pending identity review")])
+_a = audit.classify(_posts, _matches, _cur, _hist)
+_url = "https://gpacalculator.net/admissions/"
+eq("audit: closed posts need a closing date, from an older directory or the current one",
+   [(r["slug"], r["closed_on"]) for r in _a["closed"]], [("old-tech", "12/31/2016"), ("shut", "05/11/2024")])
+eq("audit: merged posts go to the successor's page, a page pending review, or retire with the successor",
+   [(r["slug"], r["successor_unitid"], r["treatment"].split(" once")[0]) for r in _a["merged"]],
+   [("gone", "300", f"301 to {_url}big-u/"), ("absorbed", "300", f"301 to {_url}big-u/"),
+    ("chain-north", "820", f"301 to {_url}chain-south/"), ("north-valley", "910", f"301 to {_url}south-valley/"),
+    ("old-campus", "940", "retire like a closure: State Branch is no longer listed either")])
+eq("audit: unmatched posts keep what IPEDS shows, left alone",
+   [(r["slug"], r["finding"].split(":")[0], r["treatment"]) for r in _a["unmatched"]],
+   [("quiet", "left IPEDS", "leave unchanged pending identity review"),
+    ("capital-college", "left IPEDS", "leave unchanged pending identity review"),
+    ("south-valley", "consolidated", "leave unchanged pending identity review"),
+    ("brand-college-2", "name plus city", "leave unchanged pending identity review")])
+eq("audit: a name-plus-city finding names the post already holding that IPEDS ID",
+   _a["unmatched"][-1]["finding"], "name plus city: IPEDS lists UNITID 880 as Brand College-Hilltop; also the IPEDS "
+   "ID of brand-college")
 eq("audit: an old NEWID on a college still listed is ignored; its two posts are duplicates",
-   [(r["slug"], r["filled_fields"]) for r in _dups], [("still", 2), ("still-2", 1)])
+   [(r["slug"], r["filled_fields"]) for r in _a["duplicates"]], [("still", 2), ("still-2", 1)])
+eq("audit: a not-operating flag without a closing date stays unconfirmed",
+   [r["slug"] for r in _a["unconfirmed"]], ["maybe"])
+eq("audit: Phase 1 matches that IPEDS names contradict are reassigned",
+   [(r["slug"], r["phase1_unitid"], r["unitid"], r["outcome"]) for r in _a["corrections"]],
+   [("chain-north", "820", "810", "no longer listed: now in merged.csv"),
+    ("capital-college", "840", "830", "no longer listed: now in unmatched.csv"),
+    ("plains-atc", "860", "850", "matched to this college instead"),
+    ("brand-college", "870", "880", "matched to this college instead")])
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

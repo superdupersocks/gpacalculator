@@ -11,12 +11,17 @@ directory (HD) files of earlier years, which keep a college's record, closing da
 - unmatched.csv: posts without a confident IPEDS match, left unchanged pending identity review, with what the
   older directories show for each
 - duplicates.csv: posts that share one IPEDS ID, with how complete each post is
+- unconfirmed.csv: matched colleges that federal data flags as inactive or not operating without a closing date
+- corrections.csv: Phase 1 matches the older directories contradict, with the college the post really names
 - summary.md: the counts
 
-A closure counts as confirmed only with a closing date (CLOSEDAT), an inactive flag (CYACTIVE) or College
-Scorecard's not-operating flag (CURROPER); a college that merely dropped out of IPEDS may have left federal aid
-and still teach, so that alone stays unconfirmed. Older directories confirm an identity only on an exact name in
-the same state and city. Changes nothing on the site.
+A closure counts as confirmed only with a closing date (CLOSEDAT). An inactive flag (CYACTIVE) or College
+Scorecard's not-operating flag (CURROPER) alone also fits a campus that changed owner or merged, and a college
+that merely dropped out of IPEDS may have left federal aid and still teach, so those stay unconfirmed. Older
+directories confirm an identity only on an exact name in the same state and city. Phase 1's matches are checked
+the same way: a post whose exact name and city IPEDS gave to another college, never to the matched one, is
+reassigned to that college, and so is a post matched in another city when IPEDS lists the same name plus the
+post's city. Changes nothing on the site.
 """
 import argparse
 import csv
@@ -44,6 +49,9 @@ MERGED_COLS = ["slug", "url", "title", "location", "unitid", "ipeds_name", "succ
 UNMATCHED_COLS = ["slug", "url", "title", "location", "match", "candidates", "older_ipeds", "finding", "treatment"]
 DUP_COLS = ["unitid", "ipeds_name", "ipeds_city", "slug", "url", "title", "location", "filled_fields", "published",
             "modified", "older_ipeds"]
+CHECK_COLS = ["slug", "url", "title", "location", "unitid", "ipeds_name", "evidence", "treatment"]
+FIX_COLS = ["slug", "url", "title", "location", "phase1_method", "phase1_unitid", "phase1_name", "unitid", "ipeds_name",
+            "outcome", "evidence"]
 EMPTY = {"", "n/a", "na", "-", "none", "null", "not reported", "unavailable"}
 
 
@@ -159,7 +167,8 @@ def describe(uid, hist):
 
 
 def current_evidence(inst):
-    """Closure evidence in the current files for a matched college: (closed_on, [evidence])."""
+    """Closure evidence in the current files for a matched college: (closed_on, [evidence]). Only a closing date
+    confirms a closure."""
     ev, closed_on = [], ""
     if is_set(inst.get("closed_date")):
         closed_on = inst["closed_date"]
@@ -175,66 +184,172 @@ def filled(fields):
     return sum(1 for v in (fields or {}).values() if str(v or "").strip().lower() not in EMPTY)
 
 
-def merged_row(base, uid, name, succ, by_unitid, url, evidence):
-    targets = by_unitid.get(succ[0], [])
+def current_names(rec):
+    name = norm_name(rec.get("name", ""))
+    names = {name, strip_campus(name)}
+    names |= {norm_name(a) for a in (rec.get("alias") or "").replace("|", ",").split(",") if a.strip()}
+    return names - {""}
+
+
+def current_index(current):
+    """(state, cleaned name) -> unitids in the current directory."""
+    idx = defaultdict(set)
+    for uid, rec in current.items():
+        for n in current_names(rec):
+            idx[(rec.get("state", ""), n)].add(uid)
+    return idx
+
+
+def absorbed_index(hist, current):
+    """unitid -> the unitids IPEDS says merged into it."""
+    into = defaultdict(set)
+    for uid, years in hist.items():
+        for rec in years.values():
+            if is_set(rec.get("NEWID")) and rec["NEWID"] != uid:
+                into[rec["NEWID"]].add(uid)
+    for uid, rec in current.items():
+        if is_set(rec.get("merged_into")):
+            into[rec["merged_into"]].add(uid)
+    return into
+
+
+def by_city(p, cur_idx, skip=""):
+    """The one current college named as the post plus its city ('Miller Motte College' in Jacksonville ->
+    'Miller-Motte College-Jacksonville'), else ''."""
+    name = strip_campus(norm_name(html.unescape(p["title"])))
+    hits = cur_idx.get((p["state"], f"{name} {norm_name(p['city'])}"), set()) - {skip}
+    return next(iter(hits)) if len(hits) == 1 else ""
+
+
+def recheck(m, p, idx, hist, current, cur_idx):
+    """Phase 1's match checked against every name IPEDS has used: (unitid, evidence) of the college the post
+    really names, or None when the match stands."""
+    uid = m["unitid"]
+    rec = current.get(uid, {})
+    name = norm_name(html.unescape(p["title"]))
+    same_city, elsewhere = older_hits(p, idx, hist)
+    ours = uid in same_city + elsewhere or bool({name, strip_campus(name)} & current_names(rec))
+    if not ours and len(same_city) == 1:
+        u = same_city[0]
+        return u, f"{describe(u, hist)}; IPEDS never listed UNITID {uid} under this name"
+    if (rec.get("city") or "").lower() != p["city"].lower():
+        u = by_city(p, cur_idx, skip=uid)
+        if u:
+            return u, (f"IPEDS HD2024: {current[u]['name']} (UNITID {u}), {current[u]['city']}: this name plus the "
+                       f"post's city, while UNITID {uid} is in {rec.get('city', '')}")
+    return None
+
+
+def identify(p, idx, hist, current, cur_idx, absorbed):
+    """What IPEDS says a post without a confident match is: (kind, unitid, finding). kind is renamed,
+    consolidated, merged, closed, left, ambiguous, city, or '' when no college carried the name."""
+    same_city, _ = older_hits(p, idx, hist)
+    if len(same_city) > 1:
+        return "ambiguous", "", f"ambiguous: {len(same_city)} colleges carried this name in this city"
+    if len(same_city) == 1:
+        uid = same_city[0]
+        if uid in current:
+            now = current[uid]["name"]
+            if absorbed.get(uid):
+                n = len(absorbed[uid])
+                return "consolidated", uid, (f"consolidated: same name, city and state as UNITID {uid}, now {now}, "
+                                             f"which {n} other college{'s' if n > 1 else ''} merged into")
+            return "renamed", uid, f"renamed: same name, city and state as UNITID {uid}, now {now}"
+        if successor(uid, hist, current):
+            return "merged", uid, ""
+        if closing(hist[uid]):
+            return "closed", uid, ""
+        return "left", uid, f"left IPEDS: last listed in HD{max(hist[uid])}, no closing date recorded"
+    u = by_city(p, cur_idx)
+    if u:
+        return "city", u, f"name plus city: IPEDS lists UNITID {u} as {current[u]['name']}"
+    return "", "", ""
+
+
+def merged_row(base, uid, name, succ, pages, pending, url, evidence, current, hist):
+    s, s_name, chain = succ
+    targets = pages.get(s, [])
     if len(targets) == 1:
         to, treatment = url[targets[0]], f"301 to {url[targets[0]]}"
     elif targets:
         to, treatment = "", f"301 to whichever of {', '.join(targets)} survives checkpoint D"
+    elif s not in current:
+        to, treatment = "", f"retire like a closure: {s_name} is no longer listed either"
+        if s in hist:
+            evidence += f"; successor: {describe(s, hist)}"
+    elif len(pending.get(s, [])) == 1:
+        to = url[pending[s][0]]
+        treatment = f"301 to {to} once its identity review is approved (the successor's page under a former name)"
     else:
-        to, treatment = "", "successor has no page here: treat as a closure"
+        to, treatment = "", f"retire like a closure; redirect it later if a page for {s_name} is added"
     if "merged into" not in evidence:
-        evidence += f"; merged into UNITID {succ[2][0]} (NEWID)"
-    if len(succ[2]) > 1:
-        evidence += f"; which later merged into UNITID {' -> '.join(succ[2][1:])}"
-    return {**base, "unitid": uid, "ipeds_name": name, "successor_unitid": succ[0], "successor_name": succ[1],
+        evidence += f"; merged into UNITID {chain[0]} (NEWID)"
+    if len(chain) > 1:
+        evidence += f"; which later merged into UNITID {' -> '.join(chain[1:])}"
+    return {**base, "unitid": uid, "ipeds_name": name, "successor_unitid": s, "successor_name": s_name,
             "successor_url": to, "evidence": evidence, "treatment": treatment}
 
 
-RETIRE = "retire (archive instead if Search Console shows it still draws visitors)"
+RETIRE = "retire: unpublish (kept as a draft) and answer 410 Gone"
 
 
 def classify(posts, matches, current, hist):
-    idx = name_index(hist)
-    by_unitid = defaultdict(list)
-    for m in matches:
-        if m.get("unitid") and m["method"] not in ("none", "review"):
-            by_unitid[m["unitid"]].append(m["slug"])
+    idx, cur_idx, absorbed = name_index(hist), current_index(current), absorbed_index(hist, current)
     url = {p["slug"]: p["url"] for p in posts}
     post = {p["slug"]: p for p in posts}
-    closed, merged, unmatched, dups = [], [], [], []
+    closed, merged, unmatched, dups, unconfirmed, fixes = [], [], [], [], [], []
+    checked = []
     for m in matches:
+        p = post[m["slug"]]
+        alt = None
+        if m.get("unitid") and m["method"] not in ("none", "review"):
+            alt = recheck(m, p, idx, hist, current, cur_idx)
+        if alt:
+            u, ev = alt
+            fix = {"slug": m["slug"], "url": p["url"], "title": html.unescape(m["title"]), "location": m["location"],
+                   "phase1_method": m["method"], "phase1_unitid": m["unitid"],
+                   "phase1_name": current.get(m["unitid"], {}).get("name", ""), "unitid": u, "evidence": ev}
+            if u in current:
+                fix.update(ipeds_name=current[u]["name"], outcome="matched to this college instead")
+                m = {**m, "unitid": u, "method": "audit"}
+            else:
+                fix.update(ipeds_name=last_seen(hist[u])[1]["INSTNM"], outcome="no longer listed")
+                m = {**m, "unitid": "", "method": "none"}
+            fixes.append(fix)
+        checked.append(m)
+    found = {m["slug"]: identify(post[m["slug"]], idx, hist, current, cur_idx, absorbed)
+             for m in checked if m["method"] in ("none", "review")}
+    pages, pending = defaultdict(list), defaultdict(list)
+    for m in checked:
+        if m["method"] not in ("none", "review"):
+            pages[m["unitid"]].append(m["slug"])
+        elif found[m["slug"]][0] in ("renamed", "consolidated", "city"):
+            pending[found[m["slug"]][1]].append(m["slug"])
+    for m in checked:
         p = post[m["slug"]]
         base = {"slug": m["slug"], "url": p["url"], "title": html.unescape(m["title"]), "location": m["location"]}
         if m["method"] in ("none", "review"):
-            same_city, elsewhere = older_hits(p, idx, hist)
-            older = " | ".join(describe(u, hist) for u in same_city + elsewhere)
-            finding = ""
-            if len(same_city) == 1:
-                uid = same_city[0]
+            kind, uid, finding = found[m["slug"]]
+            if kind in ("merged", "closed"):
                 years = hist[uid]
-                found = f"{describe(uid, hist)}; identified by exact name, city and state"
-                succ = successor(uid, hist, current)
-                if uid in current:
-                    finding = f"renamed: same name, city and state as UNITID {uid}, now {current[uid]['name']}"
-                elif succ:
-                    merged.append(merged_row(base, uid, last_seen(years)[1]["INSTNM"], succ, by_unitid, url, found))
-                    continue
-                elif closing(years):
-                    closed.append({**base, "unitid": uid, "ipeds_name": last_seen(years)[1]["INSTNM"],
-                                   "closed_on": closing(years)[1], "evidence": found, "treatment": RETIRE})
-                    continue
+                ev = f"{describe(uid, hist)}; identified by exact name, city and state"
+                if kind == "merged":
+                    merged.append(merged_row(base, uid, last_seen(years)[1]["INSTNM"], successor(uid, hist, current),
+                                             pages, pending, url, ev, current, hist))
                 else:
-                    finding = f"left IPEDS: last listed in HD{max(years)}, no closing date recorded"
-            elif len(same_city) > 1:
-                finding = f"ambiguous: {len(same_city)} colleges carried this name in this city"
+                    closed.append({**base, "unitid": uid, "ipeds_name": last_seen(years)[1]["INSTNM"],
+                                   "closed_on": closing(years)[1], "evidence": ev, "treatment": RETIRE})
+                continue
+            if kind in ("renamed", "consolidated", "city") and pages.get(uid):
+                finding += f"; also the IPEDS ID of {', '.join(pages[uid])}"
+            same_city, elsewhere = older_hits(p, idx, hist)
             unmatched.append({**base, "match": m["method"], "candidates": m.get("candidates", ""),
-                              "older_ipeds": older, "finding": finding,
-                              "treatment": "leave unchanged pending identity review"})
+                              "older_ipeds": " | ".join(describe(u, hist) for u in same_city + elsewhere),
+                              "finding": finding, "treatment": "leave unchanged pending identity review"})
             continue
         uid = m["unitid"]
         inst = current.get(uid, {})
-        if len(by_unitid[uid]) > 1:
+        if len(pages[uid]) > 1:
             others = [u for u in sum(older_hits(p, idx, hist), []) if u != uid]
             dups.append({"unitid": uid, "ipeds_name": inst.get("name", ""), "ipeds_city": inst.get("city", ""),
                          **{k: base[k] for k in ("slug", "url", "title", "location")},
@@ -243,14 +358,24 @@ def classify(posts, matches, current, hist):
                          "older_ipeds": " | ".join(describe(u, hist) for u in others)})
         succ = successor(uid, hist, current)
         if succ:
-            merged.append(merged_row(base, uid, inst.get("name", ""), succ, by_unitid, url,
-                                     f"IPEDS HD2024: {inst.get('name', '')} (UNITID {uid})"))
+            merged.append(merged_row(base, uid, inst.get("name", ""), succ, pages, pending, url,
+                                     f"IPEDS HD2024: {inst.get('name', '')} (UNITID {uid})", current, hist))
             continue
         closed_on, ev = current_evidence(inst)
-        if ev:
+        if closed_on:
             closed.append({**base, "unitid": uid, "ipeds_name": inst.get("name", ""), "closed_on": closed_on,
                            "evidence": "; ".join(ev), "treatment": RETIRE})
-    return closed, merged, unmatched, sorted(dups, key=lambda r: (r["unitid"], r["slug"]))
+        elif ev:
+            unconfirmed.append({**base, "unitid": uid, "ipeds_name": inst.get("name", ""), "evidence": "; ".join(ev),
+                                "treatment": "leave unchanged until a closure is confirmed (no closing date in IPEDS)"})
+    lists = {r["slug"]: name for name, rows in (("closed.csv", closed), ("merged.csv", merged),
+                                                 ("unmatched.csv", unmatched)) for r in rows}
+    for f in fixes:
+        if f["slug"] in lists:
+            f["outcome"] += f": now in {lists[f['slug']]}"
+    return {"closed": closed, "merged": merged, "unmatched": unmatched,
+            "duplicates": sorted(dups, key=lambda r: (r["unitid"], r["slug"])), "unconfirmed": unconfirmed,
+            "corrections": fixes}
 
 
 def load_posts(folder):
@@ -266,19 +391,28 @@ def load_posts(folder):
     return posts
 
 
-def summary(closed, merged, unmatched, dups, total, years):
+def summary(lists, total, years):
     kinds = defaultdict(int)
-    for r in unmatched:
+    for r in lists["unmatched"]:
         kinds[(r["match"], r["finding"].split(":")[0] if r["finding"] else "no older record with this name")] += 1
+    treat = defaultdict(int)
+    for r in lists["merged"]:
+        treat[r["treatment"].split(" https")[0].split(":")[0].split(";")[0]] += 1
+    n = {k: len(v) for k, v in lists.items()}
     lines = [
         "# Admissions audit (Phase 2, checkpoint C)", "",
         f"Out of {total:,} published posts. Older IPEDS directories read: {years}. Nothing here changed the site.", "",
         "| List | Posts |", "| --- | --- |",
-        f"| Confirmed closed (`closed.csv`) | {len(closed):,} |",
-        f"| Confirmed merged (`merged.csv`) | {len(merged):,} |",
-        f"| No confident match, unchanged pending identity review (`unmatched.csv`) | {len(unmatched):,} |",
-        f"| Posts sharing one IPEDS ID (`duplicates.csv`) | {len(dups):,} |", "",
-        "Unmatched posts by match step and what the older directories show:", "",
+        f"| Confirmed closed (`closed.csv`) | {n['closed']:,} |",
+        f"| Confirmed merged (`merged.csv`) | {n['merged']:,} |",
+        f"| No confident match, unchanged pending identity review (`unmatched.csv`) | {n['unmatched']:,} |",
+        f"| Posts sharing one IPEDS ID (`duplicates.csv`) | {n['duplicates']:,} |",
+        f"| Flagged as not operating without a closing date, unchanged (`unconfirmed.csv`) | {n['unconfirmed']:,} |",
+        f"| Phase 1 matches the older directories contradict (`corrections.csv`) | {n['corrections']:,} |", "",
+        "Merged posts by recommended treatment:", "",
+        "| Treatment | Posts |", "| --- | --- |",
+    ] + [f"| {k} | {v:,} |" for k, v in sorted(treat.items(), key=lambda t: -t[1])] + [
+        "", "Unmatched posts by match step and what the older directories show:", "",
         "| Match step | Older directories | Posts |", "| --- | --- | --- |",
     ] + [f"| {m} | {k} | {v:,} |" for (m, k), v in sorted(kinds.items(), key=lambda t: -t[1])]
     return "\n".join(lines) + "\n"
@@ -296,14 +430,13 @@ def main(argv=None):
     posts = load_posts(COLLEGES)
     hist = load_history(a.first_year, a.last_year, download=not a.no_download)
     got = sorted({y for years in hist.values() for y in years})
-    closed, merged, unmatched, dups = classify(posts, matches, current, hist)
+    lists = classify(posts, matches, current, hist)
     out = Path(a.out)
-    write_csv(out / "closed.csv", closed, CLOSED_COLS)
-    write_csv(out / "merged.csv", merged, MERGED_COLS)
-    write_csv(out / "unmatched.csv", unmatched, UNMATCHED_COLS)
-    write_csv(out / "duplicates.csv", dups, DUP_COLS)
+    for name, cols in (("closed", CLOSED_COLS), ("merged", MERGED_COLS), ("unmatched", UNMATCHED_COLS),
+                       ("duplicates", DUP_COLS), ("unconfirmed", CHECK_COLS), ("corrections", FIX_COLS)):
+        write_csv(out / f"{name}.csv", lists[name], cols)
     span = f"HD{got[0]}-HD{got[-1]} ({len(got)} years)" if got else "none"
-    (out / "summary.md").write_text(summary(closed, merged, unmatched, dups, len(posts), span))
+    (out / "summary.md").write_text(summary(lists, len(posts), span))
     print((out / "summary.md").read_text())
 
 

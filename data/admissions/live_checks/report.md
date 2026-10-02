@@ -1,4 +1,4 @@
-# Live page check, 2026-10-02 17:46 UTC
+# Live page check, 2026-10-02 17:54 UTC
 
 From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_check.py.
 
@@ -578,11 +578,210 @@ From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_che
 - "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
 
+## /admissions/pennsylvania-state-university-main-campus/
+
+- status 200
+- title: Penn State Main Campus Acceptance Rate (61%) & Admissions
+- description: Penn State Main Campus admitted more than half of applicants for fall 2024 (61%). It's a public 4-year college. See the full admission requirements.
+- og:title: Penn State Main Campus Acceptance Rate (61%) & Admissions
+- H1: Penn State Main Campus Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Penn State Main Campus?
+  - FAQ: What is the acceptance rate at Penn State Main Campus?
+  - FAQ: What SAT scores do Penn State Main Campus students have?
+  - FAQ: What ACT scores do Penn State Main Campus students have?
+  - FAQ: Does Penn State Main Campus accept AP credit?
+  - FAQ: What is the average net price at Penn State Main Campus?
+- "Average GPA": Main Campus itself, so we don't list an average GPA. What is the acceptance rate at Penn State Main Campus? Penn State Main Campus's acceptance rate was 61% for
+- "Acceptance rate": pus Penn State Main Campus Admissions & Acceptance Rate University Park, Pennsylvania Public, 4-year Acceptance Rate: 61% Undergraduates: 42,604 Key Highlights 620–7
+- "Average SAT": –23 $27,450 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1337 31% of fall 2024 first-year students submitted SAT scores Section 25th perc
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/miami-university/
+
+- status 200
+- title: Miami University Acceptance Rate (75%) & SAT/ACT Scores
+- description: Miami University admitted most applicants for fall 2024 (75%). The middle 50% of first-year students scored 25–30 on the ACT. See what it takes to get in.
+- og:title: Miami University Acceptance Rate (75%) & SAT/ACT Scores
+- H1: Miami University Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Miami University?
+  - FAQ: What is the acceptance rate at Miami University?
+  - FAQ: What SAT scores do Miami University students have?
+  - FAQ: What ACT scores do Miami University students have?
+  - FAQ: Does Miami University accept AP credit?
+  - FAQ: What is the average net price at Miami University?
+- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Miami University? Miami University's acceptance rate was 75% for fall 2024: i
+- "Acceptance rate": niversity Miami University Admissions & Acceptance Rate Oxford, Ohio Public, 4-year Acceptance Rate: 75% Undergraduates: 16,816 Key Highlights 610–690 / 610–700 SAT
+- "Average SAT": –23 $27,928 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1317 8% of fall 2024 first-year students submitted SAT scores Section 25th perce
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/arizona-state-university/
+
+- status 200
+- title: Arizona State University Acceptance Rate (90%) & Admissions
+- description: Arizona State University admitted most applicants for fall 2024 (90%). It's a public 4-year college in Tempe, Arizona. See the full admission requirements.
+- og:title: Arizona State University Acceptance Rate (90%) & Admissions
+- H1: Arizona State University Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Arizona State University?
+  - FAQ: What is the acceptance rate at Arizona State University?
+  - FAQ: Does Arizona State University accept AP credit?
+  - FAQ: What is the average net price at Arizona State University?
+- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Arizona State University? Arizona State University's acceptance rate was 90%
+- "Acceptance rate": y Arizona State University Admissions & Acceptance Rate Tempe, Arizona Public, 4-year Acceptance Rate: 90% Undergraduates: 65,450 Key Highlights Average Net Price, 2
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/lone-star-college-system/
+
+- status 200
+- title: Lone Star College Admission Requirements & Open Admission
+- description: Lone Star College has an open admission policy. It's a public 4-year college in The Woodlands, Texas, with 73,077 undergraduates. See admission requirements.
+- og:title: Lone Star College Admission Requirements & Open Admission
+- H1: Lone Star College Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Lone Star College?
+  - FAQ: Does Lone Star College accept AP credit?
+  - FAQ: What is the average net price at Lone Star College?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Lone Star College? Lone Star College has an open admission policy: it accepts any student who applies, so
+- "Open Admission": nts The Woodlands, Texas Public, 4-year Open Admission Undergraduates: 73,077 Key Highlights Average Net Price, 2022–23 $11,049 Admission Scores Lone Star College h
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/umass-global/
+
+- status 200
+- title: UMass Global Admission Requirements & Open Admission
+- description: UMass Global has an open admission policy. It's a public 4-year college in Aliso Viejo, California, with 5,090 undergraduates. See admission requirements.
+- og:title: UMass Global Admission Requirements & Open Admission
+- H1: UMass Global Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at UMass Global?
+  - FAQ: Does UMass Global accept AP credit?
+  - FAQ: What is the average net price at UMass Global?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at UMass Global? UMass Global has an open admission policy: it accepts any student who applies, so it doesn't
+- "Open Admission": Aliso Viejo, California Public, 4-year Open Admission Undergraduates: 5,090 Key Highlights Average Net Price, 2022–23 $31,715 Admission Scores UMass Global has an
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/devry-university-utah/
+
+- status 410
+- title: Page not found • GPA Calculator
+- description: 
+- og:title: Page not found • GPA Calculator
+- H1: Oops! That page can’t be found.
+- JSON-LD: 1 parse, 0 don't; types: Organization, WebPage, WebSite
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/lincoln-college/
+
+- status 410
+- title: Page not found • GPA Calculator
+- description: 
+- og:title: Page not found • GPA Calculator
+- H1: Oops! That page can’t be found.
+- JSON-LD: 1 parse, 0 don't; types: Organization, WebPage, WebSite
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/corcoran-college-of-art-and-design/
+
+- status 410
+- title: Page not found • GPA Calculator
+- description: 
+- og:title: Page not found • GPA Calculator
+- H1: Oops! That page can’t be found.
+- JSON-LD: 1 parse, 0 don't; types: Organization, WebPage, WebSite
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/california-jazz-conservatory/
+
+- status 410
+- title: Page not found • GPA Calculator
+- description: 
+- og:title: Page not found • GPA Calculator
+- H1: Oops! That page can’t be found.
+- JSON-LD: 1 parse, 0 don't; types: Organization, WebPage, WebSite
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/milligan-college/
+
+- status 200, ended at https://gpacalculator.net/admissions/milligan-university/
+- title: Milligan University Acceptance Rate (72%) & SAT/ACT Scores
+- description: Milligan University admitted more than half of applicants for fall 2024 (72%). Middle 50% SAT: 573–650 reading and writing, 560–618 math. See the requirements.
+- og:title: Milligan University Acceptance Rate (72%) & SAT/ACT Scores
+- H1: Milligan University Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Milligan University?
+  - FAQ: What is the acceptance rate at Milligan University?
+  - FAQ: What SAT scores do Milligan University students have?
+  - FAQ: What ACT scores do Milligan University students have?
+  - FAQ: Does Milligan University accept AP credit?
+  - FAQ: What is the average net price at Milligan University?
+- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Milligan University? Milligan University's acceptance rate was 72% for fall 2
+- "Acceptance rate": ersity Milligan University Admissions & Acceptance Rate Milligan, Tennessee Private nonprofit, 4-year Acceptance Rate: 72% Undergraduates: 865 Key Highlights 573–650
+- "Average SAT": –23 $21,463 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1189 12% of fall 2024 first-year students submitted SAT scores Section 25th perc
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/fairfax-university-of-america/
+
+- status 200
+- title: Fairfax University of America Acceptance Rate: 1%
+- description: Fairfax University of America admits just 1% of applicants. It's a private 4-year college in Fairfax, Virginia, with 43 students. See what it takes to get in.
+- og:title: Fairfax University of America Acceptance Rate: 1%
+- H1: Fairfax University of America Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Fairfax University of America?
+- "Acceptance rate": rfax University of America Admissions & Acceptance Rate Fairfax, Virginia Private 4 Year Acceptance Rate: 1% Enrollment: 43 Admission Scores Fairfax University of Am
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/kaplan-university-davenport-campus/
+
+- status 200
+- title: Purdue Global Davenport Campus Admission Requirements
+- description: Purdue Global Davenport Campus is a private 4-year college in Davenport, Iowa, with 30,512 students. See admission requirements and credit options.
+- og:title: Purdue Global Davenport Campus Admission Requirements
+- H1: Purdue Global Davenport Campus Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Purdue Global Davenport Campus?
+- "Acceptance rate": ue Global Davenport Campus Admissions & Acceptance Rate Davenport, Iowa Private 4 Year Acceptance Rate: 100% Enrollment: 30,512 Admission Scores Purdue Global Davenp
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/wichita-area-technical-college/
+
+- status 200
+- title: Wichita Area Technical College Admission Requirements
+- description: Wichita Area Technical College is a public 2-year college in Wichita, Kansas, with 5,021 students. See its admission requirements and credit options.
+- og:title: Wichita Area Technical College Admission Requirements
+- H1: Wichita Area Technical College Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Wichita Area Technical College?
+  - FAQ: How much does it cost to attend Wichita Area Technical College?
+- "Acceptance rate": ita Area Technical College Admissions & Acceptance Rate Wichita, Kansas Public 2 Year Acceptance Rate: 100% Enrollment: 5,021 Key Highlights Net Price $9,211 Admissi
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/the-university-of-texas-at-brownsville/
+
+- status 200
+- title: The University of Texas at Brownsville Admissions
+- description: The University of Texas at Brownsville is a public 4-year college in Brownsville, Texas, with 7,648 students. See admission requirements and credit options.
+- og:title: The University of Texas at Brownsville Admissions
+- H1: The University of Texas at Brownsville Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at The University of Texas at Brownsville?
+  - FAQ: How much does it cost to attend The University of Texas at Brownsville?
+- "Acceptance rate": ty of Texas at Brownsville Admissions & Acceptance Rate Brownsville, Texas Public 4 Year Acceptance Rate: 100% Enrollment: 7,648 Key Highlights Net Price $5,057 Admi
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
 ## sitemap /sitemap_index.xml colleges
 
 - index status 200: 4 colleges sitemap pages
   - colleges-sitemap1.xml: status 200, 945 addresses
   - colleges-sitemap2.xml: status 200, 944 addresses
   - colleges-sitemap3.xml: status 200, 944 addresses
-  - colleges-sitemap4.xml: status 200, 334 addresses
-- 3167 addresses, 3167 different; listed more than once: 0
+  - colleges-sitemap4.xml: status 200, 253 addresses
+- 3086 addresses, 3086 different; listed more than once: 0

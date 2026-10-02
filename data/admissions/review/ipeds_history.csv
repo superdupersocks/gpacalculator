@@ -260,6 +260,8 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 130934,2005,2023,Delaware State University,Dover,DE,00142800,www.desu.edu/,,,
 131098,2002,2004,WESLEY COLLEGE,DOVER,DE,00143300,www.wesley.edu,,,
 131098,2005,2021,Wesley College,Dover,DE,00143300,www.wesley.edu/,01/01/2022,,2021
+131308,2002,2004,CORCORAN COLLEGE OF ART AND DESIGN,WASHINGTON,DC,01195000,www.corcoran.edu,,,
+131308,2005,2014,Corcoran College of Art and Design,Washington,DC,01195000,www.corcoran.edu,11/30/2014,,2014
 131803,2002,2004,STRAYER UNIVERSITY-WASHINGTON CAMPUS,WASHINGTON,DC,00145900,www.strayer.edu,,,
 131803,2005,2005,Strayer University-Washington Campus,Washington,DC,00145900,www.strayer.edu,,,
 131803,2006,2009,Strayer University,Washington,DC,00145900,www.strayer.edu,,,
@@ -436,6 +438,16 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 152822,2002,2003,AMERICAN INSTITUTE OF BUSINESS,DES MOINES,IA,00396300,www.aib.edu,,,
 152822,2004,2004,AIB COLLEGE OF BUSINESS,DES MOINES,IA,00396300,www.aib.edu,,,
 152822,2005,2016,AIB College of Business,Des Moines,IA,00396300,www.aib.edu,06/30/2016,,2016
+153409,2002,2004,HAMILTON COLLEGE-MASON CITY BRANCH,MASON CITY,IA,00422004,WWW.HAMILTONIA.EDU,,,
+153409,2005,2006,Hamilton College-Mason City Branch,Mason City,IA,00422004,WWW.HAMILTONIA.EDU,,,
+153409,2007,2007,Hamilton College-Mason City Branch,Mason City,IA,00458606,WWW.HAMILTONIA.EDU,,,
+153409,2008,2017,Kaplan University-Mason City Campus,Mason City,IA,00458606,masoncity.kaplanuniversity.edu/Pages/Homepage.aspx,,,
+153409,2018,2019,Purdue University Global-Mason City,Mason City,IA,00458606,https://www.purdueglobal.edu/campus-locations/mason-city-iowa/,,489779,2019
+153418,2002,2004,HAMILTON COLLEGE-MAIN CAMPUS,CEDAR RAPIDS,IA,00422000,www.hamiltonia.edu,,,
+153418,2005,2006,Hamilton College-Main Campus,Cedar Rapids,IA,00422000,www.hamiltonia.edu,,,
+153418,2007,2007,Hamilton College-Main Campus,Cedar Rapids,IA,00458604,www.hamiltonia.edu,,,
+153418,2008,2017,Kaplan University-Cedar Rapids Campus,Cedar Rapids,IA,00458604,www.kaplanuniversity.edu/cedar-rapids-iowa.aspx,,,
+153418,2018,2019,Purdue University Global-Cedar Rapids,Cedar Rapids,IA,00458604,https://www.purdueglobal.edu/campus-locations/cedar-rapids-iowa/,,489779,2019
 153427,2002,2004,HAMILTON TECHNICAL COLLEGE,DAVENPORT,IA,01206400,www.hamiltontechcollege.com,,,
 153427,2005,2020,Hamilton Technical College,Davenport,IA,01206400,www.hamiltontechcollege.edu/,,,
 153427,2021,2023,Orion Technical College,Davenport,IA,01206400,orion.edu/iowa,,,
@@ -446,6 +458,11 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 153861,2002,2004,MAHARISHI UNIVERSITY OF MANAGEMENT,FAIRFIELD,IA,01111300,www.mum.edu,,,
 153861,2005,2019,Maharishi University of Management,Fairfield,IA,01111300,https://www.mum.edu,,,
 153861,2020,2023,Maharishi International University,Fairfield,IA,01111300,https://www.miu.edu/,,,
+154794,2002,2002,BRYAN CAREER COLLEGE,TOPEKA,KS,03066200,www.bryancareercolleges.com,,,
+154794,2003,2004,BRYAN COLLEGE,TOPEKA,KS,03066200,www.bryancareercolleges.com,,,
+154794,2005,2009,Bryan College,Topeka,KS,03066200,www.bryancolleges.edu,,,
+154794,2010,2011,Bryan College-Topeka,Topeka,KS,03066200,www.bryancolleges.edu,,,
+154794,2012,2018,Bryan University,Topeka,KS,03066200,www.bryanu.edu,05/27/2018,,2018
 154837,2002,2004,CENTRAL BAPTIST THEOLOGICAL SEMINARY,KANSAS CITY,KS,00190700,www.cbts.edu,,,
 154837,2005,2005,Central Baptist Theological Seminary,Kansas City,KS,00190700,www.cbts.edu,,,
 154837,2006,2017,Central Baptist Theological Seminary,Shawnee,KS,00190700,cbts.edu/,,,
@@ -520,6 +537,12 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 160913,2012,2014,South Central Louisiana Technical College-Young Memorial Campus,Morgan City,LA,00552600,www.scl.edu,,,
 160913,2015,2017,South Central Louisiana Technical College,Morgan City,LA,00552600,www.scl.edu,,,
 160913,2018,2019,South Central Louisiana Technical College,Morgan City,LA,03956324,www.scl.edu,,434061,2019
+160940,2002,2004,ANDOVER COLLEGE,PORTLAND,ME,00929200,WWW.ANDOVERCOLLEGE.edu,,,
+160940,2005,2007,Andover College,Portland,ME,00929200,WWW.ANDOVERCOLLEGE.edu,,,
+160940,2008,2009,Andover College,S Portland,ME,00929200,WWW.ANDOVERCOLLEGE.edu,,,
+160940,2010,2010,Kaplan University-Maine Campus,S Portland,ME,00929200,portland.kaplanuniversity.edu,,,
+160940,2011,2017,Kaplan University-Maine Campus,S Portland,ME,00458615,https://www.kaplanuniversity.edu,,,
+160940,2018,2019,Purdue University Global-Lewiston,Lewiston,ME,00458616,https://www.purdueglobal.edu/campus-locations/lewiston-maine/,,489779,2019
 161022,2002,2004,CENTRAL MAINE MEDICAL CENTER SCHOOL OF NURSING,LEWISTON,ME,00630501,www.cmmcson.edu,,,
 161022,2005,2006,Central Maine Medical Center School of Nursing,Lewiston,ME,00630501,www.cmmcson.edu,,,
 161022,2007,2012,Central Maine Medical Center College of Nursing and Health Professions,Lewiston,ME,00630501,www.cmmccollege.edu,,,
@@ -538,6 +561,12 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 162061,2002,2004,CAPITOL COLLEGE,LAUREL,MD,00143600,www.capitol-college.edu,,,
 162061,2005,2013,Capitol College,Laurel,MD,00143600,www.capitol-college.edu,,,
 162061,2014,2023,Capitol Technology University,Laurel,MD,00143600,www.captechu.edu/,,,
+162681,2002,2004,HAGERSTOWN BUSINESS COLLEGE,HAGERSTOWN,MD,00794600,www.hagerstownbusinesscol.org,,,
+162681,2005,2007,Hagerstown Business College,Hagerstown,MD,00794600,www.hagerstownbusinesscol.edu,,,
+162681,2008,2008,Kaplan College,Hagerstown,MD,00794600,getinfo.kaplancollege.com/KaplanCollegePortal/KaplanCollegeCampuses/Maryland/Hagerstown/,,,
+162681,2009,2009,Kaplan University,Hagerstown,MD,00458612,getinfo.kaplancollege.com/KaplanCollegePortal/KaplanCollegeCampuses/Maryland/Hagerstown/,,,
+162681,2010,2017,Kaplan University-Hagerstown Campus,Hagerstown,MD,00458612,www.kaplanuniversity.edu/hagerstown-maryland.aspx,,,
+162681,2018,2019,Purdue University Global-Hagerstown,Hagerstown,MD,00458612,https://www.purdueglobal.edu/campus-locations/hagerstown-maryland/,,489779,2019
 163204,2002,2004,UNIVERSITY OF MARYLAND-UNIVERSITY COLLEGE,Adelphi,MD,01164400,www.umuc.edu,,,
 163204,2005,2018,University of Maryland-University College,Adelphi,MD,01164400,www.umuc.edu,,,
 163204,2019,2023,University of Maryland Global Campus,Adelphi,MD,01164400,www.umgc.edu/,,,
@@ -557,6 +586,9 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 166656,2005,2007,Massachusetts College of Pharmacy & Health Science,Boston,MA,00216500,www.mcphs.edu,,,
 166656,2008,2012,Massachusetts College of Pharmacy and Health Sciences,Boston,MA,00216500,www.mcphs.edu,,,
 166656,2013,2023,MCPHS University,Boston,MA,00216500,www.mcphs.edu/,,,
+166708,2002,2004,UNIVERSITY OF MASSACHUSETTS MEDICAL SCH WORCESTER,WORCESTER,MA,00975600,www.umassmed.edu,,,
+166708,2005,2021,University of Massachusetts Medical School Worcester,Worcester,MA,00975600,www.umassmed.edu/,,,
+166708,2022,2023,University of Massachusetts Chan Medical School,Worcester,MA,00975600,www.umassmed.edu/,,,
 166984,2002,2004,SCHOOL OF THE MUSEUM OF FINE ARTS,BOSTON,MA,00466700,www.Smfa.edu,,,
 166984,2005,2015,School of the Museum of Fine Arts-Boston,Boston,MA,00466700,www.smfa.edu,,,
 166984,2016,2017,School of the Museum of Fine Arts at Tufts University,Boston,MA,00466700,www.smfa.edu/,,168148,2017
@@ -701,10 +733,24 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 180984,2013,2023,Concordia University-Nebraska,Seward,NE,00254100,www.cune.edu/,,,
 181093,2002,2004,GRACE UNIVERSITY,OMAHA,NE,00254700,www.GraceUniversity.edu,,,
 181093,2005,2017,Grace University,Omaha,NE,00254700,https://www.graceuniversity.edu/,,,
+181242,2002,2002,LINCOLN SCHOOL OF COMMERCE,LINCOLN,NE,00472100,www.lincolnschoolofcommerce.com,,,
+181242,2003,2003,LINCOLN SCHOOL OF COMMERCE,LINCOLN,NE,00422008,www.lincolnschoolofcommerce.com,,,
+181242,2004,2004,HAMILTON COLLEGE-LINCOLN CAMPUS,LINCOLN,NE,00422008,www.hamiltonlincoln.edu,,,
+181242,2005,2006,Hamilton College-Lincoln Campus,Lincoln,NE,00422008,www.hamiltonlincoln.edu,,,
+181242,2007,2007,Hamilton College-Lincoln Campus,Lincoln,NE,00458609,www.hamiltonlincoln.edu,,,
+181242,2008,2017,Kaplan University-Lincoln Campus,Lincoln,NE,00458609,www.kaplanuniversity.edu/lincoln-nebraska.aspx,,,
+181242,2018,2019,Purdue University Global-Lincoln,Lincoln,NE,00458609,https://www.purdueglobal.edu/campus-locations/lincoln-nebraska/,,489779,2019
 181376,2002,2004,NEBRASKA CHRISTIAN COLLEGE,NORFOLK,NE,01297600,nechristian.edu,,,
 181376,2005,2005,Nebraska Christian College,Norfolk,NE,01297600,nechristian.edu,,,
 181376,2006,2015,Nebraska Christian College,Papillion,NE,01297600,nechristian.edu,,,
 181376,2016,2020,Nebraska Christian College of Hope International University,Papillion,NE,00125212,www.nechristian.edu,,,
+181400,2002,2002,NEBRASKA COLLEGE OF BUSINESS,OMAHA,NE,00849100,www.ncbedu.com,,,
+181400,2003,2003,NEBRASKA COLLEGE OF BUSINESS,OMAHA,NE,00422007,www.ncbedu.com,,,
+181400,2004,2004,HAMILTON COLLEGE-OMAHA CAMPUS,OMAHA,NE,00422007,www.hamiltonomaha.edu,,,
+181400,2005,2006,Hamilton College-Omaha Campus,Omaha,NE,00422007,www.hamiltonomaha.edu,,,
+181400,2007,2007,Hamilton College-Omaha Campus,Omaha,NE,00458608,www.hamiltonomaha.edu,,,
+181400,2008,2017,Kaplan University-Omaha Campus,Omaha,NE,00458608,www.kaplanuniversity.edu/omaha-nebraska.aspx?wid=1,,,
+181400,2018,2019,Purdue University Global-Omaha,Omaha,NE,00458608,https://www.purdueglobal.edu/campus-locations/omaha-nebraska/,,489779,2019
 181738,2002,2004,UNION COLLEGE,LINCOLN,NE,00256300,www.ucollege.edu,,,
 181738,2005,2022,Union College,Lincoln,NE,00256300,https://www.ucollege.edu/,,,
 181738,2023,2023,Union Adventist University,Lincoln,NE,00256300,https://www.ucollege.edu/,,,
@@ -1053,15 +1099,23 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 210890,2005,2017,Antonelli Institute,Erdenheim,PA,00743000,www.antonelli.edu,,,
 211158,2002,2004,BLOOMSBURG UNIVERSITY OF PENNSYLVANIA,BLOOMSBURG,PA,00331500,www.bloomu.edu,,,
 211158,2005,2022,Bloomsburg University of Pennsylvania,Bloomsburg,PA,00331500,https://www.bloomu.edu/,,498562,2022
+211361,2002,2004,CALIFORNIA UNIVERSITY OF PENNSYLVANIA,CALIFORNIA,PA,00331600,www.cup.edu,,,
+211361,2005,2022,California University of Pennsylvania,California,PA,00331600,www.calu.edu/,,498571,2022
 211398,2002,2004,CAMBRIA ROWE BUSINESS COLLEGE,JOHNSTOWN,PA,00488900,WWW.CRBC.NET,,,
 211398,2005,2009,Cambria Rowe Business College,Johnstown,PA,00488900,WWW.CRBC.NET,,,
 211398,2010,2016,Cambria-Rowe Business College-Johnstown,Johnstown,PA,00488900,www.crbc.edu,08/24/2016,,2016
+211644,2002,2004,CLARION UNIVERSITY OF PENNSYLVANIA,CLARION,PA,00331800,www.clarion.edu,,,
+211644,2005,2021,Clarion University of Pennsylvania,Clarion,PA,00331800,https://www.clarion.edu/,,,
+211644,2022,2022,Clarion University of Pennsylvania,Clarion,PA,00331605,https://www.clarion.edu/,,498571,2022
 211909,2002,2004,DEAN INSTITUTE OF TECHNOLOGY,PITTSBURGH,PA,00918600,home.earthlink.net/~deantech,,,
 211909,2005,2019,Dean Institute of Technology,Pittsburgh,PA,00918600,www.deantech.edu,05/14/2019,,2019
 212018,2002,2004,DICKINSON SCHOOL OF LAW,CARLISLE,PA,00332922,www.dsl.psu.edu/,,,
 212018,2005,2005,Dickinson School of Law,Carlisle,PA,00332922,www.dsl.psu.edu/,,,
 212018,2006,2014,The Dickinson School of Law of the Pennsylvania State University,Carlisle,PA,00332922,law.psu.edu/,,,
 212018,2015,2020,Pennsylvania State University-Dickinson Law,Carlisle,PA,00332922,law.psu.edu/,,495767,
+212160,2002,2004,EDINBORO UNIVERSITY OF PENNSYLVANIA,Edinboro,PA,00332100,iis1.edinboro.edu,,,
+212160,2005,2021,Edinboro University of Pennsylvania,Edinboro,PA,00332100,www.edinboro.edu/,,,
+212160,2022,2022,Edinboro University of Pennsylvania,Edinboro,PA,00331611,www.edinboro.edu/,,498571,2022
 212425,2002,2004,ERIE BUSINESS CENTER,ERIE,PA,00489400,www.ErieBC.com,,,
 212425,2005,2009,Erie Business Center,Erie,PA,00489400,www.ErieBC.edu,,,
 212425,2010,2014,Erie Business Center-Erie,Erie,PA,00489400,www.ErieBC.edu,12/17/2014,,2014
@@ -1267,6 +1321,9 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 225399,2023,2023,Houston Christian University,Houston,TX,00357600,https://www.hc.edu/,,,
 226329,2002,2004,LON MORRIS COLLEGE,JACKSONVILLE,TX,00358500,www.lonmorris.edu,,,
 226329,2005,2012,Lon Morris College,Jacksonville,TX,00358500,www.lonmorris.edu,08/19/2012,,2012
+227182,2002,2004,NORTH HARRIS MONTGOMERY COMMUNITY COLLEGE DISTRICT,The Woodlands,TX,01114500,www.nhmccd.edu,,,
+227182,2005,2007,North Harris Montgomery Community College District,The Woodlands,TX,01114500,www.nhmccd.edu,,,
+227182,2008,2023,Lone Star College System,The Woodlands,TX,01114500,www.lonestar.edu/,,,
 227243,2002,2004,NORTHWOOD UNIVERSITY,CEDAR HILL,TX,00407221,www.northwood.edu,,,
 227243,2005,2009,Northwood University,Cedar Hill,TX,00407221,www.northwood.edu,,,
 227243,2010,2016,Northwood University-Texas,Cedar Hill,TX,00407221,www.northwood.edu,,171492,2016
@@ -1280,6 +1337,10 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 228316,2005,2023,Southwest Texas Junior College,Uvalde,TX,00361400,https://www.swtjc.edu/,,,
 228325,2002,2004,SOUTHWESTERN ASSEMBLIES OF GOD UNIVERSITY,WAXAHACHIE,TX,00361600,www.sagu.edu,,,
 228325,2005,2023,Southwestern Assemblies of God University,Waxahachie,TX,00361600,www.sagu.edu/,,,
+228635,2002,2002,UNIVERSITY OF TEXAS SOUTHWESTERN MEDICAL CENTER AT,DALLAS,TX,01001900,www.utsouthwestern.edu,,,
+228635,2003,2004,UNIVERSITY OF TEXAS SOUTHWESTERN MEDICAL CENTER AT DALLAS,DALLAS,TX,01001900,www.utsouthwestern.edu,,,
+228635,2005,2010,University of Texas Southwestern Medical Center at Dallas,Dallas,TX,01001900,www.utsouthwestern.edu,,,
+228635,2011,2023,University of Texas Southwestern Medical Center,Dallas,TX,01001900,www.utsouthwestern.edu/,,,
 228714,2002,2003,TEXAS A & M UNIVERSITY-GALVESTON,GALVESTON,TX,00363204,www.tamug.edu,,,
 228714,2004,2004,TEXAS A & M UNIVERSITY AT GALVESTON,GALVESTON,TX,00363204,www.tamug.edu,,,
 228714,2005,2009,Texas A & M University at Galveston,Galveston,TX,00363204,www.tamug.edu,,,
@@ -1397,6 +1458,9 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 244233,2005,2009,City College,Fort Lauderdale,FL,02515400,www.citycollege.edu,,,
 244233,2010,2022,City College-Fort Lauderdale,Fort Lauderdale,FL,02515400,https://www.citycollege.edu/,,,
 244233,2023,2023,City College-Hollywood,Hollywood,FL,02515400,https://www.citycollege.edu/,,,
+244437,2002,2004,GEORGIA PERIMETER COLLEGE,DECATUR,GA,00156200,www.gpc.edu,,,
+244437,2005,2015,Georgia Perimeter College,Decatur,GA,00156200,www.gpc.edu,,,
+244437,2016,2023,Georgia State University-Perimeter College,Atlanta,GA,00157406,perimeter.gsu.edu/,,,
 245032,2002,2002,SOUTHWESTERN COLLEGE OF BUSINESS,CRESTVIEW HILLS,KY,01212801,,,,
 245032,2003,2003,SOUTHWESTERN COLLEGE OF BUSINESS,FLORENCE,KY,01212801,-1,,,
 245032,2004,2004,SOUTHWESTERN COLLEGE,FLORENCE,KY,01212801,www.swcollege.net,,,
@@ -1421,6 +1485,16 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 260372,2005,2018,Lac Courte Oreilles Ojibwa Community College,Hayward,WI,02532200,www.lco.edu,,,
 260372,2019,2021,Lac Courte Oreilles Ojibwe College,Hayward,WI,02532200,www.lco.edu/,,,
 260372,2022,2023,Lac Courte Oreilles Ojibwe University,Hayward,WI,02532200,www.lco.edu/,,,
+260901,2002,2003,KAPLAN COLLEGE,DAVENPORT,IA,00458600,www.kaplancollegeia.com,,,
+260901,2004,2004,KAPLAN UNIVERSITY,DAVENPORT,IA,00458600,www.kaplancollegeia.com,,,
+260901,2005,2009,Kaplan University,Davenport,IA,00458600,www.kucampus.edu,,,
+260901,2010,2017,Kaplan University-Davenport Campus,Davenport,IA,00458600,www.kaplanuniversity.edu/home.aspx,,,
+260901,2018,2019,Purdue University Global-Davenport,Davenport,IA,00458621,https://www.purdueglobal.edu/campus-locations/davenport-iowa/,,,
+260910,2002,2004,HAMILTON COLLEGE,CEDAR FALLS,IA,00422005,www.hamiltoncf.com,,,
+260910,2005,2006,Hamilton College,Cedar Falls,IA,00422005,www.hamiltoncf.com,,,
+260910,2007,2007,Hamilton College,Cedar Falls,IA,00458607,www.hamiltoncf.com,,,
+260910,2008,2017,Kaplan University-Cedar Falls Campus,Cedar Falls,IA,00458607,www.kaplanuniversity.edu/cedar-falls-iowa.aspx,,,
+260910,2018,2019,Purdue University Global-Cedar Falls,Cedar Falls,IA,00458607,https://www.purdueglobal.edu/campus-locations/cedar-falls-iowa/,02/19/2019,,2019
 260947,2002,2004,CHRISTIAN LIFE COLLEGE,MT PROSPECT,IL,03199300,www.christianlifecollege.edu,,,
 260947,2005,2019,Christian Life College,Mount Prospect,IL,03199300,www.christianlifecollege.edu,,,
 261861,2002,2004,WEST VIRGINIA CAREER INSTITUTE,MOUNT BRADDOCK,PA,00500701,www.wvjcmorgantown.edu,,,
@@ -1430,6 +1504,11 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 261931,2002,2004,ECPI TECHNICAL COLLEGE,ROANOKE,VA,03092700,www.ecpitech.edu,,,
 261931,2005,2009,ECPI Technical College,Roanoke,VA,03092700,www.ecpitech.edu,,,
 261931,2010,2016,Skyline College-Roanoke,Roanoke,VA,03092700,www.skyline.edu,11/30/2015,,2016
+262086,2002,2004,CHAPMAN UNIVERSITY-UNIVERSITY COLLEGE,ORANGE,CA,00011641,www.chapman.edu,,,
+262086,2005,2008,Chapman University-University College,Orange,CA,00011641,www.chapman.edu/univcoll/,,,
+262086,2009,2010,"Brandman University, Part of the Chapman University System",Irvine,CA,00011641,www.brandman.edu/,,,
+262086,2011,2020,Brandman University,Irvine,CA,04161800,www.brandman.edu/,,,
+262086,2021,2023,University of Massachusetts Global,Irvine,CA,04161800,www.umassglobal.edu/,,,
 262457,2002,2004,SAN JOAQUIN VALLEY COLLEGE,FRESNO,CA,02120701,www.sjvc.edu,,,
 262457,2005,2013,San Joaquin Valley College-Fresno,Fresno,CA,02120701,www.sjvc.edu,,,
 262457,2014,2014,San Joaquin Valley College-Fresno,,CA,02120701,,,122685,
@@ -1449,10 +1528,22 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 366553,2002,2004,SOUTHWEST FLORIDA COLLEGE,Fort Myers,FL,02278800,www.swfc.edu,,,
 366553,2005,2013,Southwest Florida College,Fort Myers,FL,02278800,www.swfc.edu,,,
 366553,2014,2023,Southern Technical College,Fort Myers,FL,02278800,www.southerntech.edu/,,,
+367024,2002,2004,HAMILTON COLLEGE,Urbandale,IA,00422002,www.hamiltonia.edu,,,
+367024,2005,2006,Hamilton College,Urbandale,IA,00422002,www.hamiltonia.edu,,,
+367024,2007,2007,Hamilton College,Urbandale,IA,00458605,www.hamiltonia.edu,,,
+367024,2008,2017,Kaplan University-Des Moines Campus,Urbandale,IA,00458605,www.kaplanuniversity.edu/des-moines-iowa.aspx,,,
+367024,2018,2019,Purdue University Global-Des Moines,Urbandale,IA,00458605,https://www.purdueglobal.edu/campus-locations/des-moines-iowa/,,489779,2019
 367097,2002,2002,LAWRENCE CAREER COLLEGE,LAWRENCE,KS,02613000,lcc-ks.com,,,
 367097,2003,2004,PINNACLE CAREER INSTITUTE,LAWRENCE,KS,02613000,www.pcitraining.edu,,,
 367097,2005,2009,Pinnacle Career Institute,Lawrence,KS,02613000,www.pcitraining.edu,,,
 367097,2010,2018,Pinnacle Career Institute-Lawrence,Lawrence,KS,02613000,www.pcitraining.edu,08/15/2017,,2018
+367112,2002,2004,CAREER TECHNICAL COLLEGE,MONROE,LA,02606800,-1,,,
+367112,2005,2009,Career Technical College,Monroe,LA,02606800,www.careertc.edu,,,
+367112,2010,2012,Career Technical College-Monroe,Monroe,LA,02606800,www.careertc.edu,,,
+367112,2013,2015,Career Technical College-Monroe,Monroe,LA,02253901,www.mccann.edu,,,
+367112,2016,2017,McCann School of Business & Technology,Monroe,LA,02253901,www.mccann.edu,,,
+367112,2018,2020,Platt College-McCann-Monroe,Monroe,LA,02306826,https://www.mccann.edu/,,,
+367112,2021,2023,Miller-Motte College-McCann-Monroe,Monroe,LA,02306826,https://www.mccann.edu/,,,
 367194,2002,2003,Musictech College,St Paul,MN,03001200,www.musictech.edu,,,
 367194,2004,2004,MCNALLY SMITH COLLEGE OF MUSIC,St Paul,MN,03001200,www.mcnallysmith.edu,,,
 367194,2005,2017,McNally Smith College of Music,Saint Paul,MN,03001200,www.mcnallysmith.edu,12/15/2017,,2017
@@ -1467,6 +1558,11 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 368452,2010,2018,Nossi College of Art,Madison,TN,02578200,www.nossi.edu,,,
 368452,2019,2022,Nossi College of Art,Nashville,TN,02578200,https://www.nossi.edu/,,,
 368452,2023,2023,Nossi College of Art and Design,Nashville,TN,02578200,https://www.nossi.edu/,,,
+369516,2002,2002,BRYAN CAREER COLLEGE,SPRINGFIELD,MO,03066300,,,,
+369516,2003,2004,BRYAN COLLEGE,SPRINGFIELD,MO,03066300,www.bryancollege.com,,,
+369516,2005,2009,Bryan College,Springfield,MO,03066300,www.bryancollege.com,,,
+369516,2010,2011,Bryan College-Springfield,Springfield,MO,03066300,www.bryancolleges.edu,,,
+369516,2012,2023,Bryan University,Springfield,MO,03066300,www.bryanu.edu/,,,
 369862,2002,2004,ACADEMY OF COURT REPORTING-COLUMBUS,COLUMBUS,OH,02152101,-1,,,
 369862,2005,2008,Academy of Court Reporting-Columbus,Columbus,OH,02152101,,,,
 369862,2009,2009,Miami-Jacobs Career College,Columbus,OH,02152101,,,,
@@ -1548,6 +1644,10 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 384388,2009,2011,Georgia Military College-Atlanta Campus,Fairburn,GA,00157103,fairburn.gmc.cc.ga.us/,,,
 384388,2012,2012,Georgia Military College-Atlanta Campus,,GA,00157103,,,139904,2012
 384388,2018,2018,Georgia Military College - Atlanta,Fairburn,GA,00157103,,,485111,
+384412,2002,2004,POTOMAC COLLEGE,WASHINGTON,DC,03218300,potomac.edu,,,
+384412,2005,2009,Potomac College,Washington,DC,03218300,www.potomac.edu,,,
+384412,2010,2012,Potomac College-Washington,Washington,DC,03218300,www.potomac.edu,,,
+384412,2013,2023,University of the Potomac-Washington DC Campus,Washington,DC,03218300,www.potomac.edu/,,,
 386472,2002,2004,HERZING COLLEGE,WINTER PARK,FL,02089709,www.herzing.edu,,,
 386472,2005,2008,Herzing College,Winter Park,FL,02089709,www.herzing.edu,,,
 386472,2009,2009,Herzing University,Winter Park,FL,02089709,www.herzing.edu,,,
@@ -1729,6 +1829,11 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 428000,2010,2013,Miami Ad School-Miami Beach,Miami Beach,FL,03125600,www.miamiadschool.com,,,
 428000,2014,2019,Miami Ad School-Wynwood,Miami,FL,03125600,www.miamiadschool.com,,,
 428000,2020,2023,Miami Ad School,Miami,FL,03125600,miamiadschool.com/,,,
+428170,2002,2002,KEISER CAREER INSTITUTE,LAKE WORTH,FL,03123900,www.keisercareer.com,,,
+428170,2003,2004,KEISER CAREER COLLEGE,LAKE WORTH,FL,03123900,www.keisercareer.com,,,
+428170,2005,2011,Keiser Career College-Greenacres,Greenacres,FL,03123900,www.keisercareer.edu,,,
+428170,2012,2014,Southeastern College-Greenacres,Greenacres,FL,03123900,www.sec.edu/,,,
+428170,2015,2023,Southeastern College-West Palm Beach,West Palm Beach,FL,03123900,www.sec.edu/,,,
 428286,2002,2002,THE ILLINOIS INSTITUTE OF ART AT SCHAUMBURG,Schaumburg,IL,01258401,www.ilia.aii.edu,,,
 428286,2003,2004,ILLINOIS INSTITUTE OF ART AT SCHAUMBURG,Schaumburg,IL,01258401,www.ilia.aii.edu,,,
 428286,2005,2005,Illinois Institute of Art at Schaumburg,Schaumburg,IL,01258401,www.ilia.aii.edu,,,
@@ -2182,6 +2287,12 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 445300,2009,2013,University of Phoenix-Jersey City Campus,Jersey City,NJ,42098802,www.phoenix.edu,,,
 445300,2014,2018,University of Phoenix-New Jersey,Jersey City,NJ,42098802,www.phoenix.edu,,,
 445300,2019,2021,University of Phoenix-New Jersey,Jersey City,NJ,82098880,https://www.phoenix.edu/,08/09/2021,,2021
+445319,2004,2004,UNIVERSITY OF PHOENIX-MINNEAPOLIS/ST PAUL CAMPUS,St. Louis Park,MN,00209888,www.phoenix.edu/,,,
+445319,2005,2005,University of Phoenix-Minneapolis/St Paul Campus,Saint Louis,MN,00209888,www.phoenix.edu,,,
+445319,2006,2008,University of Phoenix-Minneapolis/St Paul Campus,Saint Louis Park,MN,00209888,www.phoenix.edu,,,
+445319,2009,2012,University of Phoenix-Minneapolis/St Paul Campus,Saint Louis Park,MN,32098884,www.phoenix.edu,,,
+445319,2013,2013,University of Phoenix-Minneapolis St Paul Campus,Saint Louis Park,MN,32098884,www.phoenix.edu,,,
+445319,2014,2017,University of Phoenix-Minnesota,Saint Louis Park,MN,32098884,www.phoenix.edu,11/09/2016,,2017
 445391,2004,2004,UNIVERSITY OF PHOENIX-LOUISVILLE CAMPUS,Louisville,KY,00209889,www.phoenix.edu/,,,
 445391,2005,2008,University of Phoenix-Louisville Campus,Louisville,KY,00209889,www.phoenix.edu/,,,
 445391,2009,2013,University of Phoenix-Louisville Campus,Louisville,KY,32098862,www.phoenix.edu/,,,
@@ -2192,6 +2303,10 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 445407,2009,2009,DeVry University-Minnesota,St Louis Park,MN,01072769,www.devry.edu,,,
 445407,2010,2010,DeVry University-Minnesota,Edina,MN,01072769,www.devry.edu,,,
 445407,2011,2013,DeVry University-Minnesota,Edina,MN,01072767,www.devry.edu,,482529,2013
+445416,2004,2004,HAMILTON COLLEGE-COUNCIL BLUFFS,Council Bluffs,IA,00422009,-1,,,
+445416,2005,2006,Hamilton College-Council Bluffs,Council Bluffs,IA,00422009,www.hamiltoncb.com,,,
+445416,2007,2007,Hamilton College-Council Bluffs,Council Bluffs,IA,00458610,www.hamiltoncb.com,,,
+445416,2008,2013,Kaplan University-Council Bluffs Campus,Council Bluffs,IA,00458610,councilbluffs.kaplanuniversity.edu/Pages/Homepage.aspx,03/06/2013,,2013
 445674,2004,2004,COMMUNITY AND TECH COLL AT WEST VIRGINIA UNIV INST OF TECH,Montgomery,WV,00038251,www.wvutech.edu,,,
 445674,2005,2005,Community and Technical College at West Virginia University Institute of Technology,Montgomery,WV,00038251,www.wvutech.edu,,,
 445674,2006,2008,Community and Technical College at West Virginia University Institute of Technology,Montgomery,WV,04047300,www.wvutech.edu,,,
@@ -2343,6 +2458,9 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 450474,2011,2011,University of Phoenix-Augusta Campus,Augusta,GA,62098818,www.phoenix.edu,,,
 450474,2012,2013,University of Phoenix-Augusta Campus,Augusta,GA,32098828,www.phoenix.edu,,,
 450474,2014,2014,University of Phoenix-Augusta Campus,,GA,32098828,,,484677,2014
+450483,2007,2008,University of Phoenix-Washington DC Campus,Washington,DC,00209880,www.phoenix.edu,,,
+450483,2009,2013,University of Phoenix-Washington DC Campus,Washington,DC,32098812,www.phoenix.edu,,,
+450483,2014,2018,University of Phoenix-Washington DC,Washington,DC,32098812,www.phoenix.edu,05/01/2018,,2018
 450492,2007,2008,University of Phoenix-Chattanooga Campus,Chattanooga,TN,00209881,www.phoenix.edu,,,
 450492,2009,2013,University of Phoenix-Chattanooga Campus,Chattanooga,TN,42098870,www.phoenix.edu,,,
 450492,2014,2014,University of Phoenix-Chattanooga Campus,,TN,42098870,,,484747,2014
@@ -2430,6 +2548,7 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 456977,2011,2013,CBT College-Cutler Bay,Cutler Bay,FL,03071603,www.cbt.edu/,,,
 456977,2014,2020,College of Business and Technology-Cutler Bay,Cutler Bay,FL,03071603,www.cbt.edu/,,,
 456977,2021,2023,CBT Technology Institute-Cutler Bay,Cutler Bay,FL,03071603,www.cbt.edu/,,,
+456995,2009,2013,Provo CollegeAmerican Fork,American Fork,UT,02360802,www.provocollege.edu,02/20/2013,,2013
 457004,2009,2010,National College-Columbus,Columbus,OH,00372601,www.national-college.edu,,,
 457004,2011,2014,National College-Columbus,Columbus,OH,00372612,www.national-college.edu/locations/columbus-oh/,,,
 457004,2015,2017,American National University-Columbus,Columbus,OH,00372612,https://www.an.edu/locations/columbus-oh/,01/23/2017,,2017
@@ -2607,6 +2726,10 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 487162,2015,2023,Southern Regional Technical College,Thomasville,GA,00561500,southernregional.edu/,,,
 487320,2015,2023,Texas State Technical College,Waco,TX,00363400,www.tstc.edu/,,,
 487524,2015,2023,Husson University,Bangor,ME,00204300,www.husson.edu/,,,
+489779,2016,2017,Kaplan University-Indianapolis,Indianapolis,IN,00458618,www.kaplanuniversity.edu,,,
+489779,2018,2018,Purdue University Global-Indianapolis,Indianapolis,IN,00458600,https://www.purdueglobal.edu/campus-locations/indianapolis-indiana/,,,
+489779,2019,2019,Purdue University Global,Indianapolis,IN,00458600,https://www.purdueglobal.edu/,,,
+489779,2020,2023,Purdue University Global,West Lafayette,IN,00458600,https://www.purdueglobal.edu/,,,
 489937,2016,2019,Piedmont International University,Winston-Salem,NC,00295600,www.piedmontu.edu,,,
 489937,2020,2023,Carolina University,Winston-Salem,NC,00295600,https://www.carolinau.edu/,,,
 490230,2017,2023,Reformed University,Lawrenceville,GA,04256700,runiv.edu/,,,
@@ -2627,3 +2750,4 @@ unitid,first_year,last_year,name,city,state,opeid,website,closed,newid,deathyr
 497000,2021,2022,Remington College-Knoxville,Knoxville,TN,03026523,https://www.remingtoncollege.edu/locations/online/,,,
 497000,2023,2023,Remington College-Online Dallas,Dallas,TX,03026523,https://www.remingtoncollege.edu/locations/online/,,,
 498562,2022,2023,Commonwealth University of Pennsylvania,Bloomsburg,PA,00331500,https://www.commonwealthu.edu/,,,
+498571,2022,2023,Pennsylvania Western University,California,PA,00331600,https://www.pennwest.edu/,,,

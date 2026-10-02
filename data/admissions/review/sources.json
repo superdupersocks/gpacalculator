@@ -1,13 +1,13 @@
 {
- "fetched_at": "2026-10-02T16:30:04+00:00",
+ "fetched_at": "2026-10-02T16:53:50+00:00",
  "fsa_closed_schools": {
   "url": "https://fsapartners.ed.gov/additional-resources/reports/weekly-closed-school-search-file ('Closed School Search File': WKCL.20260927110422.001.xlsx [CLOSED SCHOOL SEARCH PAGE])",
   "bytes": 1558197,
-  "sha256": "be0670905b50b55b3ff3d6337d923c90812e904e723d1dbfcb0c29aefaaad785",
+  "sha256": "8a155394ccaa788ee6216f51e2e416dc7ab972115ec6274a96003b7bb7801841",
   "rows": 23006
  },
  "ipeds_history": {
   "url": "https://nces.ed.gov/ipeds/datacenter/data/HD{2002..2023}.zip",
-  "rows": 2628
+  "rows": 2752
  }
 }

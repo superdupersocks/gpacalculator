@@ -89,7 +89,7 @@ Admissions block source: none 4,045, IPEDS ADM 1,956
 | retention_rate | 4,947 (82%) | 2,073 (74%) |
 | median_earnings_10yr | 0 (0%) | 0 (0%) |
 | tuition_in_district | 3,410 (57%) | 2,343 (84%) |
-| room_board_on_campus | 0 (0%) | 0 (0%) |
+| room_board_on_campus | 1,958 (33%) | 1,726 (62%) |
 | books_supplies | 3,329 (55%) | 2,282 (82%) |
 | cost_in_state_on_campus | 1,959 (33%) | 1,727 (62%) |
 | cost_out_of_state_on_campus | 1,959 (33%) | 1,727 (62%) |

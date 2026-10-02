@@ -475,9 +475,9 @@
   },
   "room_board_on_campus": {
     "source": "IPEDS IC_AY 2023",
-    "variable": "",
+    "variable": "CHG5AY3",
     "year": 2023,
-    "meaning": ""
+    "meaning": "On campus, food and housing 2023-24"
   },
   "books_supplies": {
     "source": "IPEDS IC_AY 2023",

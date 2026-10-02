@@ -1,7 +1,7 @@
 # Pages read by scripts/page_check.py (admissions-pages.yml). Edit the stage line to run the check again.
-# stage: after R (applied and checked by 17:53 UTC), B2's second list (17:44), S, M, P and N (17:30-17:37), the
-# old-address fix (17:14) and the design overhaul's theme deploy (17:38); before H (the 53 pages under review still
-# show their old figures: Fairfax, Kaplan Davenport, Wichita Area Technical, UT Brownsville below)
+# stage: after H (18:01 UTC: the 53 pages under review lost their old figures: Fairfax, Kaplan Davenport, Wichita
+# Area Technical, UT Brownsville below), R (17:52), B2's second list (17:44), S, M, P and N (17:30-17:37), the
+# old-address fix (17:14) and the design overhaul's theme deploy (17:38)
 /admissions/harvard/
 /admissions/abilene-christian-university/
 /admissions/clark-atlanta-university/
@@ -49,4 +49,5 @@
 /admissions/kaplan-university-davenport-campus/
 /admissions/wichita-area-technical-college/
 /admissions/the-university-of-texas-at-brownsville/
+/admissions/bacone-college/
 sitemap /sitemap_index.xml colleges

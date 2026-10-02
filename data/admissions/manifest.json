@@ -1,0 +1,120 @@
+{
+  "fetched_at": "2026-10-02T00:29:28+00:00",
+  "files": {
+    "ipeds_hd": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/HD2024.zip",
+      "bytes": 1088372,
+      "sha256": "d98425c123d7c0e872aec6e83960dfb501884818bf17385c340790f3d1f28345",
+      "year": 2024,
+      "member": "HD2024.csv"
+    },
+    "ipeds_hd_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/HD2024_Dict.zip",
+      "bytes": 140379,
+      "sha256": "a68c38003a9e56b1b5f444377540d5120d86cecc35855f84f1393480b862487d",
+      "year": 2024
+    },
+    "ipeds_adm": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/ADM2023.zip",
+      "bytes": 97321,
+      "sha256": "670ecc7c4313f044dcdf740a42ef10c6d2927eb9f890fb405e3569c8442aca27",
+      "year": 2023,
+      "member": "adm2023.csv"
+    },
+    "ipeds_adm_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/ADM2023_Dict.zip",
+      "bytes": 28244,
+      "sha256": "d80bf7c781e39f7cbcb02f10f4d17b0c2c0e16786ea686217d12344c6167803d",
+      "year": 2023
+    },
+    "ipeds_ic": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/IC2024.zip",
+      "bytes": 135305,
+      "sha256": "924f04f0afd953633a34bbc2ad1beaa65fdbf2a7ba25ebe364bac7469a976288",
+      "year": 2024,
+      "member": "IC2024.csv"
+    },
+    "ipeds_ic_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/IC2024_Dict.zip",
+      "bytes": 50610,
+      "sha256": "d18e1c06153039963d005d86a45de23776603c6b3d31b79269a8388d511f9c54",
+      "year": 2024
+    },
+    "ipeds_ic_ay": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/IC2023_AY.zip",
+      "bytes": 309736,
+      "sha256": "42d3ee39a107d69b6da02df2ffa934ebe3bb76657568fb9efb7027b6ce0d69ee",
+      "year": 2023,
+      "member": "ic2023_ay.csv"
+    },
+    "ipeds_ic_ay_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/IC2023_AY_Dict.zip",
+      "bytes": 40627,
+      "sha256": "45ce5ace49c5f1e965c1704e531bd2a8224b39fd74765792899e86e0bb0788b9",
+      "year": 2023
+    },
+    "ipeds_drvef": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/DRVEF2023.zip",
+      "bytes": 415320,
+      "sha256": "8d38adec5a7febeaa0060310534e1871d09621fe3620f0adec11f33bf6720b40",
+      "year": 2023,
+      "member": "drvef2023.csv"
+    },
+    "ipeds_drvef_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/DRVEF2023_Dict.zip",
+      "bytes": 31719,
+      "sha256": "ef33194569c425e99747cf2a97329f6d7f21793210242daaf2fd67cb8109710c",
+      "year": 2023
+    },
+    "ipeds_efd": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/EF2023D.zip",
+      "bytes": 94562,
+      "sha256": "cfe4267b5b2e2a2ce6ea8c079c64707868c8c5b22372d578959e1726969e0c8c",
+      "year": 2023,
+      "member": "ef2023d.csv"
+    },
+    "ipeds_efd_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/EF2023D_Dict.zip",
+      "bytes": 19121,
+      "sha256": "5f8d9b6c785a149e32d4af0fd22f1f4350a12919e30d0de30652d8a5ed58338e",
+      "year": 2023
+    },
+    "ipeds_drvgr": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/DRVGR2023.zip",
+      "bytes": 123219,
+      "sha256": "884ef3518a426926b447aff48a78f2dde7b5df6b2ef6ba449f9a7d39113aa2af",
+      "year": 2023,
+      "member": "drvgr2023.csv"
+    },
+    "ipeds_drvgr_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/DRVGR2023_Dict.zip",
+      "bytes": 20303,
+      "sha256": "231115d8c4244ea0de51491ddd400ef5d50ca1c3d32b229c4f974dc3c9bfb0bd",
+      "year": 2023
+    },
+    "ipeds_sfa": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/SFA2223.zip",
+      "bytes": 1913114,
+      "sha256": "144f97dc24492febc772e2aed6c7eb543037ed56274a49cbae0e743cf717e2df",
+      "year": 2023,
+      "member": "sfa2223.csv"
+    },
+    "ipeds_sfa_dict": {
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/SFA2223_Dict.zip",
+      "bytes": 79497,
+      "sha256": "466b5e12ac11361c69783de01ecc741890a86096ae2e55203f4a0e729dc93c83",
+      "year": 2023
+    }
+  },
+  "ipeds_years": {
+    "hd": 2024,
+    "adm": 2023,
+    "ic": 2024,
+    "ic_ay": 2023,
+    "drvef": 2023,
+    "efd": 2023,
+    "drvgr": 2023,
+    "sfa": 2023
+  },
+  "scorecard_missing": "HTTP Error 403: Forbidden"
+}

@@ -345,9 +345,9 @@ def first_after(text, label, pick=-1):
 C1_DEGREE = r"Total\s+first-time,?\s+first-year\s+\((?:degree[-\s]+seeking|freshman)\)\s+(?:students\s+)?(?:who\s+)?"
 C1_STUDENTS = r"Total\s+first-time,?\s+first-year\s+(?:degree-seeking\s+)?students\s+(?:who\s+)?"
 C1 = {"applicants": r"applied\b", "admits": r"(?:were\s+)?admitted\b", "enrolled": r"enrolled\b"}
-# The C1 lines by sex that the total adds up: men, women, another gender, unknown gender up to 2024-25; males,
-# females, students of unknown sex from 2025-26. Enrollees come by sex, and by sex and full- or part-time.
-C1_SEX = re.compile(r"Total\s+(?:(full|part)-time,?\s+)?first-time,?\s+first-year\s+(?:students\s+of\s+)?"
+# The C1 lines by sex that the total adds up: men, women, (of) another gender, (of) unknown gender up to 2024-25;
+# males, females, students of unknown sex from 2025-26. Enrollees come by sex, and by sex and full- or part-time.
+C1_SEX = re.compile(r"Total\s+(?:(full|part)-time,?\s+)?first-time,?\s+first-year\s+(?:students\s+)?(?:of\s+)?"
                     r"(men|women|males?|females?|another\s+gender|unknown\s+(?:gender|sex)|non-?binary)\s+"
                     r"(?:students\s+)?who\s+(applied|were\s+admitted|enrolled)\b", re.I)
 C1_WHAT = {"applied": "applicants", "were admitted": "admits", "enrolled": "enrolled"}
@@ -355,14 +355,16 @@ C1_WHAT = {"applied": "applicants", "were admitted": "admits", "enrolled": "enro
 
 def c1_by_sex(t):
     """{column: its C1 lines by sex added up}, for a total left blank (a calculated field that never ran, or a
-    2025-26 Total column after four residency columns). Needs both a men's and a women's line."""
+    2025-26 Total column after four residency columns). Needs both a men's and a women's line. Only a number on a
+    line's own row counts: below a blank line can sit a check sum the college added (Vanderbilt's workbook adds up
+    each block of lines by sex on the row under it)."""
     seen = {}
     for m in C1_SEX.finditer(t):
         col = C1_WHAT[" ".join(m.group(3).lower().split())]
         sex = m.group(2).lower()[:3].replace("mal", "men").replace("fem", "wom")
         key = (col, (m.group(1) or "").lower(), sex)
         if key not in seen:  # the form comes before any repeat of it (a spreadsheet's answer sheet, say)
-            got = after(t, m)
+            got = numbers(t[m.end():line_end(t, m.end())])
             seen[key] = clean("count", got[0]) if got else None
     out = {}
     for col in C1_WHAT.values():
@@ -487,11 +489,11 @@ def factor_levels(text):
 def parse(text):
     """Readings from the file's text, matched against the CDS wording. Returns {} for fields not found.
     "_tight" lists the GPA fields whose value sat on its label's own line, "_summed" the C1 totals added up from
-    the lines by sex, "_c1_odd" the stated C1 totals those lines don't give ({column: (stated, by sex)}) and
+    the lines by sex, "_alt" the lines-by-sex totals of a file that states another C1 total ({column: total}) and
     "_c1_lines" the C1 lines as read."""
     t = text.replace("\xa0", " ").replace("\f", "\n").replace("\r", "")
     flat = re.sub(r"[ \t]+", " ", t)
-    out, tight, summed, odd = {}, set(), set(), {}
+    out, tight, summed, alt = {}, set(), set(), {}
     sums = c1_by_sex(t)
     for col, label in C1.items():
         row = next((g for g in (after(t, m) for m in re.finditer(C1_DEGREE + label, t, re.I)) if g), [])
@@ -505,16 +507,17 @@ def parse(text):
         s = sums.get(col)
         if s and v != s:
             # The "(degree-seeking)" row of 2025-26 has residency columns (in-state, out-of-state, international,
-            # unknown) before its Total; with the Total blank, its last number is only one of them, and the numbers
-            # before it don't add up to it. A total the file states (a lone number, or one that adds up its row)
-            # stays, even when the lines by sex say otherwise; the run log lists those.
+            # unknown) before its Total; with the Total blank, its last number is one of them, and the numbers
+            # before it don't add up to it: the lines by sex give the total. Otherwise the file states two totals: a
+            # lone number can be the in-state column (RIT's 10,339 of 31,527 applicants), and a row that adds up can
+            # count other students than the lines by sex (Auburn Montgomery's 162 enrollees, against 364 by sex and
+            # in IPEDS). Both stay, for a second reading or IPEDS to settle; the run log lists them.
             parts = [clean("count", x) or 0 for x in row]
-            part = len(parts) > 1 and parts[-1] == v and parts[-1] != sum(parts[:-1])
-            if not v or part:
+            if not v or (len(parts) > 1 and parts[-1] == v and parts[-1] != sum(parts[:-1])):
                 v = s
                 summed.add(col)
             else:
-                odd[col] = (v, s)
+                alt[col] = s
         if v:
             out[col] = v
     for col, label in COUNTS.items():
@@ -586,7 +589,7 @@ def parse(text):
             out[col] = clean("pct", got[0])
 
     out.update(factor_levels(t))
-    out["_tight"], out["_summed"], out["_c1_odd"], out["_c1_lines"] = tight, summed, odd, c1_lines(t)
+    out["_tight"], out["_summed"], out["_alt"], out["_c1_lines"] = tight, summed, alt, c1_lines(t)
     return out
 
 
@@ -709,17 +712,17 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
     same_fall = ipeds if ipeds and ipeds.get("admissions_year") == year[:4] else {}
     cdf = their_values(theirs, year)
     tight, summed = mine_text.get("_tight", set()), mine_form.get("_summed", set())
-    text_summed = mine_text.get("_summed", set())
+    text_summed, text_alt = mine_text.get("_summed", set()), mine_text.get("_alt", {})
     values, methods, prov, review = {}, {}, [], []
 
     def flag(col, why):
         review.append({"unitid": src["unitid"], "name": src["name"], "cds_year": year,
                        "file_url": src["source_url"], "field": col, "problem": why})
     for col, (kind, _, _) in FIELDS.items():
-        f, t, c = mine_form.get(col), mine_text.get(col), cdf.get(col)
+        f, t, c, t2 = mine_form.get(col), mine_text.get(col), cdf.get(col), text_alt.get(col)
         i = clean(kind, same_fall.get(col)) if col in IPEDS_SAME else None
         if col in POSITIVE:
-            f, t, c, i = (None if x == 0 else x for x in (f, t, c, i))
+            f, t, c, i, t2 = (None if x == 0 else x for x in (f, t, c, i, t2))
         if f is None and t is None and c is None:
             continue
         by_sex = " (lines by sex added up)"
@@ -727,8 +730,12 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
             v, how = f, "form fields" + (by_sex if col in summed else "")
         elif agree(kind, t, c):
             v, how = t, "file text + collegedata.fyi" + (by_sex if col in text_summed else "")
+        elif agree(kind, t2, c):
+            v, how = t2, "file text + collegedata.fyi" + by_sex
         elif agree(kind, t, i):
             v, how = t, "file text + IPEDS same fall" + (by_sex if col in text_summed else "")
+        elif agree(kind, t2, i):
+            v, how = t2, "file text + IPEDS same fall" + by_sex
         elif agree(kind, c, i):
             v, how = c, "collegedata.fyi + IPEDS same fall"
         elif t is not None and c is None and col in tight:
@@ -737,12 +744,13 @@ def decide(src, ipeds, mine_form, mine_text, theirs, producer=""):
             v, how = None, ""
         prov.append({"unitid": src["unitid"], "field": col, "question": question(col, year), "value": v,
                      "verified": "yes" if v is not None else "no", "method": how,
-                     "form": f, "text": t, "collegedata": c, "ipeds": i})
+                     "form": f, "text": t if t2 is None else f"{t}; lines by sex {t2}", "collegedata": c, "ipeds": i})
         if v is not None:
             values[col], methods[col] = v, how
         else:
-            flag(col, f"readings disagree or unconfirmed: file text {t}, collegedata.fyi {c} ({producer or 'n/a'}), "
-                      f"IPEDS same fall {i}")
+            flag(col, f"readings disagree or unconfirmed: file text {t}"
+                      + (f" (lines by sex {t2})" if t2 is not None else "")
+                      + f", collegedata.fyi {c} ({producer or 'n/a'}), IPEDS same fall {i}")
     problems = check(values) + gpa_conflict(values, methods)
     for col in ("applicants", "admits", "enrolled"):  # the CDS and IPEDS describe the same students
         v, i = values.get(col), clean("count", same_fall.get(col))
@@ -770,11 +778,14 @@ def file_key(src):
 
 
 def first_years(src, form, text, theirs):
-    """The file's first-year class as [(enrolled, applicants)] readings: ours (form fields, text), else
-    collegedata.fyi's when its three C1 counts hang together. Its row-shifted reads of some flattened PDFs (MIT's
-    admits as its applicants, Holy Cross with more enrollees than applicants) would otherwise make a college's own
-    file look like another campus's."""
+    """The file's first-year class as [(enrolled, applicants)] readings: ours (form fields, text, and the text's
+    lines by sex when it states another total), else collegedata.fyi's when its three C1 counts hang together. Its
+    row-shifted reads of some flattened PDFs (MIT's admits as its applicants, Holy Cross with more enrollees than
+    applicants) would otherwise make a college's own file look like another campus's."""
     ours = [(r.get("enrolled"), r.get("applicants")) for r in (form, text) if r.get("enrolled") or r.get("applicants")]
+    alt = text.get("_alt") or {}
+    if alt.get("enrolled") or alt.get("applicants"):
+        ours.append((alt.get("enrolled") or text.get("enrolled"), alt.get("applicants") or text.get("applicants")))
     if ours:
         return ours
     a, b, e = (clean("count", theirs.get(question(c, src["cds_year"]))) for c in ("applicants", "admits", "enrolled"))
@@ -840,7 +851,8 @@ def explain(readings, skip):
     sex miss by over 5%, so the run log shows what the reader saw."""
     shown, log = set(), []
     for u, (src, form, text, their, producer) in sorted(readings.items(), key=lambda kv: kv[1][0]["name"]):
-        odd = {c: (v, s) for c, (v, s) in (text.get("_c1_odd") or {}).items() if abs(v - s) > 0.05 * v}
+        alt = text.get("_alt") or {}
+        odd = {c: (text[c], s) for c, s in alt.items() if text.get(c) and abs(text[c] - s) > 0.05 * text[c]}
         why = skip.get(u) or "; ".join(f"stated {c} total {v:,}, lines by sex {s:,}" for c, (v, s) in odd.items())
         if why and text.get("_c1_lines") and file_key(src) not in shown:
             shown.add(file_key(src))

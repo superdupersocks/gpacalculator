@@ -195,10 +195,12 @@ readings = {"1": (_src("1", "Main", "aaa"), {}, {"applicants": 46000}, {}, ""),
             "5": (_src("5", "No IPEDS", "ddd"), {}, {"applicants": 900}, {}, ""),
             "6": (_src("6", "Shifted", "eee"), {}, {}, {"C.116": "1284"}, ""),
             "7": (_src("7", "Upside down", "fff"), {}, {}, {"C.116": "1829", "C.117": "900", "C.118": "2657"}, ""),
-            "8": (_src("8", "Surge", "ggg"), {"applicants": 4133, "enrolled": 249}, {}, {}, "")}
+            "8": (_src("8", "Surge", "ggg"), {"applicants": 4133, "enrolled": 249}, {}, {}, ""),
+            "9": (_src("9", "Two totals", "hhh"), {},
+                  {"applicants": 2512, "enrolled": 162, "_alt": {"applicants": 2694, "enrolled": 364}}, {}, "")}
 ipeds = {"1": {"applicants": "44000"}, "2": {"applicants": "5100"}, "3": {"applicants": "3005", "enrolled": "666"},
          "4": {"applicants": "45409"}, "6": {"applicants": "28232"}, "7": {"applicants": "9568", "enrolled": "800"},
-         "8": {"applicants": "1747", "enrolled": "260"}}
+         "8": {"applicants": "1747", "enrolled": "260"}, "9": {"applicants": "2694", "enrolled": "364"}}
 skip = cds.assign(readings, ipeds)
 eq("CDS files matched to their college", sorted(skip), ["2", "3"])
 eq("CDS skipped file says why, and whose reading it is", skip["3"].split("(")[1].split(")")[0],
@@ -256,14 +258,32 @@ eq("CDS text: a 2025-26 residency row with its Total blank isn't the total",
    cds.parse(C1_2025).get("applicants"), 32754)
 eq("CDS text: a residency row whose Total adds up stays",
    cds.parse(C1_2025 + "    32,754").get("applicants"), 32754)
-_stated = cds.parse("""Total first-time, first-year males who applied          20,000
-Total first-time, first-year females who applied        28,196
-Total first-time, first-year students of unknown sex who applied     48,196
-Total first-time, first-year (degree-seeking) who applied                   48,196""")
-eq("CDS text: a total the file states stays when its lines by sex don't give it",
-   (_stated.get("applicants"), _stated["_summed"], _stated["_c1_odd"]), (48196, set(), {"applicants": (48196, 96392)}))
-eq("CDS text: the C1 lines as read, for the run log", _stated["_c1_lines"][-1],
-   "Total first-time, first-year (degree-seeking) who applied 48,196")
+# Vanderbilt's workbook adds up each block of lines by sex on the row under it; a blank line by sex doesn't take
+# that check sum.
+_vu = cds.parse("""Total first-time, first-year males who applied                    21595
+Total first-time, first-year females who applied                  26601
+Total first-time, first-year students of unknown sex who applied
+                                                                  48196
+Total first-time, first-year (degree-seeking) who applied    2885   36130   9181   0   48196""")
+eq("CDS text: a check sum under a blank line by sex isn't counted",
+   (_vu.get("applicants"), _vu["_summed"], _vu["_alt"]), (48196, set(), {}))
+eq("CDS text: the C1 lines as read, for the run log", _vu["_c1_lines"][-1],
+   "Total first-time, first-year (degree-seeking) who applied 2885 36130 9181 0 48196")
+eq("CDS text: lines \"of another gender\" count toward the total", cds.parse(
+    "Total first-time, first-year men who enrolled 220\nTotal first-time, first-year women who enrolled 227\n"
+    "Total first-time, first-year of another gender who enrolled 29\n"
+    "Total first-time, first-year (degree-seeking) enrolled   95   347   34   476")["_alt"], {})
+# A lone number in the residency row can be its in-state column (RIT); a file that states two totals keeps both,
+# and a second reading settles which one is published.
+_rit = cds.parse("""Total first-time, first-year men who applied 18303
+Total first-time, first-year women who applied 13224
+Total first-time, first-year (degree-seeking) who applied        10339""")
+eq("CDS text: a file's two totals both kept", (_rit.get("applicants"), _rit["_alt"]), (10339, {"applicants": 31527}))
+_src25 = {"unitid": "1", "name": "X", "cds_year": "2025-26", "source_url": "https://x.edu/cds.pdf"}
+vals2, prov2, _ = cds.decide(_src25, {"admissions_year": "2024", "applicants": "27911"}, {}, _rit, {"C.116": "31527"})
+eq("CDS decide: the total a second reading confirms is published",
+   (vals2.get("applicants"), [p["method"] for p in prov2 if p["field"] == "applicants"]),
+   (31527, ["file text + collegedata.fyi (lines by sex added up)"]))
 eq("CDS text: enrollees by sex aren't counted again by full- and part-time", cds.parse(
     "Total first-time, first-year males who enrolled 100\nTotal first-time, first-year females who enrolled 120\n"
     "Total full-time, first-time, first-year males who enrolled 90\nTotal part-time, first-time, first-year males "

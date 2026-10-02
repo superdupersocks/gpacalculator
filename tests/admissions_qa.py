@@ -6,11 +6,15 @@ College Scorecard institution file, with deliberate problems: suppressed values,
 more admits than applicants, an alias, a typo and two posts for one college.
 """
 import csv
+import io
 import json
 import shutil
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
+
+import openpyxl
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts" / "admissions"))
@@ -142,9 +146,17 @@ eq("CDS C9 percentiles and submit %", (g.get("sat_comp_p50"), g.get("sat_erw_p25
 eq("CDS form values decoded", (cds.clean("level", "/VI"), cds.clean("yn", "/Y"), cds.clean("pct", "0.25"),
                                cds.clean("count", "1,234"), cds.clean("gpa", "N/A")),
    ("Very Important", "Yes", 25.0, 1234, None))
-eq("CDS form fields mapped by template year",
-   cds.from_form({"FRSH_GPA": "3.91", "Q111_3": "/VI", "AP_RECD_1ST_N": "1000", "AP_ADMT_1ST_N": "250"}, "2025-26"),
-   {"applicants": 1000, "admits": 250, "factor_gpa": "Very Important", "gpa_avg": 3.91})
+form = cds.from_form({"FRSH_GPA": "3.91", "Q111_3": "/VI", "AP_RECD_1ST_N": "1000", "AP_ADMT_1ST_N": "250",
+                      "AD_EDEC": "/Y", "EN_FRSH_GPA_1_P": "0.6", "EN_FRSH_GPA_2_P": "0.4"})
+eq("CDS form fields (same names every template year)", {k: v for k, v in form.items() if k != "_summed"},
+   {"applicants": 1000, "admits": 250, "factor_gpa": "Very Important", "gpa_avg": 3.91, "ed_offered": "Yes",
+    "gpa_4_0": 60.0, "gpa_375_399": 40.0})
+form = cds.from_form({"AP_RECD_1ST_N": "0", "AP_RECD_1ST_MEN_N": "5,831", "AP_RECD_1ST_WMN_N": "6,310",
+                      "AP_ADMT_1ST_N": "0", "EN_TOT_1ST_N": "0", "EN_TOT_1ST_FT_MEN_N": "2890",
+                      "EN_TOT_1ST_PT_WMN_N": "10"})
+eq("CDS form: an uncalculated 0 total is its lines by sex added up",
+   ({k: form.get(k) for k in ("applicants", "admits", "enrolled")}, sorted(form["_summed"])),
+   ({"applicants": 12141, "admits": None, "enrolled": 2900}, ["applicants", "enrolled"]))
 src = {"unitid": "1", "name": "X", "cds_year": "2023-24", "source_url": "https://x.edu/cds.pdf"}
 vals, prov, rev = cds.decide(src, {"admissions_year": "2023", "sat_math_p25": "760", "applicants": "500"},
                              {"factor_gpa": "Important"}, {"gpa_avg": 3.9, "sat_math_p50": 780},
@@ -152,15 +164,80 @@ vals, prov, rev = cds.decide(src, {"admissions_year": "2023", "sat_math_p25": "7
 eq("CDS decide: form, text+collegedata, collegedata+IPEDS",
    {k: vals.get(k) for k in ("factor_gpa", "gpa_avg", "sat_math_p25", "applicants")},
    {"factor_gpa": "Important", "gpa_avg": 3.9, "sat_math_p25": 760, "applicants": 500})
-vals2, _, _ = cds.decide(src, None, {}, {}, {"C.701": "Very Important"}, "tier1_xlsx")
-eq("CDS decide: collegedata.fyi's exact XLSX read is trusted", vals2.get("factor_rigor"), "Very Important")
-vals2, _, _ = cds.decide(src, None, {}, {}, {"C.701": "Very Important"}, "tier4_docling")
-eq("CDS decide: a layout-model read alone is not", vals2.get("factor_rigor"), None)
 eq("CDS decide: disagreement and single readings go to review",
    sorted(r["field"] for r in rev), ["gpa_submit_pct", "sat_math_p50"])
+for producer in ("tier1_xlsx", "tier2_acroform", "tier4_docling"):
+    vals2, _, _ = cds.decide(src, None, {}, {}, {"C.701": "Very Important", "C.117": "2885"}, producer)
+    eq(f"CDS decide: collegedata.fyi alone is not published ({producer})", vals2, {})
+vals2, _, rev2 = cds.decide(src, None, {}, {"gpa_avg": 3.62, "gpa_submit_pct": 97.0, "_tight": {"gpa_avg"}}, {})
+eq("CDS decide: a GPA on its label's line stands alone; a loose one doesn't",
+   (vals2, [r["field"] for r in rev2]), ({"gpa_avg": 3.62}, ["gpa_submit_pct"]))
+vals2, _, rev2 = cds.decide(src, {"admissions_year": "2023", "applicants": "28111"}, {"applicants": 0},
+                            {"applicants": 0}, {"C.117": "0"})
+eq("CDS decide: a 0 applicant count is blank, not published", (vals2, rev2), ({}, []))
+vals2, _, rev2 = cds.decide(src, {"admissions_year": "2023", "applicants": "28111"}, {"applicants": 12000}, {}, {})
+eq("CDS decide: C1 far from IPEDS for the same fall goes to review",
+   (vals2, [r["field"] for r in rev2]), ({}, ["applicants"]))
 
-import io  # noqa: E402
-import zipfile  # noqa: E402
+# Which college a file belongs to: a file listed for three campuses is used for the one whose applicant count
+# it matches; a single file far from IPEDS's count describes another campus; a misread count alone doesn't
+# disqualify a file when another reading is close.
+def _src(u, name, archive):
+    return {"unitid": u, "name": name, "cds_year": "2025-26", "source_url": "https://x.edu/" + archive,
+            "archive_url": "https://archive/" + archive + ".pdf"}
+
+
+readings = {"1": (_src("1", "Main", "aaa"), {}, {"applicants": 46000}, {}, ""),
+            "2": (_src("2", "Branch", "aaa"), {}, {"applicants": 46000}, {}, ""),
+            "3": (_src("3", "Other", "bbb"), {}, {}, {"C.116": "52703"}, ""),
+            "4": (_src("4", "Misread", "ccc"), {}, {"applicants": 45000}, {"C.116": "2885"}, ""),
+            "5": (_src("5", "No IPEDS", "ddd"), {}, {"applicants": 900}, {}, "")}
+ipeds = {"1": {"applicants": "44000"}, "2": {"applicants": "5100"}, "3": {"applicants": "3005"},
+         "4": {"applicants": "45409"}}
+skip = cds.assign(readings, ipeds)
+eq("CDS files matched to their college", sorted(skip), ["2", "3"])
+
+LAYOUT = """C1. Applications
+Total first-time, first-year students who applied in Fall 2023 1,578.0 2,055.0 9.0
+                                              IN-STATE   OUT-OF-STATE   INTERNATIONAL   UNKNOWN        TOTAL
+Total first-time, first-year (degree seeking) who applied     3,046      465      131                3,642
+Total first-time, first-year (degree-seeking) who were admitted                                       2,933
+C7. Relative importance
+                                                                                          Not
+                                    Very Important          Important        Considered
+                                                                                       Considered
+      Rigor of secondary school record      X
+      Academic GPA                                 ☐                    ☐
+                                                                        ✔                 ☐                 ☐
+      Interview                                                                                         X
+C8: SAT and ACT Policies
+C21. Early decision: Does your institution offer an early decision plan for fall enrollment?
+     ☐ Yes  ✔ No
+Number of early decision applications received by your institution:            1,053
+CDS-C Page 6
+C12. Average high school GPA of all degree-seeking, first-time, first-year students who
+     submitted GPA:                                                  3.71
+Percent of total first-time, first-year students who submitted high school GPA:     96.4%"""
+g = cds.parse(LAYOUT)
+eq("CDS layout text: C1 total column, C7 marks under their headings, C21, C12",
+   {k: g.get(k) for k in ("applicants", "admits", "factor_rigor", "factor_gpa", "factor_interview", "ed_offered",
+                          "ed_applicants", "gpa_avg", "gpa_submit_pct")},
+   {"applicants": 3642, "admits": 2933, "factor_rigor": "Very Important", "factor_gpa": "Important",
+    "factor_interview": "Not Considered", "ed_offered": "No", "ed_applicants": 1053, "gpa_avg": 3.71,
+    "gpa_submit_pct": 96.4})
+eq("CDS layout text: a by-sex row isn't a total", cds.parse(LAYOUT.split("IN-STATE")[0]).get("applicants"), None)
+_wb = openpyxl.Workbook()
+_ws = _wb.active
+_ws.append(["C11", "Percent who had GPA of 4.0", 0.55])
+_ws.append([None, "Percent who had GPA between 3.75 and 3.99", 0.45])
+_ws.append(["C12", "Percent of total first-time, first-year students who submitted high school GPA:", 1])
+for _c in ("C1", "C2", "C3"):
+    _ws[_c].number_format = "0.0%"
+_buf2 = io.BytesIO()
+_wb.save(_buf2)
+g = cds.parse(cds.text_of(_buf2.getvalue(), "xlsx"))
+eq("CDS spreadsheet percent cells read as percents", (g.get("gpa_4_0"), g.get("gpa_submit_pct")), (55.0, 100.0))
+
 _buf = io.BytesIO()
 with zipfile.ZipFile(_buf, "w") as _z:
     _z.writestr("word/document.xml", "<w:document><w:body><w:tbl><w:tr><w:tc><w:p><w:t>Average high school GPA of "
@@ -178,8 +255,6 @@ eq("newest release on the Access page", fetch.newest_release(page),
    (2024, "https://nces.ed.gov/ipeds/tablefiles/tableDocs/IPEDS202425Tablesdoc.xlsx",
     "https://nces.ed.gov/ipeds/tablefiles/zipfiles/IPEDS_2024-25_Provisional.zip"))
 eq("no release on the page", fetch.newest_release("<html></html>"), (None, None, None))
-import io  # noqa: E402
-import openpyxl  # noqa: E402
 wb = openpyxl.Workbook()
 ws = wb.active
 ws.title = "Tables24"

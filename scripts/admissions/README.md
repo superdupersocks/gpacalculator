@@ -15,8 +15,8 @@ the live site; Phase 2 imports the output.
 The cloud sessions can't reach ed.gov or the colleges' sites, so these run in GitHub Actions: steps 1-3 in
 `.github/workflows/admissions-data.yml`, steps 4-5 in `admissions-cds.yml`. Both run by hand from the Actions
 tab, or on a push that changes their scripts on a `claude/admissions-*` branch, and commit their outputs back
-to the branch. Locally: `pip install openpyxl pypdf cryptography`, then run the scripts in order. Tests:
-`python3 tests/admissions_qa.py`.
+to the branch. Locally: `pip install openpyxl pypdf cryptography`, install poppler-utils, then run the scripts
+in order. Tests: `python3 tests/admissions_qa.py`.
 
 ## Sources
 
@@ -31,9 +31,13 @@ to the branch. Locally: `pip install openpyxl pypdf cryptography`, then run the 
   script slims the Field of Study file to `programs.csv` (bachelor's programs: graduates, earnings, debt).
 - **Common Data Set** (GPA, admission factors, early decision/action, wait list, newer test scores and counts):
   `cds_sources.py` uses collegedata.fyi's public index (MIT-licensed) only to find each college's newest CDS on
-  the college's own site. `cds.py` reads the college's file and publishes a value only when it is exact (the
-  PDF's form fields, or collegedata.fyi's read of the college's form fields or Excel file) or when two
-  independent readings agree (our reading of the text, collegedata.fyi's extraction, IPEDS for the same fall).
+  the college's own site. `cds.py` reads the college's file: its form fields when the PDF is fillable, and its
+  text laid out as on the page (`pdftotext -layout` from poppler-utils; spreadsheet and Word cells keep their
+  columns). A value is published when it comes from the form fields or when two readings agree (our text,
+  collegedata.fyi's extraction, IPEDS for the same fall); a GPA printed on its label's own line may stand alone
+  if it passes its checks. collegedata.fyi alone is never enough: its readings of some files are off by a row
+  or a column. Before reading, each file is checked against its college: a file whose applicant count is far
+  from IPEDS's (another campus's CDS) or that is listed for several colleges is used only where it matches.
   Everything else goes to `cds_review.csv`. Values are cited to the college's own file.
 
 Values are never estimated, and suppressed or missing values stay blank, never 0.

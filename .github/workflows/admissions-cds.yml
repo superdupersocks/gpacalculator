@@ -7,7 +7,6 @@ on:
     branches: ['claude/admissions-**']
     paths:
       - 'scripts/admissions/cds*.py'
-      - 'scripts/admissions/cds_tags.json'
       - '.github/workflows/admissions-cds.yml'
 permissions:
   contents: write
@@ -24,6 +23,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install openpyxl pypdf cryptography
+      - run: sudo apt-get install -y -qq poppler-utils >/dev/null  # pdftotext -layout
       - run: python tests/admissions_qa.py
       - run: python scripts/admissions/cds_sources.py
       - run: python scripts/admissions/cds.py
@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/admissions/cds_*.csv data/admissions/cds_debug_snippets.json
+          git add data/admissions/cds_*.csv
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
           git commit -m "Refresh Common Data Set values"
           git pull --rebase origin "${GITHUB_REF_NAME}"

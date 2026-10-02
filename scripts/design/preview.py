@@ -44,11 +44,49 @@ GP_TYPOGRAPHY = [r"body, button, input, select, textarea\{[^}]*\}", r"body\{line
                  r"h1\{font-family[^}]*\}", r"h2\{font-family[^}]*\}", r"h3\{font-family[^}]*\}"]
 
 
-def transform(html, theme, settings=False):
+def own_title(html):
+    m = re.findall(r'"@type":"ListItem","position":\d+,"name":"([^"]*)"', html)
+    return m[-1] if m else None
+
+
+def mirror_markup(html, slug, pages_dir, theme):
+    """Mirror the phase 4 markup that functions.php prints: logo badge + wordmark, the hero breadcrumb,
+    and the hero class on blog posts. Only when the theme being previewed has those functions."""
+    php = open(os.path.join(theme, "functions.php"), encoding="utf-8").read()
+    if "gpa_logo_badge_svg" in php:
+        badge = "".join(re.findall(r"'([^']*)'", re.search(r"function gpa_logo_badge_svg\(\) \{(.*?)\n\}", php, re.S).group(1)))
+        html = re.sub(r'<div class="site-logo">.*?</div>',
+                      f'<div class="site-logo"><a href="https://gpacalculator.net/" rel="home" aria-label="GPA Calculator">{badge}</a></div>',
+                      html, count=1, flags=re.S)
+        html = re.sub(r'(<p class="main-title">\s*<a [^>]*rel="home"[^>]*>)\s*GPA\b', r'\1<span class="gpa-wordmark-accent">GPA</span>', html, count=1)
+    body = re.search(r'<body[^>]*class="([^"]*)"', html)
+    classes = body.group(1).split() if body else []
+    if "gpa_hero_breadcrumb" in php and slug != "home" and "single-colleges" not in classes:
+        is_post = "single-post" in classes
+        if is_post and "gpa-hero-band" not in classes:
+            html = html.replace(body.group(0), body.group(0)[:-1] + ' gpa-hero-band"', 1)
+        if is_post or "gpa-hero-band" in classes or "page-template-template-calculator" in classes:
+            parts = slug.split("__")
+            crumbs = ['<li class="gpa-breadcrumb__item"><a class="gpa-breadcrumb__link" href="https://gpacalculator.net/">Home</a></li>']
+            if not is_post:
+                for i in range(1, len(parts)):
+                    parent = "__".join(parts[:i])
+                    f = os.path.join(pages_dir, parent + ".html")
+                    name = own_title(open(f, encoding="utf-8").read()) if os.path.exists(f) else parts[i - 1].replace("-", " ").title()
+                    crumbs.append(f'<li class="gpa-breadcrumb__item"><a class="gpa-breadcrumb__link" href="https://gpacalculator.net/{parent.replace("__", "/")}/">{name}</a></li>')
+            crumbs.append(f'<li class="gpa-breadcrumb__item"><span class="gpa-breadcrumb__current" aria-current="page">{own_title(html) or ""}</span></li>')
+            nav = '<nav class="gpa-breadcrumb" aria-label="Breadcrumb"><ol class="gpa-breadcrumb__list">' + "".join(crumbs) + "</ol></nav>"
+            html = re.sub(r'(<header class="entry-header"[^>]*>)', lambda m: m.group(1) + nav, html, count=1)
+    return html
+
+
+def transform(html, theme, settings=False, slug=None, pages_dir=None):
     """Mirror the enqueue changes in functions.php for pages saved before they were deployed. With settings=True,
     also mirror the phase 3 site settings: Simple CSS emptied, GeneratePress Customizer typography reset."""
     if not theme:
         return html
+    if slug and pages_dir:
+        html = mirror_markup(html, slug, pages_dir, theme)
     if settings:
         html = re.sub(r"<link[^>]+so-css-generatepress\.css[^>]*>", "", html)
         m = re.search(r"(<style id=.generate-style-inline-css.>)(.*?)(</style>)", html, re.S)
@@ -95,7 +133,7 @@ def main():
         path = urllib.parse.unquote(u.path)
         if route.request.resource_type == "document":
             with open(os.path.join(pages_dir, slug + ".html"), encoding="utf-8") as f:
-                return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=transform(f.read(), a.theme, a.settings))
+                return route.fulfill(status=200, content_type="text/html; charset=utf-8", body=transform(f.read(), a.theme, a.settings, slug, pages_dir))
         local = None
         if a.theme and path.startswith(THEME_PATH):
             cand = os.path.join(a.theme, path[len(THEME_PATH):])

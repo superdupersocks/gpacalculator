@@ -9,18 +9,18 @@
 
 /* Templates that use the article column: calculator pages, content pages
    (registered template, the older unregistered one, and the body class the
-   theme adds). Blog posts and college pages join in phase 4. */
+   theme adds) and blog posts. */
 
 /* ---------- 1. Page background and the white content column ---------- */
 body {
     background-color: var(--gpa-page-bg) !important;
 }
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) :is(.site-content, .site-main, .inside-article) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.site-content, .site-main, .inside-article) {
     background-color: transparent !important;
 }
 /* On calculator pages the card rises --rx-card-overlap into the hero, so the
    column's white starts where the hero ends. */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content {
     max-width: var(--gpa-content-max) !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -29,33 +29,33 @@ body {
     padding-bottom: var(--gpa-hdr-above);
 }
 @media (max-width: 940px) {
-    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content {
         border-radius: 0;
     }
 }
 
 /* Calculator, tables, media, charts: full column width */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *, .gpacalc-mount *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *, .gpacalc-mount *) {
     max-width: 100%;
 }
 
 /* Text blocks: 800px, centred inside the column (ad slots are not text, so they keep the full width) */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, .gpa-callout, .gpa-takeaways):not(#root *, .gpacalc-mount *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, .gpa-callout, .gpa-takeaways):not(#root *, .gpacalc-mount *) {
     max-width: var(--gpa-text-max) !important;
     margin-left: auto !important;
     margin-right: auto !important;
 }
 
 /* ---------- 2. Article text ---------- */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
     font-size: var(--gpa-body-size) !important;
     line-height: var(--gpa-body-line) !important;
 }
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content p:not(#root *, .gpacalc-mount *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content p:not(#root *, .gpacalc-mount *) {
     margin-top: 0 !important;
     margin-bottom: var(--gpa-p-gap) !important;
 }
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content li:not(#root *, .gpacalc-mount *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content li:not(#root *, .gpacalc-mount *) {
     margin-bottom: var(--gpa-li-gap) !important;
 }
 #primary #main .entry-content h3:not(#root *, .gpacalc-mount *) {
@@ -71,7 +71,7 @@ body {
 }
 
 /* ---------- 3. Section rhythm ---------- */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
     margin-bottom: var(--gpa-block-gap) !important;
 }
 
@@ -126,15 +126,6 @@ body {
 @media (max-width: 768px) {
     .university-gpa-intro { margin-bottom: 28px; }
 }
-/* Homepage hero on phones (replaced by the shared hero in phase 4) */
-/* "html body" because gpa-homepage.css loads after this file (Simple CSS used to load last) */
-@media (max-width: 767px) {
-    html body .gpa-hero { padding: 28px 16px !important; }
-    html body .gpa-hero-title { margin-bottom: 12px !important; }
-    html body .gpa-hero-sub { font-size: 15px; line-height: 1.4 !important; margin: 6px 0 14px !important; }
-    html body :is(.gpa-hero-title, .gpa-hero-sub) { padding-left: 16px !important; padding-right: 16px !important; }
-}
-
 /* ---------- 6. Hero (calculator and content templates) ----------
    One design: light glossy blue band, flat bottom, breadcrumb, navy title,
    one subtitle line. The band is .entry-header::after, full viewport width,
@@ -202,6 +193,70 @@ html :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-head
 :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro strong {
     color: var(--gpa-hero-title) !important;
 }
+/* Homepage: the hero is a block group (.gpa-hero) holding the title, the
+   subtitle and the calculator. Same band; below the card's top + overlap a
+   page-colored layer covers it, so the card rises into the band the same way. */
+html body .gpa-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    background: var(--gpa-hero-bg) !important;
+    padding: var(--gpa-hero-pad-top) 20px var(--gpa-hdr-above) !important;
+}
+html body .gpa-hero > #root { position: relative; }
+html body .gpa-hero > #root::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: var(--gpa-hero-overlap);
+    bottom: calc(-1 * var(--gpa-hdr-above));
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: var(--gpa-page-bg);
+    pointer-events: none;
+}
+html body .gpa-hero .gpa-hero-title {
+    font-size: var(--gpa-h1-size) !important;
+    line-height: var(--gpa-h1-line) !important;
+    color: var(--gpa-hero-title) !important;
+    margin: 0 auto 12px !important;
+}
+html body .gpa-hero .gpa-hero-sub {
+    max-width: 640px;
+    margin: 0 auto calc(var(--gpa-hero-tail) - var(--gpa-hero-overlap)) !important;
+    font-size: var(--gpa-hero-sub-size) !important;
+    line-height: 1.5 !important;
+    color: var(--gpa-hero-text) !important;
+}
+html body .gpa-hero .gpa-hero-trust { color: var(--gpa-hero-text) !important; }
+@media (max-width: 767px) {
+    html body .gpa-hero :is(.gpa-hero-title, .gpa-hero-sub) { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+/* College pages keep their own hero layout (admissions templates) but use
+   the same band and title colors. "html body" beats database-page.css,
+   which loads later; the hero's inline background (college photo or
+   gradient) is replaced too. */
+html body :is(.db-hero, .db-archive-hero) {
+    background: var(--gpa-hero-bg) !important;
+}
+html body .db-hero {
+    border: 1px solid var(--gpa-border) !important;
+    box-shadow: none !important;
+}
+html body :is(.db-hero__overlay, .db-hero-overlay, .db-archive-hero__overlay, .db-archive-hero__bg, .db-hero-bg) {
+    display: none !important;
+}
+html body :is(.db-hero__title, .db-hero-title, .db-archive-hero__title) {
+    color: var(--gpa-hero-title) !important;
+}
+html body :is(.db-hero__location, .db-hero-location, .db-archive-hero__subtitle) {
+    color: var(--gpa-hero-text) !important;
+}
+html body .db-archive-hero__stat { color: var(--gpa-hero-title) !important; }
+html body .db-archive-hero__stat-divider { background: var(--gpa-border-strong) !important; }
+
 /* Calculator card rises into the hero: the column starts --rx-card-overlap
    above the band's end, and its white begins exactly there (section 2). */
 body.page-template-template-calculator.page-template-template-calculator .entry-content {
@@ -225,4 +280,268 @@ body.gpa-hero-band.gpa-hero-band .entry-content {
 }
 :is(body.page-template-template-calculator, body.gpa-hero-band) #primary #main .entry-content > :is(h2, p.rx-eyebrow):first-child {
     margin-top: 0 !important;
+}
+
+/* ---------- 7. Breadcrumb ----------
+   Printed once per page, above the H1 in the hero (functions.php
+   gpa_hero_breadcrumb; college pages print their own). */
+.gpa-breadcrumb {
+    font-size: 14px;
+    line-height: 1.4;
+}
+.gpa-breadcrumb__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.gpa-breadcrumb__item {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    margin: 0 !important;
+}
+.gpa-breadcrumb__item + .gpa-breadcrumb__item::before {
+    content: "/";
+    margin: 0 8px;
+    color: var(--gpa-breadcrumb-sep);
+    flex: none;
+}
+html .gpa-breadcrumb a.gpa-breadcrumb__link {
+    color: var(--gpa-link) !important;
+    text-decoration: none !important;
+    font-weight: 400;
+}
+html .gpa-breadcrumb a.gpa-breadcrumb__link:hover {
+    color: var(--gpa-primary) !important;
+}
+.gpa-breadcrumb__current {
+    color: var(--gpa-breadcrumb-current);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60vw;
+}
+/* College pages print it above their own hero, on the page width */
+.gpa-breadcrumb:not(.entry-header *) {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 16px 16px 0;
+}
+/* In the hero: centred, above the title */
+.entry-header .gpa-breadcrumb {
+    margin: 0 auto 16px;
+}
+.entry-header .gpa-breadcrumb__list {
+    justify-content: center;
+}
+@media (max-width: 768px) {
+    .gpa-breadcrumb { font-size: 13px; }
+    .entry-header .gpa-breadcrumb { margin-bottom: 12px; }
+}
+@media (max-width: 480px) {
+    .gpa-breadcrumb__item:has(.gpa-breadcrumb__current) { display: none; }
+}
+
+/* Blog posts: author line under the title, quiet like the subtitle */
+body.single-post.gpa-hero-band .entry-header .entry-meta {
+    margin-top: 0;
+    color: var(--gpa-hero-text);
+    font-size: var(--gpa-small-size);
+}
+
+/* ---------- 8. Header, logo and nav ----------
+   White bar with a 1px line; 72px tall (60px on phones). Logo = "4.0" badge
+   (inline SVG, functions.php gpa_logo_badge) + live wordmark. */
+.site-header {
+    background: var(--gpa-surface) !important;
+    border-bottom: 1px solid var(--gpa-border) !important;
+    box-shadow: none !important;
+}
+.site-header .inside-header {
+    min-height: 72px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    align-items: center;
+}
+.site-header .site-logo { line-height: 0; margin-right: 0 !important; }
+.site-header .site-logo a { display: inline-flex; }
+.gpa-logo-badge {
+    display: block;
+    width: 36px;
+    height: 36px;
+}
+.gpa-logo-badge .gpa-logo-badge__from { stop-color: var(--gpa-blue-600); }
+.gpa-logo-badge .gpa-logo-badge__to { stop-color: var(--gpa-indigo-700); }
+.gpa-logo-badge text {
+    fill: var(--gpa-white);
+    font-family: var(--gpa-font);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+.site-header .site-branding-container { align-items: center; }
+.site-header .site-logo + .site-branding { margin-left: 10px; }
+.site-header .main-title {
+    margin: 0;
+    font-family: var(--gpa-font) !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.01em;
+}
+.site-header .main-title a,
+.site-header .main-title a:hover {
+    color: var(--gpa-text-strong) !important;
+    text-decoration: none !important;
+}
+.site-header .main-title .gpa-wordmark-accent { color: var(--gpa-primary); }
+
+.main-navigation a,
+.main-navigation .main-nav a {
+    font-family: var(--gpa-font) !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: var(--gpa-text) !important;
+    text-decoration: none !important;
+    transition: color .15s ease, background-color .15s ease;
+}
+.main-navigation .main-nav ul li a { padding: 0 !important; }
+.main-navigation .main-nav ul li.menu-item-has-children > a { padding-left: 0 !important; }
+.menu-item-has-children .dropdown-menu-toggle { padding-right: 0 !important; }
+#menu-top-nav { gap: 25px; }
+.main-navigation .main-nav ul li:hover > a,
+.main-navigation .main-nav ul li.sfHover > a,
+.main-navigation .main-nav ul li > a:focus-visible,
+.main-navigation .main-nav ul li[class*="current-menu-"] > a {
+    color: var(--gpa-primary) !important;
+}
+.main-navigation .sub-menu {
+    background: var(--gpa-surface) !important;
+    border: 1px solid var(--gpa-border) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--gpa-black) 10%, transparent) !important;
+    min-width: 260px !important;
+}
+.main-navigation #menu-top-nav .sub-menu li a {
+    display: block !important;
+    padding: 0.625rem !important;
+    font-size: 14px !important;
+    line-height: 1.25rem !important;
+    color: var(--gpa-text) !important;
+}
+@media (min-width: 769px) {
+    .main-navigation .main-nav > ul { column-gap: 4px !important; margin-right: -12px !important; }
+    .main-navigation .main-nav > ul > li > a,
+    .main-navigation .main-nav > ul > li.menu-item-has-children > a {
+        line-height: 40px !important;
+        margin: 16px 0 !important;
+        padding: 0 12px !important;
+        border-radius: 10px !important;
+    }
+    .main-navigation .sub-menu { padding: 6px !important; }
+    .main-navigation .main-nav .sub-menu li a {
+        padding: 9px 12px !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+    }
+    .main-navigation .main-nav .sub-menu li a:hover,
+    .main-navigation .main-nav .sub-menu li a:focus-visible {
+        background-color: var(--gpa-tint-blue) !important;
+        color: var(--gpa-primary) !important;
+    }
+}
+@media (max-width: 768px) {
+    .site-header .inside-header {
+        min-height: 60px;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+    .gpa-logo-badge { width: 30px; height: 30px; }
+    .site-header .site-logo + .site-branding { margin-left: 8px; }
+    .site-header .main-title { font-size: 17px !important; }
+    .mobile-menu-control-wrapper .menu-toggle,
+    .mobile-menu-control-wrapper .menu-toggle:hover,
+    .mobile-menu-control-wrapper .menu-toggle:focus {
+        background: transparent !important;
+        color: var(--gpa-text-strong) !important;
+    }
+    .has-inline-mobile-toggle #site-navigation.toggled {
+        background: var(--gpa-surface) !important;
+        border-top: 1px solid var(--gpa-divider);
+    }
+}
+
+/* ---------- 9. Footer ----------
+   One block for every template (was copied in style.css, gpa-homepage.css
+   and database-page.css). Deep navy; widget content stays as it is. */
+.site-footer,
+.site-footer .footer-widgets,
+.site-footer .site-info {
+    background: var(--gpa-footer-bg) !important;
+    color: var(--gpa-footer-link) !important;
+    font-family: var(--gpa-font) !important;
+}
+.site-footer .footer-widgets { padding: 3rem 0 !important; }
+.site-footer .footer-widgets .widget { color: var(--gpa-footer-link) !important; }
+.site-footer .footer-widgets .widget-title,
+.site-footer .footer-widgets h2 {
+    font-family: var(--gpa-font) !important;
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    color: var(--gpa-footer-text) !important;
+    margin: 0 0 16px !important;
+}
+.site-footer .footer-widgets a {
+    color: var(--gpa-footer-link) !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    text-decoration: none !important;
+    transition: color .15s ease;
+}
+.site-footer .footer-widgets a:hover { color: var(--gpa-footer-text) !important; }
+.site-footer .footer-widgets ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.site-footer .footer-widgets li {
+    margin: 0 0 8px !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+}
+.site-footer .site-info {
+    border-top: 1px solid var(--gpa-footer-line) !important;
+    padding: 24px 0 !important;
+    text-align: center !important;
+    color: var(--gpa-footer-accent) !important;
+    font-size: 14px !important;
+}
+.site-footer .site-info :is(a, .copyright-bar) {
+    color: var(--gpa-footer-accent) !important;
+    text-decoration: none !important;
+}
+/* College templates zero every .grid-container's padding; the footer keeps the site width */
+html body .site-footer .grid-container {
+    max-width: 1280px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+}
+/* Freestar's privacy-manager link prints after the footer: same band */
+.gpa-cmp-link {
+    background: var(--gpa-footer-bg);
+    color: var(--gpa-footer-accent);
+}
+#pmLink:hover { color: var(--gpa-footer-accent) !important; }
+@media (max-width: 768px) {
+    .site-footer .footer-widgets { padding: 40px 0 !important; }
+    html body .site-footer .grid-container {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
 }

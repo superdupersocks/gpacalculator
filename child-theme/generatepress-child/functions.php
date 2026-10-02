@@ -1416,6 +1416,13 @@ if ( ! function_exists( 'gpa_render_breadcrumb' ) ) {
             $trail[] = array( get_the_title(), null );
         } elseif ( is_post_type_archive( 'colleges' ) ) {
             $trail[] = array( 'College Admissions', null );
+        } elseif ( is_singular() && ! is_front_page() ) {
+            // Same trail as the BreadcrumbList schema: Home > parent pages > this page.
+            $post_id = get_queried_object_id();
+            foreach ( gpa_breadcrumb_ancestors( $post_id ) as $ancestor_id ) {
+                $trail[] = array( gpa_breadcrumb_title( $ancestor_id ), get_permalink( $ancestor_id ) );
+            }
+            $trail[] = array( gpa_breadcrumb_title( $post_id ), null );
         } else {
             return;
         }
@@ -1434,6 +1441,39 @@ if ( ! function_exists( 'gpa_render_breadcrumb' ) ) {
         }
         echo '</ol></nav>';
     }
+}
+
+/** Published parent pages of a page, top level first. */
+function gpa_breadcrumb_ancestors( $post_id ) {
+    $ids = array();
+    foreach ( array_reverse( get_post_ancestors( $post_id ) ) as $ancestor_id ) {
+        if ( 'publish' === get_post_status( $ancestor_id ) ) {
+            $ids[] = $ancestor_id;
+        }
+    }
+    return $ids;
+}
+
+function gpa_breadcrumb_title( $post_id ) {
+    return wp_specialchars_decode( wp_strip_all_tags( get_the_title( $post_id ) ), ENT_QUOTES );
+}
+
+/**
+ * Design overhaul phase 4: the breadcrumb sits in the hero, above the H1, on
+ * calculator, content and blog post pages. College pages print their own.
+ */
+add_action( 'generate_before_page_title', 'gpa_hero_breadcrumb' );
+add_action( 'generate_before_entry_title', 'gpa_hero_breadcrumb' );
+function gpa_hero_breadcrumb() {
+    static $done = false;
+    if ( $done || ! is_singular( array( 'page', 'post' ) ) || is_front_page() || ! in_the_loop() || ! is_main_query() ) {
+        return;
+    }
+    if ( is_page() && ! gpa_is_content_hero_page() && ! ( function_exists( 'gpa_is_calculator_tool_page' ) && gpa_is_calculator_tool_page() ) ) {
+        return;
+    }
+    $done = true;
+    gpa_render_breadcrumb();
 }
 
 add_filter( 'rank_math/json_ld', 'gpa_breadcrumb_list_schema', 110, 2 );
@@ -1479,13 +1519,22 @@ function gpa_breadcrumb_list_schema( $data, $jsonld ) {
         );
         $page_url = $admission_url;
     } elseif ( is_singular() ) {
+        $post_id = get_queried_object_id();
+        foreach ( gpa_breadcrumb_ancestors( $post_id ) as $ancestor_id ) {
+            $items[] = array(
+                '@type'    => 'ListItem',
+                'position' => count( $items ) + 1,
+                'name'     => gpa_breadcrumb_title( $ancestor_id ),
+                'item'     => get_permalink( $ancestor_id ),
+            );
+        }
         $items[] = array(
             '@type'    => 'ListItem',
-            'position' => 2,
-            'name'     => get_the_title(),
-            'item'     => get_permalink(),
+            'position' => count( $items ) + 1,
+            'name'     => gpa_breadcrumb_title( $post_id ),
+            'item'     => get_permalink( $post_id ),
         );
-        $page_url = get_permalink();
+        $page_url = get_permalink( $post_id );
     } else {
         return $data;
     }
@@ -2735,7 +2784,7 @@ function gpa_is_content_hero_page() {
 
 add_filter( 'body_class', 'gpa_content_hero_band_class', 30 );
 function gpa_content_hero_band_class( $classes ) {
-    if ( gpa_is_content_hero_page() ) {
+    if ( gpa_is_content_hero_page() || is_singular( 'post' ) ) {
         $classes[] = 'gpa-hero-band';
     }
     return $classes;
@@ -3542,3 +3591,33 @@ function gpa_scale_page_nav( $content ) {
  * /admissions/auburn-university/ to auburn-university-at-montgomery. Exact matches keep working.
  */
 add_filter( 'strict_redirect_guess_404_permalink', '__return_true' );
+
+/**
+ * Design overhaul phase 4: logo = "4.0" badge (inline SVG, colors from
+ * layout.css tokens) + live wordmark "GPA Calculator" with "GPA" in the
+ * primary blue. The site title text stays a real link for crawlers.
+ */
+function gpa_logo_badge_svg() {
+	return '<svg class="gpa-logo-badge" viewBox="0 0 36 36" width="36" height="36" aria-hidden="true" focusable="false">'
+		. '<defs><linearGradient id="gpa-logo-grad" x1="0" y1="0" x2="1" y2="1">'
+		. '<stop offset="0" class="gpa-logo-badge__from"/><stop offset="1" class="gpa-logo-badge__to"/>'
+		. '</linearGradient></defs>'
+		. '<rect width="36" height="36" rx="9" fill="url(#gpa-logo-grad)"/>'
+		. '<text x="18" y="23" text-anchor="middle" font-size="14">4.0</text>'
+		. '</svg>';
+}
+
+add_filter( 'generate_logo_output', 'gpa_logo_output', 20, 2 );
+function gpa_logo_output( $output, $logo_url ) {
+	return sprintf(
+		'<div class="site-logo"><a href="%1$s" rel="home" aria-label="%2$s">%3$s</a></div>',
+		esc_url( apply_filters( 'generate_logo_href', home_url( '/' ) ) ),
+		esc_attr( get_bloginfo( 'name', 'display' ) ),
+		gpa_logo_badge_svg()
+	);
+}
+
+add_filter( 'generate_site_title_output', 'gpa_site_title_wordmark', 20 );
+function gpa_site_title_wordmark( $output ) {
+	return preg_replace( '#(rel="home"[^>]*>)\s*GPA\b#', '$1<span class="gpa-wordmark-accent">GPA</span>', $output, 1 );
+}

@@ -2015,47 +2015,7 @@ body.single-colleges .inside-navigation.grid-container {
     font-size: 16px !important;
 }
 
-/* ================================================================
-   FOOTER (reuse from existing calculator CSS)
-   ================================================================ */
-.db-footer .site-footer { background: var(--gpa-gray-900) !important; }
-.db-footer #footer-widgets { background: var(--gpa-gray-900) !important; padding: 60px 0 20px !important; }
-.db-footer .footer-widgets-container { max-width: 1200px !important; }
-.db-footer .inside-footer-widgets { display: flex !important; flex-wrap: wrap !important; gap: 20px !important; }
-.db-footer .inside-footer-widgets > div { flex: 1 !important; min-width: 160px !important; }
-.db-footer #footer-widgets .widget-title { color: var(--gpa-white) !important; font-size: 16px !important; font-weight: 700 !important; margin-bottom: 16px !important; }
-.db-footer #footer-widgets .widget a { color: var(--gpa-gray-300) !important; font-size: 14px !important; text-decoration: none !important; font-weight: 400 !important; }
-.db-footer #footer-widgets .widget a:hover { color: var(--gpa-white) !important; }
-.db-footer #footer-widgets .widget ul { list-style: none !important; padding: 0 !important; margin: 0 !important; }
-.db-footer #footer-widgets .widget li { margin-bottom: 10px !important; }
-.db-footer .site-info { background: var(--gpa-gray-900) !important; border-top: 1px solid var(--gpa-gray-800) !important; padding: 20px 0 !important; }
-.db-footer .site-info .copyright-bar { color: var(--gpa-gray-400) !important; font-size: 14px !important; text-align: center !important; }
-
-/* Also apply footer when body class is used */
-body.post-type-archive-colleges .site-footer,
-body.single-colleges .site-footer { background: var(--gpa-gray-900) !important; }
-body.post-type-archive-colleges #footer-widgets,
-body.single-colleges #footer-widgets { background: var(--gpa-gray-900) !important; padding: 60px 0 20px !important; }
-body.post-type-archive-colleges .footer-widgets-container,
-body.single-colleges .footer-widgets-container { max-width: 1200px !important; }
-body.post-type-archive-colleges .inside-footer-widgets,
-body.single-colleges .inside-footer-widgets { display: flex !important; flex-wrap: wrap !important; gap: 20px !important; }
-body.post-type-archive-colleges .inside-footer-widgets > div,
-body.single-colleges .inside-footer-widgets > div { flex: 1 !important; min-width: 160px !important; }
-body.post-type-archive-colleges #footer-widgets .widget-title,
-body.single-colleges #footer-widgets .widget-title { color: var(--gpa-white) !important; font-size: 16px !important; font-weight: 700 !important; margin-bottom: 16px !important; }
-body.post-type-archive-colleges #footer-widgets .widget a,
-body.single-colleges #footer-widgets .widget a { color: var(--gpa-gray-300) !important; font-size: 14px !important; text-decoration: none !important; font-weight: 400 !important; }
-body.post-type-archive-colleges #footer-widgets .widget a:hover,
-body.single-colleges #footer-widgets .widget a:hover { color: var(--gpa-white) !important; }
-body.post-type-archive-colleges #footer-widgets .widget ul,
-body.single-colleges #footer-widgets .widget ul { list-style: none !important; padding: 0 !important; margin: 0 !important; }
-body.post-type-archive-colleges #footer-widgets .widget li,
-body.single-colleges #footer-widgets .widget li { margin-bottom: 10px !important; }
-body.post-type-archive-colleges .site-info,
-body.single-colleges .site-info { background: var(--gpa-gray-900) !important; border-top: 1px solid var(--gpa-gray-800) !important; padding: 20px 0 !important; }
-body.post-type-archive-colleges .site-info .copyright-bar,
-body.single-colleges .site-info .copyright-bar { color: var(--gpa-gray-400) !important; font-size: 14px !important; text-align: center !important; }
+/* Footer: layout.css (section 9), the same on every template */
 
 /* ================================================================
    RESPONSIVE BREAKPOINTS
@@ -2279,13 +2239,6 @@ body.single-colleges .site-info .copyright-bar { color: var(--gpa-gray-400) !imp
     .db-college-grid {
         grid-template-columns: 1fr 1fr 1fr !important;
     }
-
-    /* Footer columns */
-    .db-footer .inside-footer-widgets > div,
-    body.post-type-archive-colleges,
-body.single-colleges .inside-footer-widgets > div {
-        min-width: 200px !important;
-    }
 }
 
 /* ---- xl: 1280px (filter grid 6 columns) ---- */
@@ -2330,13 +2283,6 @@ body.single-colleges .inside-footer-widgets > div {
     .db-faq .rank-math-answer p,
     .db-faq-answer {
         font-size: 16px !important;
-    }
-
-    /* Footer */
-    .db-footer .inside-footer-widgets > div,
-    body.post-type-archive-colleges,
-body.single-colleges .inside-footer-widgets > div {
-        flex: 0 0 48% !important;
     }
 }
 
@@ -3391,55 +3337,4 @@ body.single-colleges .db-container {
     to   { transform: rotate(360deg); }
 }
 
-/* ============================================================
-   T10.6 — Visible breadcrumb (archive /admission/ + single college)
-   UI counterpart of the BreadcrumbList JSON-LD (T1.3). Tokens only.
-   ============================================================ */
-.gpa-breadcrumb {
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: var(--gpa-gap-md, 16px) var(--gpa-gap-md, 16px) 0;
-    font-size: 0.875rem;
-    line-height: 1.4;
-}
-.gpa-breadcrumb__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0;
-}
-.gpa-breadcrumb__item {
-    display: inline-flex;
-    align-items: center;
-    color: var(--gpa-text-muted, var(--gpa-text-muted));
-    min-width: 0;
-}
-/* Separator before every item except the first. */
-.gpa-breadcrumb__item + .gpa-breadcrumb__item::before {
-    content: "/";
-    margin: 0 0.5em;
-    color: var(--gpa-text-light, var(--gpa-gray-400));
-    flex: none;
-}
-.gpa-breadcrumb__link {
-    color: var(--gpa-text-muted, var(--gpa-text-muted));
-    text-decoration: none;
-    transition: color 0.15s ease;
-}
-.gpa-breadcrumb__link:hover,
-.gpa-breadcrumb__link:focus {
-    color: var(--gpa-primary, var(--gpa-primary));
-    text-decoration: underline;
-}
-.gpa-breadcrumb__current {
-    color: var(--gpa-text-body, var(--gpa-text));
-    font-weight: 600;
-    /* Truncate a very long college name gracefully on small screens. */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 60vw;
-}
+/* T10.6 breadcrumb styles: layout.css (section 7) */

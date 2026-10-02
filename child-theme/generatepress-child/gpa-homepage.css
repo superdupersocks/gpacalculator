@@ -26,16 +26,7 @@
 	        margin-left: 2rem !important;
         margin-right: 2rem !important;
 } */
-/* ---- Hero ---- */
-.gpa-hero {   background: linear-gradient(
-    135deg,
-    var(--gpa-primary) 0%,
-    var(--gpa-accent) 50%,
-    var(--gpa-blue-800) 100%
-  ) !important; padding: 80px 16px !important; }
-.gpa-hero-title { 
-	        font-size: 3.75rem; font-weight: 700 !important; color: var(--gpa-white) !important; line-height: 1.2 !important; margin-bottom: 24px !important; }
-.gpa-hero-sub {         font-size: 1.5rem; color: color-mix(in srgb, var(--gpa-white) 85%, transparent) !important; line-height: 1.6 !important; margin-bottom: 32px !important; }
+/* ---- Hero: the shared hero in layout.css (section 6) ---- */
 .gpa-hero-trust { font-size: 14px !important; font-weight: 500 !important; color: color-mix(in srgb, var(--gpa-white) 70%, transparent) !important; }
 
 /* ---- Sections ---- */
@@ -167,63 +158,7 @@
 .gpa-sec-gray.gpa-related-sec{
 padding:80px 0 80px 0 !important;	
 }
-/* ============================================
-   FOOTER - Match Bolt (dark style)
-   ============================================ */
-.site-footer {
-    background:var(--gpa-gray-800) !important;
-    color: var(--gpa-gray-300) !important;
-    font-family: "Lexend", "Lexend Fallback", system-ui, sans-serif !important;
-}
-.site-footer .footer-widgets {
-    background: var(--gpa-gray-800) !important;
-    padding: 3rem 0 !important;
-}
-.site-footer .footer-widgets .widget {
-    color: var(--gpa-gray-300) !important;
-}
-.site-footer .footer-widgets .widget-title,
-.site-footer .footer-widgets h2 {
-    font-family: "Lexend", "Lexend Fallback", system-ui, sans-serif !important;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-    font-weight: 600 !important;
-    color: var(--gpa-white) !important;
-    margin-bottom: 16px !important;
-}
-.site-footer .footer-widgets a {
-    color: var(--gpa-gray-300) !important;
-    font-size: 14px !important;
-    text-decoration: none !important;
-    transition: color 0.2s !important;
-}
-.site-footer .footer-widgets a:hover {
-    color: var(--gpa-white) !important;
-}
-.site-footer .footer-widgets ul {
-    list-style: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-.site-footer .footer-widgets li {
-    margin-bottom: 8px !important;
-    line-height: 20px;
-}
-
-/* Footer Bar */
-.site-footer .footer-bar,
-.site-info {
-    background: var(--gpa-gray-800) !important;
-    border-top: 1px solid var(--gpa-gray-700) !important;
-    padding: 24px 0 !important;
-    text-align: center !important;
-    color: var(--gpa-gray-400) !important;
-    font-size: 14px !important;
-}
-.site-info a {
-    color: var(--gpa-gray-400) !important;
-    text-decoration: none !important;
-}
+/* Footer: layout.css (section 9) */
 
 /* ---- Rank Math FAQ Block ---- */
 .rank-math-block {
@@ -261,13 +196,10 @@ padding:80px 0 80px 0 !important;
    Responsive
    ============================================ */
 @media (max-width: 768px) {
-    .gpa-hero { padding: 50px 16px !important; }
-    .gpa-hero-title { font-size: 36px !important; }
     .gpa-h2 { font-size: 24px !important; }
     .gpa-sec-white, .gpa-sec-gray, .gpa-sec-dk { padding: 50px 16px !important; }
     .gpa-steps-wrap { padding: 32px 16px !important; }
     .gpa-result-num { font-size: 36px !important; }
-    .site-footer .footer-widgets { padding: 40px 0 !important; }
 }
 
 

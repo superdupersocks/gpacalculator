@@ -52,3 +52,27 @@ CDS files give no ranges). Needs step 1 live, since the new template shows the f
    /admissions/wilkes-university/ lists nine ranges. A page with a cited GPA but no ranges (e.g. one in the pending
    file) shows the average only.
 5. Changelog row with the undo `bash scripts/admissions/phase3_bands_live.sh revert <log>`.
+
+## 3. College names: lost punctuation and former names
+
+Data: `data/admissions/audit/phase3_names.csv` (`scripts/admissions/phase3_names.py`), 417 titles, each checked against
+the college's 2024 IPEDS name and the names IPEDS listed for the same college from 2002 to 2023
+(`data/admissions/review/ipeds_names.csv`): 304 renamed colleges (Calvin College is Calvin University), 65 names
+that lost a hyphen, apostrophe or period (Hardin-Simmons University), 30 campus names (Pace University New York is
+Pace University) and 18 forms of the same name (University of Illinois Chicago). A renamed college's old name goes
+into its former_name field, so the page says "Calvin University (formerly Calvin College) is ..." and the hub's
+search finds the old name. Addresses don't change. The 36 former names left as they are, with the reason, are in
+`phase3_names_kept.csv`. Needs step 1 live, since the new template shows the former name.
+
+1. Database backup: `SSH 'cd WP && wp db export - | gzip > ~/backups/gpacalculator-<UTC date-time>-pre-names.sql.gz'`,
+   then `gunzip -t`, the dump ends with "-- Dump completed", copy it to `~/gpacalculator-backups/`, SHA-256 matches.
+2. `bash scripts/admissions/phase3_names_live.sh plan`: expect "417 rows would change (304 former name, 65
+   punctuation, 30 campus name, 18 name form), 0 already match, 0 skipped". A SKIP means the page's title or college
+   is no longer the row's: stop and report it.
+3. `bash scripts/admissions/phase3_names_live.sh apply` (note the log name it prints): "applied 417".
+4. Check /admissions/calvin/: the heading and browser tab say Calvin University, and the opening line reads "Calvin
+   University (formerly Calvin College) is a private nonprofit 4-year university in Grand Rapids, Michigan";
+   /admissions/hardin-simmons-university/ says Hardin-Simmons University; /admissions/uiuc/ says University of
+   Illinois Urbana-Champaign with no "formerly"; on /admissions/, searching "Calvin College" lists Calvin University.
+5. Changelog row with the undo `bash scripts/admissions/phase3_names_live.sh revert <log>` (it restores every title
+   and removes the former names; the posts keep the new modified date).

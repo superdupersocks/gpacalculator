@@ -150,11 +150,8 @@ def write_sql(state, path):
                 f.write("INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES " + ", ".join(meta) + ";\n")
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("out")
-    ap.add_argument("--sql")
-    a = ap.parse_args()
+def compose():
+    """The State after every Phase 2 change, replayed in the order it went live."""
     s = State()
     s.cd("D", "phase2_cd_actions.csv")
     s.cd("C", "phase2_cd_actions.csv")
@@ -172,6 +169,15 @@ def main():
     s.import_e("phase2_r_import.csv")
     s.cd("R", "phase2_r_actions.csv")
     s.import_e("phase2_h_blank.csv")
+    return s
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("out")
+    ap.add_argument("--sql")
+    a = ap.parse_args()
+    s = compose()
     for line in s.log:
         print(line)
     print(f"{sum(1 for p in s.posts.values() if p['status'] == 'publish')} published colleges")

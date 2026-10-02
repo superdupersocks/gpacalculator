@@ -34,7 +34,7 @@ ADMCON_KEYWORDS = [("req_gpa", "gpa"), ("req_class_rank", "rank"), ("req_hs_reco
                    ("req_competencies", "competenc"), ("req_toefl", "toefl"), ("req_other_test", "other test"),
                    ("req_test_scores", "test score"), ("req_work_experience", "work experience"),
                    ("req_essay", "essay"), ("req_legacy", "legacy")]
-CREDITS_KEYWORDS = [("dual_credit", "dual"), ("life_experience_credit", "life experience"),
+CREDITS_KEYWORDS = [("dual_credit", "dual credit"), ("life_experience_credit", "life experience"),
                     ("ap_credit", "advanced placement")]
 
 TEST_PARTS = {"SATVR": (200, 800), "SATMT": (200, 800), "ACTCM": (1, 36), "ACTEN": (1, 36), "ACTMT": (1, 36)}
@@ -92,7 +92,7 @@ class Data:
                    "LOCALE", "HBCU", "LATITUDE", "LONGITUD", "CYACTIVE", "CLOSEDAT", "NEWID", "SECTOR"],
             "adm": ["UNITID", "APPLCN", "ADMSSN", "ENRLT", "SATPCT", "ACTPCT", "ADMCON1", "ADMCON7"]
                    + [f"{p}{q}" for p in TEST_PARTS for q in (25, 75)],
-            "ic": ["UNITID", "OPENADMP", "RELAFFIL", "CREDITS1"],
+            "ic": ["UNITID", "OPENADMP", "RELAFFIL"],
         }
         missing = [f"{f}: {v}" for f, vs in need.items() for v in vs if v not in self.dicts[f]["header"]]
         sc_need = ["UNITID", "INSTNM", "CITY", "STABBR", "ADM_RATE", "SAT_AVG", "UGDS", "TUITIONFEE_IN",
@@ -124,10 +124,10 @@ class Data:
         return tuple(sorted(v for e, y, v in hits if (e, y) == best))
 
     def by_title(self, f, prefix, keywords):
-        """{our column: variable} for variables like ADMCON3, matched on their dictionary title."""
+        """{our column: variable} for variables named like pattern, matched on their dictionary title."""
         found = {}
         for var, meta in self.dicts[f]["vars"].items():
-            if not re.fullmatch(prefix + r"\d+", var) or var not in self.dicts[f]["header"]:
+            if not re.fullmatch(prefix, var) or var not in self.dicts[f]["header"]:
                 continue
             title = meta["title"].lower()
             for col, kw in keywords:
@@ -381,8 +381,10 @@ def main(argv=None):
     out = Path(a.out)
     d = Data(a.raw)
     d.require()
-    admcon = d.by_title("adm", "ADMCON", ADMCON_KEYWORDS)
-    credits = d.by_title("ic", "CREDITS", CREDITS_KEYWORDS)
+    admcon = d.by_title("adm", r"ADMCON\d+", ADMCON_KEYWORDS)
+    credits = d.by_title("ic", r"\w+", CREDITS_KEYWORDS)  # optional: IPEDS has moved these items between years
+    if len(credits) < len(CREDITS_KEYWORDS):
+        print(f"note: credit-policy items found in IC: {credits or 'none'}")
     for need in ("req_gpa", "req_test_scores"):
         if need not in admcon:
             raise SystemExit(f"no ADMCON variable titled like {need} in the ADM dictionary")

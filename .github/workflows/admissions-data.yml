@@ -50,3 +50,12 @@ jobs:
           if git diff --cached --quiet; then echo "no changes"; exit 0; fi
           git commit -m "Refresh admissions data from College Scorecard and IPEDS"
           git push
+      - name: Keep the parsed dictionaries for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admissions-dictionaries
+          path: |
+            data/admissions/raw/ipeds/*_dict.json
+            data/admissions/manifest.json
+          if-no-files-found: ignore

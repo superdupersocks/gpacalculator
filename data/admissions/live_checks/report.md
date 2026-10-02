@@ -1,23 +1,24 @@
-# Live page check, 2026-10-02 15:00 UTC
+# Live page check, 2026-10-02 17:46 UTC
 
 From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_check.py.
 
 ## /admissions/harvard/
 
 - status 200
-- title: Harvard University Acceptance Rate (3.6%) & SAT/ACT Scores
-- description: Harvard University admitted just 3.6% of applicants for fall 2024. Middle 50% SAT: 740–780 reading and writing, 770–800 math. Here's what it takes to get in.
-- og:title: Harvard University Acceptance Rate (3.6%) & SAT/ACT Scores
-- H1: Harvard University Admissions & Acceptance Rate
+- title: Harvard University Average GPA & Acceptance Rate (3.6%)
+- description: Harvard University admitted just 3.6% of applicants for fall 2024. Middle 50% SAT: 740–780 reading and writing, 770–800 math. See its average GPA.
+- og:title: Harvard University Average GPA & Acceptance Rate (3.6%)
+- H1: Harvard University Average GPA & Admissions
 - JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
-  - FAQ: What GPA do you need to get into Harvard University?
+  - FAQ: What is the average high school GPA at Harvard University?
   - FAQ: What is the acceptance rate at Harvard University?
   - FAQ: What SAT scores do Harvard University students have?
   - FAQ: What ACT scores do Harvard University students have?
   - FAQ: Does Harvard University accept AP credit?
   - FAQ: What is the average net price at Harvard University?
-- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Harvard University? Harvard University's acceptance rate was 3.6% for fall 20
-- "Acceptance rate": versity Harvard University Admissions & Acceptance Rate Cambridge, Massachusetts Private nonprofit, 4-year Acceptance Rate: 3.6% Undergraduates: 8,844 Key Highlights
+- "Average high school GPA": dergraduates: 8,844 Key Highlights 4.22 Average high school GPA As reported by the college, 2025–26 (weighted) 740–780 / 770–800 SAT reading and writing / math Middle 50%, f
+- "Average GPA": s Harvard University Harvard University Average GPA & Admissions Cambridge, Massachusetts Private nonprofit, 4-year Acceptance Rate: 3.6% Undergraduates: 8,844 K
+- "Acceptance rate": Massachusetts Private nonprofit, 4-year Acceptance Rate: 3.6% Undergraduates: 8,844 Key Highlights 4.22 Average high school GPA As reported by the college, 2025–26 (
 - "Average SAT": –23 $17,900 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1553 54% of fall 2024 first-year students submitted SAT scores Section 25th perc
 - "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
@@ -210,32 +211,37 @@ From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_che
 
 ## /admissions/ivy-tech-community-college-kokomo/
 
-- status 200
-- title: Ivy Tech Community College Kokomo Admission Requirements
-- description: Ivy Tech Community College Kokomo is a public 2-year college in Kokomo, Indiana, with 5,403 students. See its admission requirements and credit options.
-- og:title: Ivy Tech Community College Kokomo Admission Requirements
-- H1: Ivy Tech Community College Kokomo Admissions & Acceptance Rate
-- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, PostalAddress, Question
-  - FAQ: What is the acceptance rate at Ivy Tech Community College Kokomo?
-- "Acceptance rate": h Community College Kokomo Admissions & Acceptance Rate Kokomo, Indiana Public 2 Year Acceptance Rate: 100% Enrollment: 5,403 Admission Scores Ivy Tech Community Col
-- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+- status 200, ended at https://gpacalculator.net/admissions/ivy-tech-community-college/
+- title: Ivy Tech Community College Admission Requirements
+- description: Ivy Tech Community College has an open admission policy. It's a public 2-year college in Indianapolis, Indiana. See admission requirements and credit options.
+- og:title: Ivy Tech Community College Admission Requirements
+- H1: Ivy Tech Community College Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Ivy Tech Community College?
+  - FAQ: Does Ivy Tech Community College accept AP credit?
+  - FAQ: What is the average net price at Ivy Tech Community College?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Ivy Tech Community College? Ivy Tech Community College has an open admission policy: it accepts any studen
+- "Open Admission": ts Indianapolis, Indiana Public, 2-year Open Admission Undergraduates: 110,710 Key Highlights Average Net Price, 2022–23 $7,391 Admission Scores Ivy Tech Community
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
 
 ## /admissions/stanford/
 
 - status 200
-- title: Stanford University Acceptance Rate (3.6%) & SAT/ACT Scores
-- description: Stanford University admitted just 3.6% of applicants for fall 2024. Middle 50% SAT: 740–780 reading and writing, 770–800 math. Here's what it takes to get in.
-- og:title: Stanford University Acceptance Rate (3.6%) & SAT/ACT Scores
-- H1: Stanford University Admissions & Acceptance Rate
+- title: Stanford University Average GPA & Acceptance Rate (3.6%)
+- description: Stanford University admitted just 3.6% of applicants for fall 2024. Middle 50% SAT: 740–780 reading and writing, 770–800 math. See its average GPA.
+- og:title: Stanford University Average GPA & Acceptance Rate (3.6%)
+- H1: Stanford University Average GPA & Admissions
 - JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
-  - FAQ: What GPA do you need to get into Stanford University?
+  - FAQ: What is the average high school GPA at Stanford University?
   - FAQ: What is the acceptance rate at Stanford University?
   - FAQ: What SAT scores do Stanford University students have?
   - FAQ: What ACT scores do Stanford University students have?
   - FAQ: Does Stanford University accept AP credit?
   - FAQ: What is the average net price at Stanford University?
-- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Stanford University? Stanford University's acceptance rate was 3.6% for fall
-- "Acceptance rate": ersity Stanford University Admissions & Acceptance Rate Stanford, California Private nonprofit, 4-year Acceptance Rate: 3.6% Undergraduates: 7,904 Key Highlights 740
+- "Average high school GPA": dergraduates: 7,904 Key Highlights 3.94 Average high school GPA As reported by the college, 2025–26 740–780 / 770–800 SAT reading and writing / math Middle 50%, fall 2024 fi
+- "Average GPA": Stanford University Stanford University Average GPA & Admissions Stanford, California Private nonprofit, 4-year Acceptance Rate: 3.6% Undergraduates: 7,904 Key H
+- "Acceptance rate": d, California Private nonprofit, 4-year Acceptance Rate: 3.6% Undergraduates: 7,904 Key Highlights 3.94 Average high school GPA As reported by the college, 2025–26 7
 - "Average SAT": –23 $17,998 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1553 51% of fall 2024 first-year students submitted SAT scores Section 25th perc
 - "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
@@ -243,19 +249,20 @@ From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_che
 ## /admissions/upenn/
 
 - status 200
-- title: University of Pennsylvania Acceptance Rate: 5.4%
-- description: The University of Pennsylvania admitted just 5.4% of applicants for fall 2024. Middle 50% SAT: 740–770 reading and writing, 770–800 math. See the requirements.
-- og:title: University of Pennsylvania Acceptance Rate: 5.4%
-- H1: University of Pennsylvania Admissions & Acceptance Rate
+- title: University of Pennsylvania: Average GPA & 5.4% Acceptance
+- description: The University of Pennsylvania admitted just 5.4% of applicants for fall 2024. Middle 50% SAT: 740–770 reading and writing, 770–800 math. See its average GPA.
+- og:title: University of Pennsylvania: Average GPA & 5.4% Acceptance
+- H1: University of Pennsylvania Average GPA & Admissions
 - JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
-  - FAQ: What GPA do you need to get into University of Pennsylvania?
+  - FAQ: What is the average high school GPA at University of Pennsylvania?
   - FAQ: What is the acceptance rate at University of Pennsylvania?
   - FAQ: What SAT scores do University of Pennsylvania students have?
   - FAQ: What ACT scores do University of Pennsylvania students have?
   - FAQ: Does University of Pennsylvania accept AP credit?
   - FAQ: What is the average net price at University of Pennsylvania?
-- "Average GPA": ennsylvania itself, so we don't list an average GPA. What is the acceptance rate at University of Pennsylvania? University of Pennsylvania's acceptance rate was
-- "Acceptance rate": University of Pennsylvania Admissions & Acceptance Rate Philadelphia, Pennsylvania Private nonprofit, 4-year Acceptance Rate: 5.4% Undergraduates: 11,478 Key Highlig
+- "Average high school GPA": dergraduates: 11,478 Key Highlights 3.9 Average high school GPA As reported by the college, 2025–26 740–770 / 770–800 SAT reading and writing / math Middle 50%, fall 2024 fi
+- "Average GPA": Pennsylvania University of Pennsylvania Average GPA & Admissions Philadelphia, Pennsylvania Private nonprofit, 4-year Acceptance Rate: 5.4% Undergraduates: 11,47
+- "Acceptance rate": Pennsylvania Private nonprofit, 4-year Acceptance Rate: 5.4% Undergraduates: 11,478 Key Highlights 3.9 Average high school GPA As reported by the college, 2025–26 7
 - "Average SAT": –23 $26,017 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1553 50% of fall 2024 first-year students submitted SAT scores Section 25th perc
 - "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
@@ -263,17 +270,18 @@ From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_che
 ## /admissions/csu-fullerton/
 
 - status 200
-- title: California State University Fullerton Acceptance Rate: 91%
-- description: California State University Fullerton admitted most applicants for fall 2024 (91%). It's a public 4-year college in Fullerton, California. See the requirements.
-- og:title: California State University Fullerton Acceptance Rate: 91%
-- H1: California State University Fullerton Admissions & Acceptance Rate
+- title: California State University Fullerton Average GPA
+- description: California State University Fullerton admitted most applicants for fall 2024 (91%). It's a public 4-year college in Fullerton, California. See its average GPA.
+- og:title: California State University Fullerton Average GPA
+- H1: California State University Fullerton Average GPA & Admissions
 - JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
-  - FAQ: What GPA do you need to get into California State University Fullerton?
+  - FAQ: What is the average high school GPA at California State University Fullerton?
   - FAQ: What is the acceptance rate at California State University Fullerton?
   - FAQ: Does California State University Fullerton accept AP credit?
   - FAQ: What is the average net price at California State University Fullerton?
-- "Average GPA": y Fullerton itself, so we don't list an average GPA. What is the acceptance rate at California State University Fullerton? California State University Fullerton'
-- "Acceptance rate": State University Fullerton Admissions & Acceptance Rate Fullerton, California Public, 4-year Acceptance Rate: 91% Undergraduates: 38,760 Key Highlights Average Net P
+- "Average high school GPA": rgraduates: 38,760 Key Highlights 3.434 Average high school GPA As reported by the college, 2024–25 Average Net Price, 2022–23 $6,283 Admission Scores California State Unive
+- "Average GPA": n California State University Fullerton Average GPA & Admissions Fullerton, California Public, 4-year Acceptance Rate: 91% Undergraduates: 38,760 Key Highlights
+- "Acceptance rate": ns Fullerton, California Public, 4-year Acceptance Rate: 91% Undergraduates: 38,760 Key Highlights 3.434 Average high school GPA As reported by the college, 2024–25
 - "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
 
@@ -348,3 +356,233 @@ From `data/admissions/live_checks/pages.txt`, read-only GETs by scripts/page_che
 - H1: GPA Calculator
 - JSON-LD: 1 parse, 0 don't; types: Answer, FAQPage, ImageObject, Offer, Organization, Question, SearchAction, WebApplication, WebPage, WebSite
 - flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/baker-college/
+
+- status 200
+- title: Baker College Acceptance Rate (82%) & SAT Scores
+- description: Baker College admitted most applicants for fall 2024 (82%). Middle 50% SAT: 500–600 reading and writing, 460–560 math. Here's what it takes to get in.
+- og:title: Baker College Acceptance Rate (82%) & SAT Scores
+- H1: Baker College Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Baker College?
+  - FAQ: What is the acceptance rate at Baker College?
+  - FAQ: What SAT scores do Baker College students have?
+  - FAQ: Does Baker College accept AP credit?
+  - FAQ: What is the average net price at Baker College?
+- "Average GPA": ker College itself, so we don't list an average GPA. What is the acceptance rate at Baker College? Baker College's acceptance rate was 82% for fall 2024: it admi
+- "Acceptance rate": aker College Baker College Admissions & Acceptance Rate Owosso, Michigan Private nonprofit, 4-year Acceptance Rate: 82% Undergraduates: 3,595 Key Highlights 500–600
+- "Average SAT": –23 $14,743 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1080 9% of fall 2024 first-year students submitted SAT scores Section 25th perce
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/university-of-phoenix/
+
+- status 200
+- title: University of Phoenix Admission Requirements
+- description: The University of Phoenix has an open admission policy. It's a private for-profit 4-year college in Phoenix, Arizona. See admission requirements.
+- og:title: University of Phoenix Admission Requirements
+- H1: University of Phoenix Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at University of Phoenix?
+  - FAQ: Does University of Phoenix accept AP credit?
+  - FAQ: What is the average net price at University of Phoenix?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at University of Phoenix? University of Phoenix has an open admission policy: it accepts any student who appl
+- "Open Admission": nix, Arizona Private for-profit, 4-year Open Admission Undergraduates: 89,828 Key Highlights Average Net Price, 2022–23 $13,612 Admission Scores University of Phoen
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/ivy-tech-community-college/
+
+- status 200
+- title: Ivy Tech Community College Admission Requirements
+- description: Ivy Tech Community College has an open admission policy. It's a public 2-year college in Indianapolis, Indiana. See admission requirements and credit options.
+- og:title: Ivy Tech Community College Admission Requirements
+- H1: Ivy Tech Community College Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Ivy Tech Community College?
+  - FAQ: Does Ivy Tech Community College accept AP credit?
+  - FAQ: What is the average net price at Ivy Tech Community College?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Ivy Tech Community College? Ivy Tech Community College has an open admission policy: it accepts any studen
+- "Open Admission": ts Indianapolis, Indiana Public, 2-year Open Admission Undergraduates: 110,710 Key Highlights Average Net Price, 2022–23 $7,391 Admission Scores Ivy Tech Community
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/fortis-institute/
+
+- status 200
+- title: Fortis Institute Admission Requirements & Open Admission
+- description: Fortis Institute has an open admission policy. It's a private for-profit 2-year college in Cookeville, Tennessee. See admission requirements and credit options.
+- og:title: Fortis Institute Admission Requirements & Open Admission
+- H1: Fortis Institute Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Fortis Institute?
+  - FAQ: Does Fortis Institute accept AP credit?
+  - FAQ: What is the average net price at Fortis Institute?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Fortis Institute? Fortis Institute has an open admission policy: it accepts any student who applies, so it
+- "Open Admission": e, Tennessee Private for-profit, 2-year Open Admission Undergraduates: 334 Key Highlights Average Net Price, 2022–23 $24,139 Admission Scores Fortis Institute has a
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/pennsylvania-western-university/
+
+- status 200
+- title: Pennsylvania Western University Acceptance Rate: 94%
+- description: Pennsylvania Western University admitted most applicants for fall 2024 (94%). Middle 50% SAT: 480–580 reading and writing, 460–560 math. See the requirements.
+- og:title: Pennsylvania Western University Acceptance Rate: 94%
+- H1: Pennsylvania Western University Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Pennsylvania Western University?
+  - FAQ: What is the acceptance rate at Pennsylvania Western University?
+  - FAQ: What SAT scores do Pennsylvania Western University students have?
+  - FAQ: What ACT scores do Pennsylvania Western University students have?
+  - FAQ: Does Pennsylvania Western University accept AP credit?
+  - FAQ: What is the average net price at Pennsylvania Western University?
+- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Pennsylvania Western University? Pennsylvania Western University's acceptance
+- "Acceptance rate": ylvania Western University Admissions & Acceptance Rate California, Pennsylvania Public, 4-year Acceptance Rate: 94% Undergraduates: 7,586 Key Highlights 480–580 / 4
+- "Average SAT": –23 $19,579 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1063 21% of fall 2024 first-year students submitted SAT scores Section 25th perc
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/connecticut-state-community-college/
+
+- status 200
+- title: Connecticut State Community College Admission Requirements
+- description: Connecticut State Community College has an open admission policy. It's a public 2-year college in New Britain, Connecticut. See admission requirements.
+- og:title: Connecticut State Community College Admission Requirements
+- H1: Connecticut State Community College Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Connecticut State Community College?
+  - FAQ: Does Connecticut State Community College accept AP credit?
+  - FAQ: What is the average net price at Connecticut State Community College?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Connecticut State Community College? Connecticut State Community College has an open admission policy: it
+- "Open Admission": New Britain, Connecticut Public, 2-year Open Admission Undergraduates: 36,315 Key Highlights Average Net Price, 2022–23 $9,059 Admission Scores Connecticut State Co
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/purdue-university-global/
+
+- status 200
+- title: Purdue University Global Admission Requirements
+- description: Purdue University Global has an open admission policy. It's a public 4-year college in West Lafayette, Indiana. See admission requirements and credit options.
+- og:title: Purdue University Global Admission Requirements
+- H1: Purdue University Global Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Purdue University Global?
+  - FAQ: Does Purdue University Global accept AP credit?
+  - FAQ: What is the average net price at Purdue University Global?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Purdue University Global? Purdue University Global has an open admission policy: it accepts any student wh
+- "Open Admission": West Lafayette, Indiana Public, 4-year Open Admission Undergraduates: 31,224 Key Highlights Average Net Price, 2022–23 $9,494 Admission Scores Purdue University Gl
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/long-island-university/
+
+- status 200
+- title: Long Island University Acceptance Rate (86%) & Admissions
+- description: Long Island University admitted most applicants for fall 2024 (86%). Middle 50% SAT: 560–670 reading and writing, 550–680 math. Here's what it takes to get in.
+- og:title: Long Island University Acceptance Rate (86%) & Admissions
+- H1: Long Island University Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Long Island University?
+  - FAQ: What is the acceptance rate at Long Island University?
+  - FAQ: What SAT scores do Long Island University students have?
+  - FAQ: What ACT scores do Long Island University students have?
+  - FAQ: Does Long Island University accept AP credit?
+  - FAQ: What is the average net price at Long Island University?
+- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Long Island University? Long Island University's acceptance rate was 86% for
+- "Acceptance rate": ity Long Island University Admissions & Acceptance Rate Brookville, New York Private nonprofit, 4-year Acceptance Rate: 86% Undergraduates: 12,072 Key Highlights 560
+- "Average SAT": –23 $22,620 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1224 24% of fall 2024 first-year students submitted SAT scores Section 25th perc
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/clarion-university-of-pennsylvania/
+
+- status 200, ended at https://gpacalculator.net/admissions/pennsylvania-western-university/
+- title: Pennsylvania Western University Acceptance Rate: 94%
+- description: Pennsylvania Western University admitted most applicants for fall 2024 (94%). Middle 50% SAT: 480–580 reading and writing, 460–560 math. See the requirements.
+- og:title: Pennsylvania Western University Acceptance Rate: 94%
+- H1: Pennsylvania Western University Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Pennsylvania Western University?
+  - FAQ: What is the acceptance rate at Pennsylvania Western University?
+  - FAQ: What SAT scores do Pennsylvania Western University students have?
+  - FAQ: What ACT scores do Pennsylvania Western University students have?
+  - FAQ: Does Pennsylvania Western University accept AP credit?
+  - FAQ: What is the average net price at Pennsylvania Western University?
+- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Pennsylvania Western University? Pennsylvania Western University's acceptance
+- "Acceptance rate": ylvania Western University Admissions & Acceptance Rate California, Pennsylvania Public, 4-year Acceptance Rate: 94% Undergraduates: 7,586 Key Highlights 480–580 / 4
+- "Average SAT": –23 $19,579 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1063 21% of fall 2024 first-year students submitted SAT scores Section 25th perc
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/kaplan-university-lincoln-campus/
+
+- status 200, ended at https://gpacalculator.net/admissions/purdue-university-global/
+- title: Purdue University Global Admission Requirements
+- description: Purdue University Global has an open admission policy. It's a public 4-year college in West Lafayette, Indiana. See admission requirements and credit options.
+- og:title: Purdue University Global Admission Requirements
+- H1: Purdue University Global Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Purdue University Global?
+  - FAQ: Does Purdue University Global accept AP credit?
+  - FAQ: What is the average net price at Purdue University Global?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Purdue University Global? Purdue University Global has an open admission policy: it accepts any student wh
+- "Open Admission": West Lafayette, Indiana Public, 4-year Open Admission Undergraduates: 31,224 Key Highlights Average Net Price, 2022–23 $9,494 Admission Scores Purdue University Gl
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/georgia-military-college-augusta-campus/
+
+- status 200, ended at https://gpacalculator.net/admissions/georgia-military-college/
+- title: Georgia Military College Admission Requirements
+- description: Georgia Military College has an open admission policy. It's a public 4-year college in Milledgeville, Georgia. See admission requirements and credit options.
+- og:title: Georgia Military College Admission Requirements
+- H1: Georgia Military College Admission Requirements
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What is the acceptance rate at Georgia Military College?
+  - FAQ: Does Georgia Military College accept AP credit?
+  - FAQ: What is the average net price at Georgia Military College?
+- "Acceptance rate": Frequently Asked Questions What is the acceptance rate at Georgia Military College? Georgia Military College has an open admission policy: it accepts any student wh
+- "Open Admission": s Milledgeville, Georgia Public, 4-year Open Admission Undergraduates: 6,575 Key Highlights Average Net Price, 2022–23 $11,571 Admission Scores Georgia Military Col
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): und
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## /admissions/university-of-phoenix-las-vegas-campus/
+
+- status 410
+- title: Page not found • GPA Calculator
+- description: 
+- og:title: Page not found • GPA Calculator
+- H1: Oops! That page can’t be found.
+- JSON-LD: 1 parse, 0 don't; types: Organization, WebPage, WebSite
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link no
+
+## /admissions/auburn-university/
+
+- status 200, ended at https://gpacalculator.net/admissions/auburn/
+- title: Auburn University Acceptance Rate (46%) & SAT/ACT Scores
+- description: Auburn University admitted 46% of applicants for fall 2024. The middle 50% of first-year students scored 26–31 on the ACT. See the full admission requirements.
+- og:title: Auburn University Acceptance Rate (46%) & SAT/ACT Scores
+- H1: Auburn University Admissions & Acceptance Rate
+- JSON-LD: 1 parse, 0 don't; types: Answer, BreadcrumbList, CollegeOrUniversity, EducationalOccupationalProgram, FAQPage, ListItem, MonetaryAmount, PostalAddress, Question
+  - FAQ: What GPA do you need to get into Auburn University?
+  - FAQ: What is the acceptance rate at Auburn University?
+  - FAQ: What SAT scores do Auburn University students have?
+  - FAQ: What ACT scores do Auburn University students have?
+  - FAQ: Does Auburn University accept AP credit?
+  - FAQ: What is the average net price at Auburn University?
+- "Average GPA": University itself, so we don't list an average GPA. What is the acceptance rate at Auburn University? Auburn University's acceptance rate was 46% for fall 2024:
+- "Acceptance rate": iversity Auburn University Admissions & Acceptance Rate Auburn, Alabama Public, 4-year Acceptance Rate: 46% Undergraduates: 27,907 Key Highlights 630–690 / 630–700 S
+- "Average SAT": –23 $24,524 Admission Scores SAT Scores Average SAT (College Scorecard estimate) 1345 15% of fall 2024 first-year students submitted SAT scores Section 25th perc
+- "Sources": tendance minus grants and scholarships. Sources U.S. Department of Education, National Center for Education Statistics, IPEDS (2024–25 provisional data): adm
+- flags: collegesimply no, GPA Requirements in title/description/H1 no, Admission Standards no, Applicant Competition no, What GPA do I need no, Freestar tags yes, College Navigator link yes
+
+## sitemap /sitemap_index.xml colleges
+
+- index status 200: 4 colleges sitemap pages
+  - colleges-sitemap1.xml: status 200, 945 addresses
+  - colleges-sitemap2.xml: status 200, 944 addresses
+  - colleges-sitemap3.xml: status 200, 944 addresses
+  - colleges-sitemap4.xml: status 200, 334 addresses
+- 3167 addresses, 3167 different; listed more than once: 0

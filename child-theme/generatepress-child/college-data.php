@@ -780,12 +780,12 @@ if ( ! function_exists( 'gpa_college_sections' ) ) {
 
 if ( ! function_exists( 'gpa_college_profile_styles' ) ) {
     /**
-     * College pages use the content-page design: content-styles.css and admissions.css instead of database-page.css
-     * (which the /admissions/ hub keeps), and the content template's body classes, which give them the hero band, the
-     * white column and the section numbers in layout.css.
+     * College pages and the /admissions/ hub use the content-page design: content-styles.css and admissions.css
+     * instead of database-page.css, and the content template's body classes, which give them the hero band, the white
+     * column and the section numbers in layout.css.
      */
     function gpa_college_profile_styles() {
-        if ( ! is_singular( 'colleges' ) ) {
+        if ( ! is_singular( 'colleges' ) && ! is_post_type_archive( 'colleges' ) ) {
             return;
         }
         wp_dequeue_style( 'database-page' );
@@ -797,10 +797,168 @@ if ( ! function_exists( 'gpa_college_profile_styles' ) ) {
 
 if ( ! function_exists( 'gpa_college_profile_body_class' ) ) {
     function gpa_college_profile_body_class( $classes ) {
-        if ( is_singular( 'colleges' ) ) {
+        if ( is_singular( 'colleges' ) || is_post_type_archive( 'colleges' ) ) {
             $classes = array_merge( $classes, array( 'content-page', 'gpa-template-content', 'gpa-hero-band' ) );
         }
         return $classes;
     }
     add_filter( 'body_class', 'gpa_college_profile_body_class' );
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Admissions Phase 3: the /admissions/ hub. archive-colleges.php prints the hero, the finder
+ * (template-parts/college-db-archive.php, also the [gpa_college_archive] shortcode) and the notes on the data; the
+ * finder's rows come from gpa_render_college_card(), on the first load and from the filter_colleges AJAX handler.
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+if ( ! function_exists( 'gpa_college_hub_stats' ) ) {
+    // The hub's live numbers: published colleges, colleges whose page shows a cited GPA, the fall most pages'
+    // admissions figures are for ("fall 2024") and the data releases most pages use.
+    function gpa_college_hub_stats() {
+        static $stats = null;
+        if ( null !== $stats ) {
+            return $stats;
+        }
+        global $wpdb;
+        $gpa   = (int) $wpdb->get_var(
+            "SELECT COUNT(DISTINCT p.ID) FROM {$wpdb->posts} p
+             JOIN {$wpdb->postmeta} g ON g.post_id = p.ID AND g.meta_key = 'cds_gpa' AND g.meta_value <> ''
+             JOIN {$wpdb->postmeta} u ON u.post_id = p.ID AND u.meta_key = 'cds_gpa_source_url' AND u.meta_value <> ''
+             WHERE p.post_type = 'colleges' AND p.post_status = 'publish'"
+        );
+        $most  = function ( $key ) use ( $wpdb ) {
+            return (string) $wpdb->get_var( $wpdb->prepare(
+                "SELECT m.meta_value FROM {$wpdb->postmeta} m
+                 JOIN {$wpdb->posts} p ON p.ID = m.post_id AND p.post_type = 'colleges' AND p.post_status = 'publish'
+                 WHERE m.meta_key = %s AND m.meta_value <> ''
+                 GROUP BY m.meta_value ORDER BY COUNT(*) DESC LIMIT 1",
+                $key
+            ) );
+        };
+        $year  = $most( 'adm_year' );
+        $count = wp_count_posts( 'colleges' );
+        $stats = array(
+            'colleges'          => isset( $count->publish ) ? (int) $count->publish : 0,
+            'gpa'               => $gpa,
+            'fall'              => ctype_digit( $year ) ? 'fall ' . $year : '',
+            'ipeds_release'     => $most( 'ipeds_release' ),
+            'scorecard_release' => $most( 'scorecard_release' ),
+        );
+        return $stats;
+    }
+}
+
+if ( ! function_exists( 'gpa_college_hub_search_sql' ) ) {
+    /**
+     * The hub's search (filter_colleges AJAX, query var gpa_hub_terms): every word has to be in the college's name,
+     * its federal (IPEDS) name, a former name or its location ("Abilene, Texas"), so "Texas" finds the colleges in
+     * Texas, not only the ones named after it.
+     */
+    function gpa_college_hub_search_sql( $search, $query ) {
+        global $wpdb;
+        $terms = (array) $query->get( 'gpa_hub_terms' );
+        if ( ! $terms ) {
+            return $search;
+        }
+        $and = array();
+        foreach ( $terms as $term ) {
+            $like  = '%' . $wpdb->esc_like( $term ) . '%';
+            $and[] = $wpdb->prepare(
+                "({$wpdb->posts}.post_title LIKE %s OR EXISTS (SELECT 1 FROM {$wpdb->postmeta} gs WHERE gs.post_id = {$wpdb->posts}.ID AND gs.meta_key IN ('location', 'ipeds_name', 'former_name') AND gs.meta_value LIKE %s))",
+                $like,
+                $like
+            );
+        }
+        return ' AND ' . implode( ' AND ', $and ) . ' ';
+    }
+}
+
+if ( ! function_exists( 'gpa_render_college_card' ) ) {
+    /**
+     * One college in the hub's list: its name, place and type, then the figures its page shows (acceptance rate or
+     * open admission, SAT and ACT middle 50%, and the average GPA with its label when the college published one we
+     * verified). Each figure cell carries its own label, shown on phones; desktop shows them once, in the list's
+     * header row. Pages still under review say so instead of showing figures. The class db-college-card is what
+     * database-ajax.js counts.
+     */
+    function gpa_render_college_card( $post_id ) {
+        $v    = gpa_college_view( $post_id );
+        $f    = $v['fresh'];
+        $own  = trim( (string) get_field( 'owning', $post_id ) );
+        $meta = array_filter( array( $v['location'], gpa_college_has( $own ) ? $own : '' ) );
+        $dash = '<span class="gpa-hub-row__none" title="Not reported">–</span>';
+
+        $cells = '';
+        if ( $f ) {
+            if ( $v['rate'] ) {
+                $rate = esc_html( $v['rate'] );
+            } elseif ( $v['open'] ) {
+                $rate = '<span class="gpa-hub-row__open">Open admission</span>';
+            } else {
+                $rate = $dash;
+            }
+            $sat = array();
+            foreach ( $f['sat'] as $section => $p ) {
+                if ( '' !== gpa_college_range( $p ) ) {
+                    $sat[] = '<span class="gpa-hub-row__line">' . esc_html( gpa_college_range( $p ) ) . ' <small>' . ( 'Math' === $section ? 'Math' : 'R&amp;W' ) . '</small></span>';
+                }
+            }
+            $act = isset( $f['act']['Composite'] ) ? gpa_college_range( $f['act']['Composite'] ) : '';
+            // [label, short label shown on phones, value]
+            foreach ( array(
+                array( 'Acceptance rate', 'Acceptance', $rate ),
+                array( 'SAT, middle 50%', 'SAT', $sat ? implode( '', $sat ) : $dash ),
+                array( 'ACT, middle 50%', 'ACT', '' !== $act ? esc_html( $act ) : $dash ),
+            ) as $cell ) {
+                $cells .= '<div class="gpa-hub-row__fig"><span class="gpa-hub-row__label"><span class="gpa-hub-row__short" aria-hidden="true">' . esc_html( $cell[1] ) . '</span><span class="screen-reader-text">' . esc_html( $cell[0] ) . '</span></span><span class="gpa-hub-row__val">' . $cell[2] . '</span></div>';
+            }
+        } else {
+            $cells = '<div class="gpa-hub-row__review">Figures under review</div>';
+        }
+
+        $gpa = '';
+        if ( $v['cds'] ) {
+            $gpa = '<span class="gpa-hub-row__gpa">Average GPA <strong>' . esc_html( $v['cds']['value'] ) . '</strong>'
+                . ( '' !== $v['cds']['basis'] ? ' (' . esc_html( $v['cds']['basis'] ) . ')' : '' )
+                . ', as reported by the college for ' . esc_html( $v['cds']['year'] ) . '</span>';
+        }
+
+        return '<div class="db-college-card gpa-hub-row" role="listitem" data-post-id="' . esc_attr( $post_id ) . '">'
+            . '<div class="gpa-hub-row__college"><a class="gpa-hub-row__name" href="' . esc_url( get_permalink( $post_id ) ) . '">' . esc_html( $v['name'] ) . '</a>'
+            . ( $meta ? '<span class="gpa-hub-row__meta"><span>' . implode( '</span> <span>', array_map( 'esc_html', $meta ) ) . '</span></span>' : '' )
+            . $gpa . '</div>'
+            . $cells
+            . '</div>';
+    }
+}
+
+if ( ! function_exists( 'gpa_college_hub_title' ) ) {
+    // The hub's title and description (search results and social cards), from its live count.
+    function gpa_college_hub_title() {
+        return 'College Admissions Database: Acceptance Rates, SAT & ACT';
+    }
+    function gpa_college_hub_description() {
+        $s = gpa_college_hub_stats();
+        return 'Look up acceptance rates, SAT and ACT score ranges and admission requirements for ' . number_format( $s['colleges'] )
+            . ' US colleges, with average GPAs where colleges report them.';
+    }
+    function gpa_college_hub_seo_title( $title ) {
+        return is_post_type_archive( 'colleges' ) ? gpa_college_hub_title() : $title;
+    }
+    function gpa_college_hub_seo_description( $description ) {
+        return is_post_type_archive( 'colleges' ) ? gpa_college_hub_description() : $description;
+    }
+    add_filter( 'pre_get_document_title', 'gpa_college_hub_seo_title', 20 );
+    add_filter( 'rank_math/frontend/title', 'gpa_college_hub_seo_title', 20 );
+    add_filter( 'rank_math/frontend/description', 'gpa_college_hub_seo_description', 20 );
+    add_filter( 'rank_math/opengraph/facebook/og_title', 'gpa_college_hub_seo_title', 20 );
+    add_filter( 'rank_math/opengraph/twitter/twitter_title', 'gpa_college_hub_seo_title', 20 );
+    add_filter( 'rank_math/opengraph/facebook/og_description', 'gpa_college_hub_seo_description', 20 );
+    add_filter( 'rank_math/opengraph/twitter/twitter_description', 'gpa_college_hub_seo_description', 20 );
+    // Without Rank Math (local previews), print the description the plugin would
+    add_action( 'wp_head', function () {
+        if ( is_post_type_archive( 'colleges' ) && ! defined( 'RANK_MATH_VERSION' ) ) {
+            echo "\n" . '<meta name="description" content="' . esc_attr( gpa_college_hub_description() ) . '" />' . "\n";
+        }
+    }, 1 );
 }

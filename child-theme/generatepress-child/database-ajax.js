@@ -24,7 +24,8 @@
         totalColleges: parseInt(gpa_db_ajax.total_colleges, 10) || 0,
         showingCount: 0,
         loading: false,
-        loadingMore: false
+        loadingMore: false,
+        queued: false
     };
 
     // ============================================
@@ -233,7 +234,12 @@
     // AJAX Request: Filter/Search Colleges
     // ============================================
     function fetchColleges(append) {
-        if (state.loading) return;
+        if (state.loading) {
+            // A search or filter change made while a request is out runs when it returns, so the list always
+            // matches what was typed last
+            if (!append) state.queued = true;
+            return;
+        }
         state.loading = true;
 
         var params = buildParams();
@@ -318,6 +324,12 @@
                 }
             } else {
                 console.error('Database AJAX request failed:', xhr.status);
+            }
+
+            if (state.queued) {
+                state.queued = false;
+                state.page = 1;
+                fetchColleges(false);
             }
         };
 
@@ -429,8 +441,9 @@
     if (filtersToggle && filtersPanel) {
         filtersToggle.addEventListener('click', function () {
             var isVisible = filtersPanel.style.display !== 'none';
-            filtersPanel.style.display = isVisible ? 'none' : 'block';
+            filtersPanel.style.display = isVisible ? 'none' : 'grid';
             filtersToggle.classList.toggle('db-archive-filters__toggle--active', !isVisible);
+            filtersToggle.setAttribute('aria-expanded', String(!isVisible));
         });
     }
 

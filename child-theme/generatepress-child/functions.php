@@ -1048,7 +1048,7 @@ function gpa_college_archive_schema($data, $jsonld) {
             '@id'         => $page_url . '#collectionpage',
             'url'         => $page_url,
             'name'        => 'US College Admissions Database',
-            'description' => 'Browse admission requirements, acceptance rates and SAT and ACT score ranges for US colleges and universities.',
+            'description' => function_exists( 'gpa_college_hub_description' ) ? gpa_college_hub_description() : 'Browse admission requirements, acceptance rates and SAT and ACT score ranges for US colleges and universities.',
             'mainEntity'  => array( '@id' => $page_url . '#itemlist' ),
         );
     }
@@ -2071,11 +2071,12 @@ if ( ! function_exists( 'gpa_fmt_pct' ) ) {
 
 add_shortcode( 'gpa_college_archive', 'gpa_college_archive_shortcode' );
 function gpa_college_archive_shortcode() {
+    // The college finder from the /admissions/ hub; its styles are in admissions.css (section 7)
     wp_enqueue_style(
-        'database-page',
-        get_stylesheet_directory_uri() . '/database-page.css',
+        'gpa-admissions',
+        get_stylesheet_directory_uri() . '/admissions.css',
         array('gpa-components'),
-        gpa_asset_ver( 'database-page.css' )
+        gpa_asset_ver( 'admissions.css' )
     );
     wp_enqueue_script(
         'database-ajax',
@@ -2089,209 +2090,7 @@ function gpa_college_archive_shortcode() {
     return ob_get_clean();
 }
 
-if ( ! function_exists( 'gpa_render_college_card' ) ) {
-    function gpa_render_college_card( $post_id ) {
-        $college_name      = get_the_title( $post_id );
-        $permalink         = get_permalink( $post_id );
-        $location          = get_field( 'location', $post_id );
-        $owning            = get_field( 'owning', $post_id );
-        $acceptance_rate   = get_field( 'acceptance_rate', $post_id );
-        $average_gpa       = get_field( 'average_gpa', $post_id );
-        $admission_standards = get_field( 'admission_standards', $post_id );
-        $img_url           = get_field( 'img_url', $post_id );
-
-        $sat_range         = get_field( 'sat_range', $post_id );
-        $average_sat_score = get_field( 'average_sat_score', $post_id );
-        $sat_reading_25    = get_field( 'sat_reading_25', $post_id );
-        $sat_reading_75    = get_field( 'sat_reading_75', $post_id );
-        $sat_math_25       = get_field( 'sat_math_25', $post_id );
-        $sat_math_75       = get_field( 'sat_math_75', $post_id );
-        $sat_composite_25  = get_field( 'sat_composite_25', $post_id );
-        $sat_composite_75  = get_field( 'sat_composite_75', $post_id );
-
-        $act_range         = get_field( 'act_range', $post_id );
-        $average_act_score = get_field( 'average_act_score', $post_id );
-        $act_reading_25    = get_field( 'act_reading_25', $post_id );
-        $act_reading_75    = get_field( 'act_reading_75', $post_id );
-        $act_math_25       = get_field( 'act_math_25', $post_id );
-        $act_math_75       = get_field( 'act_math_75', $post_id );
-        $act_composite_25  = get_field( 'act_composite_25', $post_id );
-        $act_composite_75  = get_field( 'act_composite_75', $post_id );
-
-        // Pages with the federal import: no unsourced GPA, standards label or hotlinked photo; ACT English instead of
-        // Reading; the SAT average is College Scorecard's estimate
-        $fresh = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
-        $act_english_25 = $act_english_75 = '';
-        if ( $fresh ) {
-            $average_gpa = $admission_standards = $img_url = '';
-            $act_english_25 = get_post_meta( $post_id, 'act_english_25', true );
-            $act_english_75 = get_post_meta( $post_id, 'act_english_75', true );
-        }
-
-        $state_abbr = '';
-        if ( $location ) {
-            $parts = array_map( 'trim', explode( ',', $location ) );
-            if ( isset( $parts[1] ) ) {
-                $state_abbr = strtoupper( trim( $parts[1] ) );
-            }
-        }
-
-        $acceptance_num = floatval( str_replace( '%', '', $acceptance_rate ) );
-        if ( $acceptance_num > 0 && $acceptance_num < 20 ) {
-            $acceptance_badge_class = 'db-card-badge--red';
-        } elseif ( $acceptance_num < 50 ) {
-            $acceptance_badge_class = 'db-card-badge--orange';
-        } else {
-            $acceptance_badge_class = 'db-card-badge--green';
-        }
-
-        $owning_lower = strtolower( trim( $owning ) );
-        if ( strpos( $owning_lower, 'public' ) !== false ) {
-            $owning_badge_class = 'db-card-badge--purple';
-        } elseif ( strpos( $owning_lower, 'private' ) !== false ) {
-            $owning_badge_class = 'db-card-badge--blue';
-        } else {
-            $owning_badge_class = 'db-card-badge--gray';
-        }
-
-        $gpa_formatted = gpa_fmt_gpa( $average_gpa );
-        $gpa_display = $gpa_formatted !== '' ? $gpa_formatted : 'N/A';
-        $acceptance_display = $acceptance_rate ? esc_html( gpa_fmt_pct( $acceptance_rate ) ) : 'N/A';
-
-        ob_start();
-        ?>
-        <div class="db-college-card" data-post-id="<?php echo esc_attr( $post_id ); ?>">
-            <a class="db-college-card__image" href="<?php echo esc_url( $permalink ); ?>" aria-label="<?php echo esc_attr( $college_name ); ?>">
-                <?php if ( $img_url ) : ?>
-                    <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $college_name ); ?>" loading="lazy" decoding="async" />
-                <?php else : ?>
-                    <div class="db-college-card__image-placeholder" aria-hidden="true">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                        </svg>
-                    </div>
-                <?php endif; ?>
-            </a>
-            <div class="db-college-card__badges">
-                <?php if ( $state_abbr ) : ?>
-                    <span class="db-card-badge db-card-badge--state"><?php echo esc_html( $state_abbr ); ?></span>
-                <?php endif; ?>
-                <?php if ( $admission_standards ) : ?>
-                    <span class="db-card-badge db-card-badge--standards"><?php echo esc_html( $admission_standards ); ?></span>
-                <?php endif; ?>
-                <?php if ( $owning ) : ?>
-                    <span class="db-card-badge <?php echo esc_attr( $owning_badge_class ); ?>"><?php echo esc_html( $owning ); ?></span>
-                <?php endif; ?>
-            </div>
-
-            <h3 class="db-college-card__name">
-                <a href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $college_name ); ?></a>
-            </h3>
-
-            <?php if ( $location ) : ?>
-                <div class="db-college-card__location">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <span><?php echo esc_html( $location ); ?></span>
-                </div>
-            <?php endif; ?>
-
-            <div class="db-college-card__stats">
-                <div class="db-college-card__stat">
-                    <span class="db-college-card__stat-label">Acceptance Rate</span>
-                    <span class="db-college-card__stat-value <?php echo esc_attr( $acceptance_badge_class ); ?>"><?php echo $acceptance_display; ?></span>
-                </div>
-                <?php if ( '' !== $gpa_formatted ) : ?>
-                <div class="db-college-card__stat">
-                    <span class="db-college-card__stat-label">Average GPA</span>
-                    <span class="db-college-card__stat-value"><?php echo esc_html( $gpa_display ); ?></span>
-                </div>
-                <?php endif; ?>
-            </div>
-
-            <div class="db-college-card__test-box db-college-card__test-box--sat">
-                <div class="db-college-card__test-header">
-                    <span class="db-college-card__test-title">SAT Scores</span>
-                    <?php if ( $sat_range ) : ?>
-                        <span class="db-college-card__test-range"><?php echo esc_html( $sat_range ); ?></span>
-                    <?php endif; ?>
-                </div>
-                <?php if ( $average_sat_score ) : ?>
-                    <div class="db-college-card__test-avg">
-                        <span class="db-college-card__test-avg-label"><?php echo $fresh ? 'Est. average' : 'Average'; ?></span>
-                        <span class="db-college-card__test-avg-value"><?php echo esc_html( $average_sat_score ); ?></span>
-                    </div>
-                <?php endif; ?>
-                <div class="db-college-card__test-breakdown">
-                    <?php if ( $sat_reading_25 || $sat_reading_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Reading &amp; Writing</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $sat_reading_25 ); ?> - <?php echo esc_html( $sat_reading_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $sat_math_25 || $sat_math_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Math</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $sat_math_25 ); ?> - <?php echo esc_html( $sat_math_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $sat_composite_25 || $sat_composite_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Composite</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $sat_composite_25 ); ?> - <?php echo esc_html( $sat_composite_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="db-college-card__test-box db-college-card__test-box--act">
-                <div class="db-college-card__test-header">
-                    <span class="db-college-card__test-title">ACT Scores</span>
-                    <?php if ( $act_range ) : ?>
-                        <span class="db-college-card__test-range"><?php echo esc_html( $act_range ); ?></span>
-                    <?php endif; ?>
-                </div>
-                <?php if ( $average_act_score ) : ?>
-                    <div class="db-college-card__test-avg">
-                        <span class="db-college-card__test-avg-label">Average</span>
-                        <span class="db-college-card__test-avg-value"><?php echo esc_html( $average_act_score ); ?></span>
-                    </div>
-                <?php endif; ?>
-                <div class="db-college-card__test-breakdown">
-                    <?php if ( $act_reading_25 || $act_reading_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Reading</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_reading_25 ); ?> - <?php echo esc_html( $act_reading_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $act_english_25 || $act_english_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">English</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_english_25 ); ?> - <?php echo esc_html( $act_english_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $act_math_25 || $act_math_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Math</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_math_25 ); ?> - <?php echo esc_html( $act_math_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $act_composite_25 || $act_composite_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Composite</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_composite_25 ); ?> - <?php echo esc_html( $act_composite_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
-}
+// gpa_render_college_card(), one college in the hub list and its AJAX results: college-data.php
 
 add_action('wp_ajax_filter_colleges', 'gpa_ajax_filter_colleges');
 add_action('wp_ajax_nopriv_filter_colleges', 'gpa_ajax_filter_colleges');
@@ -2317,7 +2116,9 @@ function gpa_ajax_filter_colleges() {
     );
 
     if ( $search ) {
-        $args['s'] = $search;
+        // Every word must be in the college's name, its federal (IPEDS) name, a former name or its city and state
+        // (gpa_college_hub_search_sql() in college-data.php)
+        $args['gpa_hub_terms'] = array_slice( preg_split( '/[\s,]+/', $search, -1, PREG_SPLIT_NO_EMPTY ), 0, 6 );
     }
 
     $meta_query = array( 'relation' => 'AND' );
@@ -2393,11 +2194,12 @@ function gpa_ajax_filter_colleges() {
             array( 'key' => 'adm_open_admission', 'value' => 'Yes' ),
         );
     } elseif ( $quick_filter === 'ivy_league' ) {
-        $ivy_slugs = array(
-            'harvard', 'yale-university', 'princeton-university', 'columbia-university',
-            'brown-university', 'dartmouth-college', 'university-of-pennsylvania', 'cornell-university',
+        // By IPEDS unit ID: Brown, Columbia, Cornell, Dartmouth, Harvard, Penn, Princeton, Yale
+        $meta_query[] = array(
+            'key'     => 'ipeds_unitid',
+            'value'   => array( '217156', '190150', '190415', '182670', '166027', '215062', '186131', '130794' ),
+            'compare' => 'IN',
         );
-        $args['post_name__in'] = $ivy_slugs;
     }
 
     // Lowest-first sorts would list colleges with no figure (open admission, not reported) as if it were 0
@@ -2427,7 +2229,9 @@ function gpa_ajax_filter_colleges() {
         $args[ $k ] = $v;
     }
 
+    add_filter( 'posts_search', 'gpa_college_hub_search_sql', 10, 2 );
     $query = new WP_Query( $args );
+    remove_filter( 'posts_search', 'gpa_college_hub_search_sql', 10 );
 
     $html = '';
     if ( $query->have_posts() ) {

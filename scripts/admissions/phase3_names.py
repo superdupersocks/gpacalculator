@@ -13,7 +13,8 @@ scripts/admissions/ipeds_names.py). Writes data/admissions/audit/phase3_names.cs
   The title keeps punctuation IPEDS drops (A.T. Still, a comma) and keeps a space where IPEDS joins a campus or city
   to a college's or system's name with a hyphen (University of Houston Clear Lake), as the site's titles do.
 - former name: the title is a name the same college (same UNITID) carried in an earlier IPEDS year, and the college
-  has since been renamed (Calvin College is Calvin University). The new title is the 2024 name, written the same way.
+  has since been renamed (Calvin College is Calvin University; Patrick Henry Community College is Patrick & Henry
+  Community College, since "and" joins two names). The new title is the 2024 name, written the same way.
   The import keeps the old name in the post's former_name field: the page says "(formerly ...)" and the hub's search
   finds it.
 - campus name: only the campus or place in the name changed (Herzing University Kenner is Herzing University New
@@ -55,7 +56,7 @@ GENERIC_END = {
     "system", "tech", "technology", "theology", "university",
 }
 CAMPUS_WORDS = {"main", "campus", "campuses", "branch", "online", "global", "immersion", "digital", "worldwide"}
-CONNECTORS = {"at", "in", "of", "the", "and"}
+CONNECTORS = {"at", "in", "of", "the"}
 LEGAL = {"inc", "llc", "ltd"}
 ALIASES = {"st": "saint", "ste": "sainte", "ft": "fort", "mt": "mount"}
 STATE_NAMES = {s.lower() for s in STATES}
@@ -188,8 +189,8 @@ def is_place(ws, cities):
 
 
 def same_name(o, n):
-    """Whether two differing stretches of words are the same name written another way: a connector, an initial,
-    "Inc", or a spelling (Centeville, Centerville)."""
+    """Whether two differing stretches of words are the same name written another way: a connector ("at", "of"; not
+    "and", which joins two names), an initial, "Inc", or a spelling (Centeville, Centerville)."""
     ws = set(o + n)
     if ws <= CONNECTORS or ws <= LEGAL or all(len(w) == 1 for w in ws):
         return True

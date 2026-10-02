@@ -40,8 +40,9 @@ functions.php keeps everything the design deploys shipped. The design's CSS file
 Data: `data/admissions/audit/phase3_gpa_bands.csv` (`scripts/admissions/phase3_gpa_bands.py`): for 192 of the 267 pages
 with a cited GPA, the share of first-year students in each GPA range from the same Common Data Set (C11), every value
 verified in Phase 1, adding up to 99-101% and fitting the cited average. The other 75 are in
-`phase3_gpa_bands_pending.csv` with the reason: 46 CDS files give no ranges, and 27 give ranges the average doesn't fit
-(13 weighted averages above 4.0, 14 others), so the two may be on different bases. Those pages keep the average only.
+`phase3_gpa_bands_pending.csv` with the reason: 46 CDS files give fewer than three ranges, 2 give ranges that don't
+add up to 99-101%, and 27 give ranges the average doesn't fit (13 weighted averages above 4.0, 14 others), so the two
+may be on different bases. Those pages keep the average only.
 The caption says the college doesn't say whether the GPAs are weighted. Needs step 1 live, since the new template
 shows the fields. A later GPA refresh must rewrite or remove these fields along with the average.
 
@@ -61,17 +62,17 @@ shows the fields. A later GPA refresh must rewrite or remove these fields along 
 
 Data: `data/admissions/audit/phase3_names.csv` (`scripts/admissions/phase3_names.py`), 417 titles, each checked against
 the college's 2024 IPEDS name and the names IPEDS listed for the same college from 2002 to 2023
-(`data/admissions/review/ipeds_names.csv`): 304 renamed colleges (Calvin College is Calvin University), 65 names
+(`data/admissions/review/ipeds_names.csv`): 306 renamed colleges (Calvin College is Calvin University), 65 names
 that lost a hyphen, apostrophe or period (Hardin-Simmons University), 30 campus names (Pace University New York is
-Pace University) and 18 forms of the same name (University of Illinois Chicago). A renamed college's old name goes
+Pace University) and 16 forms of the same name (University of Illinois Chicago). A renamed college's old name goes
 into its former_name field, so the page says "Calvin University (formerly Calvin College) is ..." and the hub's
 search finds the old name. Addresses don't change. The 36 former names left as they are, with the reason, are in
 `phase3_names_kept.csv`. Needs step 1 live, since the new template shows the former name.
 
 1. Database backup: `SSH 'cd WP && wp db export - | gzip > ~/backups/gpacalculator-<UTC date-time>-pre-names.sql.gz'`,
    then `gunzip -t`, the dump ends with "-- Dump completed", copy it to `~/gpacalculator-backups/`, SHA-256 matches.
-2. `bash scripts/admissions/phase3_names_live.sh plan`: expect "417 rows would change (304 former name, 65
-   punctuation, 30 campus name, 18 name form), 0 already match, 0 skipped". A SKIP means the page's title or college
+2. `bash scripts/admissions/phase3_names_live.sh plan`: expect "417 rows would change (306 former name, 65
+   punctuation, 30 campus name, 16 name form), 0 already match, 0 skipped". A SKIP means the page's title or college
    is no longer the row's: stop and report it.
 3. `bash scripts/admissions/phase3_names_live.sh apply` (note the log name it prints): "applied 417".
 4. Check /admissions/calvin/: the heading and browser tab say Calvin University, and the opening line reads "Calvin

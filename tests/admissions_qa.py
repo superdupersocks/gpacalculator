@@ -838,8 +838,8 @@ _h = {"10": [{"unitid": "10", "first_year": "2002", "last_year": "2017", "name":
 _hi = {"10": {"name": "University of the Potomac-Washington DC Campus"}, "30": {"name": "George Washington University"},
        "60": {"name": "Penn State Scranton"}}
 _hx = _r.history_index(_h)
-eq("R/second look: the older directories by title or slug: renamed, merged by NEWID, closed, left IPEDS (for FSA), a "
-   "NEWID loop that IPEDS 2024's own record ends, and nothing",
+eq("R/second look: the older directories by title or slug: renamed, merged by NEWID (with its own record, for FSA), "
+   "closed, left IPEDS (for FSA), a NEWID loop that IPEDS 2024's own record ends, and nothing",
    [(lambda f: f and (f["uid"], f["end"], f["merged"], f["closed"], len(f["segs"])))(
        _r.history_match(_r.page_keys(t, s, loc), _hx, _h, _hi)) for t, s, loc in (
        ("Potomac College Washington", "potomac-college-washington", "Washington, District Of Columbia"),
@@ -848,7 +848,7 @@ eq("R/second look: the older directories by title or slug: renamed, merged by NE
        ("Gone College", "gone-college", "Erie, Pennsylvania"),
        ("Worthington Scranton", "penn-state-worthington-scranton", "Dunmore, Pennsylvania"),
        ("Nowhere College", "nowhere-college", "Erie, Pennsylvania"))],
-   [("10", "10", False, False, 0), ("30", "30", True, False, 0), ("", "40", False, True, 1),
+   [("10", "10", False, False, 0), ("30", "30", True, False, 1), ("", "40", False, True, 1),
     ("", "50", False, False, 1), ("60", "60", False, False, 0), None])
 _sm = {s: {"title": t, "location": loc, "method": "none", "unitid": "", "ipeds_name": ""} for s, t, loc in (
     ("corcoran", "Corcoran College of Art and Design", "Washington, District Of Columbia"),
@@ -868,6 +868,26 @@ eq("R/second look in the review: a renamed college gets E's fields, a merged one
    ([("corcoran", "301", "R", "george-washington/", False), ("gone-college", "hold", "", "", True),
      ("kaplan-university-davenport-campus", "retire", "R", "", False),
      ("potomac-college-washington", "import", "R", "", False)], {"potomac-college-washington": "10"}))
+_kh = {"90": [{"unitid": "90", "first_year": "2010", "last_year": "2019", "name": "Kaplan University-Hagerstown Campus",
+               "city": "Hagerstown", "state": "MD", "opeid": "00458612", "closed": "", "newid": "95"}],
+       "91": [{"unitid": "91", "first_year": "2008", "last_year": "2019", "name": "Kaplan University-Lincoln Campus",
+               "city": "Lincoln", "state": "NE", "opeid": "00458609", "closed": "", "newid": "95"}]}
+_ki = {"95": {"name": "Purdue University Global", "alias": "", "city": "West Lafayette", "state": "IN",
+              "closed_date": "", "operating": "Yes", "control": "Public", "level": "4-year", "opeid": "00458600"}}
+_km = {s: {"title": t, "location": loc, "method": "none", "unitid": "", "ipeds_name": ""} for s, t, loc in (
+    ("kaplan-university-hagerstown-campus", "Purdue Global Hagerstown Campus", "Hagerstown, Maryland"),
+    ("kaplan-university-lincoln-campus", "Purdue Global Lincoln Campus", "Lincoln, Nebraska"))}
+_krows, _ = _r.review(sorted(_km), {}, {}, _km, _ki, {"95": "purdue-global"}, {}, _kh)
+_kfsa = [{"opeid": "00458612", "name": "Purdue University Global - Hagerstown", "city": "Hagerstown", "state": "MD",
+          "close_date": "2019-09-18"}]
+_r.fsa_review(_krows, {}, {}, _ki, [], _kh, {"00458612": _kfsa}, {})
+eq("R/second look: a campus IPEDS folded into another college (NEWID) retires when FSA lists the campus itself "
+   "closed, else it goes where the college went; '&amp;' in a title reads as '&'",
+   ([(r["slug"], r["outcome"], r["checkpoint"], r["reason"].split("; ")[-1][:30]) for r in _krows],
+    _r.norm("McCann School of Business &amp; Technology")),
+   ([("kaplan-university-hagerstown-campus", "retire", "R", "closed 2019-09-18 (FSA's close"),
+     ("kaplan-university-lincoln-campus", "301", "R", "FSA's closed-school file doesn")],
+    "mccann school of business and technology"))
 _srem = [{"slug": "remington-college-knoxville", "title": "Remington College Knoxville",
           "location": "Knoxville, Tennessee", "unitid": "497000", "outcome": "hold", "checkpoint": "", "target": "",
           "reason": "renamed: ...; open in IPEDS 2024 but missing from College Scorecard's June 2026 release"}]

@@ -36,6 +36,7 @@ Writes data/admissions/audit/:
 Changes nothing on the site.
 """
 import csv
+import html
 import re
 import sys
 from collections import Counter
@@ -60,6 +61,8 @@ NEW_PAGES = {
     "192448": ("long-island-university", "Long Island University"),
     "235237": ("pierce-college-district", "Pierce College District"),
     "214111": ("montgomery-county-community-college", "Montgomery County Community College"),
+    "498571": ("pennsylvania-western-university", "Pennsylvania Western University"),
+    "489779": ("purdue-university-global", "Purdue University Global"),
 }
 
 # Judgment calls on the audit's evidence: slug -> ("unitid", UNITID, why) to settle which college a page is, or
@@ -100,6 +103,9 @@ MANUAL = {
     "unt-health-fort-worth": (
         "unitid", "228909", "IPEDS 2024 lists the University of North Texas's health science center in Fort Worth as "
         "University of North Texas Health Science Center (UNITID 228909), alias UNT Health Science Center"),
+    "university-of-arizona-global-campus": (
+        "unitid", "154022", "IPEDS 2024 gives uagc.edu, the University of Arizona Global Campus's website, for UNITID "
+        "154022, which it lists as Ashford University in San Diego"),
     "midwestern-university": (
         "hold", "the page covers both of Midwestern University's campuses, which IPEDS lists as two colleges "
         "(Downers Grove, UNITID 143853, and Glendale, UNITID 423643)"),
@@ -151,9 +157,9 @@ SPELLED_OUT = {"purdue global": "purdue university global"}  # our titles' short
 
 
 def norm(s):
-    """A name or city for comparison: lower case, '&' as 'and', no punctuation, 'the', 'inc' or 'campus', St. as
-    Saint, and the names FSA spells out (SPELLED_OUT)."""
-    words = re.sub(r"[^a-z0-9 ]", " ", (s or "").lower().replace("&", " and ")).split()
+    """A name or city for comparison: lower case, '&' as 'and' (also as our titles' '&amp;'), no punctuation, 'the',
+    'inc' or 'campus', St. as Saint, and the names FSA spells out (SPELLED_OUT)."""
+    words = re.sub(r"[^a-z0-9 ]", " ", html.unescape(s or "").lower().replace("&", " and ")).split()
     out = " ".join(ABBREVIATIONS.get(w, w) for w in words if w not in ("the", "inc", "campus"))
     for short, full in SPELLED_OUT.items():
         out = re.sub(rf"\b{short}\b", full, out)
@@ -341,7 +347,7 @@ def history_match(keys, index, hist, inst):
     """What the directories since 2002 say of the college a page names, or None when none lists a name of the page:
     {"uid": the IPEDS 2024 college it is now ('' when none), "end": the college its records lead to, "evidence",
     "merged": it got there by NEWID, "closed": IPEDS gives a closing date, "segs": the records (for FSA's check
-    when it left IPEDS)}."""
+    when it left IPEDS, or the records found when it merged: FSA's list may show that campus closed)}."""
     found = set().union(*(index.get(k, set()) for k in keys))
     if not found:
         return None
@@ -362,7 +368,8 @@ def history_match(keys, index, hist, inst):
     if end in inst:
         now = (f"merged into {inst[end]['name']} (UNITID {end}, NEWID)" if merged else
                f"IPEDS 2024 lists it as {inst[end]['name']}")
-        return {"uid": end, "end": end, "evidence": f"{said}; {now}", "merged": merged, "closed": False, "segs": []}
+        return {"uid": end, "end": end, "evidence": f"{said}; {now}", "merged": merged, "closed": False,
+                "segs": [s for s in segs if s["unitid"] in found] if merged else []}
     last = max((s for s in segs if s["unitid"] == end), key=lambda s: s["last"], default=None)
     if last and last["closed"]:
         return {"uid": "", "end": end, "evidence": f"{said}; UNITID {end} closed {last['closed']} (IPEDS CLOSEDAT, "
@@ -472,7 +479,8 @@ def review(pages, unmatched, merged, match, inst, page_of, s_pages, hist=None):
             continue
         i = inst.get(uid, {})
         row.update(unitid=uid, ipeds_name=i.get("name", ""), ipeds_city=i.get("city", ""),
-                   ipeds_state=i.get("state", ""))
+                   ipeds_state=i.get("state", ""), _evidence=evidence,
+                   _merged_segs=look["segs"] if look and look["merged"] else [])
         what, cp, target, why = outcome(slug, uid, inst, page_of, s_pages)
         if uid not in inst and "(IPEDS CLOSEDAT" in evidence:
             what, cp, target, why = "retire", "R", "", ""
@@ -523,6 +531,16 @@ def fsa_review(rows, unmatched, match, inst, held, hist, by_ope, by_place):
             before = NEVER
         r.update(outcome="retire", checkpoint="R", target="", reason=f"{before}; {why}") if date else \
             r.update(reason=f"{before}; {why}")
+    for r in rows:  # campuses IPEDS folded into another college (NEWID), which FSA's list may show closed
+        segs = r.get("_merged_segs")
+        if not segs:
+            continue
+        last = max(segs, key=lambda s: s["last"])
+        ope, since = latest_opeid([s["unitid"] for s in segs], hist)
+        date, why = fsa_closed([ope] if ope else [], ([last["name"], r["title"]], last["city"], last["state"]),
+                               since or last["first"], by_ope, by_place)
+        r.update(outcome="retire", checkpoint="R", target="", reason=f"{r['_evidence']}; {why}") if date else \
+            r.update(reason=f"{r['reason']}; {why}")
     for r in rows:  # pages the review placed at a college IPEDS 2024 lists but College Scorecard doesn't
         i = inst.get(r.get("unitid") or "")
         if r["outcome"] != "hold" or not i or not r["reason"].endswith(SCORECARD):
@@ -576,7 +594,8 @@ def main():
     # Pages whose college R confirms can take redirects in R (Northwood's Texas campus to its Michigan page)
     confirmed = {uid: slug for slug, uid in imports.items()}
     for r in rows:
-        if r["outcome"] == "hold" and r.get("unitid") in confirmed and r["finding"] == "merged":
+        if r["outcome"] == "hold" and r.get("unitid") in confirmed and (r["finding"] == "merged" or
+                                                                          r.get("_merged_segs")):
             r.update(outcome="301", checkpoint="R", target=f"{SITE}{confirmed[r['unitid']]}/",
                      reason=r["reason"].replace("the college it merged into has no page yet",
                                                 "R imports that college's page"))

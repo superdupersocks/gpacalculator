@@ -33,14 +33,18 @@ isn't needed.
    ```
 3. `bash scripts/admissions/phase2_b_live.sh count`, then `bash scripts/admissions/phase2_b_live.sh export` (note the
    export name it prints). The export is the audit copy of the original values Digant asked to keep.
-4. Theme first, so the listing stops sorting by GPA before the GPAs go. B2's data is already in (06:27), so B and B2
-   ship together from 759f5b7 (B's five files, B2's GPA card and the exact-slug 404 guess; B2 step 3 is then done):
-   `bash scripts/deploy_theme.sh 759f5b7 --dry-run --only functions.php,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,database-ajax.js`.
-   Only those five files may change. Then the same command without `--dry-run`; note the theme backup name. If this
-   Mac's permission settings block the deploy, Digant runs that command (without `--dry-run`) in Terminal and types
-   "deployed" in the thread; find the backup name with `bash scripts/deploy_theme.sh --list`.
+4. Theme first, so the listing stops sorting by GPA before the GPAs go. B2's data is already in (06:27), so B, B2 and
+   E's template ship together from af793b4: B's five files plus E's new college-data.php. That commit holds B, B2's GPA
+   card, the exact-slug 404 guess and E's template (which changes a page only once E's data reaches it), so B2 step 3
+   and E step 2 are then done:
+   `bash scripts/deploy_theme.sh af793b4 --dry-run --only functions.php,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,database-ajax.js,college-data.php`.
+   Only those six files may change (college-data.php is new). Then the same command without `--dry-run`; note the
+   theme backup name. If this Mac's permission settings block the deploy, Digant runs that command (without
+   `--dry-run`) in Terminal and types "deployed" in the thread; find the backup name with
+   `bash scripts/deploy_theme.sh --list`. If 759f5b7 was deployed instead (the earlier version of this step), B is
+   deployed and E step 2 ships the rest.
 5. Data: `bash scripts/admissions/phase2_b_live.sh apply <export name>`. The leftover count must be 0.
-6. Check (and run B2 step 5's checks too when the theme came from 759f5b7):
+6. Check (and run B2 step 5's checks too when the theme came from af793b4 or 759f5b7):
    - Profiles that had a GPA (abilene-christian-university, harvard, clark-atlanta-university, hardin-simmons-university)
      and two that didn't (westcliff-university, a-t-still-university) return 200. Their `<title>`, meta description,
      `og:title` and H1 carry no GPA figure and no "GPA Requirements"; the page has no "Average GPA" stat, no "Admission
@@ -85,13 +89,66 @@ links them; two files belong to other colleges). Don't write any CDS value into 
 5. Check /admissions/pitt/ (4.06, weighted), /admissions/unc/ (4.47, weighted), /admissions/alabama/ (3.85) and
    /admissions/agnes-scott/ (3.63): the card shows the GPA with "As reported by the college, 2025–26"; the FAQ "What
    is the average high school GPA at ...?" gives the same value and links to the college's Common Data Set file; the
-   JSON-LD parses and its FAQPage has that question; `<title>` and the meta description carry no GPA. /admissions/harvard/
-   (pending) shows no GPA. Freestar tags are on the page. If anything breaks:
+   JSON-LD parses and its FAQPage has that question; `<title>` and the meta description carry no GPA figure (from
+   af793b4 they say "Average GPA" and "See its average GPA"). /admissions/harvard/ (pending) shows no GPA. Freestar
+   tags are on the page. If anything breaks:
    `bash scripts/admissions/phase2_b2_live.sh revert <log name>` and `bash scripts/deploy_theme.sh --revert <theme backup>`.
 6. Changelog: one row for the two theme files and one for the 243 pages' fields, each with its undo command.
 
 Undo: `bash scripts/admissions/phase2_b2_live.sh revert <log name>` puts every field back;
 `bash scripts/deploy_theme.sh --revert <theme backup>` restores the two theme files.
+
+## E: fresh federal data on the confidently matched pages
+
+Digant's go (05:58) ends: "Fix the missing legacy redirects next, then prioritize importing the fresh data and
+finishing the template." His terms for E (04:35): confidently matched posts get the verified Phase 1 values with
+their sources and reporting years, uncertain matches are reviewed separately, and the template must support the new
+fields and labels before the import. Run E after B (its theme deploy and its data step).
+
+Code: commit af793b4 (functions.php, single-colleges.php and the new college-data.php). A page with the import shows
+each figure with its year and source: acceptance rate with the counts behind it, SAT/ACT middle 50% and medians of
+fall 2024 entrants, IPEDS's admission factors in its own wording, undergraduates, net price (2022–23), AP and
+life-experience credit (2024–25), College Scorecard's average SAT labeled as its estimate, and a Sources section
+linking College Navigator. Its FAQ and FAQPage schema come from one builder. Titles and descriptions follow the new
+fields; pages with a cited CDS GPA say "Average GPA" without the figure. Pages without the import render as before.
+
+Data: `data/admissions/audit/phase2_e_import.csv` (2,787 posts, made by `scripts/admissions/phase2_e_import.py`;
+counts in `phase2_e_summary.md`). Each row replaces the plan's fields; a field with no fresh value is emptied, never
+left with the old unsourced one. College Scorecard's enrollment and net price fallbacks are left out because its
+file doesn't state their year. `phase2_e_held.csv` lists the 44 confident matches that stay unchanged, with the
+reason: 27 branch campuses with no IPEDS record of their own (their parent college reports for them), 10 missing from
+College Scorecard's June 2026 release, 4 the audit left unconfirmed, 3 whose match the audit corrected. The 357
+uncertain matches and the 371 unmatched pages aren't in the file either.
+
+1. `git pull`, then a database backup as in B, step 1 (`...-pre-admissions-e.sql.gz`).
+2. Theme, unless B step 4 already deployed af793b4: the live functions.php and single-colleges.php must be 759f5b7's
+   (stop and report otherwise, as in B2 step 2), then
+   `bash scripts/deploy_theme.sh af793b4 --dry-run --only functions.php,single-colleges.php,college-data.php`.
+   Only those three files may change. Then the same command without `--dry-run`; note the theme backup name.
+3. Data: `bash scripts/admissions/phase2_e_live.sh plan`. It changes nothing; it prints how many posts each field
+   would change and should end "2787 posts would change, 0 already match, 0 skipped". Report every `SKIP` line (a
+   post unpublished or retitled since the October 1 export) and go on without it. Then
+   `bash scripts/admissions/phase2_e_live.sh apply`; note the log name. It ends "updated N posts (N fields), skipped N".
+4. Check:
+   - /admissions/harvard/: title "Harvard University Acceptance Rate (3.6%) & SAT/ACT Scores"; acceptance rate 3.6%
+     for fall 2024 (1,970 of 54,008 applicants); SAT 740–780 reading and writing, 770–800 math; "Average SAT (College
+     Scorecard estimate)" 1553; requirements in IPEDS wording; a Sources section linking College Navigator.
+   - /admissions/pitt/: the GPA card (4.06, weighted) and its Common Data Set FAQ remain; the acceptance rate reads
+     58% for fall 2024.
+   - /admissions/blue-cliff-college-metairie/ (open admission): an "Open Admission" badge, no acceptance rate, and the
+     requirements card says it accepts any student who applies.
+   - Unchanged: /admissions/ivy-tech-community-college-kokomo/ (held) and a page under review.
+   - On each: the JSON-LD parses, its FAQPage questions are the page's FAQ questions, no `collegesimply` anywhere,
+     Freestar tags present.
+   - /admissions/ loads with the new values on its cards; the acceptance-rate filters, the high-acceptance quick
+     filter (it includes open admission) and the SAT sort return colleges; a calculator page works.
+   If anything breaks: `bash scripts/admissions/phase2_e_live.sh revert <log name>` (and the theme revert if step 2
+   ran), then report.
+5. Changelog: one row for the 2,787 pages' fields (and one for the theme files if step 2 ran), each with its undo.
+
+Undo: `bash scripts/admissions/phase2_e_live.sh revert <log name>` puts every changed field back and removes the ones
+the import added; `bash scripts/deploy_theme.sh --revert <theme backup>` restores the theme files (the new
+college-data.php stays on the server, unused: the restored functions.php doesn't load it).
 
 ## C and D: retire closed colleges, redirect merged ones and duplicates
 

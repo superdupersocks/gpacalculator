@@ -54,7 +54,7 @@ ADMISSIONS = ["admissions_source", "admissions_year", "open_admission", "applica
               "admit_rate", "yield_rate", "sat_submit_pct", "act_submit_pct"]
 TESTS = [f"{TEST_NAMES[p]}_p{q}" for p in TEST_PARTS for q in (25, 50, 75)] + ["sat_avg"]
 COST = ["undergrad_enrollment", "tuition_in_state", "tuition_out_of_state", "net_price", "grad_rate",
-        "retention_rate", "median_earnings_10yr"]
+        "retention_rate", "median_earnings_10yr", "median_debt", "pell_share", "federal_loan_share"]
 
 
 IPEDS_KEYS = ("hd", "adm", "ic", "ic_ay", "drvef", "efd", "drvgr", "sfa", "drvic")
@@ -308,6 +308,8 @@ def build_row(d, uid, admcon, credits):
     row["grad_rate"] = gr if gr is not None else num(d.sv(uid, "C150_4") or d.sv(uid, "C150_L4"))
     row["retention_rate"] = ret if ret is not None else num(d.sv(uid, "RET_FT4") or d.sv(uid, "RET_FTL4"))
     row["median_earnings_10yr"] = num(d.sv(uid, "MD_EARN_WNE_P10"), "int")
+    row["median_debt"] = num(d.sv(uid, "GRAD_DEBT_MDN"), "int")
+    row["pell_share"], row["federal_loan_share"] = num(d.sv(uid, "PCTPELL")), num(d.sv(uid, "PCTFLOAN"))
     for col in EXTRA_MEASURES:
         row[col] = measure(col)
     check(d, row)
@@ -381,6 +383,9 @@ def sources(d, admcon, credits):
            for col in {**MEASURES, **EXTRA_MEASURES}},
         **{col: (f"IPEDS HD{yh}", var, yh, "") for col, var in HD_EXTRA.items()},
         "median_earnings_10yr": (sc, "MD_EARN_WNE_P10", None, "Median earnings 10 years after entry, USD"),
+        "median_debt": (sc, "GRAD_DEBT_MDN", None, "Median federal loan debt of completers, USD"),
+        "pell_share": (sc, "PCTPELL", None, "Share of undergraduates with a Pell grant, 0-1"),
+        "federal_loan_share": (sc, "PCTFLOAN", None, "Share of undergraduates with a federal loan, 0-1"),
     }
     for part in TEST_PARTS:
         for q in (25, 50, 75):

@@ -342,6 +342,17 @@ def fetch_scorecard(manifest):
                 url = url or SCORECARD_ZIP
             data = get(url)
     except Exception as e:
+        kept = OUT / "scorecard" / "institutions.csv"  # slim_scorecard.py's copy of a hand download
+        if kept.exists():
+            import shutil
+            src = json.loads((OUT / "scorecard" / "source.json").read_text())
+            (RAW / "scorecard").mkdir(parents=True, exist_ok=True)
+            shutil.copy(kept, RAW / "scorecard" / "institutions.csv")
+            manifest["files"]["scorecard"] = {"url": f"{SCORECARD_PAGE} ({src['file']}, downloaded by hand)",
+                                              "bytes": src["bytes"], "sha256": src["sha256"],
+                                              "member": src["member"]}
+            print(f"Scorecard download refused ({e}); using the kept copy of {src['file']}")
+            return
         print(f"WARNING: College Scorecard not downloaded ({e}); Scorecard-only columns will be empty")
         manifest["scorecard_missing"] = str(e)
         return

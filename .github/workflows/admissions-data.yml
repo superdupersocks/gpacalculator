@@ -15,7 +15,7 @@ on:
         required: false
   push:
     branches: ['claude/admissions-**']
-    paths: ['scripts/admissions/**', '.github/workflows/admissions-data.yml']
+    paths: ['scripts/admissions/**', 'data/admissions/scorecard/**', '.github/workflows/admissions-data.yml']
 
 permissions:
   contents: write

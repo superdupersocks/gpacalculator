@@ -164,8 +164,8 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | --- | --- | --- | --- | --- |
 | gpa-calculator (homepage, + prerender) | gpa | Yes, after Calculators is off | No | To port |
 | college-gpa-calculator (+ prerender) | gpa | Yes | No | To write |
-| high-school-gpa-calculator (v2.9) | gpa | Yes | No | To port |
-| high-school-gpa-calc | gpa | Yes | No | To write |
+| high-school-gpa-calculator (old v2.9 React bundle; only on the private calculator-starter page, unused on public pages) | gpa | Yes | No | Retire candidate |
+| high-school-gpa-calc (v3.2, plain JS reference build; the live High School GPA calculator) | gpa | Yes | No | To write |
 | middle-school-gpa-calculator | gpa | Yes | No | To write |
 | raise-gpa-calculator | gpa | Yes | No | To write |
 | sgpa-to-cgpa-calculator | university-gpa | Yes | No | To write |
@@ -186,7 +186,7 @@ so it carries PR #1's plugin 0.6.0 + core 1.3.0 and the live design tokens). Dig
 
 | Step | What | State |
 | --- | --- | --- |
-| 0 | Setup: skill in the repo, inventory of existing core / merge work | Done 2026-10-03; skill corrected to 800px column, 14px phone margin. Live-vs-repo calculator file comparison pending (needs the Mac) |
+| 0 | Setup: skill in the repo, inventory of existing core / merge work | Done 2026-10-03; skill corrected to 800px column, 14px phone margin. Live-vs-repo comparison done 05:23 by the design thread's Mac: nothing live is newer; only the plugin main file and README differ (repo ahead) |
 | 1 | One-page design note: core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Not started |
 | 2 | Core + GPA engine; College GPA (generic profile) and UCLA (university profile); tests, QA, screenshots; College live behind the per-page switch | Not started |
 
@@ -201,7 +201,7 @@ Starting point found in step 0 (2026-10-03):
 - University engine: `assets/shared-calculator.js` (minified, one engine, rules per mount from the
   `gpcm_university_profiles` option). This is the profile model to generalize.
 - Legacy save keys to migrate: homepage and College Bolt bundles share `gpa_calc_draft_v1` / `gpa_calc_saved_v1`;
-  High School v2.9 uses `gpaCalculatorSimple`; university engine `top-uni-gpa-calculator-v3`.
+  the old High School v2.9 bundle uses `gpaCalculatorSimple`; live High School v3.2 uses `hs:v2` / `hs:saves` and copies (never deletes) the Bolt `gpa_calc_saved_v1` saves once, flagged by `hs:imported`; university engine `top-uni-gpa-calculator-v3`.
 
 ## Open issues
 
@@ -223,8 +223,8 @@ Starting point found in step 0 (2026-10-03):
 - The 189 trashed `colleges` posts are not exported; empty the trash or restore deliberately.
 - Country configs (`gpcm_international_profiles`) and any uploaded shared JS/CSS (`gpcm_shared_assets`)
   still live only in the site database.
-- Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
-- Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
+- `high-school-gpa-calculator` (old v2.9 bundle) is used only on the private calculator-starter page (server check 2026-10-03); the live High School calculator is `high-school-gpa-calc` v3.2. Retiring the old one still waits on Digant.
+- Reconcile the High School GPA v3.2 weighting rules with `course-catalog.js` before it moves onto the core.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog

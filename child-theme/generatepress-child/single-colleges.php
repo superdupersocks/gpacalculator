@@ -72,28 +72,30 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					// here as plain links to the numbered H2s with short labels, on pages with 4 or more of them. Markup and
 					// styles: the shared .gpa-jump component (components.css 12). college-v2.php keeps the theme's
 					// browser-built TOC (gpa_toc_builder) off college pages.
+					// Chip text (Design spec rev 25, "Chip labels and jump-link SEO"): the H2 itself when it is 3 words or
+					// fewer, else a 1–3 word label naming the topic. IDs and H2 text never change.
 					$chip_labels = array(
 						'compare'                => 'Compare your GPA',
 						'average-gpa'            => 'Average GPA',
 						'gpa-requirements'       => 'GPA requirements',
 						'acceptance-rate'        => 'Acceptance rate',
 						'sat-act-scores'         => 'SAT & ACT',
-						'admission-requirements' => 'Requirements',
-						'credit'                 => 'Credit policy',
-						'net-price'              => 'Net price',
+						'credit'                 => 'Life experience credit',
 					);
-					$chips = '' !== $compare ? array( 'compare' ) : array();
+					$chips = '' !== $compare ? array( 'compare' => 'How does your GPA compare?' ) : array();
 					foreach ( $sections as $section ) {
-						$chips[] = $section['id'];
+						$chips[ $section['id'] ] = $section['title'];
 					}
-					$chips = array_values( array_unique( $chips ) );
+					foreach ( $chips as $chip_id => $h2 ) {
+						$chips[ $chip_id ] = str_word_count( $h2 ) <= 3 || ! isset( $chip_labels[ $chip_id ] ) ? $h2 : $chip_labels[ $chip_id ];
+					}
 					?>
 					<?php if ( count( $chips ) >= 4 ) : ?>
 					<nav class="gpa-jump" aria-label="Jump to">
 						<span class="gpa-jump__label">Jump to</span>
 						<ul class="gpa-jump__list">
-							<?php foreach ( $chips as $chip ) : ?>
-							<li><a class="gpa-jump__chip" href="#<?php echo esc_attr( $chip ); ?>"><?php echo esc_html( isset( $chip_labels[ $chip ] ) ? $chip_labels[ $chip ] : ucfirst( str_replace( '-', ' ', $chip ) ) ); ?></a></li>
+							<?php foreach ( $chips as $chip_id => $chip_text ) : ?>
+							<li><a class="gpa-jump__chip" href="#<?php echo esc_attr( $chip_id ); ?>"><?php echo esc_html( $chip_text ); ?></a></li>
 							<?php endforeach; ?>
 						</ul>
 					</nav>

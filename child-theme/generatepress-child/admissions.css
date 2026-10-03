@@ -823,6 +823,8 @@ body.post-type-archive-colleges .gpa-hub {
 }
 #page .entry-content .gpa-compare__verdict strong { display: block; margin-top: 4px; font-size: 26px; font-weight: 800; line-height: 1.25; color: var(--gpa-cmp-ink); }
 #page .entry-content .gpa-compare p.gpa-compare__text { margin: 8px 0 0 !important; font-size: 15px; line-height: 1.6; color: var(--gpa-gray-800, #1E293B); }
+/* The result's key figures (the average, where your GPA or score sits, the admit rate), set by college-compare.js. */
+#page .entry-content .gpa-compare p.gpa-compare__text strong { padding: 1px 4px; border-radius: 6px; background: var(--gpa-indigo-100); color: var(--gpa-indigo-800); font-weight: 700; white-space: nowrap; }
 #page .entry-content .gpa-compare__range { margin-top: 18px; }
 #page .entry-content .gpa-compare__scale { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.4; color: var(--gpa-gray-600); }
 #page .entry-content .gpa-compare__mid { text-align: center; }
@@ -865,6 +867,7 @@ body.post-type-archive-colleges .gpa-hub {
     text-decoration: none;
     box-sizing: border-box;
 }
+#page .entry-content a.gpa-compare__cta[hidden] { display: none; }
 #page .entry-content a.gpa-compare__cta--primary { background: var(--gpa-cmp-accent); border-color: var(--gpa-cmp-accent); color: var(--gpa-white); }
 #page .entry-content a.gpa-compare__cta:hover { border-color: var(--gpa-indigo-700); }
 #page .entry-content a.gpa-compare__cta--primary:hover { background: var(--gpa-indigo-700); }
@@ -901,8 +904,13 @@ body.gpa-college-v2.single-colleges #primary #main .entry-content.entry-content 
     text-decoration: none;
     box-sizing: border-box;
 }
-#page .entry-content ul.gpa-college-similar a:hover { border-color: var(--gpa-indigo-500); }
-#page .entry-content .gpa-college-similar__name { display: block; font-weight: 600; color: var(--gpa-cmp-ink, var(--gpa-blue-950)); }
+#page .entry-content ul.gpa-college-similar a:hover,
+#page .entry-content ul.gpa-college-similar a:focus-visible { border-color: var(--gpa-indigo-500); box-shadow: 0 4px 14px rgba(79, 70, 229, .12); }
+/* The name reads as a link (Digant, 2026-10-03 07:54): link color, an arrow, underlined on hover. */
+#page .entry-content .gpa-college-similar__name { display: block; padding-right: 22px; position: relative; font-weight: 600; color: var(--gpa-indigo-700); }
+#page .entry-content .gpa-college-similar__name::after { content: "→"; position: absolute; right: 0; top: 0; color: var(--gpa-indigo-500); transition: transform .15s; }
+#page .entry-content ul.gpa-college-similar a:hover .gpa-college-similar__name { text-decoration: underline; text-underline-offset: 3px; }
+#page .entry-content ul.gpa-college-similar a:hover .gpa-college-similar__name::after { transform: translateX(3px); }
 #page .entry-content .gpa-college-similar__note { display: block; margin-top: 4px; font-size: 14px; color: var(--gpa-gray-600); }
 
 /* "Before you apply" opens the block after the FAQ, so it takes a section's spacing too. */
@@ -921,3 +929,86 @@ html body.single-colleges .entry-header p.gpa-college-where {
     letter-spacing: .2px;
     color: var(--gpa-hero-text) !important;
 }
+
+/* v2's sentence about the college (type, place, undergraduates), moved from the hero to the end of the acceptance rate
+   section (single-colleges.php). */
+#page .entry-content p.gpa-college-about { margin-top: 16px !important; }
+
+/* "See all colleges in {State} →" on its own, where a college has no similar colleges to list. */
+#page .entry-content p.gpa-college-similar__all--solo { margin-top: 32px !important; }
+
+/* ---------- 11. One calm column on template v2 (Digant, 2026-10-03 08:14: "why does it look so boxy?") ----------
+   The compare box is the page's only card. Everything else sits on the text edge without a frame: the quick facts keep
+   their tint with an accent rule instead of a border, the contents list and the callouts become a thin left rule, the
+   tables and FAQ lose their outer frame (rows keep their dividers), and similar colleges become linked rows. College
+   pages only: the shared components (components.css, layout.css) are unchanged everywhere else. */
+body.gpa-college-v2.single-colleges #page #main .entry-content blockquote.gpa-college-facts {
+    border: 0 !important;
+    border-left: 3px solid var(--gpa-indigo-500) !important;
+    border-radius: 0 12px 12px 0 !important;
+}
+body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block {
+    padding: 2px 0 2px 20px !important;
+    border: 0 !important;
+    border-left: 2px solid var(--gpa-border) !important;
+    border-radius: 0 !important;
+}
+body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block li { padding: 5px 0 !important; border-top: 0 !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block li::before { width: 24px; height: 24px; font-size: 12px; }
+body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: none !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+@media (min-width: 641px) {
+    body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table { max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important; }
+}
+body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table thead,
+body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table th { background: none !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table thead th { border-bottom: 2px solid var(--gpa-border) !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table :is(th, td):first-child { padding-left: 0 !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table :is(th, td):last-child { padding-right: 0 !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table figcaption { padding-left: 0 !important; padding-right: 0 !important; text-align: left !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content .rank-math-block {
+    border: 0 !important;
+    border-top: 1px solid var(--gpa-border) !important;
+    border-bottom: 1px solid var(--gpa-border) !important;
+    border-radius: 0 !important;
+    background: none !important;
+}
+body.gpa-college-v2.single-colleges #page #main .entry-content .rank-math-block .rank-math-question:not(#root *) { padding-left: 0 !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content .rank-math-block .rank-math-answer { padding-left: 0 !important; padding-right: 0 !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-callout {
+    padding: 2px 0 2px 20px !important;
+    border: 0 !important;
+    border-left: 3px solid var(--gpa-indigo-200) !important;
+    border-radius: 0 !important;
+    background: none !important;
+}
+body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-callout::before { display: none !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-callout > p { margin: 0 !important; padding: 0 !important; max-width: none !important; text-indent: 0 !important; }
+body.gpa-college-v2.single-colleges #page #main .entry-content ul.gpa-college-similar {
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid var(--gpa-border);
+}
+body.gpa-college-v2.single-colleges #page #main .entry-content ul.gpa-college-similar a {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 14px 28px 14px 0;
+    position: relative;
+    border: 0;
+    border-bottom: 1px solid var(--gpa-border);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+body.gpa-college-v2.single-colleges #page #main .entry-content ul.gpa-college-similar a:hover { box-shadow: none; background: var(--gpa-indigo-50); }
+body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-college-similar__name { position: static; padding-right: 0; }
+body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-college-similar__name::after { right: 4px; top: 50%; margin-top: -0.7em; }
+body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-college-similar__note { margin-top: 0; }

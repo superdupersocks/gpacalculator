@@ -28,6 +28,10 @@
     var youEl = box.querySelector('.gpa-compare__you-label');
     var noteEl = box.querySelector('.gpa-compare__note');
     var fitsEl = box.querySelector('.gpa-compare__fits');
+    var fitsBtn = box.querySelector('.gpa-compare__cta--fits');
+    var planBtn = box.querySelector('.gpa-compare__cta--plan');
+    var bands = fitsBtn ? (fitsBtn.getAttribute('data-bands') || '').split(',') : [];
+    var hub = fitsBtn ? fitsBtn.getAttribute('href') : '';
     var staticText = textEl.textContent;
     var state = { scale: 'unweighted', test: c.act ? 'ACT' : 'SAT' };
 
@@ -41,6 +45,29 @@
 
     function fmt(n, d) {
         return Number(n).toFixed(d);
+    }
+
+    // The result text's key figures in bold: hi() marks them, setRich() writes the text as text nodes and <strong>s
+    function hi(text) {
+        return '\u0001' + text + '\u0002';
+    }
+
+    function setRich(el, text) {
+        el.textContent = '';
+        text.split(/(\u0001[^\u0002]*\u0002)/).forEach(function (bit) {
+            if (bit.charAt(0) === '\u0001') {
+                var b = document.createElement('strong');
+                b.textContent = bit.slice(1, -1);
+                el.appendChild(b);
+            } else if (bit !== '') {
+                el.appendChild(document.createTextNode(bit));
+            }
+        });
+    }
+
+    // "a weighted", "an unweighted"
+    function an(word) {
+        return (/^[aeiou]/i.test(word) ? 'an ' : 'a ') + word;
     }
 
     // Position of a score in the middle 50%: 0 below the 25th, 1 in the lower half, 2 in the upper half, 3 above the 75th
@@ -82,9 +109,17 @@
         var parts = [];
         var signals = [];
 
-        // The "Colleges where a 3.4 fits" button (when the band pages exist) names the GPA as typed
-        if (fitsEl) {
-            fitsEl.textContent = gOk ? 'a ' + String(gpaIn.value).trim().replace(',', '.') : 'your GPA';
+        // "Colleges where a 3.5 fits": the hub's list for the GPA typed, rounded to a tenth (/admissions/?gpa=3.5), shown
+        // only when that GPA has a list; an unweighted GPA can't be above 4.0
+        if (fitsBtn) {
+            var key = gOk ? (Math.round(g * 10) / 10).toFixed(1) : '';
+            var show = key !== '' && bands.indexOf(key) !== -1 && !(state.scale === 'unweighted' && g > 4);
+            fitsBtn.hidden = !show;
+            if (show) {
+                fitsEl.textContent = 'a ' + key;
+                fitsBtn.setAttribute('href', hub + (hub.indexOf('?') === -1 ? '?' : '&') + 'gpa=' + key);
+            }
+            planBtn.classList.toggle('gpa-compare__cta--primary', !show);
         }
         noteEl.hidden = !(gOk && state.scale === 'weighted' && g > 4 && c.basis !== 'weighted');
 
@@ -101,10 +136,10 @@
                 var diff = g - c.gpa;
                 var pos = diff >= 0.15 ? 1 : (diff > -0.15 ? 0.6 : 0.2);
                 signals.push(pos);
-                parts.push('Your ' + state.scale + ' ' + fmt(g, 2) + ' is ' + (pos === 1 ? 'above' : (pos === 0.6 ? 'close to' : 'below')) +
-                    ' the ' + c.basis + ' average of ' + fmt(c.gpa, 2) + ' that ' + c.name + ' reported for ' + c.gpaYear + '.');
+                parts.push('Your ' + state.scale + ' ' + fmt(g, 2) + ' is ' + hi(pos === 1 ? 'above' : (pos === 0.6 ? 'close to' : 'below')) +
+                    ' the ' + c.basis + ' average of ' + hi(fmt(c.gpa, 2)) + ' that ' + c.name + ' reported for ' + c.gpaYear + '.');
             } else if (c.gpa !== null) {
-                parts.push(c.name + ' reported a ' + c.basis + ' average (' + fmt(c.gpa, 2) + '), so a ' + state.scale +
+                parts.push(c.name + ' reported ' + an(c.basis) + ' average (' + fmt(c.gpa, 2) + '), so ' + an(state.scale) +
                     ' GPA can’t be compared with it directly. Switch to ' + c.basis + ' if you know yours.');
             } else if (c.gpaUnstated) {
                 parts.push(c.name + ' doesn’t say whether its average GPA is weighted or unweighted, so we can’t place your ' + fmt(g, 2) + ' against it.');
@@ -120,26 +155,29 @@
             signals.push([0.1, 0.5, 0.75, 1][tp]);
             var label = state.test === 'ACT' ? p[0] + '–' + p[2] : 'about ' + p[0] + '–' + p[2];
             parts.push('Your ' + state.test + ' of ' + s + ' is ' +
-                ['below the middle 50% (' + label + ')', 'in the lower half of the middle 50% (' + label + ')',
-                    'in the upper half of the middle 50% (' + label + ')', 'above the middle 50% (' + label + ')'][tp] +
+                [hi('below') + ' the middle 50% (' + hi(label) + ')', hi('in the lower half') + ' of the middle 50% (' + hi(label) + ')',
+                    hi('in the upper half') + ' of the middle 50% (' + hi(label) + ')', hi('above') + ' the middle 50% (' + hi(label) + ')'][tp] +
                 ' of first-year students who sent scores.' +
                 (state.test === 'SAT' ? ' The SAT range is the two section ranges added together, so it’s approximate.' : '') +
                 (tp === 0 && c.tests === 'optional' ? ' Scores are optional here, so you could apply without them.' : ''));
-            var span = lim[1] - lim[0];
-            var pct = function (v) { return Math.max(0, Math.min(100, (v - lim[0]) / span * 100)); };
+            // The bar's scale starts above the lowest possible score (ACT 12, SAT 800; Digant, 2026-10-03 08:09), so the
+            // middle 50% has grey on both sides and the "You" marker sits clearly; lower scores sit at the left edge
+            var bar = state.test === 'ACT' ? [12, 36] : [800, 1600];
+            var span = bar[1] - bar[0];
+            var pct = function (v) { return Math.max(0, Math.min(100, (v - bar[0]) / span * 100)); };
             var band = rangeEl.querySelector('.gpa-compare__band');
             band.style.left = pct(p[0]) + '%';
             band.style.width = (pct(p[2]) - pct(p[0])) + '%';
             rangeEl.querySelector('.gpa-compare__you').style.left = pct(s) + '%';
             var ends = rangeEl.querySelectorAll('.gpa-compare__scale span');
-            ends[0].textContent = lim[0];
+            ends[0].textContent = bar[0];
             ends[1].textContent = 'Middle 50% of enrolled students: ' + label;
-            ends[2].textContent = lim[1];
+            ends[2].textContent = bar[1];
             youEl.textContent = 'You: ' + s;
         }
 
         if (c.rate !== null) {
-            parts.push(c.name + ' admitted ' + c.rateTxt + ' of applicants for ' + c.fall + '.');
+            parts.push(c.name + ' admitted ' + hi(c.rateTxt) + ' of applicants for ' + c.fall + '.');
         }
         if (!signals.length) {
             verdictEl.textContent = c.rate !== null && c.rate >= 75 ? 'Likely match' : (c.rate !== null && c.rate < 15 ? 'Reach' : 'Add a test score');
@@ -150,7 +188,7 @@
         if (c.rate !== null && c.rate < 15) {
             parts.push('At a college this selective, strong grades and scores don’t guarantee admission.');
         }
-        textEl.textContent = parts.join(' ');
+        setRich(textEl, parts.join(' '));
     }
 
     function press(group, attr, value) {

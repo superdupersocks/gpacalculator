@@ -219,8 +219,27 @@ Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
    FAQs hidden below three, similar colleges + state link, official admissions link checked from GitHub for 2,701
    colleges). Switch: option `gpa_admissions_v2_tiers` read against each page's `admissions_tier`
    (`scripts/admissions/step3_switch.sh`); editors preview with `?gpa_v2=1`. Samples in
-   `/mnt/project-files/admissions/step3/` (Harvard, UCLA, Miami, Calvin, Lone Star). Waits on Digant's go for tier A.
+   `/mnt/project-files/admissions/step3/` (Harvard, UCLA, Miami, Calvin, Lone Star). Digant's go for tier A came
+   2026-10-03 06:57 UTC (PR #12 merged; rollout on his Mac per the runbook). Tiers B and C wait until tier A has run
+   2–4 weeks and Digant has seen its Search Console results.
    Server steps: `docs/ADMISSIONS_STEP3_RUNBOOK.md`. Previews on a fresh container: `scripts/admissions/preview/setup_local.sh`.
+4. **GPA-band lists** ("Colleges where a 3.5 GPA is typical"; plan approved 2026-10-03 06:57,
+   https://claude.ai/code/artifact/1ce947b3-ef22-4b08-9c59-ae0abdd57e5b). Shared data for the /gpa-scale/ pages, the
+   college pages' "Colleges where a [GPA] fits" button and the hub's `?gpa=` filter: **`data/admissions/gpa-bands.json`**,
+   built by `python3 scripts/admissions/gpa_bands.py` (re-run after any GPA or tier change).
+   - Source: each college's own Common Data Set C12 average as its page publishes it (`audit/phase2_b2_gpa.csv`:
+     `cds_gpa`, year, basis), tier A/B indexed pages only (`tiering/tiers.csv`): 258 colleges. Only the 15 averages
+     above 4.0 are known to be weighted; the rest don't state a basis (`basis` is ""), so pages use the neutral
+     `weighted_note` in the file, never "most colleges report weighted averages".
+   - Rule: lists for 3.0–4.0 (averages ≤ 4.0) and 4.1–4.3 (weighted averages > 4.0) take the colleges within 0.05 of
+     the GPA, widening to 0.10 under 10 (3.0 always 0.15); ordered tier A first, then larger undergraduate enrollment;
+     15 shown, `total` counted for "See all" (`see_all`: `/admissions/?gpa=3.5`). 4.4 and 4.5 (`mode: "highest"`)
+     show the five highest weighted averages under `intro`. A list under 3 colleges is left out.
+   - Each college: `name`, `url`, `gpa`, `basis`, `year`, `tier`, `state`, `enrollment`. Label the average "as
+     reported by the college" with year and basis; heading "Colleges where a {gpa} GPA is typical", never "colleges
+     you can get into".
+   - Live pieces (hub `?gpa=` filter, the college-page button) are built next and wait on Digant's go.
+5. **State hubs** (`/admissions/<state>/`, the "See all colleges in [State]" target): outline and one sample next.
 
 ## GPA scale work: weighted vs unweighted (roadmap checklist, 2026-10-03)
 

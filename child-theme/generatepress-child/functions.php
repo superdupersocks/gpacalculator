@@ -293,6 +293,28 @@ function gpa_content_styles() {
     }
 }
 
+// GPA scale styles (gpa-scale.css): the /gpa-scale/ hub, its GPA pages and any page that uses the scale chart
+// or a [gpa_scale_*] shortcode. Prints after components.css and content-styles.css.
+add_action('wp_enqueue_scripts', 'gpa_scale_styles', 20);
+function gpa_scale_styles() {
+    if ( ! is_singular() ) {
+        return;
+    }
+    $post   = get_post();
+    $parent = $post && $post->post_parent ? get_post( $post->post_parent ) : null;
+    $on     = $post && ( 'gpa-scale' === $post->post_name || ( $parent && 'gpa-scale' === $parent->post_name )
+        || false !== strpos( $post->post_content, 'gpa-scale-table' ) || false !== strpos( $post->post_content, '[gpa_scale_' ) );
+    if ( ! $on ) {
+        return;
+    }
+    wp_enqueue_style(
+        'gpa-scale',
+        get_stylesheet_directory_uri() . '/gpa-scale.css',
+        wp_style_is( 'gpa-content', 'enqueued' ) ? array( 'gpa-components', 'gpa-content' ) : array( 'gpa-components' ),
+        gpa_asset_ver( 'gpa-scale.css' )
+    );
+}
+
 add_action('wp_enqueue_scripts', 'gpa_database_page_styles');
 function gpa_database_page_styles() {
     if ( gpa_is_database_page() ) {
@@ -3500,26 +3522,38 @@ function gpa_scale_table_mark_rows( $html, $block ) {
 	if ( 'core/table' !== $block['blockName'] || false === strpos( $html, 'gpa-scale-table' ) ) {
 		return $html;
 	}
-	$current = '';
-	$slug    = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
-	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) ) {
-		$current = $m[1] . '.' . $m[2];
+	// The page's own GPA is marked beside the chart on its nearest letter's row (both rows on a tie, both 4.0
+	// rows for a 4.0), using the site-wide rule gpa_scale_figures(); rows carry data-letter so the weighted
+	// view (gpa-scale-tools.js) can move the mark.
+	$marks = array();
+	$mark  = '';
+	$slug  = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
+	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) && function_exists( 'gpa_scale_figures' ) ) {
+		$gs = $m[1] . '.' . $m[2];
+		list( $letter, $pct ) = gpa_scale_figures( $gs );
+		$marks = explode( '/', $letter );
+		if ( '4.0' === $gs ) {
+			$marks[] = 'A+';
+		}
+		$mark = 'Your ' . $gs . ' · ' . $pct;
 	}
 	return preg_replace_callback(
 		'#<tr>(.*?)</tr>#s',
-		function ( $row ) use ( $current ) {
+		function ( $row ) use ( $marks, $mark ) {
 			if ( ! preg_match_all( '#<td\b[^>]*>(.*?)</td>#s', $row[1], $cells ) || count( $cells[1] ) < 3 ) {
 				return $row[0]; // header row or unexpected shape
 			}
-			$gpa    = trim( wp_strip_all_tags( $cells[1][0] ) );
-			$letter = strtolower( substr( trim( wp_strip_all_tags( end( $cells[1] ) ) ), 0, 1 ) );
-			$class  = in_array( $letter, array( 'a', 'b', 'c', 'd', 'f' ), true ) ? 'is-band-' . $letter : '';
-			$attrs  = '';
-			if ( '' !== $current && $gpa === $current ) {
+			$letter_full = trim( wp_strip_all_tags( end( $cells[1] ) ) );
+			$letter      = strtolower( substr( $letter_full, 0, 1 ) );
+			$class       = in_array( $letter, array( 'a', 'b', 'c', 'd', 'f' ), true ) ? 'is-band-' . $letter : '';
+			$attrs       = ' data-letter="' . esc_attr( $letter_full ) . '"';
+			$inner       = $row[1];
+			if ( $marks && in_array( $letter_full, $marks, true ) ) {
 				$class .= ' is-current-gpa';
-				$attrs  = ' aria-current="true"';
+				$attrs .= ' aria-current="true"';
+				$inner  = preg_replace( '#<td\b#', '<td data-mark="' . esc_attr( $mark ) . '"', $inner, 1 );
 			}
-			return '' === trim( $class ) ? $row[0] : '<tr class="' . esc_attr( trim( $class ) ) . '"' . $attrs . '>' . $row[1] . '</tr>';
+			return '<tr class="' . esc_attr( trim( $class ) ) . '"' . $attrs . '>' . $inner . '</tr>';
 		},
 		$html
 	);

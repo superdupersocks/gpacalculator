@@ -225,11 +225,7 @@
     color: var(--gpa-table-head-text) !important;
     font-weight: 600 !important;
 }
-/* GPA scale tables: keep their letter-grade band colors and the "Your GPA" tag */
-#page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after {
-    background: var(--gpa-primary);
-    color: var(--gpa-white);
-}
+/* GPA scale tables: their band colors, "your GPA" row and tag are in gpa-scale.css */
 @media (max-width: 768px) {
     #page .entry-content :is(figure.wp-block-table, .rx-table, .content-table):not(#root *, .gpacalc-mount *) :is(th, td) {
         padding: 10px 12px !important;

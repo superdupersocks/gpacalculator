@@ -312,9 +312,10 @@ switch ( $mode ) {
 		// Rebuild our own menus (a re-run replaces them), then point the header, footer widgets and bottom bar.
 		$ids = array();
 		foreach ( $MENUS as $key => $menu ) {
+			// A re-apply keeps the previous menu under a new name, so the backup taken before it can still revert to it.
 			$old = wp_get_nav_menu_object( $menu['name'] );
 			if ( $old ) {
-				wp_delete_nav_menu( $old->term_id );
+				wp_update_nav_menu_object( $old->term_id, array( 'menu-name' => $menu['name'] . ' (replaced ' . gmdate( 'Y-m-d H:i' ) . ')' ) );
 			}
 			$mid = wp_create_nav_menu( $menu['name'] );
 			if ( is_wp_error( $mid ) ) {

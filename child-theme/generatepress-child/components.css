@@ -1346,3 +1346,83 @@
 #page #main .entry-content .rx-formula > .wp-block-columns + p:not(#root *) { margin-top: 20px !important; }
 /* Calculators asked for Inter: they use Lexend like the rest of the page (Inter's download goes in phase 5) */
 body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { font-family: var(--gpa-font) !important; }
+
+/* 12. In-page navigation: jump-link chips (Design spec "In-page navigation"; Digant 2026-10-03 16:46).
+   One shared component for every template. Server-rendered markup only, never built by JavaScript:
+     <nav class="gpa-jump" aria-label="Jump to">
+       <span class="gpa-jump__label">Jump to</span>
+       <ul class="gpa-jump__list">
+         <li><a class="gpa-jump__chip" href="#average-gpa">Average GPA</a></li> ...
+       </ul>
+     </nav>
+   Short labels (2-3 words), descriptive section IDs, 4+ sections. Desktop wraps (2 lines at most);
+   phones: one row that scrolls sideways with a 20px fade on the right. Always visible, no toggle. */
+#page .entry-content .gpa-jump {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px 12px;
+    max-width: var(--gpa-text-max);
+    margin: 0 auto var(--gpa-sec-gap) !important;
+    padding: 0 !important;
+    font-family: var(--gpa-font);
+}
+#page .entry-content .gpa-jump__label {
+    flex: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 36px;               /* level with the first row of chips */
+    color: var(--gpa-text-muted);
+    white-space: nowrap;
+}
+#page .entry-content ul.gpa-jump__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+#page .entry-content ul.gpa-jump__list > li {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+#page .entry-content ul.gpa-jump__list > li::before,
+#page .entry-content ul.gpa-jump__list > li::marker { content: none !important; display: none !important; }
+#page .entry-content a.gpa-jump__chip {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--gpa-border);
+    border-radius: 999px;
+    background: var(--gpa-surface);
+    color: var(--gpa-link) !important;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none !important;
+    transition: border-color .15s ease, color .15s ease;
+}
+#page .entry-content a.gpa-jump__chip:hover { border-color: var(--gpa-primary); color: var(--gpa-primary) !important; }
+#page .entry-content a.gpa-jump__chip:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; }
+@media (max-width: 640px) {
+    #page .entry-content .gpa-jump { gap: 8px; }
+    #page .entry-content ul.gpa-jump__list {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding: 4px 20px 4px 0 !important;       /* room for the 44px tap area and the fade */
+        margin: -4px 0 !important;
+        -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent);
+        mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent);
+    }
+    #page .entry-content ul.gpa-jump__list::-webkit-scrollbar { display: none; }
+    #page .entry-content a.gpa-jump__chip { position: relative; }
+    #page .entry-content a.gpa-jump__chip::after { content: ""; position: absolute; inset: -4px 0; }   /* 44px tap area */
+}
+@media (prefers-reduced-motion: reduce) { #page .entry-content a.gpa-jump__chip { transition: none; } }
+/* Sections the chips point to stop below the sticky header */
+html:has(.gpa-jump) #page .entry-content [id] { scroll-margin-top: 80px; }

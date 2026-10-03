@@ -246,6 +246,12 @@ Starting point found in step 0 (2026-10-03):
 
 ## Changelog
 
+### 2026-10-03: College GPA jump-link SEO pilot, live 18:05 UTC (page 22)
+- Go-live date for the 28-day Search Console comparison: **2026-10-03**. Review on or after **2026-10-31**; no other calculator page gets chip/H2 changes before Digant reviews it.
+- H2 rewrites (IDs unchanged): "About College GPA" → "What is a college GPA?", "More than just a number" → "Why your college GPA matters", "Understanding your GPA range" → "What is a good college GPA?".
+- TOC chips (Rank Math TOC item text): What is a college GPA? · How to calculate GPA · GPA example · GPA formula · Grade points · Why GPA matters · Good college GPA · Classes that count. FAQ and Related tools excluded.
+- Verified in view-source: all previously live IDs resolve, all 8 chip hrefs match an H2 ID, FAQPage schema unchanged. Revision 39913; revert and backups in docs/LIVE_CHANGELOG.md (design branch, 8320b28).
+
 ### 2026-10-01: /gpa-scale/ FAQs rewritten and restyled, internal link dedupe (live)
 - After a DB backup (`~/backups/gpacalculator-2026-10-01-pre-faq.sql.gz`), `scripts/wp/gpa_scale_pass6.php`: every page's Rank
   Math FAQ replaced with 6 questions from `content/gpa-scale-faqs.json` (`scripts/build_gpa_scale_faqs.py`: common query

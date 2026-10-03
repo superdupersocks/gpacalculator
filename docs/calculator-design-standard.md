@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 24. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 25. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -51,7 +51,7 @@ One white card, 800px max, the only element on the page with a shadow.
 
 | Property | Desktop | Mobile |
 | --- | --- | --- |
-| Width | max 800px, centered | full width minus 12px side margins |
+| Width | max 800px, centered | full width minus 14px side margins (14px from the screen edge) |
 | Padding | 32px | 16px |
 | Radius | 16px | 16px |
 | Border / shadow | 1px `--gpa-calc-border`, `--gpa-calc-shadow` | same |

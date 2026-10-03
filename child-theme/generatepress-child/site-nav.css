@@ -1,0 +1,134 @@
+/* Site header + footer navigation (site-nav.php, site-nav.js). Uses the theme's tokens only.
+   Base header/footer colours and type stay in layout.css (Design thread); this file adds
+   the five-item header fit, the footer <details> columns and the bottom bar. */
+
+/* ---------- Header: five items fit from 769px ---------- */
+@media (min-width: 769px) and (max-width: 1099px) {
+    .main-navigation .main-nav > ul > li > a,
+    .main-navigation .main-nav > ul > li.menu-item-has-children > a {
+        padding: 0 8px !important;
+        font-size: 14px !important;
+    }
+    .main-navigation .main-nav > ul { margin-right: -8px !important; }
+}
+@media (min-width: 769px) and (max-width: 899px) {
+    .site-header .main-title { font-size: 17px !important; }
+    .site-header .site-logo + .site-branding { margin-left: 8px; }
+    .gpa-logo-badge { width: 30px; height: 30px; }
+    .main-navigation .main-nav > ul > li > a,
+    .main-navigation .main-nav > ul > li.menu-item-has-children > a { padding: 0 6px !important; }
+    .main-navigation .main-nav > ul > li .dropdown-menu-toggle { padding-left: 4px !important; }
+}
+@media (min-width: 769px) and (max-width: 859px) {
+    .site-header .inside-header { padding-left: 20px !important; padding-right: 20px !important; }
+    .main-navigation .main-nav > ul > li > a,
+    .main-navigation .main-nav > ul > li.menu-item-has-children > a {
+        padding: 0 4px !important;
+        font-size: 13.5px !important;
+    }
+    .main-navigation .main-nav > ul { margin-right: -4px !important; }
+}
+/* Dropdown parents are buttons, not links */
+.main-navigation .main-nav > ul > li.menu-item-has-children > a[role="button"] { cursor: default; }
+.main-navigation .main-nav > ul > li > a:focus-visible {
+    outline: 2px solid var(--gpa-primary);
+    outline-offset: 2px;
+}
+
+/* ---------- Footer columns ---------- */
+.site-footer .gpa-foot-col > summary {
+    display: block;
+    list-style: none;
+    cursor: default;
+}
+.site-footer .gpa-foot-col > summary::-webkit-details-marker { display: none; }
+.site-footer .gpa-foot-col > summary::marker { content: ""; }
+.site-footer .gpa-foot-col > summary:focus { outline: none; }
+
+@media (max-width: 768px) {
+    /* One column, each a tap-to-open row */
+    html body .site-footer .inside-footer-widgets {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+    html body .site-footer .inside-footer-widgets > div {
+        flex: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    .site-footer .footer-widgets { padding: 8px 0 24px !important; }
+    .site-footer .gpa-foot-col { border-bottom: 1px solid var(--gpa-footer-line); margin: 0 !important; }
+    .site-footer .gpa-foot-col > summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        cursor: pointer;
+        padding: 12px 4px 12px 0;
+        min-height: 52px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .site-footer .gpa-foot-col > summary:focus-visible {
+        outline: 2px solid var(--gpa-footer-text);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+    .site-footer .gpa-foot-col > summary .widget-title,
+    .site-footer .gpa-foot-col > summary h2 {
+        margin: 0 !important;
+        font-size: 1rem !important;
+        line-height: 1.5rem !important;
+    }
+    /* Chevron */
+    .site-footer .gpa-foot-col > summary::after {
+        content: "";
+        flex: none;
+        width: 8px;
+        height: 8px;
+        margin: -4px 4px 0 0;
+        border-right: 2px solid var(--gpa-footer-link);
+        border-bottom: 2px solid var(--gpa-footer-link);
+        transform: rotate(45deg);
+        transition: transform .15s ease;
+    }
+    .site-footer .gpa-foot-col[open] > summary::after { transform: rotate(-135deg); margin-top: 4px; }
+    .site-footer .gpa-foot-col ul { padding-bottom: 14px !important; }
+    .site-footer .gpa-foot-col li a {
+        display: inline-block;
+        padding: 4px 0;
+    }
+}
+
+/* ---------- Bottom bar ---------- */
+.site-footer .site-info .gpa-legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 6px 0;
+}
+.site-footer .site-info .gpa-legal__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.site-footer .site-info .gpa-legal__list li,
+.site-footer .site-info .gpa-legal__copy { margin: 0; }
+.site-footer .site-info .gpa-legal__list li + li::before,
+.site-footer .site-info .gpa-legal__list + .gpa-legal__copy::before {
+    content: "·";
+    margin: 0 10px;
+    color: var(--gpa-footer-accent);
+}
+.site-footer .site-info .gpa-legal a:hover { color: var(--gpa-footer-text) !important; }
+@media (max-width: 768px) {
+    .site-footer .site-info .gpa-legal__list { gap: 0 22px; }
+    .site-footer .site-info .gpa-legal__list li + li::before { content: none; }
+    .site-footer .site-info .gpa-legal__list li a { display: inline-block; padding: 8px 0; }
+    .site-footer .site-info .gpa-legal__copy { flex-basis: 100%; text-align: center; margin-top: 4px; }
+    .site-footer .site-info .gpa-legal__list + .gpa-legal__copy::before { content: none; }
+}

@@ -19,6 +19,7 @@
         acceptance_rate: '',
         gpa: '',
         sat: '',
+        state: '',
         sort: 'name_asc',
         page: parseInt(gpa_db_ajax.page, 10) || 1,
         maxPages: parseInt(gpa_db_ajax.total_pages, 10) || 1,
@@ -86,6 +87,7 @@
         if (state.acceptance_rate) params.acceptance_rate = state.acceptance_rate;
         if (state.gpa) params.gpa = state.gpa;
         if (state.sat) params.sat = state.sat;
+        if (state.state) params.state = state.state;
         if (state.sort) params.sort = state.sort;
 
         return params;
@@ -116,6 +118,7 @@
         if (state.acceptance_rate) params.set('acceptance', state.acceptance_rate);
         if (state.gpa) params.set('gpa', state.gpa);
         if (state.sat) params.set('sat', state.sat);
+        if (state.state) params.set('state', state.state);
         if (state.sort && state.sort !== 'name_asc') params.set('sort', state.sort);
 
         var queryString = params.toString();
@@ -152,6 +155,9 @@
         if (params.has('sat')) {
             state.sat = params.get('sat');
             if (satSelect) satSelect.value = state.sat;
+        }
+        if (params.has('state')) {
+            state.state = params.get('state');
         }
         if (params.has('sort')) {
             state.sort = params.get('sort');
@@ -379,8 +385,13 @@
         state.acceptance_rate = '';
         state.gpa = '';
         state.sat = '';
+        state.state = '';
         state.sort = 'name_asc';
         state.page = 1;
+        var band = document.getElementById('db-gpa-band');
+        if (band) band.hidden = true;
+        var stateNote = document.getElementById('db-state');
+        if (stateNote) stateNote.hidden = true;
 
         // Reset DOM elements
         if (searchInput) searchInput.value = '';
@@ -557,7 +568,7 @@
 
         // Only fire AJAX if a recognized filter/search param is present.
         // Unrelated params (cache-bust _cb, analytics utm_*, fbclid, etc.) must not wipe PHP-rendered cards.
-        var known = ['search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort'];
+        var known = ['search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort', 'state'];
         var params = new URLSearchParams(window.location.search);
         var hasKnownParam = false;
         for (var i = 0; i < known.length; i++) {

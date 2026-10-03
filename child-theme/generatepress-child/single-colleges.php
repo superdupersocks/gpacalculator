@@ -1,7 +1,7 @@
 <?php
 /**
  * College profile (/admissions/<slug>/), Admissions Phase 3: the site's content-page design. Hero band with the
- * breadcrumb, H1 and a one-paragraph intro; quick facts; numbered sections (GPA, acceptance rate, SAT and ACT,
+ * breadcrumb, H1 and a one-paragraph intro (v2: no intro; its first sentence moves into the content); quick facts; numbered sections (GPA, acceptance rate, SAT and ACT,
  * admission requirements, AP credit, net price), each only when the college has data for it; the FAQ as a Rank Math
  * FAQ block; Sources. Styles: layout.css and components.css (shared), admissions.css (college data only), loaded by
  * gpa_college_profile_styles() in college-data.php, which also adds the content template's body classes.
@@ -19,7 +19,6 @@ get_header();
 
 $post_id  = get_the_ID();
 $v        = gpa_college_view( $post_id );
-$intro    = gpa_college_intro( $v );
 $facts    = gpa_college_quick_facts( $v );
 $sections = gpa_college_sections( $v );
 $faqs     = gpa_college_faqs( $post_id );
@@ -28,6 +27,18 @@ $sources  = gpa_college_sources( $post_id );
 $v2       = function_exists( 'gpa_college_v2' ) && gpa_college_v2( $post_id );
 $compare  = $v2 ? gpa_college_compare_box( $v ) : '';
 $official = $v2 ? gpa_college_official_link( $post_id ) : null;
+// v1 opens with a two-sentence intro in the hero. v2 keeps the hero short (Digant, 2026-10-03 07:54): the admit rate is
+// already in the quick facts, and the sentence about the college (type, place, undergraduates) closes the acceptance
+// rate section, or opens the first section when there isn't one.
+$intro    = $v2 ? '' : gpa_college_intro( $v );
+if ( $v2 && $sections && '' !== ( $about = gpa_college_intro( $v, true ) ) ) {
+	$at = array_search( 'acceptance-rate', array_column( $sections, 'id' ), true );
+	if ( false === $at ) {
+		$sections[0]['html'] = '<p>' . esc_html( $about ) . '</p>' . $sections[0]['html'];
+	} else {
+		$sections[ $at ]['html'] .= '<p class="gpa-college-about">' . esc_html( $about ) . '</p>';
+	}
+}
 // The mid-article ad goes before the middle section, as on content pages (after the notice when there are none)
 $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : count( $sections );
 ?>

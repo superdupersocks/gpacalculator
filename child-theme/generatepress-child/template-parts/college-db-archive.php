@@ -100,6 +100,24 @@ $stats          = gpa_college_hub_stats();
 		<button class="gpa-hub__reset" id="db-filters-reset" type="button">Clear filters</button>
 	</div>
 
+	<?php
+	// ?gpa=3.5 (the GPA-band lists' "See all"): say what the list is
+	$band_key   = isset( $_GET['gpa'] ) ? sanitize_text_field( wp_unslash( $_GET['gpa'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	$band_range = function_exists( 'gpa_college_band_range' ) ? gpa_college_band_range( $band_key ) : null;
+	if ( $band_range ) :
+		?>
+	<div class="gpa-callout gpa-callout--note gpa-hub__band" id="db-gpa-band"><p><strong>Colleges where a <?php echo esc_html( $band_key ); ?> GPA is typical</strong>Each of these colleges reported an average high school GPA of <?php echo esc_html( sprintf( '%.2f', $band_range[0] ) ); ?> to <?php echo esc_html( sprintf( '%.2f', $band_range[1] ) ); ?> in its Common Data Set<?php echo (float) $band_key > 4.0 ? ', on a weighted scale' : ''; ?>. <?php echo (float) $band_key > 4.0 ? 'A typical GPA isn\'t a cutoff: colleges review each application.' : 'Colleges don\'t all say whether their average is weighted. Many count honors and AP courses, so compare with your weighted GPA if you have one.'; ?></p></div>
+	<?php endif; ?>
+
+	<?php
+	// ?state=MA (college pages' "See all colleges in {State}"): say what the list is
+	$state_key   = isset( $_GET['state'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_GET['state'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	$state_names = function_exists( 'gpa_college_state_names' ) ? gpa_college_state_names() : array();
+	if ( isset( $state_names[ $state_key ] ) ) :
+		?>
+	<div class="gpa-callout gpa-callout--note gpa-hub__band" id="db-state"><p><strong>Colleges in <?php echo esc_html( $state_names[ $state_key ] ); ?></strong>Every college we list in <?php echo esc_html( $state_names[ $state_key ] ); ?>, with its average GPA and test scores where it reports them.</p></div>
+	<?php endif; ?>
+
 	<div class="gpa-hub__count" id="db-results-count" aria-live="polite">
 		Showing <span id="db-showing-count"><?php echo esc_html( $college_query->post_count ); ?></span> of <span id="db-total-count"><?php echo esc_html( number_format( $total_colleges ) ); ?></span> colleges
 	</div>

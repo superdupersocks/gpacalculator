@@ -213,12 +213,12 @@ if ( ! function_exists( 'gpa_college_compare_box' ) ) {
         }
         $name  = esc_html( $v['name'] );
         $calc  = '<p class="gpa-compare__help">Don\'t know your GPA? <a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( gpa_college_calc_anchor( $v ) ) . '</a></p>';
-        // "Colleges where a {GPA} fits" waits for the GPA-band list pages (Digant, 2026-10-03 05:49): until a filter
-        // returns their URL, the box shows only "Plan the grades I need".
+        // "Colleges where a {GPA} fits" links the GPA-band list on the hub (/admissions/?gpa=3.5) for the GPA typed, and
+        // shows only while that GPA has a list (college-compare.js); then it leads and "Plan the grades I need" follows.
         $fits  = (string) apply_filters( 'gpa_college_fits_url', '', $v );
         $ctas  = '<div class="gpa-compare__ctas">'
-            . ( '' !== $fits ? '<a class="gpa-compare__cta gpa-compare__cta--primary" href="' . esc_url( $fits ) . '"><span>Colleges where <span class="gpa-compare__fits">your GPA</span> fits</span></a>' : '' )
-            . '<a class="gpa-compare__cta' . ( '' === $fits ? ' gpa-compare__cta--primary' : '' ) . '" href="' . esc_url( home_url( '/how-to-raise-gpa/' ) ) . '">Plan the grades I need</a>'
+            . ( '' !== $fits && ! $d['open'] ? '<a class="gpa-compare__cta gpa-compare__cta--primary gpa-compare__cta--fits" href="' . esc_url( $fits ) . '" data-bands="' . esc_attr( implode( ',', array_keys( gpa_college_band_lists() ) ) ) . '" hidden><span>Colleges where <span class="gpa-compare__fits">your GPA</span> fits</span></a>' : '' )
+            . '<a class="gpa-compare__cta gpa-compare__cta--primary gpa-compare__cta--plan" href="' . esc_url( home_url( '/how-to-raise-gpa/' ) ) . '">Plan the grades I need</a>'
             . '</div>';
         $fine  = '<p class="gpa-compare__fine">A guide based on reported data, not a prediction. ' . $name . ' reviews each application.</p>';
         if ( $d['open'] ) {
@@ -339,7 +339,7 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
             $above = (float) $pivot >= (float) $v['cds']['value'];
             $faqs[] = array(
                 'question' => $q,
-                'answer'   => $name . '\'s first-year students averaged a ' . esc_html( $v['cds']['basis'] ) . ' GPA of ' . esc_html( $v['cds']['value'] ) . ', as reported by the college for ' . esc_html( $v['cds']['year'] ) . ', so on the same ' . esc_html( $v['cds']['basis'] ) . ' scale a ' . $pivot . ' is ' . ( $above ? 'at or above' : 'below' ) . ' that average'
+                'answer'   => $name . '\'s first-year students averaged ' . ( 'unweighted' === $v['cds']['basis'] ? 'an ' : 'a ' ) . esc_html( $v['cds']['basis'] ) . ' GPA of ' . esc_html( $v['cds']['value'] ) . ', as reported by the college for ' . esc_html( $v['cds']['year'] ) . ', so on the same ' . esc_html( $v['cds']['basis'] ) . ' scale a ' . $pivot . ' is ' . ( $above ? 'at or above' : 'below' ) . ' that average'
                     . ( $v['rate'] ? ' at a college that admitted ' . esc_html( $v['rate'] ) . ' of applicants' . $fall : '' ) . '. An average isn\'t a cutoff: your courses, test scores and the rest of your application count too.',
             );
         } elseif ( $v['rate'] && in_array( $gpa_req, array( 'Required', 'Recommended', 'Considered if submitted' ), true ) ) {
@@ -477,6 +477,64 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
             );
         }
 
+        // Questions only some colleges get, each where its own data answers it (Digant, 2026-10-03 07:54: different
+        // per college, but meaningful), in this order, as many as fit under ten questions in all
+        $extra = array();
+        if ( $v['bands'] ) {
+            $high = 0.0;
+            $top  = $v['bands'][0];
+            foreach ( $v['bands'] as $b ) {
+                if ( in_array( $b[0], array( '4.0', '3.75–3.99', '3.50–3.74' ), true ) ) {
+                    $high += $b[1];
+                }
+                if ( $b[1] > $top[1] ) {
+                    $top = $b;
+                }
+            }
+            $extra[] = array(
+                'question' => 'What GPA do most ' . $college . ' students have?',
+                'answer'   => '<strong>' . esc_html( gpa_college_pct_cell( $high ) ) . '</strong> of ' . $name . '\'s first-year students who submitted a high school GPA had 3.50 or higher, and the largest group (' . esc_html( gpa_college_pct_cell( $top[1] ) ) . ') had '
+                    . ( '4.0' === $top[0] ? 'a 4.0' : esc_html( $top[0] ) ) . ', as the college reported in its ' . esc_html( $v['cds']['year'] ) . ' Common Data Set. The college doesn\'t say whether these GPAs are weighted or unweighted.',
+            );
+        }
+        $factor = function ( $key ) use ( $f ) {
+            return isset( $f['requirements'][ $key ] ) ? gpa_college_requirement_status( $f['requirements'][ $key ] )[0] : '';
+        };
+        if ( ! $v['open'] && '' !== $f['fall'] ) {
+            $legacy = $factor( 'admission_requirements_legacy_status' );
+            if ( 'Considered if submitted' === $legacy || 'Not considered' === $legacy ) {
+                $extra[] = array(
+                    'question' => 'Does ' . $college . ' consider legacy status?',
+                    'answer'   => ( 'Not considered' === $legacy
+                        ? 'No. ' . $name . ' doesn\'t consider whether a parent or other relative attended'
+                        : 'Yes. ' . $name . ' considers whether a parent or other relative attended, though it isn\'t required' )
+                        . ', according to what it reported to ' . $ed . $fall . '.',
+                );
+            }
+            $essay = $factor( 'admission_requirements_personal_statement_or_essay' );
+            $said  = array(
+                'Required'                => 'Yes. ' . $name . ' requires a personal statement or essay from first-year applicants',
+                'Recommended'             => 'It recommends one. ' . $name . ' recommends that first-year applicants send a personal statement or essay',
+                'Considered if submitted' => 'No, but it considers one. ' . $name . ' doesn\'t require a personal statement or essay but considers one if you send it',
+                'Not considered'          => 'No. ' . $name . ' doesn\'t consider a personal statement or essay',
+            );
+            if ( isset( $said[ $essay ] ) ) {
+                $extra[] = array(
+                    'question' => 'Does ' . $college . ' require an essay?',
+                    'answer'   => $said[ $essay ] . ', according to what it reported to ' . $ed . $fall . '.',
+                );
+            }
+            if ( 'Required' === $factor( 'admission_requirements_demonstration_of_competencies' ) ) {
+                $extra[] = array(
+                    'question' => 'Does ' . $college . ' require a portfolio or audition?',
+                    'answer'   => 'Yes, for admission: ' . $name . ' requires applicants to show specific skills, such as through a portfolio or an audition, according to what it reported to ' . $ed . $fall . '. Check what your program asks for with the college.',
+                );
+            }
+        }
+        // Room for AP credit and net price, which close the list
+        $closing = ( in_array( $f['ap'], array( 'Yes', 'No' ), true ) ? 1 : 0 ) + ( $f['net_price'] && '' !== $f['net_price_year'] ? 1 : 0 );
+        $faqs    = array_merge( $faqs, array_slice( $extra, 0, max( 0, 10 - count( $faqs ) - $closing ) ) );
+
         // AP credit and net price, as before
         $year = '' !== $f['credits_year'] ? ' for ' . esc_html( $f['credits_year'] ) : '';
         if ( 'Yes' === $f['ap'] || 'No' === $f['ap'] ) {
@@ -502,23 +560,49 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
 if ( ! function_exists( 'gpa_college_similar_section' ) ) {
     // "Similar colleges in {State}": one heading over 4–6 link cards (name, then difficulty and admit rate). Unnumbered
     // and out of the TOC (layout.css 10). "See all colleges in {State} →" joins it once the state hubs exist (the
-    // gpa_college_state_hub_url filter returns their URL); until then the block has no other links.
+    // gpa_college_state_hub_url filter returns their URL); until then it links the hub filtered to the state.
     function gpa_college_similar_section( array $v ) {
         $similar = gpa_college_similar( $v );
+        $st      = strtoupper( trim( (string) get_post_meta( $v['id'], 'college_state', true ) ) );
+        $names   = gpa_college_state_names();
+        $state   = isset( $names[ $st ] ) ? $names[ $st ] : gpa_college_state( $v['location'] );
+        // "See all colleges in {State} →" (Digant, 2026-10-03 08:09): the hub filtered to the state (/admissions/?state=MA,
+        // noindex like every filtered view) until the state hubs ship, then their URL through gpa_college_state_hub_url.
+        // Shown even when there are no similar colleges.
+        $hub = isset( $names[ $st ] ) ? add_query_arg( 'state', $st, get_post_type_archive_link( 'colleges' ) ) : '';
+        $hub = (string) apply_filters( 'gpa_college_state_hub_url', $hub, $state, $v );
+        $all = '' !== $hub ? '<p class="gpa-college-similar__all' . ( $similar ? '' : ' gpa-college-similar__all--solo' ) . '"><a href="' . esc_url( $hub ) . '">See all colleges in ' . esc_html( $state ) . ' →</a></p>' : '';
         if ( ! $similar ) {
-            return '';
+            return $all;
         }
-        $state = gpa_college_state( $v['location'] );
         $items = '';
         foreach ( $similar as $c ) {
             $items .= '<li><a class="gpa-college-similar__card" href="' . esc_url( get_permalink( $c['id'] ) ) . '"><span class="gpa-college-similar__name">' . esc_html( $c['title'] ) . '</span>'
                 . ( '' !== $c['note'] ? '<span class="gpa-college-similar__note">' . esc_html( $c['note'] ) . '</span>' : '' ) . '</a></li>';
         }
-        $hub = (string) apply_filters( 'gpa_college_state_hub_url', '', $state, $v );
         return '<h2 id="similar-colleges" class="gpa-no-number">Similar colleges in ' . esc_html( $state ) . '</h2>'
             . '<p class="gpa-college-similar__sub">' . ( $v['open'] ? 'Also open to anyone who applies.' : 'With a similar acceptance rate and size.' ) . '</p>'
-            . '<ul class="gpa-college-similar">' . $items . '</ul>'
-            . ( '' !== $hub ? '<p class="gpa-college-similar__all"><a href="' . esc_url( $hub ) . '">See all colleges in ' . esc_html( $state ) . ' →</a></p>' : '' );
+            . '<ul class="gpa-college-similar">' . $items . '</ul>' . $all;
+    }
+}
+
+if ( ! function_exists( 'gpa_college_state_names' ) ) {
+    // Postal code => state name, for college_state (IPEDS): the states, DC and the territories with colleges
+    function gpa_college_state_names() {
+        return array(
+            'AL' => 'Alabama', 'AK' => 'Alaska', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California', 'CO' => 'Colorado',
+            'CT' => 'Connecticut', 'DE' => 'Delaware', 'DC' => 'District of Columbia', 'FL' => 'Florida', 'GA' => 'Georgia',
+            'HI' => 'Hawaii', 'ID' => 'Idaho', 'IL' => 'Illinois', 'IN' => 'Indiana', 'IA' => 'Iowa', 'KS' => 'Kansas',
+            'KY' => 'Kentucky', 'LA' => 'Louisiana', 'ME' => 'Maine', 'MD' => 'Maryland', 'MA' => 'Massachusetts',
+            'MI' => 'Michigan', 'MN' => 'Minnesota', 'MS' => 'Mississippi', 'MO' => 'Missouri', 'MT' => 'Montana',
+            'NE' => 'Nebraska', 'NV' => 'Nevada', 'NH' => 'New Hampshire', 'NJ' => 'New Jersey', 'NM' => 'New Mexico',
+            'NY' => 'New York', 'NC' => 'North Carolina', 'ND' => 'North Dakota', 'OH' => 'Ohio', 'OK' => 'Oklahoma',
+            'OR' => 'Oregon', 'PA' => 'Pennsylvania', 'RI' => 'Rhode Island', 'SC' => 'South Carolina', 'SD' => 'South Dakota',
+            'TN' => 'Tennessee', 'TX' => 'Texas', 'UT' => 'Utah', 'VT' => 'Vermont', 'VA' => 'Virginia', 'WA' => 'Washington',
+            'WV' => 'West Virginia', 'WI' => 'Wisconsin', 'WY' => 'Wyoming', 'PR' => 'Puerto Rico', 'GU' => 'Guam',
+            'VI' => 'U.S. Virgin Islands', 'AS' => 'American Samoa', 'MP' => 'Northern Mariana Islands', 'FM' => 'Micronesia',
+            'MH' => 'Marshall Islands', 'PW' => 'Palau',
+        );
     }
 }
 
@@ -579,6 +663,57 @@ if ( ! function_exists( 'gpa_college_schema_address' ) ) {
             'addressCountry'  => 'US',
         ), 'strlen' );
     }
+}
+
+if ( ! function_exists( 'gpa_college_band_lists' ) ) {
+    // The GPA-band lists' windows (gpa-bands.json, from scripts/admissions/gpa_bands.py): "3.5" => [window, weighted,
+    // total]. Only the "typical" lists (3.0 to 4.3); 4.4 and 4.5 list the highest averages and have no hub view.
+    function gpa_college_band_lists() {
+        static $bands = null;
+        if ( null === $bands ) {
+            $file  = get_stylesheet_directory() . '/gpa-bands.json';
+            $json  = is_readable( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
+            $bands = is_array( $json ) && isset( $json['bands'] ) && is_array( $json['bands'] ) ? $json['bands'] : array();
+        }
+        return $bands;
+    }
+
+    // The hub's ?gpa=3.5 view ("See all colleges where a 3.5 GPA is typical"): [low, high] of the reported average,
+    // or null for a value that isn't a list. Same rule as the lists: averages of 4.0 or below for 3.0 to 4.0, weighted
+    // averages above 4.0 for 4.1 and up.
+    function gpa_college_band_range( $key ) {
+        $bands = gpa_college_band_lists();
+        $key   = is_string( $key ) && preg_match( '/^\d\.\d$/', $key ) ? $key : '';
+        if ( '' === $key || ! isset( $bands[ $key ] ) ) {
+            return null;
+        }
+        $w  = (float) $bands[ $key ]['window'];
+        $lo = (float) $key - $w;
+        $hi = (float) $key + $w;
+        return ! empty( $bands[ $key ]['weighted'] )
+            ? array( max( $lo, 4.01 ), $hi )
+            : array( $lo, min( $hi, 4.0 ) );
+    }
+
+    // The meta query for that view: a cited average in the range, on a tier A or B page (both indexed).
+    function gpa_college_band_meta_query( $key ) {
+        $range = gpa_college_band_range( $key );
+        if ( ! $range ) {
+            return null;
+        }
+        return array(
+            'relation' => 'AND',
+            array( 'key' => 'cds_gpa', 'value' => array( sprintf( '%.2f', $range[0] ), sprintf( '%.2f', $range[1] ) ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(4,2)' ),
+            array( 'key' => 'cds_gpa_source_url', 'value' => '', 'compare' => '!=' ),
+            array( 'key' => 'admissions_tier', 'value' => array( 'A', 'B' ), 'compare' => 'IN' ),
+        );
+    }
+
+    // "Colleges where a [GPA] fits" on the compare box: the hub, which college-compare.js points at the typed GPA's
+    // list (?gpa=3.5) when there is one.
+    add_filter( 'gpa_college_fits_url', function ( $url ) {
+        return gpa_college_band_lists() ? (string) get_post_type_archive_link( 'colleges' ) : $url;
+    } );
 }
 
 if ( ! function_exists( 'gpa_college_official_link' ) ) {

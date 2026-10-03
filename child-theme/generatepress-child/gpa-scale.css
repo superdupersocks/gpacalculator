@@ -602,77 +602,10 @@ body.gpa-hero-band .entry-header .gpa-updated {
 /* Answer card (Digant 19:11): label and value centred in each tile, no line under the tiles */
 #page .entry-content .gpa-answer .gpa-quickconv__stat { text-align: center; }
 
-/* "On this page" (Design System spec, In-page navigation): a collapsed <details> row on the GPA pages, no box,
-   1px dividers above and below, at the text column; the summary names the section count; links one column, the text
-   of each H2, a section number before each. Overrides layout.css section 11's Rank Math TOC box. */
-#page #main .entry-content details.gpa-onthispage {
-    max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
-    margin: 32px auto 0 !important;
+/* Answer card without the tinted outer container (Digant 20:23): just the three tiles at the text column */
+#page .entry-content .gpa-quickconv.gpa-answer {
     padding: 0 !important;
     background: none !important;
     border: 0 !important;
-    border-top: 1px solid var(--gpa-divider) !important;
-    border-bottom: 1px solid var(--gpa-divider) !important;
     border-radius: 0 !important;
-    box-shadow: none !important;
-}
-#page #main .entry-content details.gpa-onthispage > summary {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 52px;
-    margin: 0 !important;
-    padding: 0 !important;
-    font-size: 16px !important;
-    line-height: 1.4 !important;
-    font-weight: 600 !important;
-    color: var(--gpa-text-strong) !important;
-    list-style: none;
-    cursor: pointer;
-}
-#page #main .entry-content details.gpa-onthispage > summary::-webkit-details-marker { display: none; }
-#page #main .entry-content details.gpa-onthispage .gpa-onthispage__count { font-weight: 400; color: var(--gpa-text-muted); }
-#page #main .entry-content details.gpa-onthispage > summary::after {
-    content: "";
-    margin-left: auto;
-    width: 20px;
-    height: 20px;
-    flex: none;
-    background: var(--gpa-link);
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
-    transition: transform .15s;
-}
-#page #main .entry-content details.gpa-onthispage[open] > summary::after { transform: rotate(180deg); }
-#page #main .entry-content details.gpa-onthispage > summary:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; }
-#page #main .entry-content details.gpa-onthispage ol { margin: 0 0 12px !important; padding: 0 !important; list-style: none !important; counter-reset: gpa-otp; }
-#page #main .entry-content details.gpa-onthispage li {
-    counter-increment: gpa-otp;
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin: 0 !important;
-    padding: 6px 0 !important;
-    border: 0 !important;
-    font-size: 16px !important;
-    line-height: 1.45 !important;
-}
-#page #main .entry-content details.gpa-onthispage li::before {
-    content: counter(gpa-otp, decimal-leading-zero);
-    position: static;
-    width: auto;
-    height: auto;
-    background: none;
-    border-radius: 0;
-    color: var(--gpa-accent);
-    font-size: 14px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-}
-#page #main .entry-content details.gpa-onthispage li a { color: var(--gpa-link) !important; font-weight: 400 !important; text-decoration: none !important; }
-#page #main .entry-content details.gpa-onthispage li a:hover { text-decoration: underline !important; }
-.content-page .entry-content h2[id] { scroll-margin-top: 80px; }
-@media (max-width: 640px) {
-    #page #main .entry-content details.gpa-onthispage { max-width: 100% !important; }
-    #page #main .entry-content details.gpa-onthispage li { min-height: 44px; align-items: center; padding: 0 !important; }
 }

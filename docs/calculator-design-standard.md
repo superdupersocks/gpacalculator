@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 25. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 44. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -23,7 +23,7 @@ A visitor can start typing immediately and see their result without scrolling. A
 | Screen | Calculator starts at | Must be visible on first screen |
 | --- | --- | --- |
 | Desktop, 1366×768 | ≤ 280px (live today: 305px) | 4 course rows + the live result once data is entered |
-| Mobile, 390×844 | ≤ 180px (live today: 268px) | 3 course rows + the live result once data is entered |
+| Mobile, 390×844 | ≤ 180px (live today: 268px) | The first course field, directly under the card header (no banner on a first visit, no options, no semester header) |
 
 When courses or semesters push the result off-screen, the sticky result pill takes over (see Sticky result pill).
 
@@ -62,7 +62,7 @@ No hero, H1 or intro inside the card, no empty gutters inside rows, and no `#roo
 
 ## Course rows
 
-Rows are a tight, scannable list: every row stays open, and column labels appear once, not per row.
+Rows are a tight, scannable list: every row stays open on desktop (phones collapse finished rows, below), and column labels appear once, not per row.
 
 | Property | Desktop | Mobile (≤640px) |
 | --- | --- | --- |
@@ -70,13 +70,33 @@ Rows are a tight, scannable list: every row stays open, and column labels appear
 | Column labels | Once, above the first row: "Course (optional)", "Grade", "Credits", the same words on every calculator | Placeholders only ("e.g. Calculus I"), no per-row labels |
 | Gap inside a row | 12px between fields | 8px between the two lines |
 | Gap between rows | 12px | 16px, with a 1px `--gpa-divider` line |
-| Accordions | Never | Never; no collapsed "Add Class" rows |
-| Default rows | 4 | 4 |
-| Semester header | Renamable title + semester GPA on one line, 16px above its rows | Same |
+| Collapsed rows | Never | A finished row the student isn't editing collapses to one line, "MATH 121 · B+ · 4 cr", with "Edit" on the right; tapping it reopens the row. Earlier semesters collapse to "Fall · 4 classes · GPA 3.41"; the latest stays open. Never collapsed "Add Class" rows |
+| Starting rows | 1 blank row per semester; choosing a grade in the last row adds the next blank row. No "Add class" button | Same |
+| Semester header | None with one semester (the first course field sits under the card header); with several, renamable title + semester GPA on one line, 16px above its rows | Same |
 
 - Rows read as one list because each field has its own border; a wider gap only spreads the list out.
 - Long course names ("Introduction to Organic Chemistry") must stay readable at 375px. Lexend is wide, so truncate with an ellipsis, never wrap the input.
 - Enter moves to the next row; a new row is added when Enter is pressed on the last one.
+
+## Options
+
+- Grading scale, "Add previous GPA" and "Major GPA" live behind one "Options" link in the card header. It is closed by default and shows nothing until opened. The default scale is 4.0.
+- When any option differs from the default, the link reads "Options · N on".
+- The Major column, its column label and the per-row Major tick box appear only while Major GPA is on.
+
+## Phone entry controls
+
+- Grade opens a bottom sheet with a grid of letter buttons, four per row, 48px tall, plus Cancel. Escape or a tap on the backdrop closes it.
+- Credits open a bottom sheet of quick buttons, 1 2 3 4 5 and "Other". Other shows the number field with the decimal keypad. The default is 3.
+- The row layout stays as in Course rows: name + × on line 1; grade (\~110px) and credits (\~80px) on line 2, left-aligned.
+
+## First screen
+
+At 390×844 the first course field is on the first screen, with nothing between it and the card header: no banner on a first visit, no options, no semester header.
+
+## Keep going
+
+On phones, Keep going lines up with the article text, 20px from the screen edge, not with the calculator card's 14px edge. It has 24px above it.
 
 ## Controls
 
@@ -87,8 +107,8 @@ Every control is at least 44px tall, uses Lexend and takes colors only from calc
 | Inputs / selects | 44px tall, radius 8px, 1px `--gpa-calc-input-border`, 16px text (stops iOS zoom), 2px `--gpa-calc-focus` ring |
 | Grade select | Empty option reads "Grade", never "Select"; selected grade centered |
 | Credits field | Number field, text centered, decimal keypad on phones (inputmode="decimal"), default 3 |
-| Step tabs | "1 Your GPA" · "2 Target GPA", as on High School; on phones step 2 reads "Target", never a bare number |
-| Add class | `--gpa-calc-add-bg`, 1px dashed `--gpa-calc-add-border`, text `--gpa-calc-add-text` 600 |
+| Card header | One line: an "Options" link on the left, the My saves (folder) and Save icons on the right. No step bar on any calculator; the planner sits after the result and opens only from the result's planner button |
+| Add class (planned-course sections only) | `--gpa-calc-add-bg`, 1px dashed `--gpa-calc-add-border`, text `--gpa-calc-add-text` 600 |
 | Secondary (Add semester, Start over, Save, Share) | white, 1px `--gpa-border`, `--gpa-text`; text-style buttons allowed in the action row |
 | Primary CTA (Open planner, Plan my target GPA) | `--gpa-calc-cta-bg`, white 15px 600, 44px tall, radius 8px |
 | Action row | Below the last row, 16px above; one line on desktop, wraps on mobile |
@@ -119,7 +139,7 @@ Whenever the result panel is off-screen, a floating pill shows the live result s
 
 **Behavior**
 
-- Shows once there's a result and the result panel is below or above the viewport (IntersectionObserver); hides when the panel is in view.
+- Shows only while the result is still below the screen (IntersectionObserver). Hides as soon as any part of the result is visible, once the student has scrolled past the result, while a text field has focus and while a bottom sheet is open, so it never sits over the result, Keep going or the article.
 - The whole pill is one button; tapping scrolls to the result panel.
 - Zero layout height: it never pushes content.
 - Hides while a text input (course name) has focus, because iOS moves fixed elements above the keyboard. Grade and credit selects don't hide it, so it updates live as grades are picked.
@@ -156,7 +176,7 @@ Every calculator ships the same core set; full detail lives in the calculator bu
 
 - **Core (all):** live result with verdict, sticky result pill, "Show how it's calculated", Try a sample (opt-in), Start over with Undo, auto-save and restore, named saves, share link, CSV, print/PDF, inline help.
 - **GPA calculators:** multiple renamable semesters, previous GPA + credits, grading scale selector, course levels where weighting applies, target GPA planner, what-if, insight cards.
-- **Flow:** Step 1 "Your result" → Step 2 the most likely next calculation (planner for GPA, "What do I need on the final?" for grades), then 2–4 "Keep going" links chosen from the follow-up map.
+- **Flow:** the result → the most likely next calculation, opened from a button under the result, never a step bar (planner for GPA, "What do I need on the final?" for grades), then 2–4 "Keep going" links chosen from the follow-up map.
 - **Easy beats complete:** no feature may make the basic path (pick grades, see GPA) slower.
 
 ## Save, return and sample
@@ -178,24 +198,11 @@ A returning student finds their courses already filled in; nobody ever retypes a
 
 ## GPA history chart
 
-GPA calculators show a semester-by-semester trend once a student has two semesters with grades, so every new term is a reason to come back.
-
-| Property | Spec |
-| --- | --- |
-| When it shows | 2+ semesters with grades; with one semester, a one-line hint: "Add another semester to see your trend" |
-| Where | Under the result panel, above the planner box |
-| Lines | Semester GPA as points joined by a line (`--gpa-accent`); cumulative GPA as a thicker line (`--gpa-primary`) |
-| Projection | Next term as a dashed point, from the planner or what-if values |
-| Goal lines | Dashed horizontal lines from the goal tracker, labeled at the right edge |
-| Axes | x = semester names; y = the active scale (4.0, 4.33 or 5.0), auto-zoomed to the data with a floor of 2.0 when every value is above it |
-| Size | 200px tall desktop, 180px mobile, full card width |
-| Interaction | Tap or hover a point to show its value; no other controls |
-| Build | Inline SVG drawn by the shared core, no chart library; colors from tokens only |
-| Accessibility | Visually hidden table of the same values; `aria-label` sums up the trend ("Up from 3.10 to 3.42 over 4 semesters") |
+Not used on GPA calculators (Digant, Oct 3, 2026): no history chart. Goals stay as text status lines under the result, and the what-if slider stays in the planner.
 
 ## Goal tracker
 
-Students pin up to 3 goals; each shows as a line on the history chart and a one-line status telling them exactly what they need next term.
+Students pin up to 3 goals; each shows as a one-line status under the result telling them exactly what they need next term.
 
 | Calculator | Goal presets (all values editable, since schools differ) |
 | --- | --- |
@@ -203,7 +210,7 @@ Students pin up to 3 goals; each shows as a line on the history chart and a one-
 | High school GPA | Honor roll (3.0) · High honor roll (3.5) · Scholarship minimum (custom) · A college's average GPA (from /admissions/) · Custom target |
 | Homepage GPA | Custom target · scholarship minimum |
 
-**Status line per goal** (under the chart, max 3 rows):
+**Status line per goal** (under the result, max 3 rows):
 
 - Met: "Dean's List — you're 0.08 above it" in `--gpa-success`.
 - Reachable: "Magna cum laude (3.70) — you need a 3.86 over your next 15 credits" in `--gpa-text-strong`; uses the planner math and the planner's credits value (default 15 college, 1 year high school).
@@ -235,7 +242,7 @@ The per-class and finals ideas live in the grade calculators, not inside the GPA
 
 | Calculator | Extra features | Hands off to |
 | --- | --- | --- |
-| College / High school / Homepage GPA | GPA history chart, goal tracker | Grade calculator per class ("Track this class" on a course row) |
+| College / High school / Homepage GPA | Goal tracker (text status lines); no history chart | Grade calculator per class ("Track this class" on a course row) |
 | Grade calculator | Assignment tracker per class (categories, weights, points or %), current letter grade, what-if for upcoming work; one save per class so students come back after each graded assignment | "Send to my GPA": puts the class's current letter into the GPA calculator's matching course row |
 | Final grade calculator | Finals planner: every class at once (current grade, final weight, target) → score needed on each final, plus the GPA that results | GPA calculator with the resulting grades filled in |
 | Semester grade calculator | Pulls the class's quarter or term grades from the grade calculator when saved | GPA calculator |
@@ -321,4 +328,5 @@ A calculator ships only when every box passes in the preview screenshots.
 - [ ] Lexend only; no purple
 - [ ] Screenshots at 390×844, 768×1024, 1366×768, 1440×900: empty, mid-typing (pill visible), full result
 - [ ] Math QA suite at 100% and flow test with zero console errors (per the build skill)
-- [ ] Labels read "Course (optional)", "Grade", "Credits"; grade placeholder "Grade"; grade and credits centered; phone row is name + ×, then grade \~110px and credits \~80px, left-aligned; step 2 reads "Target" on phones
+- [ ] Labels read "Course (optional)", "Grade", "Credits"; grade placeholder "Grade"; grade and credits centered; phone row is name + ×, then grade \~110px and credits \~80px, left-aligned
+- [ ] 390×844: first course field on the first screen under the card header; one blank row that auto-adds; finished rows and earlier semesters collapse to one line; grade sheet and credit quick buttons work; no step bar or chart; Options closed by default; Keep going 20px from the edge; pill hidden whenever the result is on screen or above it

@@ -934,8 +934,16 @@ body.gpa-calc-tool #root .max-w-4xl.px-4 { max-width: none !important; padding-l
   html body #page .hs-root,
   html body #page .entry-content > .frm_forms { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
 }
+@media (min-width: 641px) and (max-width: 880px) {
+  /* The content area has 40px side padding here (layout.css); pull the card back out to the column edges. */
+  html body:not(.home) #page #root,
+  html body:not(.home) #page .entry-content > .frm_forms { width: auto !important; max-width: none !important; margin-left: -40px !important; margin-right: -40px !important; }
+}
 @media (max-width: 640px) {
-  body.gpa-calc-tool #root:not(.hs-root) { width: auto !important; max-width: none !important; margin-left: -16px !important; margin-right: -16px !important; }
+  /* The content area has 20px side padding on phones (layout.css); the card sits 14px from the screen edge.
+     Two ids beat the per-calculator -16px rules in calc-assets. */
+  html body:not(.home) #page #root,
+  html body:not(.home) #page .entry-content > .frm_forms { box-sizing: border-box !important; width: auto !important; max-width: none !important; margin-left: -6px !important; margin-right: -6px !important; }
   body.gpa-calc-tool #root .max-w-4xl.px-4 > .bg-white.border { border-radius: 18px; }
 }
 
@@ -944,7 +952,7 @@ body.gpa-calc-tool #root .max-w-4xl.px-4 { max-width: none !important; padding-l
 /* Older form-based calculators (Formidable): the same card around the form */
 body.gpa-calc-tool .entry-content > .frm_forms { box-sizing: border-box; background: var(--gpa-calc-bg); border: 1px solid var(--gpa-border); border-radius: 16px; padding: 32px; }
 @media (max-width: 640px) {
-  body.gpa-calc-tool .entry-content > .frm_forms { width: auto; margin-left: -16px; margin-right: -16px; border-radius: 18px; padding: 20px 16px; }
+  body.gpa-calc-tool .entry-content > .frm_forms { border-radius: 18px; padding: 20px 16px; }
 }
 
 /* High school calculator: no full-screen minimum height (its width follows the column, above) */

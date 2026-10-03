@@ -53,8 +53,31 @@ body {
     }
 }
 @media (max-width: 640px) {
-    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
-        max-width: min(var(--gpa-text-max), calc(100% - 40px)) !important;
+    /* Phones: the column is the screen and has no padding of its own (GPA_COLUMN_TIERS in style.css), so the content area
+       carries the 20px side padding. Text, tables, columns and boxes all sit 20px in; calculators pull out to 14px
+       (calculator-page.css). Not the homepage: its bands are full-bleed by design. */
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content {
+        box-sizing: border-box !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content figure.wp-block-table {
+        overflow-x: auto;
+    }
+}
+/* Tablets (641-880px): the 800px column reaches the screen edges, so the content area carries the 40px inset itself
+   (tables, columns and boxes included) and text fills it; calculators pull back out to the column edges (calculator-page.css). */
+@media (min-width: 641px) and (max-width: 880px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content {
+        box-sizing: border-box !important;
+        padding-left: 40px !important;
+        padding-right: 40px !important;
+    }
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+        max-width: 100% !important;
+    }
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content figure.wp-block-table {
+        overflow-x: auto;
     }
 }
 

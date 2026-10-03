@@ -658,3 +658,7 @@ body.gpa-hero-band .entry-header .gpa-updated {
     border: 0 !important;
     border-radius: 0 !important;
 }
+@media (max-width: 480px) {
+    /* the badge ("Your 3.7 · 90–92%") fits inside the narrow GPA cell */
+    #page .entry-content .gpa-scale-table tr.is-current-gpa td:first-child::after { padding: 2px 5px; font-size: 9px; }
+}

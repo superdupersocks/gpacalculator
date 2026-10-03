@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 58. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 64. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -66,11 +66,11 @@ Rows are a tight, scannable list: every row stays open on desktop (phones collap
 
 | Property | Desktop | Mobile (≤640px) |
 | --- | --- | --- |
-| Layout | One line: name · grade · credits (· level where weighting applies) · remove | Line 1: course name + × remove. Line 2: grade (\~110px) and credits (\~80px) side by side, left-aligned, not full width (level, where used, after them) |
+| Layout | One line: name · grade · credits (· level where weighting applies) · remove | Line 1: course name + × remove. Line 2: grade (\~120px) and credits (\~104px) side by side, left-aligned, not full width (level, where used, after them) |
 | Column labels | Once, above the first row: "Course (optional)", "Grade", "Credits", the same words on every calculator | Placeholders only ("e.g. Calculus I"), no per-row labels |
 | Gap inside a row | 12px between fields | 8px between the two lines |
 | Gap between rows | 12px | 16px, with a 1px `--gpa-divider` line |
-| Collapsed rows | Never | A finished row the student isn't editing collapses to one line, "MATH 121 · B+ · 4 cr", with "Edit" on the right; tapping it reopens the row. Earlier semesters collapse to "Fall · 4 classes · GPA 3.41"; the latest stays open. Never collapsed "Add Class" rows |
+| Collapsed rows | Never | A finished row the student isn't editing collapses to one line only after the tap on another row lands (never on focus or pointerdown), so the first tap always opens the picker, "MATH 121 · B+ · 4 cr", with "Edit" on the right; tapping it reopens the row. Earlier semesters collapse to "Fall · 4 classes · GPA 3.41"; the latest stays open. Never collapsed "Add Class" rows |
 | Starting rows | 1 blank row per semester; choosing a grade in the last row adds the next blank row. No "Add class" button | Same |
 | Semester header | None with one semester (the first course field sits under the card header); with several, renamable title + semester GPA on one line, 16px above its rows | Same |
 
@@ -89,7 +89,7 @@ Rows are a tight, scannable list: every row stays open on desktop (phones collap
 
 - Grade opens a bottom sheet with a grid of letter buttons, four per row, 48px tall, plus Cancel. Escape or a tap on the backdrop closes it.
 - Credits open a bottom sheet of quick buttons, 1 2 3 4 5 and "Other". Other shows the number field with the decimal keypad. The default is 3.
-- The row layout stays as in Course rows: name + × on line 1; grade (\~110px) and credits (\~80px) on line 2, left-aligned.
+- The row layout stays as in Course rows: name + × on line 1; grade (\~120px) and credits (\~104px) on line 2, left-aligned. Both buttons carry the same 28px tinted chevron button as the desktop grade select, so it's clear they open a picker.
 
 ## First screen
 
@@ -116,7 +116,7 @@ Every control is at least 44px tall, uses Lexend and takes colors only from calc
 | Control | Spec |
 | --- | --- |
 | Inputs / selects | 44px tall, radius 8px, 1px `--gpa-calc-input-border`, 16px text (stops iOS zoom), 2px `--gpa-calc-focus` ring |
-| Grade select | Empty option reads "Grade", never "Select"; selected grade centered. Desktop: fixed width (about 128px grade, 104px credits); no native arrow; a 28px chevron button inside the right edge in --gpa-indigo-100 with a bold --gpa-indigo-700 chevron, tint deepens on hover; same treatment as the GPA Scale converter. Phones unchanged (grade sheet). (Digant, Oct 3) |
+| Grade select | Empty option reads "Grade", never "Select"; selected grade centered. Desktop: fixed width (about 128px grade, 104px credits); no native arrow; a 28px chevron button inside the right edge in --gpa-indigo-100 with a bold --gpa-indigo-700 chevron, tint deepens on hover; same treatment as the GPA Scale converter. Phones: the Grade and Credits buttons carry the same chevron button (see Phone entry controls). (Digant, Oct 3) |
 | Credits field | Number field, text centered, decimal keypad on phones (inputmode="decimal"), default 3 |
 | Card header | One line: an "Options" link on the left, the My saves (folder) and Save icons on the right. No step bar on any calculator; the planner sits after the result and opens only from the result's planner button |
 | Add class (planned-course sections only) | `--gpa-calc-add-bg`, 1px dashed `--gpa-calc-add-border`, text `--gpa-calc-add-text` 600 |
@@ -171,7 +171,7 @@ Whenever the result panel is off-screen, a floating pill shows the live result s
 - The whole pill is one button; tapping scrolls to the result panel.
 - Zero layout height: it never pushes content.
 - Hides while a text input (course name) has focus, because iOS moves fixed elements above the keyboard. Grade and credit selects don't hide it, so it updates live as grades are picked.
-- Sits above the mobile sticky ad (offset = measured ad height + 12px, bottom safe area included); never covers the ad.
+- Sits above the mobile sticky ad (offset = measured ad height + 12px, bottom safe area included); never covers or hides the ad, including the Freestar floating video stacked on it. The grade and credit bottom sheets follow the same rule.
 - `html { scroll-padding-bottom: 80px }` so a focused field is never scrolled under the pill.
 - Fades in/out over 150ms; no animation with `prefers-reduced-motion`.
 - Not `aria-live` (the result panel already announces); `aria-label` reads "Your GPA 3.42, go to result".
@@ -352,7 +352,7 @@ A calculator ships only when every box passes in the preview screenshots.
 - [ ] Lexend only; no purple
 - [ ] Screenshots at 390×844, 768×1024, 1366×768, 1440×900: empty, mid-typing (pill visible), full result
 - [ ] Math QA suite at 100% and flow test with zero console errors (per the build skill)
-- [ ] Labels read "Course (optional)", "Grade", "Credits"; grade placeholder "Grade"; grade and credits centered; phone row is name + ×, then grade \~110px and credits \~80px, left-aligned
+- [ ] Labels read "Course (optional)", "Grade", "Credits"; grade placeholder "Grade"; grade and credits centered; phone row is name + ×, then grade \~120px and credits \~104px, each with the chevron button, left-aligned
 - [ ] 390×844: first course field on the first screen under the card header; one blank row that auto-adds; finished rows and earlier semesters collapse to one line; grade sheet and credit quick buttons work; no step bar or chart; Options closed by default; Keep going 20px from the edge; pill hidden whenever the result is on screen or above it
 - [ ] P, NP and W on every scale: GPA and credits unchanged, note shown, no error; collapsed rows cut only the name; "Start over" hidden until there is input; planner button on one line at 375px
 - [ ] Add to home screen (phones): hidden on first load and after one calculation, shown after the second or after Save, directly under the calculator card; × hides it for 30 days; hidden when opened from the home screen; never overlaps the sticky ad or pill

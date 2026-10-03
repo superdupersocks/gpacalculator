@@ -67,26 +67,6 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					</ul></blockquote>
 					<?php endif; ?>
 
-					<?php
-					// "On this page" (Digant 2026-10-03 16:16): a <details> toggle, collapsed on every screen size, with the
-					// links in the HTML (no JS rendering). Lists the numbered H2s; its wp-block-rank-math-toc-block class
-					// keeps the theme's browser-built TOC (gpa_toc_builder) from adding a second one.
-					$toc = '' !== $compare ? array( array( 'compare', 'How does your GPA compare?' ) ) : array();
-					foreach ( $sections as $section ) {
-						$toc[] = array( $section['id'], $section['title'] );
-					}
-					?>
-					<?php if ( count( $toc ) >= 4 ) : ?>
-					<details class="wp-block-rank-math-toc-block gpa-toc gpa-toc--toggle" id="gpa-toc">
-						<summary>On this page</summary>
-						<nav aria-label="On this page"><ul>
-							<?php foreach ( $toc as $item ) : ?>
-							<li><a href="#<?php echo esc_attr( $item[0] ); ?>"><?php echo esc_html( $item[1] ); ?></a></li>
-							<?php endforeach; ?>
-						</ul></nav>
-					</details>
-					<?php endif; ?>
-
 					<?php if ( '' !== $compare ) : ?>
 					<h2 id="compare">How does your GPA compare?</h2>
 					<?php echo $compare; // built from escaped values in gpa_college_compare_box() ?>

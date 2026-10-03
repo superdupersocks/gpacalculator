@@ -186,6 +186,43 @@ body.gpa-hero-band .entry-header .gpa-updated {
     #page .entry-content .gpa-quickconv { padding: 16px !important; }
 }
 
+/* Hub converter, polish (Digant 2026-10-03 09:00): the GPA page card's look (tint, sentence-case labels, white
+   figure tiles), the select and the two figures in one row, the link centred on its own line under a hairline */
+#page .entry-content .gpa-quickconv {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+    background: var(--gpa-tint-indigo, var(--gpa-surface-subtle)) !important;
+}
+#page .entry-content .gpa-quickconv__out { display: contents; }
+#page .entry-content .gpa-quickconv__label {
+    margin-bottom: 4px;
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+}
+#page .entry-content .gpa-quickconv__field { padding-top: 13px; }   /* label level with the tiles' labels */
+#page .entry-content .gpa-quickconv__select { min-height: 46px; }   /* bottom level with the tiles */
+#page .entry-content .gpa-quickconv__stat {
+    padding: 12px 16px;
+    background: var(--gpa-surface);
+    border: 1px solid var(--gpa-border);
+    border-radius: 12px;
+}
+#page .entry-content .gpa-quickconv__stat strong { font-size: 26px; line-height: 1.25; }
+#page .entry-content .gpa-quickconv__link {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gpa-border);
+    text-align: center;
+}
+@media (max-width: 640px) {
+    #page .entry-content .gpa-quickconv { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    #page .entry-content .gpa-quickconv__field { grid-column: 1 / -1; padding-top: 0; }
+    #page .entry-content .gpa-quickconv__stat strong { font-size: 22px; }
+}
+
 #page .entry-content .gpa-lookup__group {
     margin: 24px 0 12px !important;
     font-size: 17px !important;
@@ -238,8 +275,6 @@ body.gpa-hero-band .entry-header .gpa-updated {
     color: var(--gpa-accent);
 }
 @media (max-width: 640px) {
-    #page .entry-content .gpa-quickconv { grid-template-columns: 1fr; }
-    #page .entry-content .gpa-quickconv__stat strong { line-height: 1.2; }
     #page .entry-content .gpa-lookup__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 #page .entry-content .gpa-lookup__tag.is-weighted { color: var(--gpa-gray-600); }

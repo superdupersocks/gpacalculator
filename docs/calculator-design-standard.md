@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 20. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 24. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -66,8 +66,8 @@ Rows are a tight, scannable list: every row stays open, and column labels appear
 
 | Property | Desktop | Mobile (≤640px) |
 | --- | --- | --- |
-| Layout | One line: name · grade · credits (· level where weighting applies) · remove | Stacked: name full width, then grade + credits (+ level) side by side, remove icon beside name |
-| Column labels | Once, above the first row | Placeholders only ("e.g. Calculus I"), no per-row labels |
+| Layout | One line: name · grade · credits (· level where weighting applies) · remove | Line 1: course name + × remove. Line 2: grade (\~110px) and credits (\~80px) side by side, left-aligned, not full width (level, where used, after them) |
+| Column labels | Once, above the first row: "Course (optional)", "Grade", "Credits", the same words on every calculator | Placeholders only ("e.g. Calculus I"), no per-row labels |
 | Gap inside a row | 12px between fields | 8px between the two lines |
 | Gap between rows | 12px | 16px, with a 1px `--gpa-divider` line |
 | Accordions | Never | Never; no collapsed "Add Class" rows |
@@ -85,12 +85,15 @@ Every control is at least 44px tall, uses Lexend and takes colors only from calc
 | Control | Spec |
 | --- | --- |
 | Inputs / selects | 44px tall, radius 8px, 1px `--gpa-calc-input-border`, 16px text (stops iOS zoom), 2px `--gpa-calc-focus` ring |
+| Grade select | Empty option reads "Grade", never "Select"; selected grade centered |
+| Credits field | Number field, text centered, decimal keypad on phones (inputmode="decimal"), default 3 |
+| Step tabs | "1 Your GPA" · "2 Target GPA", as on High School; on phones step 2 reads "Target", never a bare number |
 | Add class | `--gpa-calc-add-bg`, 1px dashed `--gpa-calc-add-border`, text `--gpa-calc-add-text` 600 |
 | Secondary (Add semester, Start over, Save, Share) | white, 1px `--gpa-border`, `--gpa-text`; text-style buttons allowed in the action row |
 | Primary CTA (Open planner, Plan my target GPA) | `--gpa-calc-cta-bg`, white 15px 600, 44px tall, radius 8px |
 | Action row | Below the last row, 16px above; one line on desktop, wraps on mobile |
 
-UI text 15–16px at 400–600. Numbers right-aligned with `tabular-nums`.
+UI text 15–16px at 400–600. Grade and credits text is centered in its field; other numbers are right-aligned. All numbers use `tabular-nums`.
 
 ## Result panel and planner box
 
@@ -240,6 +243,30 @@ The per-class and finals ideas live in the grade calculators, not inside the GPA
 - Handoffs use the shared storage namespace (`gpac:`) plus URL parameters, so they work with no accounts.
 - A handoff never overwrites existing rows silently: it fills a matching course name, or adds a new row and says so.
 
+## Course features (opt-in)
+
+High School v3.2's course features move into the shared core as an opt-in that each calculator's profile turns on. They arrive when High School and the Homepage move onto the core, after College has been live and stable for about a week.
+
+| Feature | Behavior |
+| --- | --- |
+| Course catalog | Suggests course names as the student types |
+| Nicknames | Common short names resolve to the full course ("APUSH" → AP U.S. History) |
+| Auto level | The level (Regular, Honors, AP, IB…) sets itself from the course name, but never overrides a level the student changed by hand |
+| Boost label | The row shows the level and its boost, e.g. "AP · +1.0" |
+
+| Calculator | Course features |
+| --- | --- |
+| High School, Homepage (high school mode), Weighted GPA | On |
+| Middle School | On, with its own course list and no AP or IB |
+| College (and university calculators) | Off: course names vary by school |
+
+## Grade categories (grade calculators)
+
+- Category names are suggested as the student types: Homework, Quizzes, Tests, Labs, Projects, Participation, Midterm, Final Exam.
+- An "Add typical categories" button adds that set in one click.
+- Weights start blank with "e.g. 20%" placeholders; the calculator never guesses a weight.
+- A warning shows under the list while the weights don't add up to 100%, with the current total.
+
 ## New tokens
 
 Add these to `gpa-design-tokens.css` under Calculator roles; every value above that isn't already a token comes from here.
@@ -294,3 +321,4 @@ A calculator ships only when every box passes in the preview screenshots.
 - [ ] Lexend only; no purple
 - [ ] Screenshots at 390×844, 768×1024, 1366×768, 1440×900: empty, mid-typing (pill visible), full result
 - [ ] Math QA suite at 100% and flow test with zero console errors (per the build skill)
+- [ ] Labels read "Course (optional)", "Grade", "Credits"; grade placeholder "Grade"; grade and credits centered; phone row is name + ×, then grade \~110px and credits \~80px, left-aligned; step 2 reads "Target" on phones

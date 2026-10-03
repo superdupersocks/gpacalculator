@@ -1,25 +1,14 @@
 {
- "taken_utc": "2026-10-02 22:40",
+ "taken_utc": "2026-10-03 01:35",
  "pages": {
   "admissions": "https://gpacalculator.net/admissions/",
   "admissions__harvard": "https://gpacalculator.net/admissions/harvard/",
-  "admissions__miami-university": "https://gpacalculator.net/admissions/miami-university/",
+  "admissions__ucla": "https://gpacalculator.net/admissions/ucla/",
   "admissions__lone-star-college-system": "https://gpacalculator.net/admissions/lone-star-college-system/",
   "admissions__fairfax-university-of-america": "https://gpacalculator.net/admissions/fairfax-university-of-america/",
-  "admissions__pitt": "https://gpacalculator.net/admissions/pitt/",
-  "admissions__caltech": "https://gpacalculator.net/admissions/caltech/",
-  "admissions__ucla": "https://gpacalculator.net/admissions/ucla/",
-  "admissions__duke": "https://gpacalculator.net/admissions/duke/",
-  "admissions__adams-state-college": "https://gpacalculator.net/admissions/adams-state-college/",
-  "admissions__hardin-simmons-university": "https://gpacalculator.net/admissions/hardin-simmons-university/",
-  "admissions__bacone-college": "https://gpacalculator.net/admissions/bacone-college/",
-  "gpa-scale__3-8-gpa": "https://gpacalculator.net/gpa-scale/3-8-gpa/",
-  "college-gpa-calculator": "https://gpacalculator.net/college-gpa-calculator/",
-  "admissions__wilkes-university": "https://gpacalculator.net/admissions/wilkes-university/",
-  "admissions__agnes-scott": "https://gpacalculator.net/admissions/agnes-scott/",
   "admissions__calvin": "https://gpacalculator.net/admissions/calvin/",
-  "admissions__uiuc": "https://gpacalculator.net/admissions/uiuc/"
+  "admissions__miami-university": "https://gpacalculator.net/admissions/miami-university/"
  },
  "skipped": [],
- "files": 36
+ "files": 19
 }

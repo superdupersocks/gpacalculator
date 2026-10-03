@@ -64,8 +64,15 @@
 			if (mobileNav() || clickMode) return;
 			var k = e.key;
 			if ((k === 'Enter' || k === ' ') && isHash) {
+				// GeneratePress already opens the menu on focus, so Enter/Space opens it (never closes it)
+				// and, when it is already open, moves into it. Escape closes.
 				e.preventDefault();
-				setOpen(!li.classList.contains('sfHover'));
+				var wasOpen = li.classList.contains('sfHover');
+				setOpen(true);
+				if (wasOpen) {
+					var firstLink = sub.querySelector('a');
+					if (firstLink) firstLink.focus();
+				}
 			} else if (k === 'ArrowDown') {
 				e.preventDefault();
 				setOpen(true);

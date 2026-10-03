@@ -119,16 +119,39 @@
 .site-footer .site-info .gpa-legal__list li,
 .site-footer .site-info .gpa-legal__copy { margin: 0; }
 .site-footer .site-info .gpa-legal__list li + li::before,
-.site-footer .site-info .gpa-legal__list + .gpa-legal__copy::before {
+.site-footer .site-info .gpa-legal__pm::before,
+.site-footer .site-info .gpa-legal__copy::before {
     content: "·";
     margin: 0 10px;
     color: var(--gpa-footer-accent);
 }
 .site-footer .site-info .gpa-legal a:hover { color: var(--gpa-footer-text) !important; }
+/* Freestar's sticky footer ad (#fs-sticky-footer, fixed, up to 100px tall) covered the end of the page: keep the
+   bottom bar clear of it. */
+body:has(#fs-sticky-footer) .site-footer .site-info { padding-bottom: 124px !important; }
+/* Freestar's consent button (#pmLink): hidden until Freestar's script labels it for the visitor's region and sets
+   an inline visibility: visible; where it never does, the bar shows no gap or stray separator. Styled as a bar link. */
+.site-footer .site-info #pmLink.gpa-legal__pm { display: none; }
+.site-footer .site-info #pmLink.gpa-legal__pm[style*="visible"] {
+    display: inline;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-size: inherit !important; /* theme button rules set 16px */
+    line-height: inherit;
+    color: var(--gpa-footer-accent);
+    cursor: pointer;
+}
+.site-footer .site-info #pmLink.gpa-legal__pm:hover { color: var(--gpa-footer-text); }
+.site-footer .site-info #pmLink.gpa-legal__pm:focus-visible { outline: 2px solid var(--gpa-footer-text); outline-offset: 2px; }
 @media (max-width: 768px) {
     .site-footer .site-info .gpa-legal__list { gap: 0 22px; }
     .site-footer .site-info .gpa-legal__list li + li::before { content: none; }
     .site-footer .site-info .gpa-legal__list li a { display: inline-block; padding: 8px 0; }
     .site-footer .site-info .gpa-legal__copy { flex-basis: 100%; text-align: center; margin-top: 4px; }
-    .site-footer .site-info .gpa-legal__list + .gpa-legal__copy::before { content: none; }
+    .site-footer .site-info .gpa-legal__copy::before { content: none; }
+    .site-footer .site-info .gpa-legal__pm::before { content: none; }
+    .site-footer .site-info #pmLink.gpa-legal__pm[style*="visible"] { flex-basis: 100%; padding: 8px 0; }
 }

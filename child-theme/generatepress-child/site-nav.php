@@ -80,6 +80,8 @@ add_action( 'wp', function () {
 	}
 	remove_all_actions( 'generate_credits' );
 	add_action( 'generate_credits', 'gpa_footer_bottom_bar' );
+	// The Freestar privacy link (#pmLink) moves into the bottom bar; drop the stand-alone copy under the footer.
+	remove_action( 'wp_footer', 'gpa_freestar_cmp_link', 20 );
 }, 99 );
 
 function gpa_footer_bottom_bar() {
@@ -92,6 +94,9 @@ function gpa_footer_bottom_bar() {
 		'fallback_cb'    => false,
 		'echo'           => false,
 	) ) : '';
+	// #pmLink is Freestar's consent button: its script finds it by id, sets the label for the visitor's region
+	// ("Do Not Sell or Share My Personal Information" in the US) and shows it with an inline visibility: visible.
 	echo '<nav class="gpa-legal" aria-label="Site information">' . $links
+		. '<button type="button" id="pmLink" class="gpa-legal__pm">Privacy Manager</button>'
 		. '<span class="gpa-legal__copy">&copy; ' . esc_html( wp_date( 'Y' ) ) . ' GPA Calculator</span></nav>';
 }

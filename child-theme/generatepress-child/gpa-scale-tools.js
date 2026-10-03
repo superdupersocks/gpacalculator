@@ -65,7 +65,7 @@
       const n = (k) => Math.max(0, parseInt(inputs[k] && inputs[k].value, 10) || 0);
       const total = n('total');
       const boost = total ? (Math.min(n('ap'), total) * 1 + Math.min(n('honors'), total) * 0.5) / total : 0;
-      const uw = Math.max(0, gpa - boost);
+      const uw = Math.min(4, Math.max(0, gpa - boost));
       const f = figures(uw);
       out('uw').textContent = uw.toFixed(2);
       out('letter').textContent = f.letter;
@@ -83,6 +83,11 @@
     Object.values(inputs).forEach((i) => i.addEventListener('input', () => {
       if (view.dataset.active === 'weighted') { const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`); }
     }));
-    if (location.hash === '#weighted') show('weighted');
+    if (gpa > 4) {
+      // Weighted-only page (4.1+): no toggle; the chart marks the estimated unweighted GPA.
+      const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`);
+    } else if (location.hash === '#weighted') {
+      show('weighted');
+    }
   });
 })();

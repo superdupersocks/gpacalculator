@@ -229,6 +229,11 @@ letters' range midpoints with "≈", chart values show their range. 14 of 31 pag
   follow it), weighted mini converter (AP/IB +1.0, Honors +0.5 → estimated unweighted GPA, letter, %), the page's one
   homepage link (anchor by page ID) and the Weighted GPA calculator. The page's row inserted in the chart is removed;
   the theme marks the GPA beside its nearest letter's row. FAQ letter and weighted answers follow the rule / toggle.
+- View v2 (Digant 2026-10-03 07:26): Unweighted tab is a static summary (letter, % with the letter's range, on a
+  5.0 scale = GPA ÷ 4 × 5, typical weighted ≈ GPA + 0.25 with about a quarter of classes AP/IB), no calculator;
+  Weighted tab keeps the estimator with results styled as results (tinted panel, estimated unweighted GPA as the
+  headline); a line links the Grade Conversion page (/grade-conversion/) for any other GPA; 4.1+ pages open on
+  the Weighted tab with no toggle. Previews `content/gpa-scale-previews/box-*`.
 - Content script `scripts/wp/gpa_scale_view_pass.php` (built by `scripts/build_gpa_scale_view_pass.py`).
 - The converter is standalone JS until the shared core (calculator-unification thread) is live.
 - State: preview of the hub and 3.9 sent (`content/gpa-scale-previews/wv-*`), awaiting Digant's OK before the rest.

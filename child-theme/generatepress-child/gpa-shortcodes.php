@@ -383,45 +383,62 @@ function gpa_scale_view_shortcode( $atts ) {
 	if ( ! $found ) {
 		return '';
 	}
-	$g  = $found[0] / 10;
-	$gs = number_format( $g, 1 );
-	list( $letter, $pct ) = gpa_scale_figures( $g );
-	$ex_total = 24;
-	$ex_ap    = 6;
-	$ex_g     = max( 0, $g - $ex_ap / $ex_total );
-	list( $ex_letter, $ex_pct ) = gpa_scale_figures( $ex_g );
+	$g        = $found[0] / 10;
+	$gs       = number_format( $g, 1 );
+	$weighted = $g > 4.0;
 	gpa_scale_enqueue_tools();
+
+	// Weighted tab: estimator. Example load: 24 classes, 6 AP/IB (+1.0), 0 Honors.
+	$ex_total = 24;
+	$ex_ap    = $weighted ? (int) min( 24, ceil( ( $g - 4.0 ) * 24 ) + 6 ) : 6;
+	$ex_g     = max( 0, min( 4.0, $g - $ex_ap / $ex_total ) );
+	list( $ex_letter, $ex_pct ) = gpa_scale_figures( $ex_g );
 	$num = function ( $name, $label, $value ) {
-		return '<label class="gpa-view__field"><span class="gpa-quickconv__label">' . $label . '</span>'
+		return '<label class="gpa-view__field"><span class="gpa-view__label">' . $label . '</span>'
 			. '<input type="number" inputmode="numeric" min="0" max="80" step="1" value="' . (int) $value . '" data-in="' . $name . '"></label>';
 	};
-	return '<div class="gpa-view" data-gpa-view data-gpa="' . esc_attr( $gs ) . '">'
-		. '<div class="gpa-view__toggle" role="group" aria-label="Read this GPA as">'
-		. '<button type="button" class="gpa-view__btn" aria-pressed="true" data-view-btn="unweighted">Unweighted</button>'
-		. '<button type="button" class="gpa-view__btn" aria-pressed="false" data-view-btn="weighted">Weighted</button>'
-		. '</div>'
-		. '<div class="gpa-view__panel" data-view="unweighted">'
-		. '<ul class="gpa-view__facts">'
-		. '<li><span>Letter grade</span><strong>' . esc_html( $letter ) . '</strong></li>'
-		. '<li><span>Percentage</span><strong>' . esc_html( $pct ) . '</strong></li>'
-		. '<li><span>National average</span><strong>3.11</strong></li>'
-		. '</ul>'
-		. '<p class="gpa-view__note">On the unweighted scale an A is worth 4.0. A ' . esc_html( $gs ) . ' sits closest to ' . esc_html( $letter ) . ' on the chart below.</p>'
-		. '</div>'
-		. '<div class="gpa-view__panel" data-view="weighted" hidden>'
+	$weighted_tab = '<div class="gpa-view__panel" data-view="weighted"' . ( $weighted ? '' : ' hidden' ) . '>'
 		. '<p class="gpa-view__note">A ' . esc_html( $gs ) . ' weighted GPA includes extra points for Honors, AP or IB classes, so the unweighted GPA behind it is lower. Enter your classes to estimate it:</p>'
 		. '<div class="gpa-view__conv">'
 		. $num( 'total', 'Total classes', $ex_total ) . $num( 'ap', 'AP / IB classes (+1.0)', $ex_ap ) . $num( 'honors', 'Honors classes (+0.5)', 0 )
 		. '</div>'
-		. '<ul class="gpa-view__facts" aria-live="polite">'
-		. '<li><span>Est. unweighted GPA</span><strong data-out="uw">' . esc_html( number_format( $ex_g, 2 ) ) . '</strong></li>'
-		. '<li><span>Letter grade</span><strong data-out="letter">' . esc_html( $ex_letter ) . '</strong></li>'
-		. '<li><span>Percentage</span><strong data-out="pct">' . esc_html( $ex_pct ) . '</strong></li>'
-		. '</ul>'
-		. '<p class="gpa-view__note">Uses +1.0 for AP/IB and +0.5 for Honors, the most common boosts; your school may differ. '
+		. '<div class="gpa-view__result" aria-live="polite">'
+		. '<div class="gpa-view__headline"><span class="gpa-view__label">Estimated unweighted GPA</span><strong data-out="uw">' . esc_html( number_format( $ex_g, 2 ) ) . '</strong></div>'
+		. '<div class="gpa-view__sub"><span class="gpa-view__label">Letter grade</span><strong data-out="letter">' . esc_html( $ex_letter ) . '</strong></div>'
+		. '<div class="gpa-view__sub"><span class="gpa-view__label">Percentage</span><strong data-out="pct">' . esc_html( $ex_pct ) . '</strong></div>'
+		. '</div>'
+		. '<p class="gpa-view__note gpa-view__fine">Uses +1.0 for AP/IB and +0.5 for Honors, the most common boosts; your school may differ. '
 		. 'Our <a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( $atts['home_anchor'] ) . '</a> works from your own classes and grades, and the '
 		. '<a href="' . esc_url( home_url( '/weighted-gpa-calculator/' ) ) . '">Weighted GPA calculator</a> shows both numbers.</p>'
-		. '</div>'
 		. '</div>';
+
+	// Unweighted tab: static summary of this page's GPA (no calculator).
+	$unweighted_tab = '';
+	if ( ! $weighted ) {
+		list( $letter, $pct ) = gpa_scale_figures( $g );
+		$rows    = gpa_scale_letter_rows();
+		$ranges  = array();
+		foreach ( explode( '/', $letter ) as $l ) {
+			if ( isset( $rows[ $l ] ) ) { $ranges[] = $l . ' = ' . $rows[ $l ][1]; }
+		}
+		$five    = number_format( $g * 1.25, 2 );
+		$typical = number_format( $g + 0.25, 2 );
+		$unweighted_tab = '<div class="gpa-view__panel" data-view="unweighted">'
+			. '<dl class="gpa-view__summary">'
+			. '<div><dt>Letter grade</dt><dd>' . esc_html( $letter ) . '</dd></div>'
+			. '<div><dt>Percentage</dt><dd>' . esc_html( $pct ) . '<small>' . esc_html( implode( ' · ', $ranges ) ) . '</small></dd></div>'
+			. '<div><dt>On a 5.0 scale</dt><dd>' . esc_html( $five ) . '<small>' . esc_html( $gs ) . ' ÷ 4 × 5</small></dd></div>'
+			. '<div><dt>Typical weighted GPA</dt><dd>≈' . esc_html( $typical ) . '<small>with about a quarter of classes AP/IB</small></dd></div>'
+			. '</dl>'
+			. '</div>';
+	}
+	$conv_link = '<p class="gpa-view__note gpa-view__other">Converting a different GPA or grade? Use the <a href="' . esc_url( home_url( '/grade-conversion/' ) ) . '">Grade Conversion</a> page.</p>';
+
+	$toggle = $weighted ? '' : '<div class="gpa-view__toggle" role="group" aria-label="Read this GPA as">'
+		. '<button type="button" class="gpa-view__btn" aria-pressed="true" data-view-btn="unweighted">Unweighted</button>'
+		. '<button type="button" class="gpa-view__btn" aria-pressed="false" data-view-btn="weighted">Weighted</button>'
+		. '</div>';
+	return '<div class="gpa-view" data-gpa-view data-gpa="' . esc_attr( $gs ) . '" data-active="' . ( $weighted ? 'weighted' : 'unweighted' ) . '">'
+		. $toggle . $unweighted_tab . $weighted_tab . $conv_link . '</div>';
 }
 add_action( 'init', function () { add_shortcode( 'gpa_scale_view', 'gpa_scale_view_shortcode' ); } );

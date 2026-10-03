@@ -1567,3 +1567,86 @@ body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { fon
     letter-spacing: 0 !important;
     white-space: nowrap;
 }
+
+/* GPA page view v2 (Digant 2026-10-03): static Unweighted summary; Weighted results read as results, not inputs */
+#page .entry-content .gpa-view__label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--gpa-gray-600);
+}
+#page .entry-content .gpa-view__field .gpa-view__label { margin-bottom: 6px; }
+#page #main .entry-content dl.gpa-view__summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin: 0 0 12px !important;
+    padding: 0 !important;
+    background: var(--gpa-surface);
+    border: 1px solid var(--gpa-border);
+    border-radius: 10px;
+}
+#page #main .entry-content dl.gpa-view__summary > div { padding: 14px 16px; border-left: 1px solid var(--gpa-border); }
+#page #main .entry-content dl.gpa-view__summary > div:first-child { border-left: 0; }
+#page #main .entry-content dl.gpa-view__summary dt {
+    margin: 0 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--gpa-gray-600) !important;
+}
+#page #main .entry-content dl.gpa-view__summary dd {
+    margin: 2px 0 0 !important;
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    color: var(--gpa-heading) !important;
+    font-variant-numeric: tabular-nums;
+}
+#page #main .entry-content dl.gpa-view__summary dd small {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--gpa-gray-600);
+}
+#page .entry-content .gpa-view__result {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    align-items: end;
+    gap: 12px 20px;
+    margin: 4px 0 12px !important;
+    padding: 16px 18px !important;
+    background: var(--gpa-tint-indigo) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+}
+#page .entry-content .gpa-view__result strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 700;
+    color: var(--gpa-heading);
+    font-variant-numeric: tabular-nums;
+}
+#page .entry-content .gpa-view__headline strong { font-size: 40px; color: var(--gpa-accent); }
+#page #main .entry-content p.gpa-view__fine:not(#root *) { font-size: 14px !important; color: var(--gpa-gray-600) !important; }
+#page #main .entry-content p.gpa-view__other:not(#root *) {
+    margin-top: 12px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid var(--gpa-border);
+    font-size: 14px !important;
+}
+@media (max-width: 640px) {
+    #page #main .entry-content dl.gpa-view__summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #page #main .entry-content dl.gpa-view__summary > div:nth-child(3) { border-left: 0; }
+    #page #main .entry-content dl.gpa-view__summary > div:nth-child(n+3) { border-top: 1px solid var(--gpa-border); }
+    #page .entry-content .gpa-view__result { grid-template-columns: 1fr 1fr; }
+    #page .entry-content .gpa-view__headline { grid-column: 1 / -1; }
+    #page .entry-content .gpa-view__headline strong { font-size: 34px; }
+}

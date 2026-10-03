@@ -1,6 +1,6 @@
 # Addresses scripts/admissions/indexing_check.py requests once each, without following redirects
 # (admissions-indexing.yml). Edit the "taken for" line to run the check again.
-# taken for: a check after step 2, tiering (Digant's go 2026-10-03 03:38 UTC): 1,318 tier C pages set to noindex and out of the sitemap
+# taken for: a check after step 3, template v2 on for tier A (Digant's go 2026-10-03 06:57 UTC, switch 07:29)
 /admissions/
 /admissions/page/2/
 /admissions/page/103/

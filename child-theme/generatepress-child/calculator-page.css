@@ -934,18 +934,24 @@ body.gpa-calc-tool #root .max-w-4xl.px-4 { max-width: none !important; padding-l
   html body #page #root:not(.hs-root),
   html body #page #root.hs-root,
   html body #page .hs-root,
-  html body #page .entry-content > .frm_forms { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
+  html body #page .entry-content > .frm_forms,
+  html body #page .entry-content > .gpacalc-mount,
+  html body #page .entry-content > .gpcm-host { box-sizing: border-box !important; width: 100% !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; }
 }
 @media (min-width: 641px) and (max-width: 880px) {
   /* The content area has 40px side padding here (layout.css); pull the card back out to the column edges. */
   html body:not(.home) #page #root,
-  html body:not(.home) #page .entry-content > .frm_forms { width: auto !important; max-width: none !important; margin-left: -40px !important; margin-right: -40px !important; }
+  html body:not(.home) #page .entry-content > .frm_forms,
+  html body:not(.home) #page .entry-content > .gpacalc-mount,
+  html body:not(.home) #page .entry-content > .gpcm-host { width: auto !important; max-width: none !important; margin-left: -40px !important; margin-right: -40px !important; }
 }
 @media (max-width: 640px) {
   /* The content area has 20px side padding on phones (layout.css); the card sits 14px from the screen edge.
      Two ids beat the per-calculator -16px rules in calc-assets. */
   html body:not(.home) #page #root,
-  html body:not(.home) #page .entry-content > .frm_forms { box-sizing: border-box !important; width: auto !important; max-width: none !important; margin-left: -6px !important; margin-right: -6px !important; }
+  html body:not(.home) #page .entry-content > .frm_forms,
+  html body:not(.home) #page .entry-content > .gpacalc-mount,
+  html body:not(.home) #page .entry-content > .gpcm-host { box-sizing: border-box !important; width: auto !important; max-width: none !important; margin-left: -6px !important; margin-right: -6px !important; }
   body.gpa-calc-tool #root .max-w-4xl.px-4 > .bg-white.border { border-radius: 18px; }
 }
 

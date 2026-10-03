@@ -173,6 +173,16 @@
     --gpa-calc-result-label: var(--gpa-accent);
     --gpa-calc-result-value: var(--gpa-heading);
     --gpa-calc-cta-bg:       var(--gpa-gradient-brand);
+    /* Calculator Design Standard: card spacing and the sticky result pill */
+    --gpa-calc-pad:          32px;
+    --gpa-calc-row-gap:      12px;
+    --gpa-calc-field-gap:    12px;
+    --gpa-calc-section-gap:  16px;
+    --gpa-calc-pill-bg:      var(--gpa-blue-950);
+    --gpa-calc-pill-text:    var(--gpa-surface);
+    --gpa-calc-pill-label:   var(--gpa-blue-300);
+    --gpa-calc-pill-chip-bg: rgba(255,255,255,0.14);
+    --gpa-calc-pill-shadow:  0 8px 24px rgba(23,37,84,0.28);
 
     /* 4. CONTENT ROLES (tables, worked examples) — roles only, no raw colors */
     --gpa-table-border:         var(--gpa-calc-border);
@@ -511,6 +521,10 @@ small, figcaption, .wp-element-caption {
 @keyframes gpa-root-spin {
     to { transform: rotate(360deg); }
 }
+@media (max-width: 640px) {
+  :root { --gpa-calc-pad: 16px; --gpa-calc-row-gap: 16px; --gpa-calc-field-gap: 8px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     #root:empty::after { animation: none; }
 }

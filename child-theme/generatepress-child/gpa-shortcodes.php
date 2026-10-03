@@ -339,7 +339,7 @@ function gpa_scale_converter_shortcode() {
 	list( $pts, $range ) = gpa_scale_letter_rows()[ $default ];
 	$url = isset( $pages[ $pts ] ) ? $pages[ $pts ] : '';
 	gpa_scale_enqueue_tools();
-	return '<div class="gpa-quickconv" data-gpa-quickconv>'
+	return '<div class="gpa-quickconv" id="gpa-scale-converter" data-gpa-quickconv>'
 		. '<label class="gpa-quickconv__field"><span class="gpa-quickconv__label">Letter grade</span>'
 		. '<select class="gpa-quickconv__select" aria-describedby="gpa-quickconv-out">' . $opts . '</select></label>'
 		. '<div class="gpa-quickconv__out" id="gpa-quickconv-out" aria-live="polite">'
@@ -430,7 +430,7 @@ function gpa_scale_view_shortcode( $atts ) {
 			. '</dl>'
 			. '</div>';
 	}
-	$conv_link = '<p class="gpa-view__note gpa-view__other">Converting a different GPA or grade? Use the <a href="' . esc_url( home_url( '/grade-conversion/' ) ) . '">Grade Conversion</a> page.</p>';
+	$conv_link = '<p class="gpa-view__note gpa-view__other">Look up any letter grade on the <a href="' . esc_url( home_url( '/gpa-scale/#gpa-scale-converter' ) ) . '">GPA scale</a>, or use <a href="' . esc_url( home_url( '/grade-conversion/' ) ) . '">Grade Conversion</a>.</p>';
 
 	$toggle = $weighted ? '' : '<div class="gpa-view__toggle" role="group" aria-label="Read this GPA as">'
 		. '<button type="button" class="gpa-view__btn" aria-pressed="true" data-view-btn="unweighted">Unweighted</button>'

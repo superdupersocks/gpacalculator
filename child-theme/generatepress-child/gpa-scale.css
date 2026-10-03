@@ -194,6 +194,7 @@ body.gpa-hero-band .entry-header .gpa-updated {
     background: var(--gpa-tint-indigo, var(--gpa-surface-subtle)) !important;
 }
 #page .entry-content .gpa-quickconv__out { display: contents; }
+#page .entry-content .gpa-quickconv { scroll-margin-top: 96px; }   /* GPA pages link to #gpa-scale-converter */
 #page .entry-content .gpa-quickconv__label {
     margin-bottom: 4px;
     font-size: 13px;

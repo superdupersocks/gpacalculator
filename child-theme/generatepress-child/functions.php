@@ -3467,26 +3467,38 @@ function gpa_scale_table_mark_rows( $html, $block ) {
 	if ( 'core/table' !== $block['blockName'] || false === strpos( $html, 'gpa-scale-table' ) ) {
 		return $html;
 	}
-	$current = '';
-	$slug    = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
-	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) ) {
-		$current = $m[1] . '.' . $m[2];
+	// The page's own GPA is marked beside the chart on its nearest letter's row (both rows on a tie, both 4.0
+	// rows for a 4.0), using the site-wide rule gpa_scale_figures(); rows carry data-letter so the weighted
+	// view (gpa-scale-tools.js) can move the mark.
+	$marks = array();
+	$mark  = '';
+	$slug  = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
+	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) && function_exists( 'gpa_scale_figures' ) ) {
+		$gs = $m[1] . '.' . $m[2];
+		list( $letter, $pct ) = gpa_scale_figures( $gs );
+		$marks = explode( '/', $letter );
+		if ( '4.0' === $gs ) {
+			$marks[] = 'A+';
+		}
+		$mark = 'Your ' . $gs . ' · ' . $pct;
 	}
 	return preg_replace_callback(
 		'#<tr>(.*?)</tr>#s',
-		function ( $row ) use ( $current ) {
+		function ( $row ) use ( $marks, $mark ) {
 			if ( ! preg_match_all( '#<td\b[^>]*>(.*?)</td>#s', $row[1], $cells ) || count( $cells[1] ) < 3 ) {
 				return $row[0]; // header row or unexpected shape
 			}
-			$gpa    = trim( wp_strip_all_tags( $cells[1][0] ) );
-			$letter = strtolower( substr( trim( wp_strip_all_tags( end( $cells[1] ) ) ), 0, 1 ) );
-			$class  = in_array( $letter, array( 'a', 'b', 'c', 'd', 'f' ), true ) ? 'is-band-' . $letter : '';
-			$attrs  = '';
-			if ( '' !== $current && $gpa === $current ) {
+			$letter_full = trim( wp_strip_all_tags( end( $cells[1] ) ) );
+			$letter      = strtolower( substr( $letter_full, 0, 1 ) );
+			$class       = in_array( $letter, array( 'a', 'b', 'c', 'd', 'f' ), true ) ? 'is-band-' . $letter : '';
+			$attrs       = ' data-letter="' . esc_attr( $letter_full ) . '"';
+			$inner       = $row[1];
+			if ( $marks && in_array( $letter_full, $marks, true ) ) {
 				$class .= ' is-current-gpa';
-				$attrs  = ' aria-current="true"';
+				$attrs .= ' aria-current="true"';
+				$inner  = preg_replace( '#<td\b#', '<td data-mark="' . esc_attr( $mark ) . '"', $inner, 1 );
 			}
-			return '' === trim( $class ) ? $row[0] : '<tr class="' . esc_attr( trim( $class ) ) . '"' . $attrs . '>' . $row[1] . '</tr>';
+			return '<tr class="' . esc_attr( trim( $class ) ) . '"' . $attrs . '>' . $inner . '</tr>';
 		},
 		$html
 	);

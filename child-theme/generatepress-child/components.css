@@ -1464,3 +1464,106 @@ body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { fon
     #page .entry-content .gpa-quickconv__link { margin-left: 0; }
     #page .entry-content .gpa-lookup__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+#page .entry-content .gpa-lookup__tag.is-weighted { color: var(--gpa-gray-600); }
+#page .entry-content .gpa-lookup__card.is-weighted { background: var(--gpa-surface-subtle); }
+#page .entry-content .gpa-lookup__note { margin: 0 0 14px !important; font-size: 15px !important; color: var(--gpa-gray-600) !important; }
+
+/* GPA page view ([gpa_scale_view]): Unweighted | Weighted toggle, summary facts, weighted mini converter */
+#page .entry-content .gpa-view {
+    margin: 0 0 24px !important;
+    padding: 20px !important;
+    background: var(--gpa-surface-subtle) !important;
+    border: 1px solid var(--gpa-border) !important;
+    border-radius: 12px !important;
+}
+#page .entry-content .gpa-view__toggle {
+    display: inline-flex;
+    padding: 4px;
+    margin-bottom: 16px;
+    background: var(--gpa-surface);
+    border: 1px solid var(--gpa-border);
+    border-radius: 999px;
+}
+#page .entry-content .gpa-view__btn {
+    min-height: 40px;
+    padding: 8px 18px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gpa-gray-600);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+}
+#page .entry-content .gpa-view__btn[aria-pressed="true"] { background: var(--gpa-accent); color: var(--gpa-surface); }
+#page .entry-content .gpa-view__btn:focus-visible { outline: 3px solid var(--gpa-focus-ring); outline-offset: 2px; }
+#page .entry-content .gpa-view__panel[hidden] { display: none !important; }
+#page #main .entry-content ul.gpa-view__facts {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 0 0 12px !important;
+    padding: 0 !important;
+    list-style: none !important;
+}
+#page #main .entry-content ul.gpa-view__facts > li {
+    margin: 0 !important;
+    padding: 12px 14px !important;
+    background: var(--gpa-surface);
+    border: 1px solid var(--gpa-border);
+    border-radius: 10px;
+    list-style: none !important;
+}
+#page #main .entry-content ul.gpa-view__facts > li::before { content: none !important; display: none !important; }
+#page #main .entry-content ul.gpa-view__facts > li > span {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--gpa-gray-600);
+}
+#page #main .entry-content ul.gpa-view__facts > li > strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--gpa-heading);
+    font-variant-numeric: tabular-nums;
+}
+#page #main .entry-content p.gpa-view__note:not(#root *) { margin: 0 !important; font-size: 15px !important; line-height: 1.6 !important; color: var(--gpa-text) !important; }
+#page .entry-content .gpa-view__conv {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 12px 0 !important;
+}
+#page .entry-content .gpa-view__field input {
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 10px;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--gpa-heading);
+    background: var(--gpa-surface);
+    border: 1px solid var(--gpa-border-strong);
+    border-radius: 10px;
+}
+#page .entry-content .gpa-view__field input:focus-visible { outline: 3px solid var(--gpa-focus-ring); outline-offset: 2px; }
+@media (max-width: 640px) {
+    #page .entry-content .gpa-view { padding: 16px !important; }
+    #page .entry-content .gpa-view__toggle { display: flex; }
+    #page .entry-content .gpa-view__btn { flex: 1; }
+    #page .entry-content .gpa-view__conv { grid-template-columns: 1fr; }
+    #page #main .entry-content ul.gpa-view__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Chart mark: the page's GPA beside its nearest letter's row (text from data-mark, set by functions.php / the view) */
+#page .entry-content .gpa-scale-table tr.is-current-gpa td[data-mark]:first-child::after {
+    content: attr(data-mark) !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    white-space: nowrap;
+}

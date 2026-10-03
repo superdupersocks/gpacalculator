@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 57. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 58. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -116,7 +116,7 @@ Every control is at least 44px tall, uses Lexend and takes colors only from calc
 | Control | Spec |
 | --- | --- |
 | Inputs / selects | 44px tall, radius 8px, 1px `--gpa-calc-input-border`, 16px text (stops iOS zoom), 2px `--gpa-calc-focus` ring |
-| Grade select | Empty option reads "Grade", never "Select"; selected grade centered |
+| Grade select | Empty option reads "Grade", never "Select"; selected grade centered. Desktop: fixed width (about 128px grade, 104px credits); no native arrow; a 28px chevron button inside the right edge in --gpa-indigo-100 with a bold --gpa-indigo-700 chevron, tint deepens on hover; same treatment as the GPA Scale converter. Phones unchanged (grade sheet). (Digant, Oct 3) |
 | Credits field | Number field, text centered, decimal keypad on phones (inputmode="decimal"), default 3 |
 | Card header | One line: an "Options" link on the left, the My saves (folder) and Save icons on the right. No step bar on any calculator; the planner sits after the result and opens only from the result's planner button |
 | Add class (planned-course sections only) | `--gpa-calc-add-bg`, 1px dashed `--gpa-calc-add-border`, text `--gpa-calc-add-text` 600 |

@@ -204,15 +204,17 @@ Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
    (`cleanup_qa.py after` / `verify`, `data/admissions/cleanup_qa/after/verify.csv`): 3,171 answer as planned and no
    link reaches a removed page; 14 old /admission/ addresses still answered the old way (rows skipped because their
    rule covers other addresses, and addresses compared without decoding them the way Rank Math does).
-   `cleanup_fix_live.php` now matches like Rank Math and splits shared rules; the 14 (`followup.csv`) run with step
-   2's go. Server steps: `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`.
-2. **Tiering**: checkpoint ready 2026-10-03 (`data/admissions/tiering/summary.md`, every page in `tiers.csv`; the
-   admissions doc's "Step 2: tiering" tab), waits on Digant's `go tiers`. A 253 (cited GPA, acceptance rate, SAT/ACT
-   or test blind), B 1,355 (one or two of those), C 1,477 (open admission or none); A and B stay in search, C comes
-   out unless it had a click in 12 months or shows a cited GPA: 1,318 pages to noindex (Rank Math's per-page No
-   Index, which also drops them from the sitemap), each page's tier stored as `admissions_tier` for step 3. Server
-   steps: `docs/ADMISSIONS_TIERING_RUNBOOK.md`.
-3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. Not started.
+   `cleanup_fix_live.php` now matches like Rank Math and splits shared rules; the 14 (`followup.csv`) were fixed with
+   step 2's go at 03:41 UTC. Server steps: `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`.
+2. **Tiering**: done 2026-10-03 03:41 UTC on Digant's `go tiers` (`data/admissions/tiering/summary.md`, every page in
+   `tiers.csv`; the admissions doc's "Step 2: tiering" tab; log `admissions-tiers-20261003-034149-log.tsv`). A 253
+   (cited GPA, acceptance rate, SAT/ACT or test blind), B 1,355 (one or two of those), C 1,477 (open admission or
+   none); A and B stay in search, C comes out unless it had a click in 12 months or shows a cited GPA: 1,318 pages set
+   to noindex (Rank Math's per-page No Index; they stay published and on the hub), each page's tier stored as
+   `admissions_tier` for step 3. Checked from GitHub (indexing check 47068a0): the colleges sitemaps list exactly the
+   1,767 indexed pages and the hub. The same go ran step 1's 14-address follow-up (log
+   `admissions-cleanup-20261003-034126-log.tsv`). Server steps: `docs/ADMISSIONS_TIERING_RUNBOOK.md`.
+3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. In progress.
 
 ## Open issues
 

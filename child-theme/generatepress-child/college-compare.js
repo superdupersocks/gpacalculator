@@ -25,6 +25,10 @@
     var verdictEl = box.querySelector('.gpa-compare__verdict strong');
     var textEl = box.querySelector('.gpa-compare__text');
     var rangeEl = box.querySelector('.gpa-compare__range');
+    var youEl = box.querySelector('.gpa-compare__you-label');
+    var noteEl = box.querySelector('.gpa-compare__note');
+    var fitsEl = box.querySelector('.gpa-compare__fits');
+    var staticText = textEl.textContent;
     var state = { scale: 'unweighted', test: c.act ? 'ACT' : 'SAT' };
 
     function num(el) {
@@ -78,8 +82,13 @@
         var parts = [];
         var signals = [];
 
+        // The primary button names the GPA as typed: "Colleges where a 3.4 fits"
+        fitsEl.textContent = gOk ? 'a ' + String(gpaIn.value).trim().replace(',', '.') : 'your GPA';
+        noteEl.hidden = !(gOk && state.scale === 'weighted' && g > 4 && c.basis !== 'weighted');
+
         if (!gOk && !sOk) {
             verdictEl.textContent = 'Enter your GPA';
+            textEl.textContent = staticText;
             rangeEl.hidden = true;
             return;
         }
@@ -99,9 +108,6 @@
                 parts.push(c.name + ' doesn’t say whether its average GPA is weighted or unweighted, so we can’t place your ' + fmt(g, 2) + ' against it.');
             } else {
                 parts.push(c.name + ' hasn’t published an average GPA we could verify, so we can’t place your ' + fmt(g, 2) + ' against admitted students.');
-            }
-            if (state.scale === 'weighted' && g > 4 && c.basis !== 'weighted') {
-                parts.push('Weighted GPAs above 4.0 can’t be compared with unweighted figures; use your unweighted GPA here.');
             }
         }
 
@@ -125,8 +131,9 @@
             rangeEl.querySelector('.gpa-compare__you').style.left = pct(s) + '%';
             var ends = rangeEl.querySelectorAll('.gpa-compare__scale span');
             ends[0].textContent = lim[0];
-            ends[1].textContent = 'Middle 50%: ' + label;
+            ends[1].textContent = 'Middle 50% of enrolled students: ' + label;
             ends[2].textContent = lim[1];
+            youEl.textContent = 'You: ' + s;
         }
 
         if (c.rate !== null) {

@@ -20,11 +20,15 @@ What it is (`child-theme/generatepress-child/college-v2.php`, `college-compare.j
 - **FAQs** built from the page's own figures (can I get in with a X GPA, what GPA you need, acceptance rate, is it
   hard to get into, SAT/ACT required, SAT/ACT scores, how much GPA matters, AP credit, net price), each only when the
   data answers it. Fewer than three: no FAQ section and no FAQPage (both come from `gpa_college_faqs()`).
-- **Similar colleges** (Related tools component): up to five indexed colleges in the same state and of the same kind
-  (4-year or 2-year), closest in acceptance rate and size; open-admission colleges get other open-admission colleges.
-  Next steps: the hub filtered to the state (`/admissions/?search=<State>`, noindex like every filtered hub view), the
-  Raise GPA and weighted GPA calculators. Each target linked once per page (the compare box links the high school GPA
-  calculator).
+- **Order after the FAQ** (Digant, 2026-10-03 04:52): FAQ, "Before you apply", Similar colleges, Keep exploring,
+  Sources. Those three H2s are unnumbered and stay out of the TOC; every section H2 sits 64px below what's above it
+  (48px on phones).
+- **Similar colleges in {State}**: up to five indexed colleges in the same state and of the same kind (4-year or
+  2-year), closest in acceptance rate and size, as link cards; open-admission colleges get other open-admission
+  colleges. **Keep exploring**: the hub filtered to the state (`/admissions/?search=<State>`, noindex like every
+  filtered hub view) and the weighted GPA calculator. The compare box's buttons are "Colleges where a {GPA} fits" (the
+  state's colleges that admit 50% or more, since the hub has no GPA filter) and "Plan the grades I need" (Raise GPA
+  calculator); its help line links the high school GPA calculator. Each target linked once per page.
 - **Official admissions link** ("Before you apply"): post meta `college_admissions_url` and
   `college_admissions_url_kind`, from `data/admissions/audit/step3_admissions_links.csv`. Every address was requested
   from GitHub (`admissions-links.yml`, `data/admissions/step3/links_status.tsv`); a page links only to an address that

@@ -211,14 +211,23 @@ if ( ! function_exists( 'gpa_college_compare_box' ) ) {
         if ( ! $d ) {
             return '';
         }
-        $name = esc_html( $v['name'] );
-        $calc = '<p class="gpa-compare__help">Don\'t know your GPA? <a href="' . esc_url( home_url( '/high-school-gpa-calculator/' ) ) . '">Work it out with the high school GPA calculator</a>.</p>';
+        $name  = esc_html( $v['name'] );
+        $state = gpa_college_state( $v['location'] );
+        $calc  = '<p class="gpa-compare__help">Don\'t know your GPA? <a href="' . esc_url( home_url( '/high-school-gpa-calculator/' ) ) . '">Calculate it with the high school GPA calculator</a></p>';
+        // The hub has no GPA filter (GPAs show only where a college published one), so "where a GPA fits" is the
+        // state's colleges that admit at least half of applicants or anyone who applies.
+        $fits  = add_query_arg( array_filter( array( 'search' => '' !== $state ? rawurlencode( $state ) : '', 'acceptance' => 'over_50' ) ), get_post_type_archive_link( 'colleges' ) );
+        $ctas  = '<div class="gpa-compare__ctas">'
+            . '<a class="gpa-compare__cta gpa-compare__cta--primary" href="' . esc_url( $fits ) . '"><span>Colleges where <span class="gpa-compare__fits">your GPA</span> fits</span></a>'
+            . '<a class="gpa-compare__cta" href="' . esc_url( home_url( '/how-to-raise-gpa/' ) ) . '">Plan the grades I need</a>'
+            . '</div>';
+        $fine  = '<p class="gpa-compare__fine">A guide based on reported data, not a prediction. ' . $name . ' reviews each application.</p>';
         if ( $d['open'] ) {
-            return '<div class="gpa-compare gpa-compare--open">'
+            return '<div class="gpa-compare gpa-compare--open"><div class="gpa-compare__result">'
                 . '<p class="gpa-compare__verdict"><span class="gpa-compare__label">Where you stand</span><strong>Any GPA meets the admission requirement</strong></p>'
-                . '<p>' . $name . ' has an open admission policy: it accepts any student who applies, so your GPA and test scores won\'t keep you out. Some programs can set their own requirements, so check the one you want with the college.</p>'
-                . $calc
-                . '</div>';
+                . '<p class="gpa-compare__text">' . $name . ' has an open admission policy: it accepts any student who applies, so your GPA and test scores won\'t keep you out. Some programs can set their own requirements, so check the one you want with the college.</p>'
+                . $ctas . $fine
+                . '</div></div>';
         }
         $tests = '';
         if ( $d['act'] || $d['sat'] ) {
@@ -231,6 +240,7 @@ if ( ! function_exists( 'gpa_college_compare_box' ) ) {
                 . '</div></div>';
         }
         return '<div class="gpa-compare" data-college="' . esc_attr( wp_json_encode( $d ) ) . '">'
+            . '<div class="gpa-compare__top">'
             . '<div class="gpa-compare__inputs">'
             . '<div class="gpa-compare__field"><label for="gpa-compare-gpa">Your GPA</label>'
             . '<input id="gpa-compare-gpa" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 3.4">'
@@ -241,12 +251,15 @@ if ( ! function_exists( 'gpa_college_compare_box' ) ) {
             . $tests
             . '</div>'
             . $calc
+            . '</div>'
             . '<div class="gpa-compare__result" aria-live="polite">'
             . '<p class="gpa-compare__verdict"><span class="gpa-compare__label">Where you stand</span><strong>Enter your GPA</strong></p>'
             . '<p class="gpa-compare__text">' . gpa_college_compare_static( $v, $d ) . '</p>'
             . '<div class="gpa-compare__range" hidden><div class="gpa-compare__scale"><span></span><span class="gpa-compare__mid"></span><span></span></div>'
-            . '<div class="gpa-compare__track"><span class="gpa-compare__band"></span><span class="gpa-compare__you"></span></div></div>'
-            . '<p class="gpa-compare__fine">A guide based on what ' . $name . ' reported, not a prediction. Colleges review each application as a whole.</p>'
+            . '<div class="gpa-compare__track"><span class="gpa-compare__band"></span><span class="gpa-compare__you"></span></div>'
+            . '<p class="gpa-compare__you-label"></p></div>'
+            . '<p class="gpa-compare__note" hidden>Weighted GPAs above 4.0 can\'t be compared directly. Many colleges recalculate on their own scale, so use your unweighted GPA here.</p>'
+            . $ctas . $fine
             . '</div></div>';
     }
 
@@ -487,40 +500,42 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
     }
 }
 
-if ( ! function_exists( 'gpa_college_related_cards' ) ) {
-    /**
-     * The Related tools component (components.css 9) at the foot of the page: similar colleges in the state, and the
-     * next steps (the state's colleges on the hub, the Raise GPA and weighted GPA calculators). Each target once; the
-     * compare box already links the high school GPA calculator, so it isn't here.
-     */
-    function gpa_college_related_cards( array $v ) {
+if ( ! function_exists( 'gpa_college_similar_section' ) ) {
+    // "Similar colleges in {State}": one heading over link cards (name, then difficulty and admit rate), as in the
+    // mockup. Unnumbered and out of the TOC (layout.css 10). Empty without at least two matches.
+    function gpa_college_similar_section( array $v ) {
         $similar = gpa_college_similar( $v );
-        $state   = gpa_college_state( $v['location'] );
-        $cards   = '';
-        if ( $similar ) {
-            $items = '';
-            foreach ( $similar as $c ) {
-                $items .= '<li><a href="' . esc_url( get_permalink( $c['id'] ) ) . '">' . esc_html( $c['title'] ) . '</a>'
-                    . ( '' !== $c['note'] ? ' <span class="gpa-college-similar__note">' . esc_html( $c['note'] ) . '</span>' : '' ) . '</li>';
-            }
-            $cards .= '<div class="wp-block-column rx-relcard rx-i-cap"><h3 class="wp-block-heading">Similar colleges in ' . esc_html( $state ) . '</h3>'
-                . '<p class="rx-relsub">' . ( $v['open'] ? 'Also open to anyone who applies' : 'Similar acceptance rate and size' ) . '</p>'
-                . '<ul class="wp-block-list rx-rellist gpa-college-similar">' . $items . '</ul></div>';
+        if ( ! $similar ) {
+            return '';
         }
-        $next = array();
+        $state = gpa_college_state( $v['location'] );
+        $items = '';
+        foreach ( $similar as $c ) {
+            $items .= '<li><a class="gpa-college-similar__card" href="' . esc_url( get_permalink( $c['id'] ) ) . '"><span class="gpa-college-similar__name">' . esc_html( $c['title'] ) . '</span>'
+                . ( '' !== $c['note'] ? '<span class="gpa-college-similar__note">' . esc_html( $c['note'] ) . '</span>' : '' ) . '</a></li>';
+        }
+        return '<h2 id="similar-colleges" class="gpa-no-number">Similar colleges' . ( '' !== $state ? ' in ' . esc_html( $state ) : '' ) . '</h2>'
+            . '<p class="gpa-college-similar__sub">' . ( $v['open'] ? 'Also open to anyone who applies.' : 'With a similar acceptance rate and size.' ) . '</p>'
+            . '<ul class="gpa-college-similar">' . $items . '</ul>';
+    }
+
+    // "Keep exploring": the state's colleges on the hub and the weighted GPA calculator, as pill links. The Raise GPA
+    // calculator is the compare box's "Plan the grades I need" and the high school GPA calculator its help line, so
+    // neither repeats here.
+    function gpa_college_next_section( array $v ) {
+        $state = gpa_college_state( $v['location'] );
+        $next  = array();
         if ( '' !== $state ) {
             $next[] = array( add_query_arg( 'search', rawurlencode( $state ), get_post_type_archive_link( 'colleges' ) ), 'All colleges in ' . $state );
+        } else {
+            $next[] = array( get_post_type_archive_link( 'colleges' ), 'All colleges' );
         }
-        $next[] = array( home_url( '/how-to-raise-gpa/' ), 'Raise GPA calculator' );
         $next[] = array( home_url( '/weighted-gpa-calculator/' ), 'Weighted GPA calculator' );
         $items  = '';
         foreach ( $next as $n ) {
-            $items .= '<li><a href="' . esc_url( $n[0] ) . '">' . esc_html( $n[1] ) . '</a></li>';
+            $items .= '<li><a class="gpa-college-next__pill" href="' . esc_url( $n[0] ) . '">' . esc_html( $n[1] ) . '</a></li>';
         }
-        $cards .= '<div class="wp-block-column rx-relcard rx-i-calc"><h3 class="wp-block-heading">Keep exploring</h3>'
-            . '<p class="rx-relsub">Compare more colleges and plan your grades</p>'
-            . '<ul class="wp-block-list rx-rellist">' . $items . '</ul></div>';
-        return '<div class="wp-block-columns rx-rel">' . $cards . '</div>';
+        return '<h2 id="keep-exploring" class="gpa-no-number">Keep exploring</h2><ul class="gpa-college-next">' . $items . '</ul>';
     }
 }
 
@@ -535,6 +550,17 @@ if ( ! function_exists( 'gpa_college_official_link' ) ) {
         }
         return array( $url, 'website' === $kind ? 'official website' : 'official admissions site' );
     }
+}
+
+if ( ! function_exists( 'gpa_college_v2_body_class' ) ) {
+    // gpa-college-v2 on template v2 pages, for admissions.css 9 (the 64px section spacing).
+    function gpa_college_v2_body_class( $classes ) {
+        if ( is_singular( 'colleges' ) && gpa_college_v2( get_queried_object_id() ) ) {
+            $classes[] = 'gpa-college-v2';
+        }
+        return $classes;
+    }
+    add_filter( 'body_class', 'gpa_college_v2_body_class' );
 }
 
 if ( ! function_exists( 'gpa_college_v2_assets' ) ) {

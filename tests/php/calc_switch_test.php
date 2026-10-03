@@ -83,6 +83,26 @@ check( 'manifest names', array( $m['name'], $m['short_name'], $m['display'], $m[
 check( 'manifest start_url', $m['start_url'], 'https://gpacalculator.net/college-gpa-calculator/?source=homescreen' );
 check( 'manifest icons', array_map( function ( $i ) { return array( $i['sizes'], basename( $i['src'] ) ); }, $m['icons'] ), array( array( '192x192', 'badge-192.png' ), array( '512x512', 'badge-512.png' ) ) );
 check( 'manifest icon files exist', is_readable( GPACalc_Calculator_Assets::path( 'a2hs/badge-192.png' ) ) && is_readable( GPACalc_Calculator_Assets::path( 'a2hs/badge-512.png' ) ), true );
+// The old shortcode enqueues its files while the content renders (after wp_enqueue_scripts): they are
+// dropped again before the footer prints them (live check, Oct 3 16:58).
+function old_shortcode_runs() {
+	wp_register_script( 'main-js-college-gpa-calculator', 'old.js', array(), 1 ); wp_enqueue_script( 'main-js-college-gpa-calculator' );
+	wp_register_style( 'main-css-college-gpa-calculator', 'old.css', array(), 1 ); wp_enqueue_style( 'main-css-college-gpa-calculator' );
+}
+check( 'late drop hooked before the footer prints', in_array( array( 'GPACalc_Switch', 'drop_late' ), $GLOBALS['hooks']['wp_print_footer_scripts'] ?? array(), true ) && in_array( array( 'GPACalc_Switch', 'drop_late' ), $GLOBALS['hooks']['wp_footer'] ?? array(), true ), true );
+college_page( array(), array( 'college' ) );
+old_shortcode_runs();
+GPACalc_Switch::drop_late();
+check( 'college on: old script enqueued late is dropped', wp_scripts()->queue, array( 'gpacalc-v2-college' ) );
+check( 'college on: old style enqueued late is dropped', in_array( 'main-css-college-gpa-calculator', wp_styles()->queue, true ), false );
+college_page();
+old_shortcode_runs();
+GPACalc_Switch::drop_late();
+check( 'college off: late drop leaves the old calculator', wp_scripts()->queue, array( 'main-js-college-gpa-calculator' ) );
+college_page( array( 'calc' => 'old' ), array( 'college' ) );
+old_shortcode_runs();
+GPACalc_Switch::drop_late();
+check( 'college ?calc=old: late drop leaves the old calculator', wp_scripts()->queue, array( 'main-js-college-gpa-calculator' ) );
 
 // Fallback and preview.
 list( $js ) = college_page( array( 'calc' => 'old' ), array( 'college' ) );

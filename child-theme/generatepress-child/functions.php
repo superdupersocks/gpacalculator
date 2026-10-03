@@ -2932,11 +2932,12 @@ if ( ! function_exists( 'get_field' ) ) {
  * uses left_3 only in the 160 tier. When Freestar corrects right_1/right_2, set every 'right' tier to right_1, right_2.
  */
 function gpa_rail_placements() {
-	$left = array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_2' );
-	$right = array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_right_3' );
+	// Digant 2026-10-03: left_2 takes the right rail's bottom spot (was right_3); the left rail keeps two ads with left_3.
+	$left = array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_3' );
+	$right = array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_left_2' );
 	return array(
 		'left'  => array( 160 => $left, 300 => $left, 336 => $left ),
-		'right' => array( 160 => array( 'gpacalculator-net_siderail_left_3' ), 300 => $right, 336 => $right ),
+		'right' => array( 160 => array( 'gpacalculator-net_siderail_left_2' ), 300 => $right, 336 => $right ),
 	);
 }
 
@@ -2957,7 +2958,7 @@ function gpa_freestar_siderails() {
 	echo "\n<!-- Freestar side rails (GPA_RAILS_V6) -->\n";
 	foreach ( array( 'left', 'right' ) as $side ) {
 		echo '<div class="gpa-rail gpa-rail--' . $side . '">';
-		foreach ( array_unique( call_user_func_array( 'array_merge', array_values( $placements[ $side ] ) ) ) as $id ) {
+		foreach ( array_unique( call_user_func_array( 'array_merge', array_reverse( array_values( $placements[ $side ] ) ) ) ) as $id ) { // widest tier first: its order is the stacking order
 			echo '<div class="gpa-rail__seg" style="display:none"><div class="gpa-rail__sticky"><div align="center" data-freestar-ad="__300x600" id="' . esc_attr( $id ) . '"></div></div></div>';
 		}
 		echo "</div>\n";

@@ -68,35 +68,26 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					<?php endif; ?>
 
 					<?php
-					// "Jump to" chips (Digant 2026-10-03 16:46, Design spec "In-page navigation"): always visible, rendered
-					// here as plain links to the numbered H2s with short labels, on pages with 4 or more of them. Markup and
-					// styles: the shared .gpa-jump component (components.css 12). college-v2.php keeps the theme's
-					// browser-built TOC (gpa_toc_builder) off college pages.
-					// Chip text (Design spec rev 29, "Chip labels and jump-link SEO"): 2–4 words that keep the section's key
-					// term. H2s that lead with the college's name get a label without it; the others (2–4 words) are the
-					// chip as they stand. No chip for the section directly below the row; the row shows on pages with 4 or
-					// more numbered sections. IDs and H2 text never change.
-					$chip_labels = array(
-						'average-gpa'      => 'Average GPA',
-						'gpa-requirements' => 'GPA requirements',
-						'acceptance-rate'  => 'Acceptance rate',
-					);
-					$chips = '' !== $compare ? array( 'compare' => 'How does your GPA compare?' ) : array();
+					// "On this page" (Design spec rev 32, "In-page navigation", Digant 2026-10-03 18:29): a <details> row,
+					// collapsed on every screen size, under the key-facts box and above the first numbered section. Each
+					// link's text is its H2's text word for word; the links are in the HTML while collapsed. Lists the
+					// numbered H2s only (no FAQ, Similar colleges, Keep planning or Sources), on pages with 4 or more.
+					// Markup = Design's shared component (Core Details block around the Rank Math TOC block; layout.css 11b,
+					// design f183e95). college-v2.php keeps the theme's browser-built TOC (gpa_toc_builder) off college pages.
+					$toc = '' !== $compare ? array( 'compare' => 'How does your GPA compare?' ) : array();
 					foreach ( $sections as $section ) {
-						$chips[ $section['id'] ] = isset( $chip_labels[ $section['id'] ] ) ? $chip_labels[ $section['id'] ] : $section['title'];
+						$toc[ $section['id'] ] = $section['title'];
 					}
-					$show_chips = count( $chips ) >= 4;
-					array_shift( $chips );
 					?>
-					<?php if ( $show_chips ) : ?>
-					<nav class="gpa-jump" aria-label="Jump to">
-						<span class="gpa-jump__label">Jump to</span>
-						<ul class="gpa-jump__list">
-							<?php foreach ( $chips as $chip_id => $chip_text ) : ?>
-							<li><a class="gpa-jump__chip" href="#<?php echo esc_attr( $chip_id ); ?>"><?php echo esc_html( $chip_text ); ?></a></li>
+					<?php if ( count( $toc ) >= 4 ) : ?>
+					<details class="wp-block-details gpa-toc">
+						<summary>On this page <span class="gpa-toc__count">· <?php echo (int) count( $toc ); ?> sections</span></summary>
+						<div class="wp-block-rank-math-toc-block"><nav aria-label="On this page"><ul>
+							<?php foreach ( $toc as $toc_id => $toc_h2 ) : ?>
+							<li><a href="#<?php echo esc_attr( $toc_id ); ?>"><?php echo esc_html( $toc_h2 ); ?></a></li>
 							<?php endforeach; ?>
-						</ul>
-					</nav>
+						</ul></nav></div>
+					</details>
 					<?php endif; ?>
 
 					<?php if ( '' !== $compare ) : ?>

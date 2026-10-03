@@ -2932,12 +2932,13 @@ if ( ! function_exists( 'get_field' ) ) {
  * uses left_3 only in the 160 tier. When Freestar corrects right_1/right_2, set every 'right' tier to right_1, right_2.
  */
 function gpa_rail_placements() {
-	// Digant 2026-10-03: left_2 takes the right rail's bottom spot (was right_3); the left rail keeps two ads with left_3.
-	$left = array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_3' );
-	$right = array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_left_2' );
+	// Digant 2026-10-03: left rail = left_1 + left_2, right rail = right_1 + right_2. At 1260-1349 (160px rails)
+	// right_1/2's mapping would ask for 300-336px ads, so the right rail uses left_3 there until Freestar fixes it.
+	$left = array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_2' );
+	$right = array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_right_2' );
 	return array(
 		'left'  => array( 160 => $left, 300 => $left, 336 => $left ),
-		'right' => array( 160 => array( 'gpacalculator-net_siderail_left_2' ), 300 => $right, 336 => $right ),
+		'right' => array( 160 => array( 'gpacalculator-net_siderail_left_3' ), 300 => $right, 336 => $right ),
 	);
 }
 

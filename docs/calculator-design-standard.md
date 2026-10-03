@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 53. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 57. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -240,22 +240,25 @@ The planner's target GPA is the student's goal; there is no "+ Add a goal" butto
 - Below good standing: rescue wording in `--gpa-danger`, and the planner button reads "Plan getting back above 2.0".
 - The goal saves with the draft and named saves; no goal is set by default.
 
-## Home screen app (PWA)
+## Add to home screen
 
-The site installs as an app with the 4.0 icon, opens straight to the student's saved calculation and works offline. No push notifications for now.
+A small hint invites returning students to put the calculator on their phone's home screen. No service worker and no offline mode; the page itself is what opens (Digant, Oct 3, 2026; mockups approved 16:33 UTC).
 
 | Part | Spec |
 | --- | --- |
-| Manifest | name "GPA Calculator", short\_name "GPA Calc", 4.0 badge icons 192/512 + maskable, display `standalone`, scope `/`, start\_url `/?source=pwa` (GA4 can tell app opens apart) |
-| App shortcuts | College GPA, High school GPA, Grade calculator, Final grade calculator |
-| Service worker | `/sw.js` at the site root; network-first for pages, cache-first for calculator CSS/JS; calculator pages a student has used work offline; never caches ad or analytics scripts; Cloudflare serves `sw.js` with `no-cache` |
-| Install button, Android/desktop | Our own button using the browser's install event, never the browser's automatic prompt |
-| Install button, iPhone | Opens a 3-step visual guide: Share → Add to Home Screen → Add |
-| When the button shows | After the student has a result, on their second visit or later; as a text link "Add GPA Calculator to your home screen" under the result links |
-| Never | On page load, as a popup, or again for 90 days after dismissal; hidden once installed |
-| Tracking | GA4 `pwa_install_click`, `pwa_installed`, and `pwa_open` (standalone display mode) |
+| When it shows | Phones only (≤640px), after the student's second calculation or after Save; never on first load |
+| Where | In the page flow directly under the calculator card, never inside it, at the card's width (Digant chose this placement, Oct 3). Never fixed or floating, so it can't cover the sticky ad, the result pill, an input or the calculator |
+| Look | One dismissible bar: 4.0 badge icon (40px, radius 10px), `--gpa-tint-blue` background, 1px `--gpa-calc-result-line` border, radius 12px, 12px padding, 16px above it; title 14px 600 `--gpa-heading`, text 14px `--gpa-text`; × button 36px |
+| Copy | "Use this calculator again?" (title) + "Add it to your home screen." |
+| iPhone / iPad (Safari) | A second line: "Tap \[share icon\] Share, then Add to Home Screen", with the inline share icon. No button: Safari doesn't let a page start the install |
+| Android / Chrome | An "Add" button (36px pill, `--gpa-primary`, white 14px 600) that calls the saved `beforeinstallprompt` event, i.e. the browser's own install prompt. If the browser never fires that event, the bar doesn't show |
+| Manifest | Minimal web app manifest per calculator page: name "GPA Calculator", short\_name "GPA Calc", the existing 4.0 badge icons (192 and 512), display `standalone`, scope `/`, start\_url = the current calculator page + `?source=homescreen` (GA4 counts home-screen opens; the bar knows to stay hidden). No service worker |
+| Dismissal | × hides it for 30 days (`localStorage` key `gpac:a2hs:dismissed` with the date, behind try/catch) |
+| Hidden when | Already launched from the home screen (`display-mode: standalone`, `navigator.standalone`, or `?source=homescreen`), dismissed in the last 30 days, desktop, or install not possible |
+| Tracking | GA4 `a2hs_shown`, `a2hs_add_click`, `a2hs_installed` (`appinstalled`), `a2hs_dismiss`, and `a2hs_open` on home-screen launches |
+| QA | Not shown on first load or after one calculation; shown after the second or after Save; × keeps it hidden after reload; never overlaps the sticky ad or pill at 390×844; Android Add opens the browser prompt |
 
-Before launch, confirm with Freestar that ads serve normally in standalone mode.
+Built once in the shared calculator core; a calculator only opts in.
 
 ## Features by calculator
 
@@ -352,3 +355,4 @@ A calculator ships only when every box passes in the preview screenshots.
 - [ ] Labels read "Course (optional)", "Grade", "Credits"; grade placeholder "Grade"; grade and credits centered; phone row is name + ×, then grade \~110px and credits \~80px, left-aligned
 - [ ] 390×844: first course field on the first screen under the card header; one blank row that auto-adds; finished rows and earlier semesters collapse to one line; grade sheet and credit quick buttons work; no step bar or chart; Options closed by default; Keep going 20px from the edge; pill hidden whenever the result is on screen or above it
 - [ ] P, NP and W on every scale: GPA and credits unchanged, note shown, no error; collapsed rows cut only the name; "Start over" hidden until there is input; planner button on one line at 375px
+- [ ] Add to home screen (phones): hidden on first load and after one calculation, shown after the second or after Save, directly under the calculator card; × hides it for 30 days; hidden when opened from the home screen; never overlaps the sticky ad or pill

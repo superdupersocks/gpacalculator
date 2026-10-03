@@ -14,10 +14,10 @@
 # sitemap cache, which a theme deploy doesn't, so the sitemaps rebuild with the new code.
 set -euo pipefail
 
-# 5a7b93f: "On this page" details row replaces the chips (spec rev 32; needs layout.css from design f183e95 first). Waits for the rollout to reach college pages: until then leave single-colleges.php out of ONLY. Chip label fixes 8c8ce61 and 90b0d64 were withdrawn. 1591876 (the chips, live 16:58) was shipped with ONLY=single-colleges.php,admissions.css,college-v2.php after
+# d74a374: "On this page" details row replaces the chips, with matching SiteNavigationElement schema (spec rev 32; needs layout.css from design f183e95 first; ships with ONLY=single-colleges.php,college-v2.php, then add a college to scripts/qa/toc-pages.txt). Waits for the rollout to reach college pages: until then leave both out of ONLY. Chip label fixes 8c8ce61 and 90b0d64 were withdrawn. 1591876 (the chips, live 16:58) was shipped with ONLY=single-colleges.php,admissions.css,college-v2.php after
 # components.css and layout.css from Design's 2fdf051 (deploy_theme.sh 2fdf051 --only components.css,layout.css). The FAQ (688b2e2) is live since
 # 16:49. The small fixes and the new titles (functions.php and others) still wait on Digant's go.
-COMMIT="5a7b93f"
+COMMIT="d74a374"
 FILES="${ONLY:-admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js,college-v2.php,college-compare.js,gpa-bands.json}"
 HOST="master_rfzfmbbwze@67.205.161.226"
 KEY="$HOME/.ssh/gpacalculator_cloudways"

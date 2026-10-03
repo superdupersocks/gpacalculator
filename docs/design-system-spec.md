@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)"
      https://claude.ai/code/artifact/1d396bba-2925-4cd3-95b4-7c5ce1bf894d
-     Synced 2026-10-03 from doc revision 33. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 35. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand.
      Check: everything below this comment is byte-identical to the export. -->
 # gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)
@@ -275,11 +275,11 @@ Sections are numbered (01, 02, 03) with CSS counters, the TOC uses the same numb
 **In-page navigation: "On this page" list (all templates)**
 
 - One rule: **each link's text is the H2's text, word for word.** Google can take jump-link labels from either the H2 or the contents link, so they must agree; no shortened chip labels.
-- **All screen sizes: collapsed by default, one column.** A `<details>` row, 52px tall: summary "On this page · 8 sections" (16px 600 `--gpa-text-strong`, count in `--gpa-text-muted`) with a chevron in `--gpa-link`; 1px `--gpa-divider` above and below, no box, aligned to the text column. Opening shows the links in one column, 16px `--gpa-link`, a section number before each in `--gpa-accent`, 44px tap rows on mobile.
+- **All screen sizes: collapsed by default, one column.** A `<details>` row, 52px tall: summary "On this page · 8 sections" (16px 600 `--gpa-text-strong`, count in `--gpa-text-muted`) with a `16px chevron in --gpa-link placed right after the text (8px gap; no circle, background or right alignment), rotating 180° when open`; 1px `--gpa-divider` above and below, no box, aligned to the text column. Opening shows the links in one column, 16px `--gpa-link`, a section number before each in `--gpa-accent`, 44px tap rows on mobile.
 - The links are in the HTML while collapsed, so Google reads them exactly as if the list were open.
 - Placement: under the calculator (calculator pages) or the key-facts box (college and GPA scale pages), above the first content section.
 - Server-rendered `<a href="#section-id">` links, never built by JavaScript. Rank Math TOC block stays the source on content pages (title tag `div`/`p`); generated templates output the same markup.
-- Exclude FAQ, "Keep planning", Similar colleges and Sources headings so the list matches the numbered H2s. Show it on pages with 3+ numbered sections (site-wide, no exceptions); 24px space below the closed row before the first section.
+- Exclude FAQ, "Keep planning", Similar colleges and Sources headings so the list matches the numbered H2s. Show it on pages with 3+ numbered sections (site-wide, no exceptions); 24px space above the row and 24px below it before the first content.
 - Section headings get `scroll-margin-top: 80px` so the sticky header never covers them.
 
 **Headings and IDs (rule for every page)**

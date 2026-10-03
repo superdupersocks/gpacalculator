@@ -73,13 +73,11 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					// link's text is its H2's text word for word; the links are in the HTML while collapsed. Lists the
 					// numbered H2s only (no FAQ, Similar colleges, Keep planning or Sources), on pages with 4 or more.
 					// Markup = Design's shared component (Core Details block around the Rank Math TOC block; layout.css 11b,
-					// design f183e95). college-v2.php keeps the theme's browser-built TOC (gpa_toc_builder) off college pages.
-					$toc = '' !== $compare ? array( 'compare' => 'How does your GPA compare?' ) : array();
-					foreach ( $sections as $section ) {
-						$toc[ $section['id'] ] = $section['title'];
-					}
+					// design f183e95). The list comes from gpa_college_toc() (college-v2.php), which also names it in the
+					// schema; college-v2.php keeps the theme's browser-built TOC (gpa_toc_builder) off college pages.
+					$toc = function_exists( 'gpa_college_toc' ) ? gpa_college_toc( $post_id, $v, $sections, $compare ) : array();
 					?>
-					<?php if ( count( $toc ) >= 4 ) : ?>
+					<?php if ( $toc ) : ?>
 					<details class="wp-block-details gpa-toc">
 						<summary>On this page <span class="gpa-toc__count">· <?php echo (int) count( $toc ); ?> sections</span></summary>
 						<div class="wp-block-rank-math-toc-block"><nav aria-label="On this page"><ul>

@@ -724,7 +724,7 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 #page .entry-content details.wp-block-details.gpa-toc {
     box-sizing: border-box;
     max-width: var(--gpa-text-max) !important;
-    margin: 24px auto 24px !important;   /* spec (Digant 20:23): 24px above the row and 24px below it */
+    margin: var(--gpa-hdr-below) auto 0 !important;
     padding: 0 !important;
     border-top: 1px solid var(--gpa-divider);
     border-bottom: 1px solid var(--gpa-divider);
@@ -752,16 +752,19 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 #page .entry-content details.gpa-toc > summary::-webkit-details-marker { display: none; }
 #page .entry-content details.gpa-toc > summary::marker { content: ""; }
 #page .entry-content details.gpa-toc > summary .gpa-toc__count { font-weight: 400; color: var(--gpa-text-muted); }
-/* Chevron: 16px, right after "On this page · N sections" (the summary's 8px gap), no circle or background, in the
-   accent colour; it turns when the list opens. The whole row stays the click/tap target (Digant 20:23). */
+/* Chevron in a 32px round tinted button (same tint as the number badges) so the row reads as openable;
+   the whole row stays the click/tap target. Chevron stroke = --gpa-accent (#4338CA). */
 #page .entry-content details.gpa-toc > summary::after {
     content: "";
     flex: none;
-    width: 16px;
-    height: 16px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='%234338CA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
-    transition: transform .15s ease;
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    border-radius: 50%;
+    background: var(--gpa-tint-indigo) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='%234338CA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
+    transition: transform .15s ease, background-color .15s ease;
 }
+#page .entry-content details.gpa-toc > summary:hover::after { background-color: var(--gpa-indigo-100); }
 #page .entry-content details.gpa-toc[open] > summary::after { transform: rotate(180deg); }
 #page .entry-content details.gpa-toc > summary:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce) { #page .entry-content details.gpa-toc > summary::after { transition: none; } }

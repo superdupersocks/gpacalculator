@@ -1,4 +1,4 @@
-/* gpacalculator.net calculator core v1.3.0 (lives in the gpacalculator-manager plugin)
+/* gpacalculator.net calculator core v2.0.0 (lives in the gpacalculator-manager plugin)
  * Shared helpers for every calculator: DOM builder, input parsing, grade scale,
  * storage (drafts + named saves), share (URL hash, summary, CSV), GA4 events,
  * count-up, live pill and the standard layout template.
@@ -8,7 +8,7 @@
  * The theme enqueues calculator scripts as type="module", so nothing here touches window.
  */
 
-export const CORE_VERSION = '1.3.0';
+export const CORE_VERSION = '2.0.0';
 
 /* ---------- DOM ---------- */
 
@@ -20,7 +20,7 @@ export function h(tag, attrs, ...children) {
       if (v == null || v === false) continue;
       if (k === 'class') el.className = v;
       else if (k === 'dataset') Object.assign(el.dataset, v);
-      else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+      else if (k === 'style' && typeof v === 'object') for (const [p, x] of Object.entries(v)) el.style.setProperty(p.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`), x);
       else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
       else if (k === 'text') el.textContent = v;
       else if (k in el && k !== 'list' && typeof v !== 'string') el[k] = v;
@@ -257,6 +257,26 @@ export function createStore(key, { debounce = 400 } = {}) {
       delete all[name];
       return write(savesKey, all);
     },
+    rename(from, to) {
+      const n = String(to || '').trim().slice(0, 60);
+      const all = saves();
+      if (!n || !all[from] || (n !== from && all[n])) return false;
+      all[n] = all[from];
+      if (n !== from) delete all[from];
+      return write(savesKey, all);
+    },
+    has(name) {
+      return Object.prototype.hasOwnProperty.call(saves(), name);
+    },
+    /** Small flags (e.g. "legacy saves imported"), stored as <key>.<flag>. */
+    flag(name, value) {
+      if (value === undefined) return read(`${key}.${name}`, null);
+      return write(`${key}.${name}`, value);
+    },
+    /** Read another calculator's raw key (legacy migration); never writes to it. */
+    readRaw(k) {
+      return read(k, null);
+    },
     /** First-visit flag for onboarding vs "Show an example" link. */
     seen() {
       return !!read(`${key}.seen`, false);
@@ -430,18 +450,42 @@ export function createToast(host) {
   };
 }
 
+/* Sticky ad footer on phones (Freestar); the pill and toasts sit above it, never over it. */
+const AD_FOOTER = '#fs-sticky-footer, .fs-sticky-footer, [id*="sticky_footer"], [id*="sticky-footer"], [data-freestar-ad*="sticky"]';
+
+/** Height of whatever is fixed to the bottom of the screen (the sticky ad), in px; 0 when none shows. */
+export function bottomObstruction() {
+  let max = 0;
+  for (const el of document.querySelectorAll(AD_FOOTER)) {
+    const r = el.getBoundingClientRect();
+    if (r.height > 0 && r.bottom >= window.innerHeight - 2) max = Math.max(max, window.innerHeight - r.top);
+  }
+  return Math.max(0, Math.round(max));
+}
+
 /**
- * Floating "live result" pill. Shows while `target` (the result card) is below the
- * viewport and has content; tap scrolls to it. Returns { update(text), enable(bool) }.
+ * Sticky result pill (Calculator Design Standard): fixed at the bottom while the result panel is
+ * off-screen (above or below), zero layout height, one button that scrolls to the result, hidden while
+ * a text input has focus (iOS keyboards move fixed elements), 12px above the sticky ad.
+ * set({ label, value, label2, value2, aria }) fills it; with two values the "Details" chip is dropped.
+ * update(text) is the v1 one-value form. enable(bool) turns it on once there is a result.
  */
 export function createLivePill(host, target, { label = 'Live grade', onOpen } = {}) {
-  const num = h('span', { class: 'calc-pill-num' });
-  const pill = h('button', { type: 'button', class: 'calc-pill', 'aria-hidden': 'true', tabindex: '-1' }, h('span', null, label), num);
-  host.append(h('div', { class: 'calc-pill-anchor' }, pill));
+  const l1 = h('span', { class: 'calc-pill-l' }, label);
+  const v1 = h('b', { class: 'calc-pill-v' });
+  const l2 = h('span', { class: 'calc-pill-l calc-pill-sep', hidden: true });
+  const v2 = h('b', { class: 'calc-pill-v', hidden: true });
+  const chip = h('span', { class: 'calc-pill-chip' }, 'Details →');
+  const pill = h('button', { type: 'button', class: 'calc-pill', 'aria-hidden': 'true', tabindex: '-1' }, l1, v1, l2, v2, chip);
+  host.append(pill);
+  document.documentElement.classList.add('calc-has-pill');
   let enabled = false;
-  let below = false;
+  let away = false;
+  let typing = false;
+  const place = () => pill.style.setProperty('--calc-pill-offset', `${bottomObstruction() + 12}px`);
   const sync = () => {
-    const on = enabled && below;
+    const on = enabled && away && !typing && !document.documentElement.classList.contains('calc-sheet-open');
+    if (on) place();
     pill.classList.toggle('is-on', on);
     pill.setAttribute('aria-hidden', on ? 'false' : 'true');
     pill.tabIndex = on ? 0 : -1;
@@ -450,21 +494,104 @@ export function createLivePill(host, target, { label = 'Live grade', onOpen } = 
     target.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
     if (onOpen) onOpen();
   });
+  // Shows only while the result is still below the screen (the student is entering courses above it):
+  // hidden once any part of the result is on screen, and once they scroll past it, so it never sits
+  // over the result, Keep going or the article below.
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => {
-      below = !e.isIntersecting && e.boundingClientRect.top > 0;
+      away = !e.isIntersecting && e.boundingClientRect.top > 0;
       sync();
     }).observe(target);
   }
+  new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  const isText = (t) => t instanceof HTMLInputElement && !['checkbox', 'radio', 'range', 'button'].includes(t.type) && t.inputMode !== 'decimal';
+  host.addEventListener('focusin', (e) => { typing = isText(e.target); sync(); });
+  host.addEventListener('focusout', () => { typing = false; sync(); });
+  window.addEventListener('resize', () => enabled && place(), { passive: true });
   return {
     update(text) {
-      setText(num, text);
+      setText(v1, text);
+    },
+    set({ label: a, value, label2, value2, aria }) {
+      setText(l1, a);
+      setText(v1, value);
+      const two = label2 != null;
+      l2.hidden = !two;
+      v2.hidden = !two;
+      chip.hidden = two;
+      if (two) { setText(l2, label2); setText(v2, value2); }
+      pill.setAttribute('aria-label', aria || `${a} ${value}${two ? `, ${label2} ${value2}` : ''}, go to result`);
     },
     enable(on) {
       enabled = !!on;
       sync();
     },
     el: pill,
+  };
+}
+
+/**
+ * Bottom sheet of choice buttons (phones): the grade picker's letter grid, credit quick buttons.
+ * open({ title, options: [{ value, label }], value, cols }) resolves to the chosen value, or null when
+ * closed (Escape, backdrop, Cancel). Focus returns to the element that opened it.
+ */
+export function createSheet(host) {
+  const title = h('p', { class: 'calc-sheet-title', id: `calc-sheet-${Math.random().toString(36).slice(2, 8)}` });
+  const grid = h('div', { class: 'calc-sheet-grid' });
+  const cancel = h('button', { type: 'button', class: 'calc-btn calc-btn-ghost calc-sheet-cancel' }, 'Cancel');
+  const panel = h('div', { class: 'calc-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': title.id }, title, grid, cancel);
+  const wrap = h('div', { class: 'calc-sheet-wrap', hidden: true }, h('div', { class: 'calc-sheet-backdrop' }), panel);
+  // On <body>, outside the page's stacking contexts, so it covers the site header; the wrappers keep the
+  // calculator's scoped styles and tokens.
+  const portal = h('div', { class: 'gpacalc-mount gpacalc-portal' }, h('div', { class: `calc ${host.className.replace(/\bcalc\b/, '')}`.trim() }, wrap));
+  document.body.append(portal);
+  let done = null;
+  let opener = null;
+  const close = (v) => {
+    if (wrap.hidden) return;
+    wrap.hidden = true;
+    document.documentElement.classList.remove('calc-sheet-open');
+    if (opener && opener.isConnected) opener.focus({ preventScroll: true });
+    const d = done;
+    done = null;
+    if (d) d(v);
+  };
+  wrap.addEventListener('click', (e) => { if (e.target.classList.contains('calc-sheet-backdrop')) close(null); });
+  cancel.addEventListener('click', () => close(null));
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); close(null); }
+    if (e.key === 'Tab') {
+      const f = [...panel.querySelectorAll('button')];
+      const i = f.indexOf(document.activeElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
+  });
+  return {
+    open({ title: t, options, value, cols = 4 }) {
+      if (done) close(null);
+      opener = document.activeElement;
+      setText(title, t);
+      grid.textContent = '';
+      grid.style.setProperty('--calc-sheet-cols', String(cols));
+      let first = null;
+      let current = null;
+      for (const o of options) {
+        // { heading } starts a labelled group (e.g. "Not counted in GPA") on its own full-width line.
+        if (o.heading) { grid.append(h('p', { class: 'calc-sheet-group', role: 'presentation' }, o.heading)); continue; }
+        const b = h('button', { type: 'button', class: `calc-sheet-opt${o.value === value ? ' is-on' : ''}${o.wide ? ' is-wide' : ''}`, 'aria-pressed': String(o.value === value), onclick: () => close(o.value) }, o.label);
+        grid.append(b);
+        if (!first) first = b;
+        if (o.value === value) current = b;
+      }
+      wrap.hidden = false;
+      document.documentElement.classList.add('calc-sheet-open');
+      (current || first || cancel).focus({ preventScroll: true });
+      return new Promise((r) => { done = r; });
+    },
+    close: () => close(null),
+    get isOpen() { return !wrap.hidden; },
+    el: wrap,
   };
 }
 
@@ -725,4 +852,245 @@ export function wireSavesAndShare(L, opts) {
     shareItem('Download CSV', async () => downloadCSV(csvName, csv())),
   );
   createMenu(L.shareBtn, L.shareMenu);
+}
+
+/* ---------- v2: shared services for every calculator ---------- */
+
+/**
+ * Toast with an optional action button (Undo). show(msg, { action: 'Undo', onAction, ms })
+ * One toast at a time; a new message replaces the old one.
+ */
+export function createActionToast(host) {
+  const text = h('span');
+  const btn = h('button', { type: 'button', hidden: true });
+  const el = h('div', { class: 'calc-toast', role: 'status', 'aria-live': 'polite', hidden: true }, text, btn);
+  host.append(el);
+  let t = 0;
+  let fn = null;
+  const hide = () => { el.hidden = true; fn = null; };
+  btn.addEventListener('click', () => {
+    const f = fn;
+    hide();
+    if (f) f();
+  });
+  return {
+    show(msg, { action, onAction, ms = 2600 } = {}) {
+      text.textContent = msg;
+      btn.hidden = !action;
+      btn.textContent = action || '';
+      fn = onAction || null;
+      el.style.setProperty('--calc-toast-offset', `${bottomObstruction() + 72}px`);
+      el.hidden = false;
+      clearTimeout(t);
+      t = setTimeout(hide, ms);
+    },
+    hide,
+    el,
+  };
+}
+
+/**
+ * GA4 `calculator_used`: once per page view, on the first edit. The theme already sends it for
+ * calculators inside #root, .gpa-calc-portal or #middle-school-gpa (functions.php), so only fire it
+ * here for calculators mounted anywhere else, and the event is never counted twice.
+ */
+export function trackCalculatorUsed(root) {
+  if (root.closest('#root, .gpa-calc-portal, #middle-school-gpa')) return;
+  let used = false;
+  const on = () => {
+    if (used) return;
+    used = true;
+    try {
+      if (typeof window.gtag === 'function') window.gtag('event', 'calculator_used');
+    } catch (e) {
+      /* analytics must never break the calculator */
+    }
+  };
+  root.addEventListener('change', on, true);
+  root.addEventListener('input', on, true);
+}
+
+/** Fire a legacy GA4 event name as is (e.g. 'gpa_export'), never throwing. */
+export function sendEvent(name, params) {
+  try {
+    if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+/**
+ * Report script errors from the calculator files as GA4 'calc_error' events (at most 3 a page), so a
+ * broken calculator shows up in GA4. Errors from ads, the theme or other plugins are ignored.
+ */
+let errorsWatched = false;
+export function watchErrors(calc) {
+  if (errorsWatched || typeof window === 'undefined') return;
+  errorsWatched = true;
+  let sent = 0;
+  const ours = (src) => /\/calc-assets\//.test(String(src || ''));
+  const report = (msg, src) => {
+    if (sent >= 3 || !ours(src)) return;
+    sent += 1;
+    sendEvent('calc_error', { calc, error_message: String(msg || 'error').slice(0, 100) });
+  };
+  window.addEventListener('error', (e) => report(e.message, e.filename || (e.error && e.error.stack)));
+  window.addEventListener('unhandledrejection', (e) => report(e.reason && e.reason.message, e.reason && e.reason.stack));
+}
+
+/* ---------- Add to home screen (Calculator Design Standard, "Add to home screen") ---------- */
+
+// Chrome/Android fires this once the page qualifies (manifest + icons). Keep it for the hint's Add button.
+let installEvent = null;
+const installWaiters = new Set();
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // no browser mini-infobar; the hint offers it at the right moment
+    installEvent = e;
+    installWaiters.forEach((f) => f());
+  });
+}
+
+const A2HS_KEY = 'gpac:a2hs:dismissed';
+const A2HS_COUNT = 'gpac:a2hs:calcs';
+const A2HS_DAYS = 30;
+const SHARE_ICON = 'M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1';
+
+function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage blocked: the hint just shows again */ } }
+
+/** Opened from the home screen (or an installed app window)? */
+export function launchedFromHomeScreen() {
+  try {
+    if (new URLSearchParams(window.location.search).get('source') === 'homescreen') return true;
+    if (window.navigator.standalone === true) return true;
+    return !!(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  } catch (e) {
+    return false;
+  }
+}
+
+const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+/**
+ * "Use this calculator again? Add it to your home screen." A dismissible bar placed in the page flow right
+ * after `after` (the calculator card), at its width. Phones only, after the second calculation or a Save,
+ * never on first load. iPhone: Share-sheet instructions; Android/Chrome: an Add button that opens the
+ * browser's install prompt (no bar if the browser never offers it). Returns { calculated(key), saved(), seen(key) }.
+ */
+export function createHomeScreenHint(after, { calc = '', icon = '' } = {}) {
+  const noop = { calculated() {}, saved() {}, seen() {}, el: null };
+  if (typeof window === 'undefined' || !after || !after.parentNode) return noop;
+  if (launchedFromHomeScreen()) {
+    sendEvent('a2hs_open', { calc });
+    return noop;
+  }
+  const phone = () => window.matchMedia('(max-width: 640px)').matches;
+  const dismissed = () => {
+    const t = Number(lsGet(A2HS_KEY));
+    return t > 0 && Date.now() - t < A2HS_DAYS * 864e5;
+  };
+  const ios = isIOS();
+  const close = h('button', { type: 'button', class: 'calc-btn calc-btn-icon calc-a2hs-x', 'aria-label': 'Dismiss' }, '×');
+  const text = h('div', { class: 'calc-a2hs-text' },
+    h('p', { class: 'calc-a2hs-title' }, 'Use this calculator again?'),
+    h('p', { class: 'calc-a2hs-sub' }, 'Add it to your home screen.'));
+  let add = null;
+  if (ios) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    for (const [k, v] of Object.entries({ viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', class: 'calc-a2hs-share' })) svg.setAttribute(k, v);
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', SHARE_ICON);
+    svg.append(path);
+    text.append(h('p', { class: 'calc-a2hs-how' }, 'Tap ', svg, ' ', h('strong', null, 'Share'), ', then ', h('strong', null, 'Add to Home Screen')));
+  } else {
+    add = h('button', { type: 'button', class: 'calc-a2hs-add' }, 'Add');
+  }
+  const bar = h('aside', { class: 'calc-a2hs', hidden: true, 'aria-label': 'Add to home screen' },
+    icon ? h('img', { class: 'calc-a2hs-icon', src: icon, alt: '', width: '40', height: '40' }) : null, text, add, close);
+  after.insertAdjacentElement('afterend', bar);
+
+  let wanted = false;
+  let shown = false;
+  const canShow = () => phone() && !dismissed() && !launchedFromHomeScreen() && (ios || !!installEvent);
+  const sync = () => {
+    const on = wanted && canShow();
+    bar.hidden = !on;
+    if (on && !shown) { shown = true; sendEvent('a2hs_shown', { calc, platform: ios ? 'ios' : 'android' }); }
+  };
+  installWaiters.add(sync);
+  window.addEventListener('appinstalled', () => { sendEvent('a2hs_installed', { calc }); wanted = false; lsSet(A2HS_KEY, String(Date.now())); sync(); });
+  close.addEventListener('click', () => { lsSet(A2HS_KEY, String(Date.now())); sendEvent('a2hs_dismiss', { calc }); wanted = false; sync(); });
+  if (add) {
+    add.addEventListener('click', async () => {
+      sendEvent('a2hs_add_click', { calc });
+      const e = installEvent;
+      if (!e) return;
+      installEvent = null;
+      try {
+        await e.prompt();
+        const choice = await e.userChoice;
+        if (choice && choice.outcome === 'accepted') { wanted = false; sync(); }
+      } catch (err) { /* the browser refused; leave the bar */ }
+    });
+  }
+
+  // A calculation counts once its inputs settle (1.5s), and only when the result is new.
+  let timer = null;
+  let lastKey = null;
+  let count = Number(lsGet(A2HS_COUNT)) || 0;
+  return {
+    el: bar,
+    calculated(key) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (key === lastKey) return;
+        lastKey = key;
+        count += 1;
+        lsSet(A2HS_COUNT, String(Math.min(count, 99)));
+        if (count >= 2) { wanted = true; sync(); }
+      }, 1500);
+    },
+    saved() { wanted = true; sync(); },
+    /** A restored or shared result: remember it without counting it as a calculation. */
+    seen(key) { clearTimeout(timer); lastKey = key; },
+  };
+}
+
+/**
+ * Copy saves from a legacy calculator once (flag kept in the store). The legacy keys are only read,
+ * never changed or deleted, so the old calculator and any other calculator sharing them keep working.
+ * convert(rawDraft, rawSaves) -> { draft?, saves?: [{ name, state }] }
+ */
+export function importLegacyOnce(store, flagName, keys, convert) {
+  if (!store.available || store.flag(flagName)) return { imported: 0 };
+  store.flag(flagName, Date.now());
+  let out;
+  try {
+    out = convert(...keys.map((k) => store.readRaw(k))) || {};
+  } catch (e) {
+    return { imported: 0 };
+  }
+  let n = 0;
+  for (const s of out.saves || []) {
+    let name = String(s.name || 'My calculation').trim().slice(0, 52) || 'My calculation';
+    let i = 2;
+    while (store.has(name)) name = `${s.name} (${i++})`.slice(0, 60);
+    if (store.save(name, s.state)) n += 1;
+  }
+  if (out.draft && !store.loadDraft()) {
+    store.saveDraft(out.draft);
+    store.flush();
+  }
+  return { imported: n, draft: !!out.draft };
+}
+
+/** Print / save as PDF. Print CSS in calc-core.css hides buttons and menus. */
+export function printPage() {
+  try {
+    window.print();
+  } catch (e) {
+    /* some in-app browsers block printing */
+  }
 }

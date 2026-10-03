@@ -18,7 +18,7 @@
   }
 
   function mount(host) {
-    if (host.dataset.gpcmReady === '1') return;
+    if (host.dataset.gpcmReady === '1' || host.dataset.gpacEngine === 'v2') return;
     const id = host.getAttribute('data-gpcm-profile-id');
     const script = host.querySelector('script[type="application/json"][data-gpcm-profile]');
     const engine = root.TopUniGPACalculator;

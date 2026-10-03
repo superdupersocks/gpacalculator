@@ -1,0 +1,157 @@
+/* GPA calculator screen v1.3.0 (gpa/gpa-app.js). Only what is specific to GPA calculators: the course-row
+ * columns, semester headers, Options, phone entry (collapsed rows, grade/credit buttons) and goals.
+ * Everything else is calc-core.css.
+ * Spacing follows the Calculator Design Standard; tokens only, no colors of its own. */
+
+/* Card header: Options on the left, My saves + Save on the right (no step bar) */
+:is(#root, .gpacalc-mount) .gpa-top { flex-wrap: nowrap; justify-content: space-between; margin-bottom: var(--calc-section-gap); }
+:is(#root, .gpacalc-mount) .gpa-options-btn,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-options-btn { min-height: var(--calc-control-h); padding: 0 4px; }
+:is(#root, .gpacalc-mount) .gpa-options-n { font-weight: 500; }
+:is(#root, .gpacalc-mount) .gpa-options[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .gpa-options { margin: 0 0 var(--calc-section-gap); padding: 16px; background: var(--calc-tint); border-radius: var(--calc-radius); }
+:is(#root, .gpacalc-mount) .gpa-options .gpa-settings { margin-bottom: 0; }
+:is(#root, .gpacalc-mount) .gpa-options .gpa-prior { margin: 12px 0 0; padding: 0; background: none; }
+:is(#root, .gpacalc-mount) .gpa-top .calc-toolbar-group { gap: 8px; flex: none; }
+:is(#root, .gpacalc-mount) .calc-save-name { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Inside Options: scale, previous GPA, major GPA */
+:is(#root, .gpacalc-mount) .gpa-settings { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-bottom: var(--calc-section-gap); }
+:is(#root, .gpacalc-mount) .gpa-scale-field { flex: 0 1 260px; }
+:is(#root, .gpacalc-mount) .gpa-major-on { min-height: var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-prior[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .gpa-prior {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--calc-field-gap);
+  margin: 0 0 var(--calc-section-gap);
+  padding: 14px 16px;
+  background: var(--calc-tint);
+  border-radius: var(--calc-radius);
+}
+:is(#root, .gpacalc-mount) .gpa-prior .calc-field { margin: 0; }
+
+/* Semester header: renamable title + semester GPA on one line, 16px above its rows */
+:is(#root, .gpacalc-mount) .gpa-term + .gpa-term { margin-top: 24px; }
+:is(#root, .gpacalc-mount) .gpa-term-head { display: flex; align-items: center; gap: 12px; margin-bottom: var(--calc-section-gap); }
+:is(#root, .gpacalc-mount) .gpa-term-name.calc-input { flex: 0 1 220px; font-weight: 600; color: var(--calc-ink); }
+:is(#root, .gpacalc-mount) .gpa-term-title,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-term-title { margin: 0 !important; font: 600 17px/1.3 var(--gpa-calc-font); color: var(--calc-ink); }
+:is(#root, .gpacalc-mount) .gpa-term-title em { font-style: normal; font-weight: 500; color: var(--calc-muted); }
+:is(#root, .gpacalc-mount) .gpa-term-gpa { font-size: 15px; font-weight: 600; color: var(--gpa-calc-result-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
+:is(#root, .gpacalc-mount) .gpa-term-menu { margin-left: auto; }
+:is(#root, .gpacalc-mount) .gpa-term-more { font-size: 20px; line-height: 1; color: var(--calc-muted); }
+
+/* Rows: one line on desktop (course · grade · credits · [type] · [major] · remove) */
+:is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) 56px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols: minmax(0, 1.9fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols: minmax(0, 1.9fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) 56px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-row .calc-field { min-width: 0; }
+:is(#root, .gpacalc-mount) .gpa-major { justify-content: center; }
+:is(#root, .gpacalc-mount) .gpa-major span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:is(#root, .gpacalc-mount) .gpa-term.is-planned .gpa-add-row { border-style: dashed; }
+:is(#root, .gpacalc-mount) .gpa-rows:empty { display: none; }
+
+/* Grade and credits are centered in their fields (every calculator, Calculator Design Standard) */
+:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade .calc-select, .gpa-f-cr .calc-input),
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade .calc-select, .gpa-f-cr .calc-input) { text-align: center; text-align-last: center; }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade .calc-select { padding-left: 28px; }
+
+/* Phone entry: grade and credit buttons open bottom sheets; finished rows and earlier semesters collapse.
+ * Desktop keeps the select and the number field, and never collapses. */
+:is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn, .gpa-row-sum, .gpa-term-sum) { display: none; }
+:is(#root, .gpacalc-mount) .gpa-grade-btn.is-empty { color: var(--calc-faint); }
+
+/* Action row: Add semester, Start over, Try a sample, "Saved on this device" */
+:is(#root, .gpacalc-mount) .gpa-sample.is-small { font-size: 14px; font-weight: 500; }
+:is(#root, .gpacalc-mount) .gpa-sample[hidden] { display: none; }
+
+/* Result */
+:is(#root, .gpacalc-mount) .calc-result-top .gpa-letter { min-width: 56px; padding: 10px 14px; font-size: 22px; font-weight: 700; border-radius: 12px; box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent); }
+:is(#root, .gpacalc-mount) .calc-verdict .is-danger { color: var(--gpa-danger); font-weight: 600; }
+:is(#root, .gpacalc-mount) .gpa-next-links { display: inline-flex; flex-wrap: wrap; gap: 6px 16px; }
+
+/* Goals (under the result, above the planner) */
+:is(#root, .gpacalc-mount) .gpa-goals-wrap[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .gpa-goals-wrap { margin-top: var(--calc-section-gap); }
+:is(#root, .gpacalc-mount) .gpa-goals,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-goals { list-style: none !important; margin: 8px 0 0 !important; padding: 0 !important; }
+:is(#root, .gpacalc-mount) .gpa-goals li { display: flex; align-items: center; gap: 4px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(#root, .gpacalc-mount) .gpa-goals li::before { content: none !important; display: none !important; }
+:is(#root, .gpacalc-mount) .gpa-goal {
+  flex: 1;
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: 500 15px/1.4 var(--gpa-calc-font);
+  color: var(--gpa-text-strong);
+  cursor: pointer;
+}
+:is(#root, .gpacalc-mount) .gpa-goal:hover { text-decoration: underline; }
+:is(#root, .gpacalc-mount) .gpa-goal.is-met { color: var(--gpa-success); }
+:is(#root, .gpacalc-mount) .gpa-goal.is-warn { color: var(--gpa-warning); }
+:is(#root, .gpacalc-mount) .gpa-goal.is-danger { color: var(--gpa-danger); }
+
+@media (max-width: 640px) {
+  /* Stacked rows: course name + remove on line 1; grade (~110px) and credits (~80px) side by side on
+   * line 2, left-aligned (then major), type on a third line */
+  :is(#root, .gpacalc-mount) .gpa-row { grid-template-columns: 110px 80px minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name name rm' 'grade cr . .'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-major { grid-template-columns: 110px 80px minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name name rm' 'grade cr major .'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-type { grid-template-areas: 'name name name rm' 'grade cr . .' 'type type type type'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-type.has-major { grid-template-areas: 'name name name rm' 'grade cr major .' 'type type type type'; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-major { justify-self: start; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-name { grid-area: name; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-grade { grid-area: grade; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-cr { grid-area: cr; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-type { grid-area: type; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-major { grid-area: major; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-rm { grid-area: rm; }
+  :is(#root, .gpacalc-mount) .gpa-row > .calc-row-msg { grid-column: 1 / -1; margin-top: 0; }
+  :is(#root, .gpacalc-mount) .gpa-major span { position: static; width: auto; height: auto; clip: auto; }
+  :is(#root, .gpacalc-mount) .gpa-major { gap: 4px; }
+  :is(#root, .gpacalc-mount) .gpa-term-name.calc-input { flex: 1 1 auto; }
+  :is(#root, .gpacalc-mount) .gpa-prior { grid-template-columns: 1fr 1fr; }
+  :is(#root, .gpacalc-mount) .gpa-scale-field { flex: 1 1 100%; }
+  :is(#root, .gpacalc-mount) .calc-save-name { display: none; }
+
+  /* Grade: a button opening the letter grid; credits: a button opening 1-5 + Other (Other shows the field) */
+  :is(#root, .gpacalc-mount) .gpa-f-grade .calc-select:not(.gpa-grade-btn) { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-grade-btn,
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-grade-btn { display: block; width: 100%; text-align: center; text-align-last: center; padding: 0 28px; cursor: pointer; }
+  :is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn):is(:hover, :focus, :active),
+  #page .entry-content :is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn):is(:hover, :focus, :active) { background-color: var(--calc-surface); color: var(--calc-ink); }
+  :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-f-cr .calc-input:not(.gpa-cr-btn) { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-cr-btn,
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-cr-btn { display: block; width: 100%; text-align: center; cursor: pointer; }
+
+  /* A finished row the student isn't editing: one line, "MATH 121" … "B+ · 4 cr  Edit", tap to edit.
+     Only the course name truncates; grade and credits always show at the right. */
+  :is(#root, .gpacalc-mount) .gpa-row.is-collapsed { display: block; padding: 0; }
+  :is(#root, .gpacalc-mount) .gpa-row.is-collapsed > :not(.gpa-row-sum),
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-row.is-collapsed > :not(.gpa-row-sum) { display: none !important; }
+  :is(#root, .gpacalc-mount) .gpa-row.is-collapsed > .gpa-row-sum,
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-row.is-collapsed > .gpa-row-sum {
+    display: flex; align-items: center; gap: 12px; width: 100%; min-height: var(--calc-control-h); margin: 0; padding: 8px 0; border: 0; background: none;
+    text-align: left; font: 500 16px/1.4 var(--gpa-calc-font); color: var(--calc-ink); cursor: pointer;
+  }
+  :is(#root, .gpacalc-mount) .gpa-row-sum-t { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  :is(#root, .gpacalc-mount) .gpa-row-sum-m { flex: none; white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums; }
+  :is(#root, .gpacalc-mount) .gpa-row-sum-e { flex: none; font-size: 14px; font-weight: 600; color: var(--gpa-link); }
+
+  /* An earlier semester: "Fall · 4 classes · GPA 3.41", tap to open */
+  :is(#root, .gpacalc-mount) .gpa-term.is-collapsed > :not(.gpa-term-sum),
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-term.is-collapsed > :not(.gpa-term-sum) { display: none !important; }
+  :is(#root, .gpacalc-mount) .gpa-term.is-collapsed > .gpa-term-sum,
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-term.is-collapsed > .gpa-term-sum {
+    display: block; width: 100%; min-height: 48px; margin: 0; padding: 12px 16px; border: 1px solid var(--calc-line); border-radius: var(--calc-radius);
+    background: var(--calc-surface-2); text-align: left; font: 600 16px/1.4 var(--gpa-calc-font); color: var(--calc-ink); cursor: pointer;
+  }
+  :is(#root, .gpacalc-mount) .gpa-term.is-collapsed > .gpa-term-sum::after { content: '▾'; float: right; color: var(--calc-muted); }
+  :is(#root, .gpacalc-mount) .gpa-term.is-collapsed + .gpa-term { margin-top: 16px; }
+
+  /* Keep going lines up with the article text (20px from the screen edge), not the calculator card's edge */
+  :is(#root, .gpacalc-mount) .calc-keep { margin: 24px 6px 0; }
+}

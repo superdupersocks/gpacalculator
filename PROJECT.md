@@ -164,8 +164,8 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | --- | --- | --- | --- | --- |
 | gpa-calculator (homepage, + prerender) | gpa | Yes, after Calculators is off | No | To port |
 | college-gpa-calculator (+ prerender) | gpa | Yes | No | To write |
-| high-school-gpa-calculator (v2.9) | gpa | Yes | No | To port |
-| high-school-gpa-calc | gpa | Yes | No | To write |
+| high-school-gpa-calculator (old v2.9 React bundle; only on the private calculator-starter page, unused on public pages) | gpa | Yes | No | Retire candidate |
+| high-school-gpa-calc (v3.2, plain JS reference build; the live High School GPA calculator) | gpa | Yes | No | To write |
 | middle-school-gpa-calculator | gpa | Yes | No | To write |
 | raise-gpa-calculator | gpa | Yes | No | To write |
 | sgpa-to-cgpa-calculator | university-gpa | Yes | No | To write |
@@ -178,6 +178,47 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | `[country_grade]`, `[country_grade_scale]` | grade-conversion | Native Grade + GPA | No | To write |
 | Starter template | — | Yes | Yes | `core_qa.py` |
 | College list on the 31 `/gpa-scale/` pages (was `[CollegeDB gpa="…"]`) | other | Removed from the pages; `[CollegeDB]` placeholder still registered | No | To rebuild from Scorecard/CDS data |
+
+## Calculator unification (shared core + engines + profiles)
+
+Thread "Calculator unification", branch `claude/calculator-unification-0oc2fc` (built on the design branch,
+so it carries PR #1's plugin 0.6.0 + core 1.3.0 and the live design tokens). Digant approves each checkpoint.
+
+| Step | What | State |
+| --- | --- | --- |
+| 0 | Setup: skill in the repo, inventory of existing core / merge work | Done 2026-10-03; skill corrected to 800px column, 14px phone margin. Live-vs-repo comparison done 05:23 by the design thread's Mac: nothing live is newer; only the plugin main file and README differ (repo ahead) |
+| 1 | One-page design note ([Claude Doc](https://claude.ai/code/artifact/94e4ec9f-935e-4109-8bd7-2e63bf2b4ab8)): core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Approved by Digant 2026-10-03 05:57 ("go step 2"). Where it differs, the Calculator Design Standard (`docs/calculator-design-standard.md`) wins |
+| 2 | Core + GPA engine; College GPA (generic profile) and UCLA (university profile); tests, QA, screenshots; College live behind the per-page switch | Built 2026-10-03, at checkpoint (waits on Digant's go). Core v2 + `engines/gpa-engine.js` + `gpa/gpa-app.js` + `profiles/college.js`, `profiles/from-gpcm.js`; per-page switch `includes/calc-switch.php` (Grade + GPA > New calculators, all off by default, `?calc=old` fallback, `?calc=new` editor preview). Tests: `node --test tests/js/gpa-engine.test.mjs`, `php tests/php/calc_switch_test.php`, `python3 tests/gpa_v2_qa.py --cases 60 --shots` (671/671), `tests/core_qa.py`. Previews: `python3 scripts/calc/build_preview.py OUTDIR` |
+
+College go-live needs, in order: Digant's typed go in the unification thread (after his 07:07 row fixes, built);
+deploy `components.css` and `calculator-page.css` from `claude/design-system-overhaul-xkzbf0` at 69e4381 with
+`--only components.css,calculator-page.css` (the hero spacing itself went live 07:12, 7846782); page 22 subtitle
+"Semester and cumulative GPA on a 4.0 scale."; a plugin upload from a Mac session; ticking College in Grade + GPA >
+New calculators; a cache purge; a `docs/LIVE_CHANGELOG.md` entry (undo = untick).
+
+After College is live and stable for about a week (Digant 07:07): move High School and Homepage onto the core, and
+promote High School v3.2's course catalog, nicknames and auto-level (never overriding a hand-set level, boost shown
+"AP · +1.0") into the core as opt-in: on for High School, Homepage high-school mode and Weighted GPA; Middle School
+gets its own list without AP/IB; College off. Grade engine: component suggestions + "Add typical categories", blank
+weights with "e.g. 20%" hints and a not-100% warning. Rules are in the standard's "Course features (opt-in)" and
+"Grade categories" sections (rev 24).
+
+Step 3 notes from Digant (05:57, not blocking step 2): inventory the ~50 Formidable / inline-script calculator pages
+with GA4 views and keep / merge / retire; give weighted-gpa, target-gpa, medical-school (AMCAS) and pharmacy-school
+(PharmCAS) their own profiles instead of the homepage bundle. Build every calculator with the component library (06:00).
+
+Starting point found in step 0 (2026-10-03):
+- The calculator skill now lives in the repo at `.claude/skills/calculator-skill/SKILL.md` (copied from Digant's
+  account skill; it was on no branch before).
+- `core/calc-core.js` 1.3.0 (PR #1) has parsing, grade scale, store (drafts + named saves), share/CSV, GA4 tracker,
+  live pill, menus, toast. Only the `_starter` template uses it; no live calculator does. `calc-core.css` still loads
+  Inter and carries 27 hex fallbacks, so it needs a Lexend / tokens-only pass.
+- The live theme tokens already define every `--gpa-calc-*` role token the skill names (plus `--gpa-band-*`,
+  `--gpa-table-*`, `--gpa-example-*`). `calc-theme.css` is an empty phase-5 placeholder from the design thread.
+- University engine: `assets/shared-calculator.js` (minified, one engine, rules per mount from the
+  `gpcm_university_profiles` option). This is the profile model to generalize.
+- Legacy save keys to migrate: homepage and College Bolt bundles share `gpa_calc_draft_v1` / `gpa_calc_saved_v1`;
+  the old High School v2.9 bundle uses `gpaCalculatorSimple`; live High School v3.2 uses `hs:v2` / `hs:saves` and copies (never deletes) the Bolt `gpa_calc_saved_v1` saves once, flagged by `hs:imported`; university engine `top-uni-gpa-calculator-v3`.
 
 ## Open issues
 
@@ -199,8 +240,8 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 - The 189 trashed `colleges` posts are not exported; empty the trash or restore deliberately.
 - Country configs (`gpcm_international_profiles`) and any uploaded shared JS/CSS (`gpcm_shared_assets`)
   still live only in the site database.
-- Two high school GPA calculators exist (`high-school-gpa-calculator`, `high-school-gpa-calc`): decide whether one retires.
-- Reconcile the High School GPA v2.9 weighting rules with `course-catalog.js` before it moves onto the core.
+- `high-school-gpa-calculator` (old v2.9 bundle) is used only on the private calculator-starter page (server check 2026-10-03); the live High School calculator is `high-school-gpa-calc` v3.2. Retiring the old one still waits on Digant.
+- Reconcile the High School GPA v3.2 weighting rules with `course-catalog.js` before it moves onto the core.
 - `engine_qa.py` needs PHP; run it in CI or a machine with PHP (the Mac used for the server pull has none).
 
 ## Changelog

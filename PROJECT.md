@@ -272,9 +272,11 @@ letters' range midpoints with "≈", chart values show their range. 14 of 31 pag
   Previews `content/gpa-scale-previews/v4-*`.
 - Content script `scripts/wp/gpa_scale_view_pass.php` (built by `scripts/build_gpa_scale_view_pass.py`).
 - The converter is standalone JS until the shared core (calculator-unification thread) is live.
-- State: v4 previews of 3.9 (both tabs, 1366 + 390) sent, awaiting Digant's go before anything goes live.
-- Still to do on rollout: the other 29 GPA pages, Rank Math titles/descriptions with the new figures, chart images
-  without the inserted row, the college GPA page chart (has A 93–100%, no A+ row), 4.1–4.5 pages, prev/next across 4.0→4.1.
+- State: LIVE 2026-10-03 08:36–08:40 (see docs/LIVE_CHANGELOG.md): theme f30d23c, hub + 31 pages, college GPA page chart,
+  14 Rank Math metas, 31 chart images. Site-wide chart now A+ 97–100 / A 93–96 (4.0), D 63–66, D− 60–62 (matches the
+  calculators). GPA scale styles are in gpa-scale.css (components.css section 12 + content-styles' scale table moved there;
+  components.css on live still has the old "Your GPA" tag rule until components.css is next deployed — harmless duplicate).
+- Next: 4.1–4.5 pages (outline + 4.2 sample first), college lists from the admissions GPA bands, prev/next across 4.0→4.1.
 
 ## Open issues
 

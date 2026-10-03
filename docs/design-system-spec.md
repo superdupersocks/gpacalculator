@@ -1,9 +1,8 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)"
      https://claude.ai/code/artifact/1d396bba-2925-4cd3-95b4-7c5ce1bf894d
-     Synced 2026-10-03 from doc revision 25. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 29. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand.
      Check: everything below this comment is byte-identical to the export. -->
-
 # gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)
 
 Oct 2, 2026 · @Digant
@@ -286,12 +285,13 @@ Sections are numbered (01, 02, 03) with CSS counters, the TOC uses the same numb
 
 **Chip labels and jump-link SEO (rule for every page)**
 
-- Never change a section's ID or H2 text when adding or restyling chips. Google's "Jump to" links come from the IDs and H2s; keep both exactly as they are on pages already live.
-- H2s stay full and descriptive (they carry the keywords). Only the chip text is shortened.
-- Chip text: 1–3 words, names the topic ("How to calculate", "Grade points", "Is 3.7 good?"); never vague ("Overview", "More", "Info"). Use the full H2 when it's already 3 words or fewer.
-- Set chip text in the Rank Math TOC block's item text where it allows; otherwise a per-page label map in the template. Generated templates (GPA scale, college pages) define labels per section in the template.
-- New pages: give each H2 a descriptive slug ID (`#average-gpa`), never a number.
-- QA on every change: view-source shows each chip `href` matching an existing H2 ID, and no live page's IDs differ from before.
+- Three layers, three jobs: **H2 = the search query**, **ID = a stable generic slug**, **chip = what the student wants, in 2–4 words that keep the key term**.
+- H2s: for data sections on entity pages, lead with the subject's short name plus the searched term ("Harvard SAT and ACT scores", "Does Harvard accept AP credit?", "Is a 3.7 GPA good?"). The H1 keeps the full name.
+- IDs: descriptive slugs, identical across pages of the same template (`#average-gpa`, `#sat-act-scores`, `#ap-credit`), never numbers and never the entity name. Never change an ID on a live page; if a rename is needed, keep the old ID as a second hidden anchor (`<span id="credit"></span>`) so existing links and Google jump links still land.
+- Chips: 2–4 words that keep the section's key term ("GPA formula", not "Formula"; "How to calculate GPA", not "How to calculate"), because Google can use chip text as its jump-link labels; never vague ("Overview", "More"). Drop a long subject name the page is already about (no "Harvard" in chips on Harvard's page); short subjects like a GPA number may stay ("Is 3.7 good?"). Skip the chip for the section directly below the chip row.
+- Changing an H2's wording on a live page is allowed only to add the searched term or subject name; never remove keywords from it. On pages that already rank, change one page first and compare 28 days of Search Console clicks, CTR and positions before rolling the change to other pages.
+- Set chip text in the Rank Math TOC block's item text where it allows; otherwise a per-page label map. Generated templates (GPA scale, college pages) define H2, ID and chip per section in the template.
+- QA on every change: view-source shows each chip `href` matching an H2 ID, every previously live ID still resolves, and H2s match the template.
 
 **Breadcrumb (Rank Math breadcrumbs, with schema)**
 

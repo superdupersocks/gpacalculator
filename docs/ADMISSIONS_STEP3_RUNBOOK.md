@@ -27,7 +27,7 @@ What it is (`child-theme/generatepress-child/college-v2.php`, `college-compare.j
   calculator, online GPA calculator, calculate your GPA, calculate my GPA). "Colleges where a {GPA} fits" stays hidden
   until the GPA-band list pages exist (filter `gpa_college_fits_url`); "Plan the grades I need" links the Raise GPA
   calculator.
-- **Order after the FAQ:** FAQ, "Before you apply", "Similar colleges in {State}", Sources. The FAQ and Similar
+- **Order after the FAQ** (Digant, 06:57): FAQ, "Before you apply", Sources, "Similar colleges in {State}". The FAQ and Similar
   colleges H2s are unnumbered and stay out of the TOC; every section H2 sits 64px below what's above it (48px on
   phones).
 - **Similar colleges in {State}**: 4 to 6 indexed colleges in the same state and of the same kind (4-year or

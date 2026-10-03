@@ -17,6 +17,12 @@ Full DB restore: `gunzip -c ~/backups/<file>.sql.gz | wp db import -` then `wp b
 4. After every push: affected pages load, calculators work, ads show. If anything breaks, revert at once and report.
 5. Log every live change here.
 
+## 2026-10-03
+
+| Time (UTC) | URL(s) | What changed | Revert |
+| --- | --- | --- | --- |
+| 00:33 | 2,668 college profiles (modified date only), colleges sitemap | Phase 4 step 1: post_modified moved to 2026-10-02 22:32 UTC (the Phase 3 template deploy) on every published college post last modified before it (2,582 from 19 April, 71 from 22–23 September, 15 earlier on 2 October); Rank Math's sitemap cache cleared. Checked: all 3,086 addresses in the colleges sitemaps (3,085 colleges and the hub) read lastmod 2026-10-02, none twice. DB backup `gpacalculator-20261003-0033-pre-dates.sql.gz` (SHA-256 `c8a86d68…f8230e3`). | `bash scripts/admissions/phase4_dates_live.sh revert admissions-dates-20261003-003341-log.tsv` |
+
 ## 2026-10-02
 
 | Time (UTC) | URL(s) | What changed | Revert |

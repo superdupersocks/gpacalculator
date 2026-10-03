@@ -9,10 +9,13 @@ Every calculator must look and behave like one product. Build on the shared calc
 
 ## Sources of truth (read before building)
 
-1. **Design spec:** Claude Doc "gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)" (https://claude.ai/code/artifact/1d396bba-2925-4cd3-95b4-7c5ce1bf894d). Sections "Color tokens", "Typography" and "Calculators". If this skill and the spec disagree on a visual value, the spec wins, except width (800px, below).
-2. **Tokens file:** `generatepress-child/gpa-design-tokens.css`. The only place colors, fonts, sizes, radii and shadows are defined.
-3. **Reference builds (plain JS):** `calc-assets/grade-calculator.js/.css` (Grade Calculator v3) and `calc-assets/high-school-gpa-calc.js` (High School GPA Calculator v3.2). Read both in full and reuse their structure.
-4. **Legacy (don't copy):** `calc-assets/gpa-calculator.js` (homepage) and `college-gpa-calculator.js` are Bolt/React/Tailwind bundles (~230–290 KB, Inter, baked-in colors). They are being rebuilt on the core. Use them only as a feature inventory.
+1. **Calculator Design Standard (source of truth for calculators):** Claude Doc "gpacalculator.net — Calculator Design Standard" (https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41), repo copy `docs/calculator-design-standard.md`. It decides calculator layout and spacing (above-the-fold targets, hero fit, card, course rows, controls, result panel and planner box), the sticky result pill, save / return / sample / share / start over, the GPA history chart, the goal tracker, the home screen app (PWA), per-calculator features and handoffs, the new calculator tokens and the pre-ship QA checklist. Where this skill and the standard differ on any of those, the standard wins; the rest of this skill summarizes it and adds code, engagement and QA rules.
+   - **Keep the repo copy in sync.** Before every build, export the doc (Claude Docs `export`, markdown) and compare its revision with the one in the header of `docs/calculator-design-standard.md`. If the doc is newer, overwrite the repo copy with the new export, update the revision in the header and commit that first. Never edit the repo copy by hand.
+   - **Known open point:** the standard says phones get "full width minus 12px side margins"; Digant's 2026-10-03 instruction and the live theme use 14px. Use 14px until the doc says otherwise.
+2. **Design spec:** Claude Doc "gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)" (https://claude.ai/code/artifact/1d396bba-2925-4cd3-95b4-7c5ce1bf894d). It owns colors, the type scale and non-calculator templates ("Color tokens", "Typography"). For anything calculator layout or behavior, the Calculator Design Standard wins.
+3. **Tokens file:** `generatepress-child/gpa-design-tokens.css`. The only place colors, fonts, sizes, radii and shadows are defined.
+4. **Reference builds (plain JS):** `calc-assets/grade-calculator.js/.css` (Grade Calculator v3) and `calc-assets/high-school-gpa-calc.js` (High School GPA Calculator v3.2). Read both in full and reuse their structure.
+5. **Legacy (don't copy):** `calc-assets/gpa-calculator.js` (homepage) and `college-gpa-calculator.js` are Bolt/React/Tailwind bundles (~230–290 KB, Inter, baked-in colors). They are being rebuilt on the core. Use them only as a feature inventory.
 
 ## How to work (Digant's standing instructions)
 
@@ -24,6 +27,8 @@ Every calculator must look and behave like one product. Build on the shared calc
 - Keep replies to Digant short. He says "save this" / "ship it"; you run all Git steps.
 
 ## Look and feel
+
+A summary for quick reference; exact values (spacing, row gaps, pill, result panel, hero fit) come from the Calculator Design Standard.
 
 ### Colors: tokens only, synced with the site theme
 
@@ -72,6 +77,8 @@ Every calculator must look and behave like one product. Build on the shared calc
 
 ## Standard feature set
 
+The Calculator Design Standard's "Standard features and flow", "GPA history chart", "Goal tracker", "Home screen app (PWA)" and "Features by calculator" sections define what each calculator ships; this list summarizes them.
+
 Every calculator gets the **core** features. GPA calculators also get the **GPA** set. Pick extras per calculator from research and justify them.
 
 **Core (all calculators)**
@@ -116,6 +123,8 @@ Every calculator gets the **core** features. GPA calculators also get the **GPA*
 
 ## Save, return, share, sample, reset
 
+Where each control sits and how it looks is in the standard's "Save, return and sample" table.
+
 - **Auto-save draft.** Save state on every change (debounced) and on `pagehide`/`visibilitychange`. Refreshing loses nothing.
 - **Come back to it.** On return, restore the last draft automatically with a small banner: "Welcome back, we restored your last calculation · Start fresh". Never show the onboarding box to returning users; give them a small "Show an example" link instead.
 - **Named saves.** "My saves" menu: save as (named), open, rename, delete, new. Opening a save while the draft has unsaved changes asks first. Sample data can't be saved.
@@ -137,6 +146,8 @@ Every calculator gets the **core** features. GPA calculators also get the **GPA*
 - Respect `prefers-reduced-motion` (count-up animation off).
 
 ## Verify before delivering
+
+- **Standard checklist.** Every box in the standard's "QA checklist before shipping" passes in the preview screenshots.
 
 - **Math QA suite (mandatory).** `tests/<calculator>_math_qa.py` (Playwright) types into the real UI and checks every displayed number against values computed independently in Python, not by reusing the calculator's code. Cover every method, scale and input format, weighting, semesters + previous GPA, planner outputs (including impossible targets), and edge cases (blank/zero rows, 0 and max values, decimals, invalid input). Deliver only at 100% passing, and report the pass count.
 - **Flow test.** sample → live result → step 2 → save → reload (draft restored) → open save → share link in a fresh browser → reset + undo. Zero console errors.

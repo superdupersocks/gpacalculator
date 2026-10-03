@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "rochester",
+  "universityName": "University of Rochester",
+  "pageTitle": "Calculate Your University of Rochester GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading system; GPA formula; exclusions",
+      "url": "https://www.rochester.edu/college/ccas/handbook/grading-system.html"
+    },
+    {
+      "label": "Official undergraduate grading scheme",
+      "url": "https://www.rochester.edu/registrar/faculty-staff/scheme.html"
+    },
+    {
+      "label": "Repeat courses",
+      "url": "https://www.rochester.edu/college/ccas/handbook/repeating-courses.html"
+    },
+    {
+      "label": "Transfer and pre-matriculation credit",
+      "url": "https://www.rochester.edu/college/ccas/handbook/transfer-credit.html"
+    },
+    {
+      "label": "Inter-institutional registration",
+      "url": "https://www.rochester.edu/college/ccas/handbook/intercollegiate-registration.html"
+    },
+    {
+      "label": "Graduate grading and GPA status",
+      "url": "https://www.rochester.edu/college/gradstudies/graduate-handbook/academic/grading.html"
+    },
+    {
+      "label": "Dean’s List",
+      "url": "https://www.rochester.edu/college/ccas/handbook/deans-list.html"
+    },
+    {
+      "label": "Probation and suspension",
+      "url": "https://www.rochester.edu/college/ccas/handbook/probation-suspension.html"
+    },
+    {
+      "label": "Majors",
+      "url": "https://www.rochester.edu/College/ccas/handbook/majors.html"
+    },
+    {
+      "label": "Honors and distinction",
+      "url": "https://www.rochester.edu/college/ccas/handbook/honors.html"
+    },
+    {
+      "label": "Undergraduate handbook / graduation GPA",
+      "url": "https://www.rochester.edu/college/CCAS/assets/pdf/UR-Here-undergraduate-handbook.pdf"
+    },
+    {
+      "label": "Undergraduate admissions facts",
+      "url": "https://admissions.rochester.edu/campus-life/university-facts/"
+    },
+    {
+      "label": "Financial aid academic progress",
+      "url": "https://www.rochester.edu/College/ccas/handbook/financial-aid.html"
+    }
+  ],
+  "helpIntro": "The University of Rochester College undergraduate GPA uses a 4.0 scale weighted by credit hours. Enter Rochester letter grades and credits to estimate current, projected, and target GPA.",
+  "helpNote": "Use this profile for College undergraduate work in Arts & Sciences, Hajim, and undergraduate Simon courses. Hajim does not assign D+ or D-. External transfer grades are excluded. SAS/Hajim graduate programs do not issue an official GPA. Repeat Impact applies only to eligible current-policy Rochester repeats.",
+  "helpExample": "A 4-credit A earns 16.0 grade points and a 4-credit B+ earns 13.2. Together, 29.2 ÷ 8 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "E": 0,
+      "XE": 0,
+      "I": null,
+      "W": null,
+      "P": null,
+      "S": null,
+      "F": null,
+      "XF": null,
+      "N": null,
+      "CR": null,
+      "NC": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 grade points per credit hour.",
+      "A-": "A- = 3.7 grade points per credit hour.",
+      "B+": "B+ = 3.3 grade points per credit hour.",
+      "B": "B = 3 grade points per credit hour.",
+      "B-": "B- = 2.7 grade points per credit hour.",
+      "C+": "C+ = 2.3 grade points per credit hour.",
+      "C": "C = 2 grade points per credit hour.",
+      "C-": "C- = 1.7 grade points per credit hour.",
+      "D+": "D+ = 1.3 grade points per credit hour.",
+      "D": "D = 1 grade points per credit hour.",
+      "D-": "D- = 0.7 grade points per credit hour.",
+      "E": "Failure; credit hours count in GPA at 0.0 points.",
+      "XE": "Failure for academic dishonesty; credit hours count in GPA at 0.0 points.",
+      "I": "Incomplete; excluded until a final grade is posted.",
+      "W": "Withdrawal; no effect on GPA.",
+      "P": "Pass under a mandatory pass/fail system; excluded from GPA.",
+      "S": "Satisfactory under the S/F option; excluded from GPA.",
+      "F": "Failure under S/F or pass/fail; excluded from the cumulative average.",
+      "XF": "Failure for academic dishonesty in an S/F course; no grade points in the undergraduate cumulative average.",
+      "N": "No grade reported; unresolved and excluded pending a final grade.",
+      "CR": "Credit notation; excluded from cumulative GPA.",
+      "NC": "No-credit notation; excluded from cumulative GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Arts & Sciences / undergraduate Simon course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the standard undergraduate 4.0 grading scheme."
+      },
+      {
+        "name": "Hajim course",
+        "grades": [
+          "A",
+          "A-",
+          "B+",
+          "B",
+          "B-",
+          "C+",
+          "C",
+          "C-",
+          "D",
+          "E",
+          "XE",
+          "I",
+          "W",
+          "P",
+          "S",
+          "F",
+          "XF",
+          "N",
+          "CR",
+          "NC"
+        ],
+        "excluded": false,
+        "note": "Hajim uses the same points but does not assign D+ or D-.",
+        "gradePoints": {
+          "A": 4,
+          "A-": 3.7,
+          "B+": 3.3,
+          "B": 3,
+          "B-": 2.7,
+          "C+": 2.3,
+          "C": 2,
+          "C-": 1.7,
+          "D": 1,
+          "E": 0,
+          "XE": 0,
+          "I": null,
+          "W": null,
+          "P": null,
+          "S": null,
+          "F": null,
+          "XF": null,
+          "N": null,
+          "CR": null,
+          "NC": null
+        }
+      },
+      {
+        "name": "External transfer or area-college course",
+        "grades": null,
+        "excluded": true,
+        "note": "External grades do not enter the Rochester GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible repeat, the second Rochester grade replaces the first in the GPA even if it is lower; both attempts remain on the transcript and credit is earned once.",
+      "originalGrades": [
+        "C-",
+        "D+",
+        "D",
+        "E"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "E"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "College undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "BIO 110",
+        "units": "4",
+        "grade": "A",
+        "special": "Arts & Sciences / undergraduate Simon course",
+        "planned": false
+      },
+      {
+        "name": "ECON 207",
+        "units": "4",
+        "grade": "B+",
+        "special": "Arts & Sciences / undergraduate Simon course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 131",
+        "units": "4",
+        "grade": "E",
+        "special": "Arts & Sciences / undergraduate Simon course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSY 101",
+        "units": "4",
+        "grade": "A-",
+        "special": "Arts & Sciences / undergraduate Simon course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "fcc3b4371c0f"
+}

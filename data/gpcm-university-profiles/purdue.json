@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "purdue",
+  "universityName": "Purdue University",
+  "pageTitle": "Calculate Your Purdue GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Current GPA formula, transcript definitions and historical scales",
+      "url": "https://www.purdue.edu/registrar/records/transcripts/"
+    },
+    {
+      "label": "Current plus/minus grade-point values and GPA example",
+      "url": "https://ag.purdue.edu/department/oap/scholastic-recognition.html"
+    },
+    {
+      "label": "Undergraduate repeat and replacement policy",
+      "url": "https://www.purdue.edu/senate/documents/content/Senate%20Document%2012-06%20Addition%20to%20University%20Regulations%20of%20Repeat%20Policy%20for%20Nonrepeatable%20Courses.pdf"
+    },
+    {
+      "label": "Transfer credit treatment",
+      "url": "https://admission.purdue.edu/become-student/transfer/credit/"
+    },
+    {
+      "label": "Academic notice and separation",
+      "url": "https://www.purdue.edu/asc/resources/assets/Understanding%20Academic%20Notice.pdf"
+    },
+    {
+      "label": "First-year admission criteria",
+      "url": "https://admissions.purdue.edu/become-student/first-year-criteria/"
+    },
+    {
+      "label": "University-wide scholarship renewal",
+      "url": "https://admissions.purdue.edu/cost-financial-aid/scholarships/"
+    }
+  ],
+  "helpIntro": "Purdue uses a 4.0 scale with plus/minus grades. Enter semester credit hours and final grades to estimate your current, projected, and target GPA.",
+  "helpNote": "For current undergraduate Purdue coursework. Transfer grades do not enter the Purdue GPA, and older Purdue transcript work may use a historical scale. Repeat Impact estimates one same-course replacement using the most recent grade.",
+  "helpExample": "A 3-credit A earns 12.0 quality points and a 4-credit B+ earns 13.2. Together, 25.2 ÷ 7 = 3.600.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "N": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "W": null,
+      "WF": null,
+      "WN": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4 grade points per credit hour.",
+      "A": "A = 4 grade points per credit hour.",
+      "A-": "A- = 3.7 grade points per credit hour.",
+      "B+": "B+ = 3.3 grade points per credit hour.",
+      "B": "B = 3 grade points per credit hour.",
+      "B-": "B- = 2.7 grade points per credit hour.",
+      "C+": "C+ = 2.3 grade points per credit hour.",
+      "C": "C = 2 grade points per credit hour.",
+      "C-": "C- = 1.7 grade points per credit hour.",
+      "D+": "D+ = 1.3 grade points per credit hour.",
+      "D": "D = 1 grade points per credit hour.",
+      "D-": "D- = 0.7 grade points per credit hour.",
+      "F": "F = 0 grade points per credit hour.",
+      "P": "Pass; excluded from GPA.",
+      "N": "Not Pass; excluded from GPA.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory; excluded from GPA.",
+      "I": "Incomplete; excluded until replaced by a final grade.",
+      "W": "Withdrawal; excluded from GPA.",
+      "WF": "Withdrawal notation; excluded from current GPA calculations.",
+      "WN": "Withdrawal notation; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Purdue course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter the Purdue course credit hours and final grade shown on the current-scale record."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "External transfer credit may apply to degree requirements, but the external grade does not enter the Purdue GPA."
+      },
+      {
+        "name": "Historical Purdue coursework (before current scale)",
+        "grades": [],
+        "excluded": false,
+        "note": "Purdue has used multiple historical grading scales. Use the transcript-era scale instead of the current calculator.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For a same-course, same-grade-mode repeat, Purdue uses the most recent grade in the cumulative GPA. This estimator models one replacement; verify third attempts or equivalent-course approvals with your advisor.",
+      "originalGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Current undergraduate cumulative GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "MA 16100",
+        "units": "4",
+        "grade": "A-",
+        "special": "Purdue course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "ENGL 10600",
+        "units": "3",
+        "grade": "B+",
+        "special": "Purdue course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "CHM 11500",
+        "units": "4",
+        "grade": "A",
+        "special": "Purdue course, standard grading",
+        "planned": true
+      },
+      {
+        "name": "COM 11400",
+        "units": "3",
+        "grade": "B+",
+        "special": "Purdue course, standard grading",
+        "planned": true
+      },
+      {
+        "name": "STAT 30100",
+        "units": "3",
+        "grade": "A-",
+        "special": "Purdue course, standard grading",
+        "planned": true
+      },
+      {
+        "name": "Elective",
+        "units": "5",
+        "grade": "B+",
+        "special": "Purdue course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "7a3712dfd8f3"
+}

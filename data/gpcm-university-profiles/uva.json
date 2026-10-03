@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uva",
+  "universityName": "University of Virginia",
+  "pageTitle": "Calculate Your UVA GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA formula; undergraduate transcript GPA",
+      "url": "https://registrar.virginia.edu/student-records/academic-record"
+    },
+    {
+      "label": "Transfer grades",
+      "url": "https://admission.virginia.edu/transfer/transfer-faq"
+    },
+    {
+      "label": "Study abroad direct vs transfer credit",
+      "url": "https://sfs.virginia.edu/uvas-satisfactory-academic-progress-policy"
+    },
+    {
+      "label": "Non-GPA grade categories",
+      "url": "https://sfs.virginia.edu/uvas-satisfactory-academic-progress-policy"
+    },
+    {
+      "label": "Repeated undergraduate courses",
+      "url": "https://college.as.virginia.edu/repeated-courses"
+    },
+    {
+      "label": "College transfer-credit policy",
+      "url": "https://college.as.virginia.edu/transfer-credit-policies-and-processes"
+    },
+    {
+      "label": "College good academic standing",
+      "url": "https://college.as.virginia.edu/good-academic-standing"
+    },
+    {
+      "label": "Dean’s List and graduation honors",
+      "url": "https://registrar.virginia.edu/student-records/academic-record"
+    },
+    {
+      "label": "College degree GPA requirement",
+      "url": "https://college.as.virginia.edu/degree-requirements"
+    }
+  ],
+  "helpIntro": "UVA undergraduate GPA uses a 4.0 scale and is credit-weighted. Enter UVA credits and final grades; A+ and A both equal 4.0 points per credit.",
+  "helpNote": "For standard undergraduate UVA coursework. External transfer grades are excluded. Direct-credit study abroad and repeat adjustments need record-aware review, so Repeat Impact is unavailable.",
+  "helpExample": "A 3-credit A earns 12.0 grade points and a 3-credit B+ earns 9.9; together, 21.9 ÷ 6 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "CR": null,
+      "NC": null,
+      "S": null,
+      "U": null,
+      "P": null,
+      "IN": null,
+      "IV": null,
+      "NG": null,
+      "AU": null,
+      "W": null,
+      "WD": null,
+      "DR": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0 grade points per credit.",
+      "A": "A = 4.0 grade points per credit.",
+      "A-": "A- = 3.7 grade points per credit.",
+      "B+": "B+ = 3.3 grade points per credit.",
+      "B": "B = 3.0 grade points per credit.",
+      "B-": "B- = 2.7 grade points per credit.",
+      "C+": "C+ = 2.3 grade points per credit.",
+      "C": "C = 2.0 grade points per credit.",
+      "C-": "C- = 1.7 grade points per credit.",
+      "D+": "D+ = 1.3 grade points per credit.",
+      "D": "D = 1.0 grade point per credit.",
+      "D-": "D- = 0.7 grade points per credit.",
+      "F": "F = 0 grade points; letter-graded credits remain in the GPA denominator.",
+      "CR": "Credit is excluded from GPA.",
+      "NC": "No Credit is excluded from GPA.",
+      "S": "Satisfactory is excluded from GPA.",
+      "U": "Unsatisfactory is excluded from GPA.",
+      "P": "Passing notation is excluded from GPA.",
+      "IN": "Incomplete is excluded until a final GPA-bearing grade is recorded.",
+      "IV": "Invalid grade reported; excluded pending correction.",
+      "NG": "Grade not reported; excluded pending final grade.",
+      "AU": "Audit is excluded from GPA.",
+      "W": "Withdrawal is excluded from GPA.",
+      "WD": "Withdrawal notation is excluded from GPA.",
+      "DR": "Dropped without penalty; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UVA course, standard undergraduate grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter UVA credits and the final undergraduate grade."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer credit may count toward the degree, but external grades do not enter the UVA GPA."
+      },
+      {
+        "name": "Direct-credit UVA study abroad",
+        "grades": [],
+        "excluded": false,
+        "note": "Direct-credit study abroad can enter UVA GPA; use the posted UVA record and school guidance.",
+        "manualReview": true
+      },
+      {
+        "name": "Repeated UVA course needing GPA adjustment",
+        "grades": [],
+        "excluded": false,
+        "note": "Repeat treatment depends on original grade, timing, credits, and the first 9 qualifying repeated credits.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled because UVA repeat treatment depends on the original grade, when the repeat was attempted, and the 9-credit adjustment limit. Use your SIS record or advising dean for the official effect.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ECON 2010",
+        "units": "3",
+        "grade": "A+",
+        "special": "UVA course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1210",
+        "units": "3",
+        "grade": "B-",
+        "special": "UVA course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1410",
+        "units": "3",
+        "grade": "F",
+        "special": "UVA course, standard undergraduate grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "STAT 2120",
+        "units": "3",
+        "grade": "B+",
+        "special": "UVA course, standard undergraduate grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "7afd74e99966"
+}

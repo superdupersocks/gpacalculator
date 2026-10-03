@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uconn",
+  "universityName": "University of Connecticut",
+  "pageTitle": "Calculate Your UConn GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades and GPA formula",
+      "url": "https://registrar.uconn.edu/grades/"
+    },
+    {
+      "label": "Undergraduate academic regulations",
+      "url": "https://catalog.uconn.edu/undergraduate/academic-regulations/"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://admissions.uconn.edu/apply/transfer/transfer-credit/"
+    },
+    {
+      "label": "Transfer credit guidelines",
+      "url": "https://admissions.uconn.edu/apply/transfer/transfer-credit-guidelines/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.uconn.edu/sap/"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admissions.uconn.edu/apply/transfer/requirements/"
+    },
+    {
+      "label": "Undergraduate admissions",
+      "url": "https://admissions.uconn.edu/apply/"
+    },
+    {
+      "label": "Graduate academic regulations",
+      "url": "https://catalog.uconn.edu/graduate/academic-regulations/"
+    },
+    {
+      "label": "Dean’s List cutoffs",
+      "url": "https://registrar.uconn.edu/deans-list/"
+    }
+  ],
+  "helpIntro": "UConn uses a 4.0 undergraduate scale. Enter UConn credits and final grades to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For current undergraduate records. Pass/Fail and S/U grades are excluded from GPA. Transfer grades do not enter the UConn GPA. Graduate repeats use a different highest-grade rule and need separate calculation.",
+  "helpExample": "A 3-credit A earns 12.0 grade points; a 3-credit B earns 9.0. Together, 21 ÷ 6 = 3.5.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P@": null,
+      "F@": null,
+      "S": null,
+      "U": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 grade points per credit.",
+      "A-": "A- = 3.7 grade points per credit.",
+      "B+": "B+ = 3.3 grade points per credit.",
+      "B": "B = 3 grade points per credit.",
+      "B-": "B- = 2.7 grade points per credit.",
+      "C+": "C+ = 2.3 grade points per credit.",
+      "C": "C = 2 grade points per credit.",
+      "C-": "C- = 1.7 grade points per credit.",
+      "D+": "D+ = 1.3 grade points per credit.",
+      "D": "D = 1 grade points per credit.",
+      "D-": "D- = 0.7 grade points per credit.",
+      "F": "F = 0 grade points; GPA-bearing credits remain in the denominator.",
+      "P@": "Pass/Fail pass; excluded from semester and cumulative GPA.",
+      "F@": "Pass/Fail failure; excluded from semester and cumulative GPA.",
+      "S": "Satisfactory; no grade points are awarded.",
+      "U": "Unsatisfactory; no grade points are awarded."
+    },
+    "specialTypes": [
+      {
+        "name": "UConn course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use finalized UConn undergraduate grades and UConn course credits."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer credit may apply to the degree, but outside grades do not enter the UConn GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible undergraduate repeat, the most recent completed attempt replaces the earlier attempt in GPA calculations, even if the new grade is lower.",
+      "originalGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL 1007",
+        "units": "3",
+        "grade": "A",
+        "special": "UConn course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1131Q",
+        "units": "4",
+        "grade": "B-",
+        "special": "UConn course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1127Q",
+        "units": "3",
+        "grade": "F",
+        "special": "UConn course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 1501",
+        "units": "3",
+        "grade": "A-",
+        "special": "UConn course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "cf5854c81a46"
+}

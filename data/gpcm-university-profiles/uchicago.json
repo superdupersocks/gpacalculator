@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uchicago",
+  "universityName": "University of Chicago",
+  "pageTitle": "Calculate Your UChicago GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading, P/F, W, incompletes, repeats, GPA inclusion",
+      "url": "https://college.uchicago.edu/advising/grading-policies"
+    },
+    {
+      "label": "Incoming transfer credit",
+      "url": "https://collegecatalog.uchicago.edu/thecollege/transfercredit/transferstudents/"
+    },
+    {
+      "label": "Current-student transfer credit",
+      "url": "https://college.uchicago.edu/advising/enrollment-policies"
+    },
+    {
+      "label": "Academic standards and review",
+      "url": "https://college.uchicago.edu/student-services/academic-standards-and-review"
+    },
+    {
+      "label": "Graduation requirements",
+      "url": "https://college.uchicago.edu/advising/graduation-requirements-procedures"
+    },
+    {
+      "label": "Transcripts and GPA portal",
+      "url": "https://college.uchicago.edu/advising/transcripts-diplomas"
+    },
+    {
+      "label": "College honors",
+      "url": "https://cha.uchicago.edu/2025-2026-college-honors"
+    },
+    {
+      "label": "Graduate grading example / program variation",
+      "url": "https://physicalsciences.uchicago.edu/current-students/policies/grading/"
+    }
+  ],
+  "helpIntro": "UChicago College uses a 4.0 quality-grade scale. Enter transcript units and final grades to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For College undergraduates. P and W do not enter GPA; F counts as 0.0. External transfer grades are excluded. Repeat Impact is unavailable because both graded attempts count. Graduate and professional-school grading may differ.",
+  "helpExample": "A 100-unit A earns 400 grade-point units and a 100-unit B earns 300. Together, 700 ÷ 200 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "P": null,
+      "W": null,
+      "I": null,
+      "NGR": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 grade points per 100-unit equivalent.",
+      "A-": "A- = 3.7 grade points per 100-unit equivalent.",
+      "B+": "B+ = 3.3 grade points per 100-unit equivalent.",
+      "B": "B = 3.0 grade points per 100-unit equivalent.",
+      "B-": "B- = 2.7 grade points per 100-unit equivalent.",
+      "C+": "C+ = 2.3 grade points per 100-unit equivalent.",
+      "C": "C = 2.0 grade points per 100-unit equivalent.",
+      "C-": "C- = 1.7 grade points per 100-unit equivalent.",
+      "D+": "D+ = 1.3 grade points per 100-unit equivalent.",
+      "D": "D = 1.0 grade points per 100-unit equivalent.",
+      "F": "F earns 0.0 grade points and remains GPA-bearing even though it does not confer credit.",
+      "P": "Pass confers credit when permitted but is excluded from GPA.",
+      "W": "Withdrawal does not confer credit and does not affect GPA.",
+      "I": "Incomplete is excluded until replaced by a final grade.",
+      "NGR": "No Grade is unresolved and excluded until a final grade is posted."
+    },
+    "specialTypes": [
+      {
+        "name": "UChicago College course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final quality grade and transcript units. P/W/I/NGR follow their listed treatment."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Grades from other institutions do not enter the College GPA."
+      },
+      {
+        "name": "Off-campus external course",
+        "grades": null,
+        "excluded": true,
+        "note": "External off-campus grades are excluded unless the course is listed with a University of Chicago course number."
+      },
+      {
+        "name": "Graduate/professional UChicago course",
+        "grades": [],
+        "excluded": false,
+        "note": "Courses numbered 30000+ and professional-school courses may follow different grading rules; confirm the posted College-record grade before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed row. Both grades count in GPA; the calculator does not decide repeat eligibility or degree-credit treatment.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "College undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.4",
+    "previousUnits": "1200",
+    "completed": [
+      {
+        "name": "MATH 15100",
+        "units": "100",
+        "grade": "A",
+        "special": "UChicago College course",
+        "planned": false
+      },
+      {
+        "name": "SOSC 10100",
+        "units": "100",
+        "grade": "B+",
+        "special": "UChicago College course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 11100",
+        "units": "100",
+        "grade": "F",
+        "special": "UChicago College course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HUMA 20100",
+        "units": "100",
+        "grade": "A-",
+        "special": "UChicago College course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "8a40c52194ff"
+}

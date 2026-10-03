@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ou",
+  "universityName": "University of Oklahoma",
+  "pageTitle": "Calculate Your University of Oklahoma GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading policies; grade values; retention/graduation GPA",
+      "url": "https://www.ou.edu/registrar/academic-records/grading-policies"
+    },
+    {
+      "label": "Academic forgiveness; repeats; reprieve; renewal",
+      "url": "https://www.ou.edu/registrar/academic-records/academic-forgiveness"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://www.ou.edu/registrar/academic-records/transferring-credit"
+    },
+    {
+      "label": "Pass/No Pass",
+      "url": "https://www.ou.edu/registrar/academic-records/pass-no-pass"
+    },
+    {
+      "label": "Student standing",
+      "url": "https://ou.edu/registrar/academic-records/student-standing"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://www.ou.edu/content/dam/financialaid/Forms/Academic_Standards_Undergrad.pdf"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://www.ou.edu/admissions/apply/transfer/transfer-admission-requirements"
+    },
+    {
+      "label": "Honors College admission",
+      "url": "https://www.ou.edu/admissions/honors/honors-college"
+    },
+    {
+      "label": "Graduate grading and repeats",
+      "url": "https://www.ou.edu/gradcollege/forms-and-policies/graduate-college-bulletin"
+    }
+  ],
+  "helpIntro": "OU uses a 4.0 scale for the Norman-campus undergraduate retention/graduation GPA: A=4, B=3, C=2, D=1, F=0. Enter credit hours and final grades to estimate current, projected, and target GPA.",
+  "helpNote": "This profile estimates the undergraduate retention/graduation GPA, which can include OU and transfer work. P/S and I/X/U/N/NP/AW/W are excluded. Repeat Impact is unavailable because current OU undergraduate forgiveness can depend on the highest of multiple attempts.",
+  "helpExample": "A 3-credit A earns 12 grade points and a 3-credit B earns 9. Together, 21 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "P": null,
+      "S": null,
+      "I": null,
+      "X": null,
+      "U": null,
+      "N": null,
+      "NP": null,
+      "AW": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 grade points per credit hour.",
+      "B": "B = 3 grade points per credit hour.",
+      "C": "C = 2 grade points per credit hour.",
+      "D": "D = 1 grade point per credit hour.",
+      "F": "F = 0 grade points; credit hours count in GPA.",
+      "P": "Pass is neutral and excluded from GPA.",
+      "S": "Satisfactory is neutral and excluded from GPA.",
+      "I": "Incomplete carries no grade points and is excluded until resolved.",
+      "X": "X carries no grade points and is excluded from GPA.",
+      "U": "Unsatisfactory carries no grade points and is excluded from GPA.",
+      "N": "N carries no grade points and is excluded from GPA.",
+      "NP": "No Pass carries no grade points and is excluded from GPA.",
+      "AW": "Administrative Withdrawal carries no grade points and is excluded from GPA.",
+      "W": "Withdrawal carries no grade points and is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "OU or transfer course counted in retention/graduation GPA",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the grade and credit hours as recorded for the OU retention/graduation GPA."
+      },
+      {
+        "name": "Officially reprieved or renewed coursework",
+        "grades": null,
+        "excluded": true,
+        "note": "Select only after OU has officially applied reprieve or renewal; affected coursework is excluded from the retention/graduation GPA."
+      },
+      {
+        "name": "Repeated course needing forgiveness review",
+        "grades": [],
+        "excluded": false,
+        "note": "OU undergraduate repeat forgiveness can depend on equivalency and the highest of multiple attempts; confirm the official adjusted record before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is unavailable. Use your officially adjusted retention/graduation GPA or confirm repeat forgiveness with Academic Records.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate retention/graduation GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "MATH 1914",
+        "units": "3",
+        "grade": "A",
+        "special": "OU or transfer course counted in retention/graduation GPA",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ENGL 1113",
+        "units": "6",
+        "grade": "B",
+        "special": "OU or transfer course counted in retention/graduation GPA",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "00df4b22af4e"
+}

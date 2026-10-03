@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "jhu",
+  "universityName": "Johns Hopkins University",
+  "pageTitle": "Calculate Your Johns Hopkins GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading scale, GPA formula, S/U, incomplete, Dean's List",
+      "url": "https://e-catalogue.jhu.edu/ksas-wse/undergraduate-policies/academic-policies/grading-policies/"
+    },
+    {
+      "label": "Course retake policy",
+      "url": "https://e-catalogue.jhu.edu/ksas-wse/undergraduate-policies/academic-policies/registration-policies/"
+    },
+    {
+      "label": "External transfer credit",
+      "url": "https://e-catalogue.jhu.edu/ksas-wse/undergraduate-policies/academic-policies/external-credit-policies/"
+    },
+    {
+      "label": "Study abroad",
+      "url": "https://e-catalogue.jhu.edu/ksas-wse/undergraduate-policies/academic-policies/study-abroad-policies/"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://e-catalogue.jhu.edu/ksas-wse/undergraduate-policies/academic-policies/academic-standing-policies/"
+    },
+    {
+      "label": "Bachelor degree and major GPA",
+      "url": "https://e-catalogue.jhu.edu/ksas-wse/undergraduate-policies/academic-policies/requirements-bachelors-degree/"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://e-catalogue.jhu.edu/ksas-wse/undergraduate-policies/academic-policies/graduation-policies/"
+    },
+    {
+      "label": "Undergraduate admissions requirements",
+      "url": "https://apply.jhu.edu/how-to-apply/application-deadlines-requirements/"
+    },
+    {
+      "label": "Admissions class profile",
+      "url": "https://apply.jhu.edu/fast-facts/"
+    },
+    {
+      "label": "Financial aid FAQ",
+      "url": "https://apply.jhu.edu/tuition-aid/common-financial-aid-questions/"
+    },
+    {
+      "label": "Homewood academic ethics",
+      "url": "https://studentaffairs.jhu.edu/policies-guidelines/undergrad-ethics/"
+    },
+    {
+      "label": "Peabody grading exception",
+      "url": "https://e-catalogue.jhu.edu/peabody/general-information-procedures-regulations/academic/grading-system-and-regulations/"
+    },
+    {
+      "label": "Carey grading exception",
+      "url": "https://e-catalogue.jhu.edu/business/policies-procedures/grading-policy/"
+    }
+  ],
+  "helpIntro": "Johns Hopkins Homewood undergraduates use a 4.0 credit-weighted GPA. Enter Hopkins credits and final grades; A+ and A are both 4.0, while F counts as zero and S/U does not enter GPA.",
+  "helpNote": "For full-time on-campus KSAS/WSE undergraduates. Peabody and other JHU divisions can use different grading systems. The repeat tool is only for an eligible Homewood course originally graded C+ or lower; ethics-violation grades and unresolved repeats need manual review.",
+  "helpExample": "A 4-credit A earns 16.0 grade points and a 3-credit B+ earns 9.9. Together, 25.9 ÷ 7 = 3.700.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "S": null,
+      "U": null,
+      "I": null,
+      "MR": null,
+      "MT": null,
+      "NG": null,
+      "W": null,
+      "X": null,
+      "FEV": 0
+    },
+    "gradeExplanations": {
+      "A+": "Excellent; A+ is 4.0, the same GPA value as A.",
+      "A": "Excellent; 4.0 points per credit.",
+      "A-": "Excellent; 3.7 points per credit.",
+      "B+": "Good; 3.3 points per credit.",
+      "B": "Good; 3.0 points per credit.",
+      "B-": "Good; 2.7 points per credit.",
+      "C+": "Satisfactory; eligible original grade for the standard retake policy.",
+      "C": "Satisfactory; eligible original grade for the standard retake policy.",
+      "C-": "Satisfactory; eligible original grade for the standard retake policy.",
+      "D+": "Passing; eligible original grade for the standard retake policy.",
+      "D": "Passing; eligible original grade for the standard retake policy.",
+      "F": "Failure; credits count in GPA at zero points; eligible original grade for standard retake.",
+      "S": "Satisfactory in an S/U course; no GPA effect.",
+      "U": "Unsatisfactory in an S/U course; no GPA effect and no credit.",
+      "I": "Incomplete is temporary and does not affect GPA until replaced by the final/reversion grade.",
+      "MR": "Missing grade roster; no final grade available for calculation.",
+      "MT": "Multi-term notation; wait for the final grade.",
+      "NG": "No grade given, course completed; no grade-point value published for GPA calculation.",
+      "W": "Official withdrawal; excluded from GPA.",
+      "X": "No grade reported by instructor; wait for a final grade.",
+      "FEV": "Failure for an ethics violation; the sanction grade remains in GPA and cannot be absolved by repeating."
+    },
+    "specialTypes": [
+      {
+        "name": "Homewood KSAS/WSE course",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter Hopkins credits and the finalized Homewood grade."
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades do not appear on the Hopkins record and do not enter the Hopkins GPA."
+      },
+      {
+        "name": "Study abroad / external program",
+        "grades": [],
+        "excluded": false,
+        "note": "Program and course posting rules vary. Confirm the transcript notation and GPA treatment before calculating.",
+        "manualReview": true
+      },
+      {
+        "name": "Other JHU division course",
+        "grades": [],
+        "excluded": false,
+        "note": "Other JHU divisions can use different grade scales and policies. Confirm how the course posts to the Homewood record.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible C+ or lower course, the completed second attempt replaces the original in GPA and credit even if the new grade is lower. Do not use Repeat Impact for ethics-violation grades or an uncompleted/withdrawn repeat.",
+      "originalGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "F"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Homewood undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "Calculus",
+        "units": "4",
+        "grade": "A+",
+        "special": "Homewood KSAS/WSE course",
+        "planned": false
+      },
+      {
+        "name": "Writing",
+        "units": "3",
+        "grade": "A-",
+        "special": "Homewood KSAS/WSE course",
+        "planned": false
+      },
+      {
+        "name": "Physics",
+        "units": "3",
+        "grade": "B+",
+        "special": "Homewood KSAS/WSE course",
+        "planned": false
+      },
+      {
+        "name": "Chemistry",
+        "units": "2",
+        "grade": "F",
+        "special": "Homewood KSAS/WSE course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Data Science",
+        "units": "3",
+        "grade": "A",
+        "special": "Homewood KSAS/WSE course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "e05bded4b542"
+}

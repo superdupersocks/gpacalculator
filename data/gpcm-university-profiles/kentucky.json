@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "kentucky",
+  "universityName": "University of Kentucky",
+  "pageTitle": "Calculate Your University of Kentucky GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading scale, exclusions, Pass/Fail, repeat policy",
+      "url": "https://provost.uky.edu/sites/default/files/2026-09/grading_final_0.pdf"
+    },
+    {
+      "label": "Official GPA calculator and quality-hour formula",
+      "url": "https://registrar.uky.edu/gpa-calculator"
+    },
+    {
+      "label": "Transfer credit and UK GPA",
+      "url": "https://admission.uky.edu/transfer/requirements"
+    },
+    {
+      "label": "Special college and program rules",
+      "url": "https://provost.uky.edu/academic-affairs-operations/academic-student-policies/special-college-rules"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://studentsuccess.uky.edu/financial-aid-and-scholarships/policies/satisfactory-academic-progress/sap-policy-undergraduate"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admission.uky.edu/transfer/requirements"
+    }
+  ],
+  "helpIntro": "The University of Kentucky standard undergraduate GPA uses a 4.0 scale: A=4, B=3, C=2, D=1, and F/E=0. Enter UK credit hours and final grades to estimate current and projected GPA.",
+  "helpNote": "For standard undergraduate grading under the policy effective August 23, 2026. Pass/Fail and transfer grades are excluded. Law, graduate/professional and other alternate grading systems need separate review. Repeat Impact is disabled because UK now uses the highest completed grade under its repeat option.",
+  "helpExample": "A 3-credit A earns 12 quality points and a 3-credit B earns 9. Together, 21 ÷ 6 = 3.5.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "F": 0,
+      "E": 0,
+      "I": null,
+      "AU": null,
+      "CR": null,
+      "IP": null,
+      "N": null,
+      "S": null,
+      "SI": null,
+      "UI": null,
+      "UN": null,
+      "W": null,
+      "XE": 0
+    },
+    "gradeExplanations": {
+      "A": "A = 4 quality points per credit hour.",
+      "B": "B = 3 quality points per credit hour.",
+      "C": "C = 2 quality points per credit hour.",
+      "D": "D = 1 quality point per credit hour.",
+      "F": "F contributes zero grade points while the course remains GPA-bearing.",
+      "E": "E is a zero-point failure; UK says it will stop being issued in Fall 2027.",
+      "I": "Incomplete is excluded until a final grade is posted.",
+      "AU": "Audit is excluded from GPA.",
+      "CR": "CR credit is excluded from GPA.",
+      "IP": "IP is excluded while work is in progress.",
+      "N": "N is a temporary non-GPA mark.",
+      "S": "S is excluded from GPA.",
+      "SI": "SI is excluded until resolved.",
+      "UI": "UI is excluded until resolved.",
+      "UN": "UN is excluded from GPA.",
+      "W": "W is excluded from GPA.",
+      "XE": "XE is a zero-point failure and cannot use the repeat option."
+    },
+    "specialTypes": [
+      {
+        "name": "UK course, standard letter grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard UK undergraduate A/B/C/D/F/E grading."
+      },
+      {
+        "name": "UK course, Pass/Fail grading",
+        "grades": [
+          "P",
+          "F",
+          "XF"
+        ],
+        "excluded": false,
+        "note": "P and F on the Pass/Fail track are excluded from GPA.",
+        "gradePoints": {
+          "P": null,
+          "F": null,
+          "XF": null
+        }
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer grades do not enter the UK GPA."
+      },
+      {
+        "name": "Law, graduate, professional, or alternate grading system",
+        "grades": [],
+        "excluded": false,
+        "note": "These contexts can use different grade symbols, grade points, or repeat rules; use the applicable program record.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "UK repeat rules can exclude lower completed attempts after you exercise the repeat option, but the calculator does not automate this 2026 highest-grade rule. Use your official Q HRS/Q PTS after repeat processing or confirm with your advisor/Registrar.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Standard undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENG 101",
+        "units": "3",
+        "grade": "A",
+        "special": "UK course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "MAT 120",
+        "units": "3",
+        "grade": "B",
+        "special": "UK course, standard letter grading",
+        "planned": false
+      },
+      {
+        "name": "BIO 148",
+        "units": "3",
+        "grade": "F",
+        "special": "UK course, standard letter grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "CHE 105",
+        "units": "3",
+        "grade": "A",
+        "special": "UK course, standard letter grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "ec2f6731d807"
+}

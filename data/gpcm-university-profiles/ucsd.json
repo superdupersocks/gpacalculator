@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ucsd",
+  "universityName": "University of California, San Diego",
+  "pageTitle": "Calculate Your UC San Diego GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula, grade values, included UC coursework and graduate scope",
+      "url": "https://senate.ucsd.edu/Operating-Procedures/Senate-Manual/regulations/500"
+    },
+    {
+      "label": "Student grading system and grade meanings",
+      "url": "https://students.ucsd.edu/academics/exams-grades-transcripts/grades/grading-system.html"
+    },
+    {
+      "label": "GPA calculation and precision",
+      "url": "https://students.ucsd.edu/academics/exams-grades-transcripts/grades/calculate-gpa.html"
+    },
+    {
+      "label": "Repeat eligibility and first 16 repeated units",
+      "url": "https://students.ucsd.edu/academics/enroll/special-enrollment/how-to-repeat-a-class.html"
+    },
+    {
+      "label": "Transfer and UC campus GPA treatment",
+      "url": "https://revelle.ucsd.edu/academics/general-education/tran-courses.html"
+    },
+    {
+      "label": "Undergraduate and graduate standing and degree GPA thresholds",
+      "url": "https://students.ucsd.edu/academics/exams-grades-transcripts/grades/academic-standing.html"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://fas.ucsd.edu/applying/undergraduates/requirements-for-aid-eligibility.html"
+    },
+    {
+      "label": "Honors and current Latin honors cutoffs",
+      "url": "https://students.ucsd.edu/academics/advising/degrees-diplomas/latin-honors.html"
+    },
+    {
+      "label": "Provost Honors",
+      "url": "https://advising.ucsd.edu/students/degree-requirements/honors.html"
+    },
+    {
+      "label": "First-year admissions profile",
+      "url": "https://admissions.ucsd.edu/first-year/index.html"
+    }
+  ],
+  "helpIntro": "UC San Diego uses a 4.0 UC GPA scale. Enter quarter units and final UC letter grades; A+ and A are 4.0, and plus/minus grades change points except A+.",
+  "helpNote": "For undergraduate planning. P/NP, S/U, I, IP and W do not enter GPA. Courses from other UC campuses generally count, while most non-UC transfer and Extension grades do not. Repeat Impact is disabled because official repeat adjustments depend on the first 16 eligible repeated units and transcript-specific exceptions.",
+  "helpExample": "A 4-unit A earns 16 grade points and a 4-unit B+ earns 13.2. Together, 29.2 ÷ 8 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D": 1,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "IP": null,
+      "W": null,
+      "X": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0; no extra grade points beyond A.",
+      "A": "A = 4.0 points per unit.",
+      "A-": "A- = 3.7 points per unit.",
+      "B+": "B+ = 3.3 points per unit.",
+      "B": "B = 3.0 points per unit.",
+      "B-": "B- = 2.7 points per unit.",
+      "C+": "C+ = 2.3 points per unit.",
+      "C": "C = 2.0 points per unit.",
+      "C-": "C- = 1.7 points per unit.",
+      "D": "D = 1.0 point per unit.",
+      "F": "F = 0 points; letter-graded units remain in the GPA denominator unless an official repeat adjustment removes the original attempt.",
+      "P": "P earns degree units when applicable but is excluded from GPA.",
+      "NP": "NP is excluded from GPA; repeat policy may affect a later cumulative adjustment.",
+      "S": "S is excluded from GPA.",
+      "U": "U is excluded from GPA.",
+      "I": "Incomplete is excluded until resolved; a lapsed or final grade can later change the record.",
+      "IP": "In Progress is excluded until a final grade is recorded.",
+      "W": "W is excluded from GPA.",
+      "X": "X is a pending academic-dishonesty notation; use the final posted grade when resolved."
+    },
+    "specialTypes": [
+      {
+        "name": "UC course (UCSD or another UC campus)",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final UC letter grades and quarter units."
+      },
+      {
+        "name": "Non-UC transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Most non-UC transfer grades do not enter the UC cumulative GPA, even when units transfer."
+      },
+      {
+        "name": "UC Extension / UCSD Extended Studies",
+        "grades": null,
+        "excluded": true,
+        "note": "Extension coursework is excluded from the UC GPA described by Academic Senate Regulation 500."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. For an official cumulative GPA after a repeat, use the repeat codes on Academic History; do not simply delete every original D/F/NP.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UC GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "MATH 20C",
+        "units": "4",
+        "grade": "A-",
+        "special": "UC course (UCSD or another UC campus)",
+        "planned": false
+      },
+      {
+        "name": "CHEM 6B",
+        "units": "4",
+        "grade": "B+",
+        "special": "UC course (UCSD or another UC campus)",
+        "planned": false
+      },
+      {
+        "name": "CSE 12",
+        "units": "4",
+        "grade": "A",
+        "special": "UC course (UCSD or another UC campus)",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ECON 1",
+        "units": "4",
+        "grade": "A",
+        "special": "UC course (UCSD or another UC campus)",
+        "planned": true
+      },
+      {
+        "name": "PSYC 1",
+        "units": "4",
+        "grade": "A-",
+        "special": "UC course (UCSD or another UC campus)",
+        "planned": true
+      },
+      {
+        "name": "HIST 10",
+        "units": "4",
+        "grade": "B+",
+        "special": "UC course (UCSD or another UC campus)",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "f3d362df8d7d"
+}

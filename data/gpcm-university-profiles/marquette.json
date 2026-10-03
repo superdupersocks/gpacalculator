@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "marquette",
+  "universityName": "Marquette University",
+  "pageTitle": "Calculate Your Marquette GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula, transfer exclusion and precision",
+      "url": "https://bulletin.marquette.edu/policies/grading-system/"
+    },
+    {
+      "label": "Undergraduate grades and non-point marks",
+      "url": "https://bulletin.marquette.edu/policies/grading-system/undergraduate-healthscienceprofessional/"
+    },
+    {
+      "label": "Undergraduate repeated courses",
+      "url": "https://bulletin.marquette.edu/policies/repeated-courses/undergraduate/"
+    },
+    {
+      "label": "Undergraduate transfer credit",
+      "url": "https://bulletin.marquette.edu/policies/transfer-course-credit-policy/undergraduate/"
+    },
+    {
+      "label": "Undergraduate graduation requirements",
+      "url": "https://bulletin.marquette.edu/policies/graduation/undergraduate/"
+    },
+    {
+      "label": "Undergraduate academic censure",
+      "url": "https://bulletin.marquette.edu/policies/academic-censure/undergraduate/"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://www.marquette.edu/central/financial-aid/policies/satisfactory-academic-progress.php"
+    },
+    {
+      "label": "Graduate grading distinction",
+      "url": "https://bulletin.marquette.edu/policies/grading-system/graduate-management/"
+    },
+    {
+      "label": "Graduate repeat distinction",
+      "url": "https://bulletin.marquette.edu/policies/repeated-courses/graduate/"
+    }
+  ],
+  "helpIntro": "Marquette uses a 4.000 scale. Enter semester hours and final undergraduate grades; GPA is total grade points divided by GPA-bearing semester hours.",
+  "helpNote": "For the standard current undergraduate record. Transfer grades do not enter Marquette GPA. Repeat Impact is unavailable because undergraduate repeat treatment depends on the highest eligible Marquette grade.",
+  "helpExample": "A 3-credit A earns 12.00 grade points; a 3-credit B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "F": 0,
+      "WF": 0,
+      "ADW": null,
+      "AU": null,
+      "AUA": null,
+      "CR": null,
+      "I": null,
+      "IC": null,
+      "IE": null,
+      "NC": null,
+      "NG": null,
+      "NPF": null,
+      "PD": null,
+      "PS": null,
+      "S": null,
+      "SY": null,
+      "U": null,
+      "UW": null,
+      "UY": null,
+      "W": null,
+      "WA": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per semester hour.",
+      "A-": "A- = 3.67 grade points per semester hour.",
+      "B+": "B+ = 3.33 grade points per semester hour.",
+      "B": "B = 3.00 grade points per semester hour.",
+      "B-": "B- = 2.67 grade points per semester hour.",
+      "C+": "C+ = 2.33 grade points per semester hour.",
+      "C": "C = 2.00 grade points per semester hour.",
+      "C-": "C- = 1.67 grade points per semester hour.",
+      "D+": "D+ = 1.33 grade points per semester hour.",
+      "D": "D = 1.00 grade points per semester hour.",
+      "F": "Failure; counts in GPA at 0.00 points.",
+      "WF": "Failure/withdrawal after the deadline; calculated into GPA like F.",
+      "ADW": "ADW has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "AU": "AU has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "AUA": "AUA has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "CR": "CR has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "I": "I has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "IC": "IC has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "IE": "IE has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "NC": "NC has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "NG": "NG has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "NPF": "NPF has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "PD": "PD has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "PS": "PS has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "S": "S has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "SY": "SY has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "U": "U has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "UW": "UW has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "UY": "UY has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "W": "W has no Marquette grade-point value; exclude it from this GPA estimate.",
+      "WA": "WA has no Marquette grade-point value; exclude it from this GPA estimate."
+    },
+    "specialTypes": [
+      {
+        "name": "Marquette undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final Marquette grade and semester hours for a standard undergraduate course."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer credits may apply toward the degree, but transferred grades are not included in Marquette GPA."
+      },
+      {
+        "name": "Repeated or unusual attempt",
+        "grades": [],
+        "excluded": false,
+        "note": "Undergraduate repeats generally keep the highest eligible Marquette grade in cumulative GPA, with exceptions and attempt limits. Use CheckMarq/Registrar treatment before entering the counted attempt.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is unavailable. Confirm which attempt CheckMarq counts, then enter only the GPA-bearing attempt in this estimate.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CHEM 1001",
+        "units": "3",
+        "grade": "A",
+        "special": "Marquette undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "ENGL 1001",
+        "units": "3",
+        "grade": "B+",
+        "special": "Marquette undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 1001",
+        "units": "3",
+        "grade": "WF",
+        "special": "Marquette undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PHIL 1001",
+        "units": "3",
+        "grade": "A-",
+        "special": "Marquette undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "89a714d014db"
+}

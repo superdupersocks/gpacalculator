@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ut-austin",
+  "universityName": "The University of Texas at Austin",
+  "pageTitle": "Calculate Your UT Austin GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA computation; grade values; undergraduate/graduate inclusion",
+      "url": "https://catalog.utexas.edu/general-information/academic-policies-and-procedures/computation-of-the-grade-point-average/"
+    },
+    {
+      "label": "Evaluation; symbols; pass/fail; repeats",
+      "url": "https://catalog.utexas.edu/general-information/academic-policies-and-procedures/evaluation/"
+    },
+    {
+      "label": "Academic warning and dismissal",
+      "url": "https://catalog.utexas.edu/general-information/academic-policies-and-procedures/scholastic-probation-and-dismissal/"
+    },
+    {
+      "label": "Undergraduate general degree requirements",
+      "url": "https://catalog.utexas.edu/undergraduate/the-university/graduation/general-requirements/"
+    },
+    {
+      "label": "Graduate degree requirements",
+      "url": "https://catalog.utexas.edu/graduate/degree-requirements/"
+    },
+    {
+      "label": "Law grading and minimum standards",
+      "url": "https://catalog.utexas.edu/law/academic-policies-and-procedures/grades-and-minimum-performance-standards/"
+    },
+    {
+      "label": "Credit value and course numbers",
+      "url": "https://catalog.utexas.edu/general-information/academic-policies-and-procedures/credit-value-and-course-numbers/"
+    },
+    {
+      "label": "University honors",
+      "url": "https://catalog.utexas.edu/general-information/academic-policies-and-procedures/honors/"
+    }
+  ],
+  "helpIntro": "UT Austin uses a 4.0 scale with plus/minus grades. Enter semester credit hours and final grades to estimate your undergraduate cumulative University GPA.",
+  "helpNote": "For the standard undergraduate University GPA. Transfer grades do not enter the UT GPA, and every UT grade from a repeated course remains in the GPA. Law uses a separate 4.30 scale; graduate GPA inclusion rules differ.",
+  "helpExample": "A 3-hour A earns 12.00 grade points; a 3-hour B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "CR": null,
+      "NC": null,
+      "Q": null,
+      "W": null,
+      "X": null,
+      "I": null,
+      "S": null,
+      "U": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per semester hour.",
+      "A-": "A- = 3.67 grade points per semester hour.",
+      "B+": "B+ = 3.33 grade points per semester hour.",
+      "B": "B = 3.00 grade points per semester hour.",
+      "B-": "B- = 2.67 grade points per semester hour.",
+      "C+": "C+ = 2.33 grade points per semester hour.",
+      "C": "C = 2.00 grade points per semester hour.",
+      "C-": "C- = 1.67 grade points per semester hour.",
+      "D+": "D+ = 1.33 grade points per semester hour.",
+      "D": "D = 1.00 grade points per semester hour.",
+      "D-": "D- = 0.67 grade points per semester hour.",
+      "F": "F = 0.00 grade points per semester hour.",
+      "CR": "Credit; excluded from GPA.",
+      "NC": "No credit; excluded from GPA.",
+      "Q": "Dropped course; excluded from GPA.",
+      "W": "Withdrawal; excluded from GPA.",
+      "X": "Temporary delay of grade; excluded until replaced.",
+      "I": "Permanent incomplete; excluded from GPA.",
+      "S": "Satisfactory developmental-study symbol; excluded from GPA.",
+      "U": "Unsatisfactory developmental-study symbol; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UT Austin undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final UT Austin letter grades and semester hours."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Grades earned outside UT Austin do not enter the cumulative University GPA."
+      },
+      {
+        "name": "UT Austin Law School course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law uses a separate 4.30 grading scale; do not calculate it with the undergraduate scale.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate record/course context",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate GPA inclusion rules differ; use the official graduate record rules.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed course. All attempts count in GPA; repeat-for-credit eligibility can vary by college/school.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate cumulative University GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "M 408C",
+        "units": "3",
+        "grade": "A-",
+        "special": "UT Austin undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "E 316M",
+        "units": "3",
+        "grade": "B+",
+        "special": "UT Austin undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "CH 301",
+        "units": "3",
+        "grade": "F",
+        "special": "UT Austin undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "BIO 311C",
+        "units": "3",
+        "grade": "A",
+        "special": "UT Austin undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "a7f88ea63cae"
+}

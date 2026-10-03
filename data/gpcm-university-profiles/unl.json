@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "unl",
+  "universityName": "University of Nebraska–Lincoln",
+  "pageTitle": "Calculate Your Nebraska GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA inclusion; precision",
+      "url": "https://registrar.unl.edu/academic-standards/grade-point-average/"
+    },
+    {
+      "label": "Undergraduate grading and academic standards",
+      "url": "https://catalog.unl.edu/undergraduate/academic-policies-other-units/procedures/"
+    },
+    {
+      "label": "Undergraduate course repeats",
+      "url": "https://registrar.unl.edu/academic-standards/course-repeats/"
+    },
+    {
+      "label": "Transfer and dismissal guidance",
+      "url": "https://registrar.unl.edu/academic-standards/academic-warnings-and-dismissals/academic-dismissal-information-students/"
+    },
+    {
+      "label": "Academic bankruptcy",
+      "url": "https://registrar.unl.edu/academic-standards/academic-policies/academic-bankruptcy-undergraduates/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.unl.edu/maintaining-eligibility/satisfactory-academic-progress/"
+    },
+    {
+      "label": "Graduate grades",
+      "url": "https://catalog.unl.edu/graduate-professional/policies/grades/"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://admissions.unl.edu/apply/admission-requirements/transfer/"
+    }
+  ],
+  "helpIntro": "Nebraska uses a 4.0 undergraduate scale. Enter semester credit hours and final grades to estimate current, cumulative, projected and target GPA.",
+  "helpNote": "For standard University of Nebraska–Lincoln undergraduate GPA planning. P, N, I, W and NR are excluded. Repeat Impact is disabled because UNL repeat eligibility includes a same-or-greater-credit condition the shared tool cannot safely model. Official UNL pages conflict on whether thousandth precision is described as rounded or truncated; MyRED is authoritative.",
+  "helpExample": "A 3-credit A- earns 11.01 grade points; a 3-credit B earns 9.00. Together, 20.01 ÷ 6 = 3.335.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "P": null,
+      "N": null,
+      "I": null,
+      "W": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.00 grade points per credit hour.",
+      "A": "A = 4.00 grade points per credit hour.",
+      "A-": "A- = 3.67 grade points per credit hour.",
+      "B+": "B+ = 3.33 grade points per credit hour.",
+      "B": "B = 3.00 grade points per credit hour.",
+      "B-": "B- = 2.67 grade points per credit hour.",
+      "C+": "C+ = 2.33 grade points per credit hour.",
+      "C": "C = 2.00 grade points per credit hour.",
+      "C-": "C- = 1.67 grade points per credit hour.",
+      "D+": "D+ = 1.33 grade points per credit hour.",
+      "D": "D = 1.00 grade points per credit hour.",
+      "D-": "D- = 0.67 grade points per credit hour.",
+      "F": "F = 0.00 grade points per credit hour.",
+      "P": "Pass; excluded from GPA.",
+      "N": "No Pass; excluded from GPA.",
+      "I": "Incomplete; excluded until replaced by a final grade.",
+      "W": "Withdrawn; excluded from GPA.",
+      "NR": "No Report; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "UNL course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard UNL undergraduate coursework."
+      },
+      {
+        "name": "UNO, UNK or UNMC equivalent used for repeat",
+        "grades": [],
+        "excluded": false,
+        "note": "NU-system equivalents may qualify for repeat recomputation but require Registrar processing in specified cases.",
+        "manualReview": true
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "External transfer grades do not enter the UNL GPA; transfer credit acceptance is separate."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. UNL may remove an eligible below-C original after a qualifying repeat; use the Registrar policy for eligibility and processing.",
+      "originalGrades": [
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "MATH 106",
+        "units": "3",
+        "grade": "A-",
+        "special": "UNL course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 109",
+        "units": "4",
+        "grade": "B+",
+        "special": "UNL course",
+        "planned": false
+      },
+      {
+        "name": "HIST 101",
+        "units": "2",
+        "grade": "F",
+        "special": "UNL course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ENGL 150",
+        "units": "3",
+        "grade": "A",
+        "special": "UNL course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "ae03515c6baa"
+}

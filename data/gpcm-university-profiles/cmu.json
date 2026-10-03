@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "cmu",
+  "universityName": "Carnegie Mellon University",
+  "pageTitle": "Calculate Your Carnegie Mellon QPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading policy",
+      "url": "https://www.cmu.edu/policies/student-and-student-life/grading.html"
+    },
+    {
+      "label": "QPA formula and transcript",
+      "url": "https://www.cmu.edu/hub/registrar/student-records/transcripts/legend.html"
+    },
+    {
+      "label": "Transfer and cross-registration",
+      "url": "https://www.cmu.edu/policies/student-and-student-life/transfer-credit-evaluation-and-assignment.html"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://www.cmu.edu/sfs/financial-aid/policies/docs/academic-progress-policy-statement.pdf"
+    },
+    {
+      "label": "Undergraduate catalog",
+      "url": "https://coursecatalog.web.cmu.edu/aboutcmu/undergraduateacademicregulations/"
+    },
+    {
+      "label": "University Honors / MCS graduation context",
+      "url": "https://coursecatalog.web.cmu.edu/schools-colleges/melloncollegeofscience/"
+    },
+    {
+      "label": "Special Spring 2026 P/NP",
+      "url": "https://www.cmu.edu/hub/registrar/exams-and-grading/special-pnp-election/faqs.html"
+    }
+  ],
+  "helpIntro": "Carnegie Mellon undergraduates use a 4.0 Quality Point Average (QPA) scale. Enter factorable CMU units and final grades; A=4, B=3, C=2, D=1, R=0.",
+  "helpNote": "For undergraduate records. P/N/O/W/I/AD are non-factorable. Graduate students use a different 4.33 scale. Repeat Impact is unavailable because every graded attempt remains in QPA.",
+  "helpExample": "A 12-unit A earns 48 quality points and a 9-unit B earns 27. Together, 75 ÷ 21 = 3.571.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "B": 3,
+      "C": 2,
+      "D": 1,
+      "R": 0,
+      "P": null,
+      "N": null,
+      "O": null,
+      "W": null,
+      "I": null,
+      "AD": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 quality points per unit.",
+      "B": "B = 3 quality points per unit.",
+      "C": "C = 2 quality points per unit.",
+      "D": "D = 1 quality point per unit.",
+      "R": "R is failure: zero quality points; factorable units remain in QPA.",
+      "P": "Passing pass/no pass grade; non-factorable.",
+      "N": "Not passing pass/no pass grade; non-factorable.",
+      "O": "Audit; non-factorable.",
+      "W": "Withdrawal; non-factorable.",
+      "I": "Incomplete; non-factorable until replaced by a permanent grade.",
+      "AD": "Transfer or examination credit notation; non-factorable."
+    },
+    "specialTypes": [
+      {
+        "name": "Carnegie Mellon course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final undergraduate transcript grade and CMU units."
+      },
+      {
+        "name": "External transfer or exam credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Ordinary external transfer/exam credit does not enter CMU QPA."
+      },
+      {
+        "name": "University cross-registration course",
+        "grades": null,
+        "excluded": false,
+        "note": "CMU cross-registration program courses have grades recorded and are factored into QPA; use the CMU transcript grade and units."
+      },
+      {
+        "name": "Graduate-level course taken as undergraduate",
+        "grades": null,
+        "excluded": false,
+        "note": "Any +/- final grade is converted to the corresponding undergraduate letter grade before QPA calculation."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter every graded attempt as a separate completed course. Repeat Impact is disabled because CMU does not replace the earlier QPA grade.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate QPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "90",
+    "completed": [
+      {
+        "name": "15-112",
+        "units": "12",
+        "grade": "A",
+        "special": "Carnegie Mellon course",
+        "planned": false
+      },
+      {
+        "name": "21-127",
+        "units": "9",
+        "grade": "B",
+        "special": "Carnegie Mellon course",
+        "planned": false
+      },
+      {
+        "name": "33-104",
+        "units": "6",
+        "grade": "R",
+        "special": "Carnegie Mellon course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Planned A",
+        "units": "27",
+        "grade": "A",
+        "special": "Carnegie Mellon course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "9a564974b851"
+}

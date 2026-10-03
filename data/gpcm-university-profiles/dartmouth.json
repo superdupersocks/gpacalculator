@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "dartmouth",
+  "universityName": "Dartmouth College",
+  "pageTitle": "Calculate Your Dartmouth GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA calculation; exact quality points; rounding",
+      "url": "https://registrar.dartmouth.edu/transcripts/transcript-information-cost/gpa-calculation-standard-rounding"
+    },
+    {
+      "label": "Scholarship ratings and cumulative GPA",
+      "url": "https://dartmouth.smartcatalogiq.com/en/2022/orc/regulations/undergraduate-study/requirements-for-the-degree-of-bachelor-of-arts/scholarship-ratings"
+    },
+    {
+      "label": "Credit/No Credit",
+      "url": "https://dartmouth.smartcatalogiq.com/en/current/orc/regulations/undergraduate-study/requirements-for-the-degree-of-bachelor-of-arts/credit-no-credit-courses"
+    },
+    {
+      "label": "Non-Recording Option",
+      "url": "https://dartmouth.smartcatalogiq.com/en/current/orc/regulations/undergraduate-study/requirements-for-the-degree-of-bachelor-of-arts/non-recording-option"
+    },
+    {
+      "label": "Temporary transcript designations",
+      "url": "https://dartmouth.smartcatalogiq.com/en/current/orc/regulations/undergraduate-study/requirements-for-the-degree-of-bachelor-of-arts/temporary-transcript-designations"
+    },
+    {
+      "label": "Incoming transfer credit and GPA",
+      "url": "https://registrar.dartmouth.edu/students/enrollment/incoming-transfer-students"
+    },
+    {
+      "label": "Exchange/transfer grades",
+      "url": "https://registrar.dartmouth.edu/students/enrollment/study-away/exchange-programs"
+    },
+    {
+      "label": "Course repetition",
+      "url": "https://dartmouth.smartcatalogiq.com/en/current/orc/regulations/undergraduate-study/working-rules-and-regulations/election-of-courses"
+    },
+    {
+      "label": "Academic Support Framework",
+      "url": "https://student-affairs.dartmouth.edu/policy/academic-support-framework"
+    },
+    {
+      "label": "General Latin honors",
+      "url": "https://dartmouth.smartcatalogiq.com/en/current/orc/regulations/undergraduate-study/honors/general-honors/"
+    },
+    {
+      "label": "First-year admission GPA",
+      "url": "https://admissions.dartmouth.edu/glossary-question/there-minimum-grade-point-average-required-admission-dartmouth"
+    },
+    {
+      "label": "Transfer admission GPA",
+      "url": "https://admissions.dartmouth.edu/glossary-question/there-minimum-college-grade-point-average-gpa-required-transfer-admission"
+    },
+    {
+      "label": "Graduate grading distinction",
+      "url": "https://graduate.dartmouth.edu/policy/satisfactory-progress"
+    }
+  ],
+  "helpIntro": "Dartmouth undergraduate GPA uses a 4.0 scale with exact thirds for plus/minus grades. Enter each GPA-bearing Dartmouth course as 1 course; E counts at zero, while CT, NC and NR do not enter the recorded GPA.",
+  "helpNote": "For Arts & Sciences undergraduates. The calculator displays three decimals for planning; Dartmouth calculates internally to high precision and rounds the official GPA to two decimals. Graduate grading is separate. Repeat Impact is unavailable because Dartmouth does not use simple grade replacement.",
+  "helpExample": "Three courses with A, B+, and B- produce (4 + 3⅓ + 2⅔) ÷ 3 = 3.333…, which Dartmouth reports as 3.33.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 10,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.666666666666667,
+      "B+": 3.333333333333333,
+      "B": 3,
+      "B-": 2.666666666666667,
+      "C+": 2.333333333333333,
+      "C": 2,
+      "C-": 1.666666666666667,
+      "D": 1,
+      "E": 0,
+      "CT": null,
+      "NC": null,
+      "NR": null,
+      "W": null,
+      "I": null,
+      "ON": null,
+      "AD": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0; Dartmouth uses 12 quality points before dividing by 3.",
+      "A-": "A- = 11/3 = 3.666…; official GPA math uses exact thirds.",
+      "B+": "B+ = 10/3 = 3.333…; official GPA math uses exact thirds.",
+      "B": "B = 3.0.",
+      "B-": "B- = 8/3 = 2.666….",
+      "C+": "C+ = 7/3 = 2.333….",
+      "C": "C = 2.0.",
+      "C-": "C- = 5/3 = 1.666….",
+      "D": "D = 1.0 and earns course credit subject to degree limits.",
+      "E": "E = 0.0; it is included in GPA and earns no course credit.",
+      "CT": "Credit in a Credit/No Credit course; excluded from cumulative GPA.",
+      "NC": "No Credit in a Credit/No Credit course; excluded from Dartmouth GPA.",
+      "NR": "Non-Recorded standing; concealed letter grade is excluded from recorded GPA unless the outcome is E.",
+      "W": "Withdrawal notation; excluded from GPA.",
+      "I": "Temporary Incomplete notation; wait for the final grade.",
+      "ON": "Temporary On-Going designation; wait for the final grade.",
+      "AD": "Temporary Administrative Delay designation; wait for the final grade."
+    },
+    "specialTypes": [
+      {
+        "name": "Dartmouth A-E course",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter 1 course for a standard GPA-bearing Dartmouth course and its final A-E grade."
+      },
+      {
+        "name": "Credit/No Credit course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use CT or NC; both are excluded from Dartmouth cumulative GPA."
+      },
+      {
+        "name": "Non-Recording Option outcome",
+        "grades": null,
+        "excluded": false,
+        "note": "Use NR when the grade is non-recorded; if the outcome is E, enter E because Dartmouth includes it in GPA."
+      },
+      {
+        "name": "External transfer or exchange credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Grades transferred from another institution are not included in Dartmouth cumulative GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "For a repeated failed course, enter both graded attempts as separate completed rows. Do not use the repeat tool; passed-course retakes can be non-averaged and need Registrar review.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.5",
+    "previousUnits": "20",
+    "completed": [
+      {
+        "name": "ECON 1",
+        "units": "1",
+        "grade": "A",
+        "special": "Dartmouth A-E course",
+        "planned": false
+      },
+      {
+        "name": "MATH 3",
+        "units": "1",
+        "grade": "B+",
+        "special": "Dartmouth A-E course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 5",
+        "units": "1",
+        "grade": "E",
+        "special": "Dartmouth A-E course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "GOVT 10",
+        "units": "1",
+        "grade": "A-",
+        "special": "Dartmouth A-E course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "cf29c8d0f37c"
+}

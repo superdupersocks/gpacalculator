@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "emory",
+  "universityName": "Emory University",
+  "pageTitle": "Calculate Your Emory GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values and GPA inclusion",
+      "url": "https://catalog.college.emory.edu/includes/documents/catalog-archives/2024-2025-catalog.pdf"
+    },
+    {
+      "label": "S/U and incomplete treatment",
+      "url": "https://college.catalog.emory.edu/ecaspolicies/satisfactory-unsatisfactory-courses"
+    },
+    {
+      "label": "Transfer and transient credit",
+      "url": "https://college.catalog.emory.edu/ecaspolicies/transient-study"
+    },
+    {
+      "label": "ARCHE cross-registration",
+      "url": "https://college.catalog.emory.edu/ecaspolicies/crossregistration"
+    },
+    {
+      "label": "Academic standing and repeat note",
+      "url": "https://ecas.catalog.prod.coursedog.com/ecaspolicies/academicstanding"
+    },
+    {
+      "label": "Graduation GPA",
+      "url": "https://college.catalog.emory.edu/ecaspolicies/graduation"
+    },
+    {
+      "label": "Different school grading systems",
+      "url": "https://law.catalog.emory.edu/academicstandards/grading"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://studentaid.emory.edu/_includes/documents/sections/undergraduate/eligibility/satisfactory-academic-progress-policy.pdf?preview=true&site_id=x5n81r"
+    },
+    {
+      "label": "Honors in Course",
+      "url": "https://oue.college.emory.edu/scholars/academic-honors/honors-in-course.html"
+    },
+    {
+      "label": "Honors Program",
+      "url": "https://oue.college.emory.edu/scholars/academic-honors/honors-program/index.html"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://apply.emory.edu/apply/transfer"
+    }
+  ],
+  "helpIntro": "Emory College uses a 4.0 credit-hour-weighted GPA. Enter completed or planned Emory College courses to estimate your current, cumulative, projected, or target GPA.",
+  "helpNote": "For Emory College undergraduates. S/U, transfer/transient and ARCHE work are excluded from the GPA. Law and several graduate/professional schools use different grading rules. Repeat treatment is not automated because the current public College policy does not specify enough detail for a safe repeat-impact estimate.",
+  "helpExample": "A 4-credit A earns 16.0 quality points and a 3-credit B+ earns 9.9; together, 25.9 ÷ 7 = 3.700.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "IF": 0,
+      "WF": 0,
+      "S": null,
+      "U": null,
+      "I": null,
+      "IP": null,
+      "W": null,
+      "WU": null,
+      "IU": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 quality points per credit hour.",
+      "A-": "A- = 3.7 quality points per credit hour.",
+      "B+": "B+ = 3.3 quality points per credit hour.",
+      "B": "B = 3.0 quality points per credit hour.",
+      "B-": "B- = 2.7 quality points per credit hour.",
+      "C+": "C+ = 2.3 quality points per credit hour.",
+      "C": "C = 2.0 quality points per credit hour.",
+      "C-": "C- = 1.7 quality points per credit hour.",
+      "D+": "D+ = 1.3 quality points per credit hour.",
+      "D": "D = 1.0 quality point per credit hour.",
+      "F": "F = 0 quality points; attempted letter-graded hours remain in the GPA denominator.",
+      "IF": "Incomplete failure is treated as F for GPA calculation.",
+      "WF": "Withdrawal failing is treated as F for GPA calculation.",
+      "S": "Satisfactory earns credit but is excluded from GPA.",
+      "U": "Unsatisfactory on S/U basis is excluded from GPA and earns no credit.",
+      "I": "Incomplete is temporary and excluded until a final grade is posted.",
+      "IP": "In progress is temporary and excluded until a final grade is posted.",
+      "W": "Withdrawal without penalty is excluded from GPA.",
+      "WU": "Unsatisfactory withdrawal is excluded from GPA under the Emory College grading rules.",
+      "IU": "Incomplete on an S/U course is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Emory College course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final Emory College letter or S/U grade and Emory credit hours."
+      },
+      {
+        "name": "Transfer or transient credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external credit may count toward degree requirements, but the external grade does not enter the Emory GPA."
+      },
+      {
+        "name": "ARCHE cross-registration",
+        "grades": null,
+        "excluded": true,
+        "note": "ARCHE courses post as credit only, not grades, on the Emory academic record."
+      },
+      {
+        "name": "Course in another Emory school with different grading rules",
+        "grades": [],
+        "excluded": false,
+        "note": "Do not apply the Emory College scale automatically to Law, graduate, public-health, or other school-specific grading systems.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "For a repeated course, use your official Emory GPA baseline or confirm the repeat treatment with Emory College before modeling the change.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Emory College undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.4",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CHEM 150",
+        "units": "4",
+        "grade": "A",
+        "special": "Emory College course",
+        "planned": false
+      },
+      {
+        "name": "ECON 101",
+        "units": "3",
+        "grade": "B+",
+        "special": "Emory College course",
+        "planned": false
+      },
+      {
+        "name": "MATH 111",
+        "units": "3",
+        "grade": "F",
+        "special": "Emory College course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "BIOL 141",
+        "units": "4",
+        "grade": "A-",
+        "special": "Emory College course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "e8dc73fee995"
+}

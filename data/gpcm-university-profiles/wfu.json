@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "wfu",
+  "universityName": "Wake Forest University",
+  "pageTitle": "Calculate Your Wake Forest GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate grade values; pass/fail; repeats; Dean’s List; honors",
+      "url": "https://bulletin.wfu.edu/undergraduate/procedures/exams-grading/"
+    },
+    {
+      "label": "Undergraduate continuation and probation",
+      "url": "https://bulletin.wfu.edu/undergraduate/procedures/enrollment/"
+    },
+    {
+      "label": "Transfer credit and GPA exclusion",
+      "url": "https://bulletin.wfu.edu/undergraduate/procedures/transfer-credit/"
+    },
+    {
+      "label": "Degree GPA and transfer-grade treatment",
+      "url": "https://bulletin.wfu.edu/undergraduate/requirements-degrees/"
+    },
+    {
+      "label": "Course retake policy",
+      "url": "https://advising.wfu.edu/academic-challenges/course-retake-policy-2/"
+    },
+    {
+      "label": "Honor-code F sanctions",
+      "url": "https://college.wfu.edu/student-resources/the-honor-and-ethics-council-hec-purpose-and-process/violations-and-sanctions/"
+    },
+    {
+      "label": "Transfer student grade treatment",
+      "url": "https://registrar.wfu.edu/transfer-credit-portal/transfer-student-information/"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://financialaid.wfu.edu/resources/policies/satisfactory-academic-progress-for-finaid-eligibility/"
+    },
+    {
+      "label": "Graduation distinctions",
+      "url": "https://registrar.wfu.edu/student-records/graduation/"
+    },
+    {
+      "label": "First-year admission GPA",
+      "url": "https://admissions.wfu.edu/become-a-deacon/first-year/"
+    },
+    {
+      "label": "Graduate grading and academic standing",
+      "url": "https://bulletin.wfu.edu/graduate/procedures/grading/"
+    },
+    {
+      "label": "Graduate degree GPA",
+      "url": "https://bulletin.wfu.edu/graduate/requirements-degrees/"
+    }
+  ],
+  "helpIntro": "Wake Forest undergraduate GPA uses a 4.00 credit-hour-weighted scale with plus/minus grades. Enter Wake Forest graded courses to estimate current, projected, and target GPA.",
+  "helpNote": "For Wake Forest College and the undergraduate School of Business. Pass/fail and transfer grades are excluded. Ordinary eligible repeats use the highest grade; irreplaceable honor-code F cases require manual review.",
+  "helpExample": "A 3-credit A- earns 11.01 grade points and a 3-credit B+ earns 9.99; together, 21.00 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "I": null,
+      "NR": null,
+      "W": null,
+      "AU": null,
+      "NC": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per credit hour.",
+      "A-": "A- = 3.67 grade points per credit hour.",
+      "B+": "B+ = 3.33 grade points per credit hour.",
+      "B": "B = 3.00 grade points per credit hour.",
+      "B-": "B- = 2.67 grade points per credit hour.",
+      "C+": "C+ = 2.33 grade points per credit hour.",
+      "C": "C = 2.00 grade points per credit hour.",
+      "C-": "C- = 1.67 grade points per credit hour.",
+      "D+": "D+ = 1.33 grade points per credit hour.",
+      "D": "D = 1.00 grade points per credit hour.",
+      "D-": "D- = 0.67 grade points per credit hour.",
+      "F": "Standard graded F = 0.00; hours count in GPA. Pass/fail failures are handled with the Pass/fail course type.",
+      "I": "Incomplete has no GPA impact while unresolved; it can later become F if not completed by the deadline.",
+      "NR": "Not Reported has no GPA impact while unresolved; it can later become F if not resolved by the deadline.",
+      "W": "Withdrawal notation; excluded from GPA.",
+      "AU": "Audit; excluded from GPA.",
+      "NC": "No-credit notation; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Wake Forest course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for ordinary undergraduate letter-graded Wake Forest courses."
+      },
+      {
+        "name": "Wake Forest pass/fail course",
+        "grades": [
+          "P",
+          "F"
+        ],
+        "excluded": false,
+        "note": "Pass/fail courses are excluded from GPA whether passed or failed.",
+        "gradePoints": {
+          "P": null,
+          "F": null
+        }
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer credit can count toward degree hours, but transfer grades do not enter the Wake Forest GPA."
+      },
+      {
+        "name": "Irreplaceable honor-code F / repeat",
+        "grades": [],
+        "excluded": false,
+        "note": "An irreplaceable F remains in the cumulative GPA even after a repeat; use official records/advising for this exception.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible ordinary repeat, the calculator estimates the GPA using the higher of the original and repeat grades. Do not use Repeat Impact for an irreplaceable honor-code F.",
+      "originalGrades": [
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "BIO 150",
+        "units": "3",
+        "grade": "A-",
+        "special": "Wake Forest course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "ECN 150",
+        "units": "3",
+        "grade": "B+",
+        "special": "Wake Forest course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "HST 101",
+        "units": "3",
+        "grade": "F",
+        "special": "Wake Forest course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSY 151",
+        "units": "3",
+        "grade": "A",
+        "special": "Wake Forest course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "16603c90a40f"
+}

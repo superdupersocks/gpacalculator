@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "utah",
+  "universityName": "University of Utah",
+  "pageTitle": "Calculate Your University of Utah GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA formula",
+      "url": "https://regulations.utah.edu/academics/6-100.php"
+    },
+    {
+      "label": "Grade table / transcript notation",
+      "url": "https://catalog.utah.edu/pages/yKdegqI491C5bHVWuxr0"
+    },
+    {
+      "label": "Transfer GPA",
+      "url": "https://registrar.utah.edu/transcripts/transcript-summary.php"
+    },
+    {
+      "label": "Undergraduate degree GPA",
+      "url": "https://regulations.utah.edu/academics/6-101.php"
+    },
+    {
+      "label": "Repeated courses",
+      "url": "https://regulations.utah.edu/academics/6-100.php"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://advising.utah.edu/academic-standards/faq.php"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://registrar.utah.edu/handbook/honors.php"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.utah.edu/policies/satisfactory-academic-progress/index.php"
+    },
+    {
+      "label": "Graduate standing",
+      "url": "https://gradschool.utah.edu/navigating-grad-school/graduate-policies/academic-standing.php"
+    }
+  ],
+  "helpIntro": "The University of Utah uses a 4.0 credit-hour-weighted GPA. Enter U of U GPA credit hours and final grades to estimate current, projected, and target GPA.",
+  "helpNote": "Transfer grades are not combined with the U of U GPA. Repeat Impact is disabled because repeats on or after Aug. 1, 2026 use the highest earned grade, which needs conditional handling.",
+  "helpExample": "A 4-credit A earns 16.0 grade points; a 3-credit B+ earns 9.9. Add grade points and divide by GPA credit hours.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "E": 0,
+      "EU": 0,
+      "CR": null,
+      "NC": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "T": null,
+      "W": null,
+      "AU": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 grade points per credit hour.",
+      "A-": "A- = 3.7 grade points per credit hour.",
+      "B+": "B+ = 3.3 grade points per credit hour.",
+      "B": "B = 3.0 grade points per credit hour.",
+      "B-": "B- = 2.7 grade points per credit hour.",
+      "C+": "C+ = 2.3 grade points per credit hour.",
+      "C": "C = 2.0 grade points per credit hour.",
+      "C-": "C- = 1.7 grade points per credit hour.",
+      "D+": "D+ = 1.3 grade points per credit hour.",
+      "D": "D = 1.0 grade points per credit hour.",
+      "D-": "D- = 0.7 grade points per credit hour.",
+      "E": "Failure; counts at 0.0.",
+      "EU": "Unofficial withdrawal; treated as E and counts at 0.0.",
+      "CR": "Credit; excluded from GPA.",
+      "NC": "No Credit; excluded from GPA.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory; excluded from GPA.",
+      "I": "Incomplete; excluded until resolved.",
+      "T": "Work in progress; excluded until resolved.",
+      "W": "Withdrawal; excluded from GPA.",
+      "AU": "Audit; excluded from GPA.",
+      "NR": "Not reported; excluded until a final grade is posted."
+    },
+    "specialTypes": [
+      {
+        "name": "University of Utah course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use finalized University of Utah grades and GPA credit hours."
+      },
+      {
+        "name": "Transfer or test credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer grades are not combined with the University of Utah GPA."
+      },
+      {
+        "name": "Repeat attempt on/after Aug. 1, 2026",
+        "grades": [],
+        "excluded": false,
+        "note": "Current repeat policy uses the highest earned grade, with exceptions for NC/U/W/AU/I/T; use the official record or advisor guidance.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled because the shared replacement-only estimator cannot safely apply Utah’s highest-grade rule.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate institutional GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "45",
+    "completed": [
+      {
+        "name": "BIOL 1010",
+        "units": "4",
+        "grade": "A",
+        "special": "University of Utah course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 1050",
+        "units": "3",
+        "grade": "B+",
+        "special": "University of Utah course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "HIST 1700",
+        "units": "5",
+        "grade": "C",
+        "special": "University of Utah course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "CHEM 1210",
+        "units": "3",
+        "grade": "A",
+        "special": "University of Utah course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "7ac5bd88fdd3"
+}

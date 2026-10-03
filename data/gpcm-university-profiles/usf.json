@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "usf",
+  "universityName": "University of South Florida",
+  "pageTitle": "Calculate Your USF GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA calculation; grade values; excluded marks",
+      "url": "https://www.usf.edu/registrar/faq/"
+    },
+    {
+      "label": "Grading system; precision; GPA definitions",
+      "url": "https://www.usf.edu/arts-sciences/students/advising/academics/grading-system.aspx"
+    },
+    {
+      "label": "Grade forgiveness",
+      "url": "https://www.usf.edu/registrar/faq/"
+    },
+    {
+      "label": "Academic integrity FF grade",
+      "url": "https://www.usf.edu/undergrad/students/ethics-integrity.aspx"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://www.usf.edu/financial-aid/sap/sap-undergrad-requirements.aspx"
+    },
+    {
+      "label": "Graduate financial-aid SAP",
+      "url": "https://www.usf.edu/financial-aid/sap/sap-grad-requirements.aspx"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://www.usf.edu/admissions/transfer/admission-information/academic-requirements.aspx"
+    },
+    {
+      "label": "Graduate admission requirements",
+      "url": "https://www.usf.edu/admissions/graduate/admission-information/academic-requirements.aspx"
+    },
+    {
+      "label": "One-USF catalog context",
+      "url": "https://www.usf.edu/undergrad/students/usf-links.aspx"
+    },
+    {
+      "label": "Scholarship renewal",
+      "url": "https://www.usf.edu/financial-aid/scholarships/terms-and-conditions/2627-tc-fsa.aspx"
+    }
+  ],
+  "helpIntro": "USF uses a 4.0 scale with plus/minus grades. Enter USF credit hours and posted grades to estimate your current or projected institutional USF GPA.",
+  "helpNote": "Transfer grades are separate from the USF GPA. Grade Forgiveness has eligibility and processing rules, so Repeat Impact is only an estimate for an otherwise eligible case.",
+  "helpExample": "A 3-credit A earns 12 quality points; a 3-credit B+ earns 9.99. Together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "FF": 0,
+      "IF": 0,
+      "MF": 0,
+      "I": null,
+      "IU": null,
+      "M": null,
+      "N": null,
+      "NC": null,
+      "NG": null,
+      "NR": null,
+      "R": null,
+      "S": null,
+      "U": null,
+      "W": null,
+      "WC": null,
+      "WE": null,
+      "Z": null,
+      "E": null
+    },
+    "gradeExplanations": {
+      "FF": "Academic dishonesty failure; counts as F for GPA and is not eligible for Grade Forgiveness.",
+      "IF": "Incomplete converted to failure; counts as zero when posted as IF.",
+      "MF": "Missing grade converted to failure; counts as zero when posted as MF.",
+      "S": "Satisfactory; excluded from USF GPA.",
+      "U": "Unsatisfactory; excluded from USF GPA.",
+      "W": "Withdrawal; excluded from USF GPA.",
+      "E": "Repeat indicator for an excluded original attempt; its hours are removed from the USF GPA calculation."
+    },
+    "specialTypes": [
+      {
+        "name": "USF course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use posted USF grades and USF credit hours."
+      },
+      {
+        "name": "Transfer or external course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades are tracked separately and do not enter the institutional USF GPA."
+      },
+      {
+        "name": "Graduate, professional, or special program GPA",
+        "grades": [],
+        "excluded": false,
+        "note": "Use the rules for that academic record or program rather than the undergraduate USF GPA profile.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Use Repeat Impact only as an estimate for an otherwise eligible USF Grade Forgiveness case. Confirm eligibility and processing with USF; the transcript keeps both grades.",
+      "originalGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate USF GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "ENC 1101",
+        "units": "3",
+        "grade": "A-",
+        "special": "USF course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MAC 1105",
+        "units": "3",
+        "grade": "C",
+        "special": "USF course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "BIO 1010",
+        "units": "3",
+        "grade": "F",
+        "special": "USF course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSY 2012",
+        "units": "3",
+        "grade": "A",
+        "special": "USF course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "b3652f702d21"
+}

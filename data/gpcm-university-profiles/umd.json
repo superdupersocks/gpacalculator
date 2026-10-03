@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "umd",
+  "universityName": "University of Maryland, College Park",
+  "pageTitle": "Calculate Your University of Maryland GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate GPA calculation and grade points",
+      "url": "https://registrar.umd.edu/grades-records/grades/gpa-calculation"
+    },
+    {
+      "label": "Academic records and GPA formula",
+      "url": "https://academiccatalog.umd.edu/undergraduate/registration-academic-requirements-regulations/academic-records-regulations/"
+    },
+    {
+      "label": "Undergraduate course repeats",
+      "url": "https://registrar.umd.edu/grades-records/grades/course-repeats"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://academiccatalog.umd.edu/undergraduate/registration-academic-requirements-regulations/transfer-credit/"
+    },
+    {
+      "label": "Academic performance",
+      "url": "https://registrar.umd.edu/grades-records/grades/academic-performance"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.umd.edu/resources-policies/satisfactory-academic-progress"
+    },
+    {
+      "label": "Latin Honors",
+      "url": "https://registrar.umd.edu/graduation-diplomas/degree-requirements/undergraduate-degree-requirements/latin-honors"
+    },
+    {
+      "label": "Transfer credit FAQs",
+      "url": "https://registrar.umd.edu/transfer-credit/transfer-credit-faqs"
+    },
+    {
+      "label": "Historical plus/minus grading",
+      "url": "https://www.registrar.umd.edu/sites/default/files/2023-03/rreg-guide-2020-21.pdf"
+    },
+    {
+      "label": "Grading methods",
+      "url": "https://registrar.umd.edu/registration/register-classes/grading-method"
+    }
+  ],
+  "helpIntro": "UMD uses a 4.0 scale for undergraduate GPA. Enter UMD credits and final grades; A+/A=4.0 through D-=0.7, while F/XF=0.",
+  "helpNote": "For current/post-Fall-2012 undergraduate grading. P, S, I, W and NGR are excluded. Transfer grades do not enter the UMD cumulative GPA. Repeat Impact is unavailable because early-course repeat treatment can depend on the New Student Provision.",
+  "helpExample": "A 3-credit A earns 12.0 quality points and a 3-credit B+ earns 9.9. Together, 21.9 ÷ 6 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "XF": 0,
+      "P": null,
+      "S": null,
+      "I": null,
+      "W": null,
+      "NGR": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0 quality points per credit.",
+      "A": "A = 4.0 quality points per credit.",
+      "A-": "A- = 3.7 quality points per credit.",
+      "B+": "B+ = 3.3 quality points per credit.",
+      "B": "B = 3.0 quality points per credit.",
+      "B-": "B- = 2.7 quality points per credit.",
+      "C+": "C+ = 2.3 quality points per credit.",
+      "C": "C = 2.0 quality points per credit.",
+      "C-": "C- = 1.7 quality points per credit.",
+      "D+": "D+ = 1.3 quality points per credit.",
+      "D": "D = 1.0 quality point per credit.",
+      "D-": "D- = 0.7 quality points per credit.",
+      "F": "F counts in GPA at 0.0 quality points.",
+      "XF": "XF counts in GPA at 0.0 quality points.",
+      "P": "P is excluded from GPA; under Pass/Fail, failing work remains a letter D+/D/D-/F as applicable.",
+      "S": "S is excluded from GPA.",
+      "I": "Incomplete is excluded until replaced by a final grade.",
+      "W": "W is excluded from GPA.",
+      "NGR": "No Grade Reported is excluded until a grade is recorded."
+    },
+    "specialTypes": [
+      {
+        "name": "UMD course, current grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard UMD College Park undergraduate courses under the Fall 2012+ plus/minus scale."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer grades do not enter the UMD cumulative GPA."
+      },
+      {
+        "name": "UMD course before Fall 2012",
+        "grades": [],
+        "excluded": false,
+        "note": "Historical UMD grading used different plus/minus quality points. Check the transcript/policy period.",
+        "manualReview": true
+      },
+      {
+        "name": "Course repeat / New Student Provision",
+        "grades": [],
+        "excluded": false,
+        "note": "UMD normally counts graded attempts, but qualifying early repeats can use the New Student Provision. Confirm eligibility before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Repeat Impact is unavailable because UMD repeat treatment depends on timing and eligibility. Use the manual-review course type for a repeated course when the New Student Provision may apply.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA (current/post-Fall-2012 grading)"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL101",
+        "units": "3",
+        "grade": "A",
+        "special": "UMD course, current grading",
+        "planned": false
+      },
+      {
+        "name": "PSYC100",
+        "units": "3",
+        "grade": "B+",
+        "special": "UMD course, current grading",
+        "planned": false
+      },
+      {
+        "name": "MATH140",
+        "units": "3",
+        "grade": "F",
+        "special": "UMD course, current grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "STAT100",
+        "units": "3",
+        "grade": "A-",
+        "special": "UMD course, current grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "4189175897ff"
+}

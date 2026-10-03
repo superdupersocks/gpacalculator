@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "asu",
+  "universityName": "Arizona State University",
+  "pageTitle": "Calculate Your ASU GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades, grade values, GPA formula, precision and special marks",
+      "url": "https://registrar.asu.edu/grades"
+    },
+    {
+      "label": "Repeating courses and grade replacement",
+      "url": "https://registrar.asu.edu/gpa-calculator"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://registrar.asu.edu/academic-standing-explained"
+    },
+    {
+      "label": "Transfer credit and ASU cumulative GPA",
+      "url": "https://catalog.asu.edu/transfer"
+    },
+    {
+      "label": "Undergraduate graduation and academic recognition",
+      "url": "https://catalog.asu.edu/undergraduatereq"
+    },
+    {
+      "label": "Dean’s List",
+      "url": "https://catalog.asu.edu/retention_standing"
+    },
+    {
+      "label": "Graduate academic progress",
+      "url": "https://graduate.asu.edu/resources-faculty-and-staff/student-academic-progress"
+    },
+    {
+      "label": "Financial-aid satisfactory academic progress",
+      "url": "https://tuition.asu.edu/satisfactory-academic-progress"
+    },
+    {
+      "label": "First-year admission requirements",
+      "url": "https://admission.asu.edu/apply/first-year/admission"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admission.asu.edu/apply/transfer/admission"
+    },
+    {
+      "label": "Academic renewal",
+      "url": "https://registrar.asu.edu/forms/academic-renewal"
+    }
+  ],
+  "helpIntro": "Arizona State University uses semester-hour weighting with A+ = 4.33, A = 4.00, A- = 3.67 and the standard plus/minus values. Enter ASU graded hours and grades to estimate semester or cumulative GPA.",
+  "helpNote": "For standard undergraduate ASU work from fall 2004 forward. The calculator preserves A+ at 4.33 honor points but caps cumulative GPA at 4.00. Transfer grades are excluded. Repeat Impact is not offered because ASU replacement depends on cohort, eligibility and a 12-hour limit.",
+  "helpExample": "A 3-credit A+ earns 12.99 honor points; a 3-credit B- earns 8.01. Together, 21.00 ÷ 6 = 3.50.",
+  "baseContext": {
+    "scaleMax": 4.33,
+    "gpaMax": 4,
+    "scaleLabel": "4.33 grade-point scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4.33,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "D": 1,
+      "E": 0,
+      "EN": 0,
+      "EU": 0,
+      "XE": 0,
+      "P": null,
+      "Y": null,
+      "W": null,
+      "X": null,
+      "I": null,
+      "NR": null,
+      "Z": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.33 grade points; cumulative ASU GPA is capped at 4.00.",
+      "A": "A = 4.00.",
+      "A-": "A- = 3.67.",
+      "B+": "B+ = 3.33.",
+      "B": "B = 3.00.",
+      "B-": "B- = 2.67.",
+      "C+": "C+ = 2.33.",
+      "C": "C = 2.00.",
+      "D": "D = 1.00.",
+      "E": "E = 0.00; hours count in GPA.",
+      "EN": "EN is treated as E for GPA, repeatability, and academic standing.",
+      "EU": "EU is treated as E for GPA purposes.",
+      "XE": "XE is treated as E for GPA, repeatability, and academic standing.",
+      "P": "P earns hours but is not used to compute GPA.",
+      "Y": "Y is satisfactory and is not included in GPA.",
+      "W": "W earns no credit or grade and is excluded from GPA.",
+      "X": "X is audit and is excluded from GPA.",
+      "I": "Incomplete is excluded until resolved; undergraduate I can become E after one calendar year.",
+      "NR": "No Report is temporary and excluded until a final grade posts.",
+      "Z": "Course in Progress is excluded until an applicable final grade posts."
+    },
+    "specialTypes": [
+      {
+        "name": "ASU course, standard undergraduate grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for ASU undergraduate courses on the standard fall-2004-and-later grading scale."
+      },
+      {
+        "name": "External transfer coursework",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades/honor points can matter for admission, but ASU cumulative GPA is based only on ASU coursework."
+      },
+      {
+        "name": "Sandra Day O’Connor College of Law course",
+        "grades": [],
+        "excluded": false,
+        "note": "Law has its own grading context; do not force it through this undergraduate profile.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate-career or graduate-policy record",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate students have separate GPA definitions and progress rules.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is not offered. ASU repeat treatment depends on admission cohort, eligibility and the 12-hour replacement limit; verify your record with the Registrar.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate ASU GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENG 101",
+        "units": "3",
+        "grade": "A+",
+        "special": "ASU course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "MAT 117",
+        "units": "3",
+        "grade": "B-",
+        "special": "ASU course, standard undergraduate grading",
+        "planned": false
+      },
+      {
+        "name": "ECN 111",
+        "units": "3",
+        "grade": "E",
+        "special": "ASU course, standard undergraduate grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "BIO 100",
+        "units": "3",
+        "grade": "A+",
+        "special": "ASU course, standard undergraduate grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "b76bc4b6d49d"
+}

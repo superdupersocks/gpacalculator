@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "ucf",
+  "universityName": "University of Central Florida",
+  "pageTitle": "Calculate Your UCF GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; standard GPA scale",
+      "url": "https://undergrad.ucf.edu/wp-content/uploads/sites/7/2023/01/S-U-Grading.pdf"
+    },
+    {
+      "label": "Grade Forgiveness",
+      "url": "https://registrar.ucf.edu/grade-forgiveness/"
+    },
+    {
+      "label": "S/U grading",
+      "url": "https://undergrad.ucf.edu/satisfactory-unsatisfactory-grading/"
+    },
+    {
+      "label": "Late withdrawal grades",
+      "url": "https://registrar.ucf.edu/question/"
+    },
+    {
+      "label": "Incomplete deadline",
+      "url": "https://calendar.ucf.edu/2026/fall/grades"
+    },
+    {
+      "label": "Transfer coursework and transfer GPA",
+      "url": "https://www.ucf.edu/admissions/undergraduate/next-steps-transfer/"
+    },
+    {
+      "label": "Transfer admission GPA",
+      "url": "https://www.ucf.edu/admissions/undergraduate/transfer/"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://cah.ucf.edu/cahsa/current-students/academic-standing/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://www.ucf.edu/financial-aid/policies/satisfactory-academic-progress/"
+    },
+    {
+      "label": "Graduate program GPA",
+      "url": "https://graduate.ucf.edu/monitoring-your-progress/"
+    },
+    {
+      "label": "Undergraduate graduation minimum",
+      "url": "https://www.ucf.edu/degree/mathematics-bs/"
+    },
+    {
+      "label": "Repeat coursework and financial aid",
+      "url": "https://www.ucf.edu/financial-aid/policies/repeat-coursework/"
+    }
+  ],
+  "helpIntro": "UCF uses a 4.0 plus/minus scale. Enter UCF semester hours and posted grades to estimate your current or projected undergraduate UCF GPA.",
+  "helpNote": "S/U and NC do not affect GPA; F and WF count at zero. Transfer, graduate, program and financial-aid GPAs can use different populations. Repeat Impact is only an estimate for an approved UCF Grade Forgiveness case.",
+  "helpExample": "A 3-credit A earns 12 grade points and a 3-credit B+ earns 9.75; together, 21.75 ÷ 6 = 3.625.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.75,
+      "B+": 3.25,
+      "B": 3,
+      "B-": 2.75,
+      "C+": 2.25,
+      "C": 2,
+      "C-": 1.75,
+      "D+": 1.25,
+      "D": 1,
+      "D-": 0.75,
+      "F": 0,
+      "WF": 0,
+      "S": null,
+      "U": null,
+      "NC": null,
+      "I": null,
+      "W": null,
+      "WP": null,
+      "N": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per semester hour.",
+      "A-": "A- = 3.75 grade points per semester hour.",
+      "B+": "B+ = 3.25 grade points per semester hour.",
+      "B": "B = 3.00 grade points per semester hour.",
+      "B-": "B- = 2.75 grade points per semester hour.",
+      "C+": "C+ = 2.25 grade points per semester hour.",
+      "C": "C = 2.00 grade points per semester hour.",
+      "C-": "C- = 1.75 grade points per semester hour; C- or lower can be eligible as the original grade for UCF Grade Forgiveness.",
+      "D+": "D+ = 1.25 grade points per semester hour.",
+      "D": "D = 1.00 grade point per semester hour.",
+      "D-": "D- = 0.75 grade points per semester hour.",
+      "F": "F = 0.00 grade points and its attempted hours count in GPA.",
+      "WF": "WF is calculated as a failing grade in GPA.",
+      "S": "S earns credit under S/U grading but does not affect GPA.",
+      "U": "U earns no credit under S/U grading and does not affect GPA.",
+      "NC": "NC does not affect GPA; it is available only in designated courses.",
+      "I": "Incomplete is not a final GPA grade; unresolved I normally changes to F after the deadline.",
+      "W": "W is excluded from GPA.",
+      "WP": "WP is excluded from GPA.",
+      "N": "N means no grade reported; wait for a final grade before calculating."
+    },
+    "specialTypes": [
+      {
+        "name": "UCF course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use posted UCF grades. S/U, NC, W/WP and temporary grades are excluded as listed; WF/F count at zero."
+      },
+      {
+        "name": "Transfer, transient, or other external coursework",
+        "grades": [],
+        "excluded": false,
+        "note": "Do not mix external grades into this UCF-GPA estimate. Transfer/admission and financial-aid calculations can use different populations.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Use Repeat Impact only to estimate an approved UCF Grade Forgiveness case: the second final grade substitutes for the eligible original grade even if it is lower.",
+      "originalGrades": [
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UCF GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.1",
+    "previousUnits": "45",
+    "completed": [
+      {
+        "name": "ENC 1101",
+        "units": "3",
+        "grade": "A",
+        "special": "UCF course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "PSY 2012",
+        "units": "3",
+        "grade": "B+",
+        "special": "UCF course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MAC 2311C",
+        "units": "3",
+        "grade": "F",
+        "special": "UCF course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "Internship",
+        "units": "3",
+        "grade": "S",
+        "special": "UCF course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Next course",
+        "units": "3",
+        "grade": "A-",
+        "special": "UCF course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "52c1cc156d94"
+}

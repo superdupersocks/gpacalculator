@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uw",
+  "universityName": "University of Washington",
+  "pageTitle": "Calculate Your UW GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading system, numeric scale, GPA formula and nontraditional grades",
+      "url": "https://registrar.washington.edu/transcripts/legend/"
+    },
+    {
+      "label": "Repeat-course GPA treatment",
+      "url": "https://registrar.washington.edu/category/register-uw/"
+    },
+    {
+      "label": "Transfer credit and UW GPA",
+      "url": "https://admit.washington.edu/apply/transfer/policies/"
+    },
+    {
+      "label": "Financial-aid satisfactory academic progress",
+      "url": "https://www.washington.edu/financialaid/key-policies-information/satisfactory-academic-progress/"
+    },
+    {
+      "label": "First-year admission review and GPA context",
+      "url": "https://admit.washington.edu/apply/first-year/"
+    },
+    {
+      "label": "First-year admitted GPA profile",
+      "url": "https://admit.washington.edu/apply/first-year/by-the-numbers/"
+    },
+    {
+      "label": "Academic satisfactory progress and major declaration",
+      "url": "https://registrar.washington.edu/register/policies-procedures/"
+    }
+  ],
+  "helpIntro": "The University of Washington uses numeric grades from 4.0 down to 0.7 in 0.1 steps, plus 0.0. Enter UW credits and the exact numeric grade shown on your record.",
+  "helpNote": "For the standard undergraduate UW GPA. Transfer grades do not enter the UW cumulative GPA. Repeat Impact is unavailable because UW does not use ordinary grade replacement; the first two graded attempts count under the modern repeat rule.",
+  "helpExample": "A 5-credit course at 3.7 earns 18.5 grade points, and a 5-credit course at 3.0 earns 15.0. Together, 33.5 ÷ 10 = 3.35.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "4.0": 4,
+      "3.9": 3.9,
+      "3.8": 3.8,
+      "3.7": 3.7,
+      "3.6": 3.6,
+      "3.5": 3.5,
+      "3.4": 3.4,
+      "3.3": 3.3,
+      "3.2": 3.2,
+      "3.1": 3.1,
+      "3.0": 3,
+      "2.9": 2.9,
+      "2.8": 2.8,
+      "2.7": 2.7,
+      "2.6": 2.6,
+      "2.5": 2.5,
+      "2.4": 2.4,
+      "2.3": 2.3,
+      "2.2": 2.2,
+      "2.1": 2.1,
+      "2.0": 2,
+      "1.9": 1.9,
+      "1.8": 1.8,
+      "1.7": 1.7,
+      "1.6": 1.6,
+      "1.5": 1.5,
+      "1.4": 1.4,
+      "1.3": 1.3,
+      "1.2": 1.2,
+      "1.1": 1.1,
+      "1.0": 1,
+      "0.9": 0.9,
+      "0.8": 0.8,
+      "0.7": 0.7,
+      "0.0": 0,
+      "S": null,
+      "NS": null,
+      "CR": null,
+      "NC": null,
+      "I": null,
+      "X": null,
+      "W": null,
+      "HW": null,
+      "RD": null,
+      "N": null
+    },
+    "gradeExplanations": {
+      "4.0": "4.0 numeric grade; contributes 4.0 grade points per credit.",
+      "3.9": "3.9 numeric grade; contributes 3.9 grade points per credit.",
+      "3.8": "3.8 numeric grade; contributes 3.8 grade points per credit.",
+      "3.7": "3.7 numeric grade; contributes 3.7 grade points per credit.",
+      "3.6": "3.6 numeric grade; contributes 3.6 grade points per credit.",
+      "3.5": "3.5 numeric grade; contributes 3.5 grade points per credit.",
+      "3.4": "3.4 numeric grade; contributes 3.4 grade points per credit.",
+      "3.3": "3.3 numeric grade; contributes 3.3 grade points per credit.",
+      "3.2": "3.2 numeric grade; contributes 3.2 grade points per credit.",
+      "3.1": "3.1 numeric grade; contributes 3.1 grade points per credit.",
+      "3.0": "3.0 numeric grade; contributes 3.0 grade points per credit.",
+      "2.9": "2.9 numeric grade; contributes 2.9 grade points per credit.",
+      "2.8": "2.8 numeric grade; contributes 2.8 grade points per credit.",
+      "2.7": "2.7 numeric grade; contributes 2.7 grade points per credit.",
+      "2.6": "2.6 numeric grade; contributes 2.6 grade points per credit.",
+      "2.5": "2.5 numeric grade; contributes 2.5 grade points per credit.",
+      "2.4": "2.4 numeric grade; contributes 2.4 grade points per credit.",
+      "2.3": "2.3 numeric grade; contributes 2.3 grade points per credit.",
+      "2.2": "2.2 numeric grade; contributes 2.2 grade points per credit.",
+      "2.1": "2.1 numeric grade; contributes 2.1 grade points per credit.",
+      "2.0": "2.0 numeric grade; contributes 2.0 grade points per credit.",
+      "1.9": "1.9 numeric grade; contributes 1.9 grade points per credit.",
+      "1.8": "1.8 numeric grade; contributes 1.8 grade points per credit.",
+      "1.7": "1.7 numeric grade; contributes 1.7 grade points per credit.",
+      "1.6": "1.6 numeric grade; contributes 1.6 grade points per credit.",
+      "1.5": "1.5 numeric grade; contributes 1.5 grade points per credit.",
+      "1.4": "1.4 numeric grade; contributes 1.4 grade points per credit.",
+      "1.3": "1.3 numeric grade; contributes 1.3 grade points per credit.",
+      "1.2": "1.2 numeric grade; contributes 1.2 grade points per credit.",
+      "1.1": "1.1 numeric grade; contributes 1.1 grade points per credit.",
+      "1.0": "1.0 numeric grade; contributes 1.0 grade points per credit.",
+      "0.9": "0.9 numeric grade; contributes 0.9 grade points per credit.",
+      "0.8": "0.8 numeric grade; contributes 0.8 grade points per credit.",
+      "0.7": "0.7 numeric grade; contributes 0.7 grade points per credit.",
+      "0.0": "0.0 is failing work; graded credits count in the GPA at zero grade points.",
+      "S": "Satisfactory is excluded from the quarterly and cumulative GPA.",
+      "NS": "Not Satisfactory is excluded from GPA and does not earn credit.",
+      "CR": "Credit is excluded from GPA.",
+      "NC": "No Credit is excluded from GPA.",
+      "I": "Incomplete is excluded until replaced by a final grade.",
+      "X": "Grade not submitted; excluded until a final grade is recorded.",
+      "W": "Withdrawal is excluded from GPA.",
+      "HW": "Hardship withdrawal is excluded from GPA.",
+      "RD": "Registrar Drop is excluded from GPA.",
+      "N": "N is used for certain multi-quarter courses and is not a numeric GPA grade until final grading is resolved."
+    },
+    "specialTypes": [
+      {
+        "name": "UW course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the exact numeric grade and UW credits from the record."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer credit and transfer GPA can matter for admission or program review, but transfer grades do not enter the UW cumulative GPA."
+      },
+      {
+        "name": "Third-or-later repeat attempt",
+        "grades": null,
+        "excluded": true,
+        "note": "Under the modern repeat notation, grades beyond the first repeat are not calculated in GPA; confirm unusual or historical records with the Registrar."
+      },
+      {
+        "name": "Law, Medicine, or Dentistry record",
+        "grades": [],
+        "excluded": false,
+        "note": "These schools have grading exceptions and should not be forced into the standard undergraduate decimal profile.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "For a standard modern repeat, enter the first and second graded attempts as separate completed courses; both count in GPA. Do not use the replacement estimator. Third-or-later repeat grades are not included under the modern transcript rule.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UW GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL 131",
+        "units": "5",
+        "grade": "3.7",
+        "special": "UW course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 124",
+        "units": "5",
+        "grade": "3.0",
+        "special": "UW course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "BIOL 180",
+        "units": "5",
+        "grade": "4.0",
+        "special": "UW course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "c3326cc3c68f"
+}

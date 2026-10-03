@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "iowa-state",
+  "universityName": "Iowa State University",
+  "pageTitle": "Calculate Your Iowa State GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading system; GPA formula; excluded grades; bachelor GPA",
+      "url": "https://catalog.iastate.edu/academics/grading/"
+    },
+    {
+      "label": "Repeating courses",
+      "url": "https://catalog.iastate.edu/academics/grading/"
+    },
+    {
+      "label": "Transfer grades and credit",
+      "url": "https://catalog.iastate.edu/admissions/"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://catalog.iastate.edu/academic_standing/"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://financialaid.iastate.edu/managing-your-aid/sap/undergraduate-students/"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://www.iastate.edu/admission-and-aid/admissions/transfer-students/transfer-requirements"
+    },
+    {
+      "label": "First-year admission / RAI",
+      "url": "https://www.iastate.edu/admission-and-aid/admissions/first-year-students"
+    },
+    {
+      "label": "Graduate GPA and probation",
+      "url": "https://catalog.iastate.edu/graduatecollege/"
+    },
+    {
+      "label": "Academic Renewal",
+      "url": "https://catalog.iastate.edu/registration/"
+    },
+    {
+      "label": "President’s and Dean’s Lists; distinction",
+      "url": "https://www.registrar.iastate.edu/students/records-privacy/presidents-deans-lists"
+    },
+    {
+      "label": "Registrar GPA calculator",
+      "url": "https://www.registrar.iastate.edu/students/grades/gpa-calc"
+    }
+  ],
+  "helpIntro": "Iowa State uses a 4.00 scale with plus/minus grades. Enter ISU semester credits and final grades to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "Transfer grades do not enter the ISU cumulative GPA. Repeat Impact is only a planning estimate for an eligible two-attempt, same-credit ISU repeat within the 18-credit designated-repeat limit; graduate and professional records need separate review.",
+  "helpExample": "A 3-credit A earns 12.00 quality points and a 3-credit B+ earns 9.99; together, 21.99 ÷ 6 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "S": null,
+      "T": null,
+      "I": null,
+      "X": null,
+      "N": null
+    },
+    "gradeExplanations": {
+      "F": "F earns 0.00 quality points and its credits count in the GPA denominator.",
+      "P": "Pass under P-NP; excluded from GPA.",
+      "NP": "Not Pass under P-NP; excluded from GPA.",
+      "S": "Satisfactory; excluded from GPA.",
+      "T": "Special-exam credit; excluded from GPA.",
+      "I": "Incomplete; excluded until resolved to a final grade.",
+      "X": "Official drop mark; excluded from GPA.",
+      "N": "No report; not a final grade and may later convert to F under university policy."
+    },
+    "specialTypes": [
+      {
+        "name": "Iowa State course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard ISU undergraduate courses on the university grading system."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades may earn accepted credit but do not enter the Iowa State cumulative GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Use Repeat Impact only for an eligible Iowa State repeat within your 18-credit designated-repeat limit and when the two attempts use the same credits. The most recent ISU attempt can lower GPA; beyond the limit, or for changed-credit/course-number cases, confirm treatment with the Registrar.",
+      "originalGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F",
+        "P",
+        "NP"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate ISU GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "45",
+    "completed": [
+      {
+        "name": "ENGL 2500",
+        "units": "3",
+        "grade": "A",
+        "special": "Iowa State course",
+        "planned": false
+      },
+      {
+        "name": "STAT 1010",
+        "units": "4",
+        "grade": "B+",
+        "special": "Iowa State course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1770",
+        "units": "3",
+        "grade": "F",
+        "special": "Iowa State course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "MATH 1660",
+        "units": "3",
+        "grade": "A-",
+        "special": "Iowa State course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "1318c333186b"
+}

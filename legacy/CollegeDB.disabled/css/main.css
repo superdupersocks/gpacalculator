@@ -1,0 +1,200 @@
+#college_db_full h4 {
+  background-color: #41485b;
+  background-image: url("../images/search-icon2.png");
+  background-position: 5px center;
+  background-repeat: no-repeat;
+  color: white;
+  font-size: 16px;
+  margin: 0;
+  padding: 10px;
+  text-align: right;
+  text-transform: uppercase; }
+#college_db_full .table_wrapper {
+  border: 1px solid #ccc; }
+#college_db_full table {
+  margin: 0;
+  font-size: 15px; }
+  #college_db_full table td {
+    padding: 10px;
+    border-right: 1px solid #ccc;
+    position: relative; }
+    #college_db_full table td:last-child {
+      border-right: none; }
+  #college_db_full table thead {
+    background-color: #41485b;
+    color: white; }
+    #college_db_full table thead td {
+      border-right-color: #676C7C;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 12px; }
+  #college_db_full table tr:nth-child(2n) {
+    background-color: #eeeeee; }
+  #college_db_full table tbody td:nth-child(n+3) {
+    text-align: right; }
+#college_db_full .cdb_edit_button {
+  display: block;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  font-size: 12px; }
+#college_db_full #dialog-form {
+  font-size: 13px;
+  display: none; }
+#college_db_full .form {
+  float: left;
+  margin-right: 20px;
+  width: 25%;
+  border-right: 1px solid #ccc; }
+  #college_db_full .form .form-group {
+    padding: 20px 20px 20px 0;
+    border-bottom: 1px solid #ccc; }
+    #college_db_full .form .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold; }
+    #college_db_full .form .form-group p {
+      margin: 0; }
+    #college_db_full .form .form-group .form-control {
+      width: 100%;
+      padding: 5px;
+      font-weight: bold; }
+    #college_db_full .form .form-group:last-child {
+      border-bottom: none; }
+  #college_db_full .form .slider-sub {
+    color: #666;
+    font-size: 13px; }
+    #college_db_full .form .slider-sub.min {
+      float: left; }
+    #college_db_full .form .slider-sub.max {
+      float: right; }
+  #college_db_full .form mark {
+    background-color: #13AFDF;
+    color: white;
+    font-weight: bold;
+    padding: 1px 4px; }
+  #college_db_full .form .ui-slider-handle {
+    background: url("../images/progress-bar-dot.png") repeat scroll 0 0 transparent;
+    border: 0 none;
+    height: 25px;
+    width: 24px; }
+  #college_db_full .form .ui-slider-range-min {
+    background-image: none;
+    background-color: #676c7c; }
+  #college_db_full .form #cdb_search {
+    width: 75%;
+    margin-left: 12.5%; }
+#college_db_full.pre-filtered-table .form {
+  margin-right: 0;
+  width: 100%;
+  border: 1px solid #ccc;
+  margin-bottom: 20px; }
+  #college_db_full.pre-filtered-table .form .form-group {
+    padding: 20px;
+    border-bottom: 1px solid #ccc; }
+#college_db_full.pre-filtered-table #cdb_table_wrapper {
+  width: 100%; }
+#college_db_full #cdb_table_wrapper {
+  float: left;
+  width: 70%;
+  position: relative; }
+#college_db_full #cdb_pagination {
+  margin: 20px 0; }
+  #college_db_full #cdb_pagination div {
+    margin: 0 5px 0 0;
+    display: inline-block; }
+  #college_db_full #cdb_pagination .button {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #2e2f33;
+    border: medium none;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+    width: auto; }
+    #college_db_full #cdb_pagination .button:hover {
+      background-color: #13AFDF; }
+    #college_db_full #cdb_pagination .button.current_page {
+      background-color: #ccc; }
+#college_db_full #cdb_overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 9000; }
+  #college_db_full #cdb_overlay.ng-hide-add.ng-hide-add-active, #college_db_full #cdb_overlay.ng-hide-remove.ng-hide-remove-active {
+    transition: all 0.5s linear;
+    -o-transition: all 0.5s linear;
+    -ms-transition: all 0.5s linear;
+    -moz-transition: all 0.5s linear;
+    -webkit-transition: all 0.5s linear; }
+  #college_db_full #cdb_overlay.ng-hide {
+    opacity: 0; }
+
+#dialog-form label {
+  width: 15%;
+  display: block;
+  float: left;
+  margin: 0 0 20px 0; }
+#dialog-form .cdb_name_field {
+  width: 85%;
+  float: left;
+  display: block;
+  margin: 0 0 20px 0; }
+#dialog-form .cdb_url_field {
+  width: 85%;
+  float: left;
+  display: block;
+  margin: 0 0 20px 0; }
+
+@media screen and (max-width: 768px) {
+  #college_db_full .form {
+    margin-right: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-bottom: 20px; }
+    #college_db_full .form .form-group {
+      padding: 20px;
+      border-bottom: 1px solid #ccc; }
+  #college_db_full #cdb_table_wrapper {
+    width: 100%; }
+  #college_db_full table thead {
+    display: none; }
+  #college_db_full table tr {
+    position: relative; }
+  #college_db_full table td {
+    float: left;
+    padding: 10px 10px 10px 50%;
+    width: 100%; }
+    #college_db_full table td:before {
+      position: absolute;
+      left: 10px;
+      text-transform: uppercase; }
+    #college_db_full table td:nth-of-type(1):before {
+      content: "School"; }
+    #college_db_full table td:nth-of-type(2):before {
+      content: "State"; }
+    #college_db_full table td:nth-of-type(3):before {
+      content: "SAT 25"; }
+    #college_db_full table td:nth-of-type(4):before {
+      content: "SAT 75"; }
+    #college_db_full table td:nth-of-type(5):before {
+      content: "ACT 25"; }
+    #college_db_full table td:nth-of-type(6):before {
+      content: "ACT 75"; }
+    #college_db_full table td:nth-of-type(7):before {
+      content: "Average GPA"; }
+    #college_db_full table td:nth-of-type(8):before {
+      content: "Acceptance Rate"; } }
+div.entry-content {
+  max-width: 1004px; }
+
+.clear {
+  clear: both; }
+
+/*# sourceMappingURL=main.css.map */

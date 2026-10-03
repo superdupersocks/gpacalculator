@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "princeton",
+  "universityName": "Princeton University",
+  "pageTitle": "Calculate Your Princeton GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Registrar GPA conversion",
+      "url": "https://registrar.princeton.edu/student-and-alumni-services/transcript-and-verification-services/calculate-your-gpa"
+    },
+    {
+      "label": "Authorized undergraduate and graduate grading symbols",
+      "url": "https://registrar.princeton.edu/faculty-and-department-resources/assessments-and-grading/grading-practices"
+    },
+    {
+      "label": "Undergraduate grading and D rules",
+      "url": "https://ua.princeton.edu/policies-resources/academic-regulations/grading"
+    },
+    {
+      "label": "Academic standing and repeated failed courses",
+      "url": "https://ua.princeton.edu/policies-resources/academic-regulations/academic-standing-leaves-absence-and-reinstatement"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://advising.princeton.edu/choosing-courses/taking-courses-transfer-credit"
+    },
+    {
+      "label": "Study abroad grades and GPA",
+      "url": "https://oip.princeton.edu/our-programs/study-abroad/getting-started/study-abroad-requirements/academic-year-policies"
+    },
+    {
+      "label": "Undergraduate satisfactory academic progress",
+      "url": "https://finaid.princeton.edu/policies-procedures/satisfactory-academic-progress"
+    },
+    {
+      "label": "Financial aid GPA FAQ",
+      "url": "https://finaid.princeton.edu/faqs"
+    },
+    {
+      "label": "Graduation and honors",
+      "url": "https://ua.princeton.edu/policies-resources/academic-regulations/graduation-and-honors"
+    },
+    {
+      "label": "Repeat-course advising context",
+      "url": "https://hpa.princeton.edu/faqs/academics-faq"
+    },
+    {
+      "label": "P/D/F selection",
+      "url": "https://registrar.princeton.edu/student-and-alumni-services/course-selection/pdf-and-grade-option-selection"
+    },
+    {
+      "label": "Study abroad eligibility",
+      "url": "https://ua.princeton.edu/policies-resources/special-features-undergraduate-program/global-experiential-learning"
+    }
+  ],
+  "helpIntro": "Princeton does not officially compute or certify GPA, but the Registrar publishes a 4.0 conversion for applications. Enter semester hours and final grades to create a planning estimate.",
+  "helpNote": "For current undergraduate records (2000-01 onward). A+ = 4.0; P, AUD, Inc, W and transfer credit are excluded. Repeat Impact is unavailable because a repeated course does not erase the original grade.",
+  "helpExample": "A regular 4-hour A earns 16 points and a regular 4-hour B+ earns 13.2. Together, 29.2 ÷ 8 = 3.65.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D": 1,
+      "F": 0,
+      "P": null,
+      "AUD": null,
+      "Inc": null,
+      "W": null,
+      "T": null,
+      "YR": null
+    },
+    "gradeExplanations": {
+      "A+": "Current A+ = 4.0; 4.3 applied before 2000-01.",
+      "A": "A = 4.0.",
+      "A-": "A- = 3.7.",
+      "B+": "B+ = 3.3.",
+      "B": "B = 3.0.",
+      "B-": "B- = 2.7.",
+      "C+": "C+ = 2.3.",
+      "C": "C = 2.0.",
+      "C-": "C- = 1.7.",
+      "D": "D = 1.0 and is normally the minimum passing grade.",
+      "F": "F = 0.0 and remains part of the record.",
+      "P": "Pass is excluded from the Registrar GPA conversion.",
+      "AUD": "Audit is excluded from the Registrar GPA conversion.",
+      "Inc": "Incomplete is excluded until replaced by a final grade.",
+      "W": "Withdrawal is excluded from the Registrar GPA conversion.",
+      "T": "Transfer credit is excluded from the Princeton GPA conversion.",
+      "YR": "Year-long first-term notation; use the final grade when the course is completed."
+    },
+    "specialTypes": [
+      {
+        "name": "Princeton course / independent work",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter the semester hours assigned by the Registrar conversion: regular courses are generally 4; thesis and specified courses may be 8."
+      },
+      {
+        "name": "Approved transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Approved outside credit appears as transfer credit and does not factor into the Princeton GPA conversion."
+      },
+      {
+        "name": "Study abroad / host-university course",
+        "grades": null,
+        "excluded": true,
+        "note": "Most host-university grades do not appear on the Princeton transcript or enter the departmental GPA; Princeton-taught exceptions should be entered as Princeton courses."
+      },
+      {
+        "name": "Pre-2000-01 Princeton record",
+        "grades": [],
+        "excluded": false,
+        "note": "A+ used 4.3 before 2000-01. Use the Registrar guidance or transcript-specific review for historical records.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate record",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate grading and program progress rules differ; this undergraduate planning profile should not be used as an official graduate GPA.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter both graded attempts as separate completed courses. Repeat Impact is disabled because Princeton does not replace the original grade in this planning calculation.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate planning GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.5",
+    "previousUnits": "40",
+    "completed": [
+      {
+        "name": "Course 1",
+        "units": "4",
+        "grade": "A",
+        "special": "Princeton course / independent work",
+        "planned": false
+      },
+      {
+        "name": "Course 2",
+        "units": "4",
+        "grade": "B+",
+        "special": "Princeton course / independent work",
+        "planned": false
+      },
+      {
+        "name": "Course 3",
+        "units": "4",
+        "grade": "F",
+        "special": "Princeton course / independent work",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Course 4",
+        "units": "4",
+        "grade": "A-",
+        "special": "Princeton course / independent work",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "545619e07293"
+}

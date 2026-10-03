@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "columbia",
+  "universityName": "Columbia University",
+  "pageTitle": "Calculate Your Columbia GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade scale; GPA formula; P/D/F; GPA scope",
+      "url": "https://bulletin.columbia.edu/columbia-college/regulations/"
+    },
+    {
+      "label": "University grading scales and school differences",
+      "url": "https://registrar.columbia.edu/content/student-grades"
+    },
+    {
+      "label": "Repeated courses and degree credit",
+      "url": "https://bulletin.columbia.edu/columbia-college/requirements-degree-bachelor-arts/"
+    },
+    {
+      "label": "Transfer credit and external coursework",
+      "url": "https://bulletin.columbia.edu/columbia-college/regulations/"
+    },
+    {
+      "label": "Study abroad GPA treatment",
+      "url": "https://bulletin.columbia.edu/columbia-college/study-abroad/"
+    },
+    {
+      "label": "Academic warning and probation",
+      "url": "https://bulletin.columbia.edu/columbia-college/regulations/regulations.pdf"
+    },
+    {
+      "label": "Graduation GPA",
+      "url": "https://bulletin.columbia.edu/columbia-college/university-policies/"
+    },
+    {
+      "label": "Dean’s List and Latin honors",
+      "url": "https://bulletin.columbia.edu/columbia-college/academic-honors-prizes-fellowships/"
+    },
+    {
+      "label": "Business School alternate grading",
+      "url": "https://students.business.columbia.edu/office-of-student-affairs/academic-advising-and-student-success/academic-policies/grading-notations"
+    }
+  ],
+  "helpIntro": "For Columbia College undergraduates, GPA is credit-weighted on a 4.33 scale: A+=4.33, A=4.00, A-=3.67 through F=0. Enter Columbia points/credits and final grades for a planning estimate.",
+  "helpNote": "This profile is for Columbia College, not every Columbia school. P, W, R and temporary marks are excluded; D and F remain GPA-bearing under Pass/D/Fail. Repeat Impact is disabled because retake treatment is conditional.",
+  "helpExample": "A 4-credit A earns 16.00 grade points and a 3-credit B+ earns 9.99; 25.99 ÷ 7 = 3.713.",
+  "baseContext": {
+    "scaleMax": 4.33,
+    "scaleLabel": "4.33 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4.33,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D": 1,
+      "F": 0,
+      "P": null,
+      "W": null,
+      "AR": null,
+      "AR YC": null,
+      "YC": null,
+      "IN": null,
+      "R": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.33 grade points per credit.",
+      "A": "A = 4.00 grade points per credit.",
+      "A-": "A- = 3.67 grade points per credit.",
+      "B+": "B+ = 3.33 grade points per credit.",
+      "B": "B = 3.00 grade points per credit.",
+      "B-": "B- = 2.67 grade points per credit.",
+      "C+": "C+ = 2.33 grade points per credit.",
+      "C": "C = 2.00 grade points per credit.",
+      "C-": "C- = 1.67 grade points per credit.",
+      "D": "D = 1.00 grade points per credit.",
+      "F": "F = 0.00 grade points per credit.",
+      "P": "Pass is excluded from GPA. Under Columbia College Pass/D/Fail, C- or higher is covered by P; D or F remains letter-graded and GPA-bearing.",
+      "W": "Withdrawal is excluded from GPA.",
+      "AR": "Temporary administrative mark; wait for a final grade.",
+      "AR YC": "Temporary year-course mark; wait for the final grade.",
+      "YC": "Year-course notation; excluded until a qualitative grade is assigned.",
+      "IN": "Incomplete; excluded until replaced by a final grade.",
+      "R": "Registration credit; no academic credit and no GPA value."
+    },
+    "specialTypes": [
+      {
+        "name": "Columbia College / Columbia-owned course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard letter-graded coursework that appears in the Columbia College GPA, including Columbia-sponsored study abroad."
+      },
+      {
+        "name": "External transfer or non-Columbia study abroad",
+        "grades": null,
+        "excluded": true,
+        "note": "Eligible outside credit may count toward the degree but its grade is not included in the Columbia College GPA."
+      },
+      {
+        "name": "Course/record using another Columbia school grading system",
+        "grades": [],
+        "excluded": false,
+        "note": "Columbia schools can use different grading systems. Confirm the transcript grade and your school’s GPA rules before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Columbia College repeat treatment depends on the first attempt and degree-credit context; confirm the record in Vergil/with advising before modeling a retake.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Columbia College undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.5",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "LIT HUM",
+        "units": "4",
+        "grade": "A+",
+        "special": "Columbia College / Columbia-owned course",
+        "planned": false
+      },
+      {
+        "name": "ECON",
+        "units": "3",
+        "grade": "B-",
+        "special": "Columbia College / Columbia-owned course",
+        "planned": false
+      },
+      {
+        "name": "MATH",
+        "units": "2",
+        "grade": "D",
+        "special": "Columbia College / Columbia-owned course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST",
+        "units": "4",
+        "grade": "A+",
+        "special": "Columbia College / Columbia-owned course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "e466aa47a6c0"
+}

@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "washu",
+  "universityName": "Washington University in St. Louis",
+  "pageTitle": "Calculate Your WashU GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades, GPA formula, excluded notations, standing, SAP",
+      "url": "https://bulletin.wustl.edu/undergrad/undergraduatestudy/"
+    },
+    {
+      "label": "Undergraduate retakes",
+      "url": "https://bulletin.wustl.edu/undergrad/artsci/policies/"
+    },
+    {
+      "label": "Transfer credit",
+      "url": "https://bulletin.wustl.edu/undergrad/undergraduatestudy/"
+    },
+    {
+      "label": "Law grading system",
+      "url": "https://bulletin.wustl.edu/law/policies/"
+    },
+    {
+      "label": "Arts & Sciences degree requirements",
+      "url": "https://bulletin.wustl.edu/undergrad/artsci/requirements/"
+    },
+    {
+      "label": "Olin standing and degree GPA",
+      "url": "https://bulletin.wustl.edu/undergrad/business/policies/"
+    }
+  ],
+  "helpIntro": "WashU uses a 4.0 undergraduate GPA scale. Enter credit units and final grades; A and A+ are both 4.0, and F counts as 0.0.",
+  "helpNote": "For the traditional undergraduate record. Pass/No Pass, transfer credit, unresolved I/N, withdrawals and audits are excluded. Law uses a different grading system. The Repeat Impact tool is disabled because the shared estimator cannot safely model WashU's higher-attempt rule.",
+  "helpExample": "A 3-unit A earns 12.0 grade points and a 4-unit B earns 12.0. Together, 24.0 ÷ 7 = 3.429.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "I": null,
+      "W": null,
+      "N": null,
+      "R": null,
+      "L": null,
+      "Z": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4 grade points per unit.",
+      "A": "A = 4 grade points per unit.",
+      "A-": "A- = 3.7 grade points per unit.",
+      "B+": "B+ = 3.3 grade points per unit.",
+      "B": "B = 3 grade points per unit.",
+      "B-": "B- = 2.7 grade points per unit.",
+      "C+": "C+ = 2.3 grade points per unit.",
+      "C": "C = 2 grade points per unit.",
+      "C-": "C- = 1.7 grade points per unit.",
+      "D+": "D+ = 1.3 grade points per unit.",
+      "D": "D = 1 grade points per unit.",
+      "D-": "D- = 0.7 grade points per unit.",
+      "F": "F = 0 grade points per unit.",
+      "P": "Pass; excluded from GPA.",
+      "NP": "No Pass; excluded from GPA.",
+      "I": "Incomplete; excluded while unresolved and may convert to F after the university deadline.",
+      "W": "Withdrawal; excluded from GPA.",
+      "N": "No grade reported; excluded while unresolved and may convert to F after the university deadline.",
+      "R": "Retaken-course notation; the lower attempt is excluded from GPA under the standard undergraduate retake policy.",
+      "L": "Successful audit; excluded from GPA.",
+      "Z": "Unsuccessful audit; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "WashU course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter the final WashU letter grade and credit units."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades do not enter the WashU GPA."
+      },
+      {
+        "name": "Retaken attempt marked R",
+        "grades": null,
+        "excluded": true,
+        "note": "Use for the lower attempt that is excluded after an eligible undergraduate retake."
+      },
+      {
+        "name": "WashU Law course/record",
+        "grades": [],
+        "excluded": false,
+        "note": "WashU Law uses a different numerical grading system; do not apply the undergraduate 4.0 scale.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "For an eligible undergraduate retake, count the higher attempt and mark the lower attempt as Retaken attempt marked R. Confirm eligibility with your school.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Traditional undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "Calc I",
+        "units": "3",
+        "grade": "A",
+        "special": "WashU course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "Chem",
+        "units": "4",
+        "grade": "B-",
+        "special": "WashU course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "History",
+        "units": "3",
+        "grade": "F",
+        "special": "WashU course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "Biology",
+        "units": "2",
+        "grade": "C+",
+        "special": "WashU course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "Physics",
+        "units": "3",
+        "grade": "A-",
+        "special": "WashU course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "9c8a14e0865b"
+}

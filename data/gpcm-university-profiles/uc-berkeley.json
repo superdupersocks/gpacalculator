@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uc-berkeley",
+  "universityName": "University of California, Berkeley",
+  "pageTitle": "Calculate Your UC Berkeley GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade definitions",
+      "url": "https://www.registrar.berkeley.edu/faculty-staff-resources/grade-definitions/"
+    },
+    {
+      "label": "Grades, grading and repeats",
+      "url": "https://www.registrar.berkeley.edu/academic-records/grades-grading/"
+    },
+    {
+      "label": "Courses, units and repetition",
+      "url": "https://undergraduate.catalog.berkeley.edu/policies/units-courses"
+    },
+    {
+      "label": "Transfer grades in Berkeley GPA",
+      "url": "https://ceu.berkeley.edu/transfer-credit/submit-and-review-transcripts/"
+    },
+    {
+      "label": "Undergraduate graduation GPA",
+      "url": "https://undergraduate.catalog.berkeley.edu/earning-your-degree/university-campus-requirements/units-gpa"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://financialaid.berkeley.edu/how-aid-works/appeals-special-circumstances/satisfactory-academic-progress/"
+    },
+    {
+      "label": "First-year admission requirements",
+      "url": "https://www.admissions.berkeley.edu/apply-to-berkeley/first-year-applicants-uc-berkeley/"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admissions.berkeley.edu/apply-to-berkeley/transfer-students/"
+    },
+    {
+      "label": "Graduate policy",
+      "url": "https://grad.berkeley.edu/academics/policy/"
+    },
+    {
+      "label": "Honors at graduation",
+      "url": "https://undergraduate.catalog.berkeley.edu/policies/grades"
+    }
+  ],
+  "helpIntro": "UC Berkeley uses a 4.0 scale. Enter semester units and final grades; A+ and A are 4.0, plus/minus grades use Berkeley values, F counts as 0.0, and P/NP is excluded from GPA.",
+  "helpNote": "For standard undergraduate Berkeley GPA planning. Repeat Impact is disabled because Berkeley replacement depends on your cumulative repeat-unit history: the first 12 graded repeat units generally use the second grade, while later repeats count both attempts. Graduate GPA rules are separate.",
+  "helpExample": "A 4-unit A earns 16.0 grade points and a 4-unit B+ earns 13.2. Together, 29.2 ÷ 8 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "I": null,
+      "IP": null,
+      "NR": null,
+      "M": null,
+      "RD": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ earns 4.0 grade points per unit, the same as A.",
+      "A": "A = 4 grade points per unit.",
+      "A-": "A- = 3.7 grade points per unit.",
+      "B+": "B+ = 3.3 grade points per unit.",
+      "B": "B = 3 grade points per unit.",
+      "B-": "B- = 2.7 grade points per unit.",
+      "C+": "C+ = 2.3 grade points per unit.",
+      "C": "C = 2 grade points per unit.",
+      "C-": "C- = 1.7 grade points per unit.",
+      "D+": "D+ = 1.3 grade points per unit.",
+      "D": "D = 1 grade points per unit.",
+      "D-": "D- = 0.7 grade points per unit.",
+      "F": "F earns 0.0 points; its units are included in GPA computation.",
+      "P": "Passed (undergraduate); excluded from GPA.",
+      "NP": "Not Passed (undergraduate); excluded from GPA.",
+      "I": "Incomplete; excluded from GPA for assignments from fall 1973 onward until resolved.",
+      "IP": "In Progress; excluded until a final grade is assigned.",
+      "NR": "Not Reported; temporary administrative grade excluded from GPA.",
+      "M": "Missing; temporary administrative grade excluded from GPA.",
+      "RD": "Review Deferred; placeholder pending review."
+    },
+    "specialTypes": [
+      {
+        "name": "UC Berkeley course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use final Berkeley letter grades and semester units; P/NP and temporary marks follow the grade table."
+      },
+      {
+        "name": "Other UC campus course that transfers grade points",
+        "grades": null,
+        "excluded": false,
+        "note": "Other UC campus grades can enter the Berkeley GPA when posted as grade-point transfer work. Confirm the Transfer Credit Report."
+      },
+      {
+        "name": "UC Berkeley Extension XB after matriculation",
+        "grades": null,
+        "excluded": false,
+        "note": "XB courses completed after matriculation can enter the Berkeley GPA. Confirm the Transfer Credit Report."
+      },
+      {
+        "name": "Non-UC / ordinary external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Ordinary transfer grades from non-UC institutions generally do not enter the Berkeley GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Berkeley generally replaces the first grade with the second for the first 12 graded repeat units; beyond that threshold both grades count. Use your official record or adviser to determine which attempts are in your GPA.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate Berkeley GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "MATH 1A",
+        "units": "4",
+        "grade": "A-",
+        "special": "UC Berkeley course",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1A",
+        "units": "4",
+        "grade": "F",
+        "special": "UC Berkeley course",
+        "planned": false
+      },
+      {
+        "name": "DECal",
+        "units": "2",
+        "grade": "P",
+        "special": "UC Berkeley course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "DATA 8",
+        "units": "4",
+        "grade": "A",
+        "special": "UC Berkeley course",
+        "planned": true
+      },
+      {
+        "name": "HISTORY 7A",
+        "units": "3",
+        "grade": "B+",
+        "special": "UC Berkeley course",
+        "planned": true
+      },
+      {
+        "name": "BIO 1A",
+        "units": "4",
+        "grade": "A-",
+        "special": "UC Berkeley course",
+        "planned": true
+      },
+      {
+        "name": "ECON 1",
+        "units": "4",
+        "grade": "A",
+        "special": "UC Berkeley course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "c60789ee9db6"
+}

@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uiuc",
+  "universityName": "University of Illinois Urbana-Champaign",
+  "pageTitle": "Calculate Your UIUC GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades / symbols",
+      "url": "https://registrar.illinois.edu/courses-grades/explanation-of-grades/"
+    },
+    {
+      "label": "GPA computation",
+      "url": "https://studentcode.illinois.edu/article3/part1/3-103"
+    },
+    {
+      "label": "Repeats / grade replacement",
+      "url": "https://studentcode.illinois.edu/article3/part3/3-309"
+    },
+    {
+      "label": "Transfer GPA",
+      "url": "https://www.admissions.illinois.edu/transferring-credit/"
+    },
+    {
+      "label": "Transfer admission GPA",
+      "url": "https://www.admissions.illinois.edu/transfer-admission-policies/"
+    },
+    {
+      "label": "Grade replacement implementation",
+      "url": "https://registrar.illinois.edu/faculty-staff/policies/campus-grade-replacement/"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://studentcode.illinois.edu/article3/part1/3-110"
+    },
+    {
+      "label": "Bachelor graduation GPA",
+      "url": "https://studentcode.illinois.edu/article3/part8/3-802"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://www.osfa.illinois.edu/process/satisfactory-academic-progress/"
+    },
+    {
+      "label": "Graduate standing",
+      "url": "https://handbook.grad.illinois.edu/student/academic-standing"
+    },
+    {
+      "label": "Dean's List",
+      "url": "https://studentcode.illinois.edu/article3/part4/3-401"
+    },
+    {
+      "label": "University Honors",
+      "url": "https://studentcode.illinois.edu/information/changes"
+    },
+    {
+      "label": "Transfer requirements",
+      "url": "https://www.admissions.illinois.edu/transfer-requirements/"
+    },
+    {
+      "label": "First-year admission",
+      "url": "https://www.admissions.illinois.edu/first-year-admission-policies/"
+    }
+  ],
+  "helpIntro": "Illinois uses a 4.0 scale with plus/minus grades. Enter Illinois semester hours and final grades to estimate your current or cumulative Illinois GPA and plan future grades.",
+  "helpNote": "A+ and A are both 4.00. Credit/no-credit, S/U, withdrawals, and temporary grades do not receive grade points. Illinois also maintains separate transfer and overall GPAs. Repeat Impact is not automated because grade replacement requires eligibility and approval.",
+  "helpExample": "A 3-hour A earns 12.00 grade points and a 4-hour B+ earns 13.32. Together, 25.32 ÷ 7 = 3.617.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "CR": null,
+      "NC": null,
+      "S": null,
+      "U": null,
+      "PS": null,
+      "PP": null,
+      "NP": null,
+      "PZ": null,
+      "PX": null,
+      "I": null,
+      "DFR": null,
+      "NR": null,
+      "NV": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ counts at 4.00 grade points per semester hour.",
+      "A": "A counts at 4.00 grade points per semester hour.",
+      "A-": "A- counts at 3.67 grade points per semester hour.",
+      "B+": "B+ counts at 3.33 grade points per semester hour.",
+      "B": "B counts at 3.00 grade points per semester hour.",
+      "B-": "B- counts at 2.67 grade points per semester hour.",
+      "C+": "C+ counts at 2.33 grade points per semester hour.",
+      "C": "C counts at 2.00 grade points per semester hour.",
+      "C-": "C- counts at 1.67 grade points per semester hour.",
+      "D+": "D+ counts at 1.33 grade points per semester hour.",
+      "D": "D counts at 1.00 grade points per semester hour.",
+      "D-": "D- counts at 0.67 grade points per semester hour.",
+      "F": "F counts at 0.00 grade points per semester hour.",
+      "CR": "Credit earned; excluded from GPA.",
+      "NC": "No credit; excluded from GPA.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory; excluded from GPA.",
+      "PS": "Pass/test-based credit; excluded from GPA.",
+      "PP": "Pass; excluded from GPA.",
+      "NP": "No Pass; excluded from GPA.",
+      "PZ": "Pass COVID notation; excluded from GPA.",
+      "PX": "Pass notation; excluded from GPA.",
+      "I": "Incomplete; excluded until a final grade is recorded.",
+      "DFR": "Deferred grade; excluded while temporary.",
+      "NR": "Not reported; excluded while temporary.",
+      "NV": "Not valid; excluded while temporary.",
+      "W": "Authorized withdrawal; excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Illinois course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter Illinois semester hours and the final transcript grade."
+      },
+      {
+        "name": "Transfer coursework / overall GPA",
+        "grades": [],
+        "excluded": false,
+        "note": "Illinois reports separate Illinois, transfer, and overall GPAs. Use official transfer grades and records rather than mixing them into the Illinois-only estimate.",
+        "manualReview": true
+      },
+      {
+        "name": "Law, Medicine, or Veterinary Medicine record",
+        "grades": [],
+        "excluded": false,
+        "note": "Professional programs are outside the standard undergraduate record and need their own rules.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is not automated for Illinois. If grade replacement was officially approved and successfully completed, use the GPA shown on your Illinois record; otherwise ordinary repeats generally count both grades.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate Illinois GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "CHEM 102",
+        "units": "3",
+        "grade": "A-",
+        "special": "Illinois course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 220",
+        "units": "4",
+        "grade": "B+",
+        "special": "Illinois course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "ECON 102",
+        "units": "3",
+        "grade": "F",
+        "special": "Illinois course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "STAT 107",
+        "units": "3",
+        "grade": "A",
+        "special": "Illinois course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "403beccd85d0"
+}

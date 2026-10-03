@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "nyu",
+  "universityName": "New York University",
+  "pageTitle": "Calculate Your NYU GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "University grading and GPA; repeated-course routing",
+      "url": "https://bulletins.nyu.edu/nyu/policies/grading/"
+    },
+    {
+      "label": "Transfer and exchange credit",
+      "url": "https://bulletins.nyu.edu/nyu/policies/transfer/"
+    },
+    {
+      "label": "Academic standing framework",
+      "url": "https://bulletins.nyu.edu/nyu/policies/academic-standing-progress/"
+    },
+    {
+      "label": "CAS degree and major GPA context",
+      "url": "https://bulletins.nyu.edu/undergraduate/arts-science/academic-policies/"
+    },
+    {
+      "label": "Tandon repeat policy example",
+      "url": "https://bulletins.nyu.edu/undergraduate/engineering/academic-policies/"
+    },
+    {
+      "label": "Stern repeat policy example",
+      "url": "https://bulletins.nyu.edu/undergraduate/business/academic-policies/"
+    },
+    {
+      "label": "Latin honors framework example",
+      "url": "https://bulletins.nyu.edu/undergraduate/arts-science/academic-policies/honors-awards/"
+    }
+  ],
+  "helpIntro": "NYU uses a 4.000 scale. Enter NYU credits and final grades to estimate your current or cumulative GPA and plan future grades.",
+  "helpNote": "For standard NYU New York undergraduate GPA arithmetic. Repeat rules vary by school, so Repeat Impact is unavailable. External transfer grades are normally excluded; designated exchange work may need school-specific review.",
+  "helpExample": "A 3-credit A- earns 11.001 quality points; a 3-credit B+ earns 9.999. Together, 21.000 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.667,
+      "B+": 3.333,
+      "B": 3,
+      "B-": 2.667,
+      "C+": 2.333,
+      "C": 2,
+      "C-": 1.667,
+      "D+": 1.333,
+      "D": 1,
+      "F": 0,
+      "IF": null,
+      "IP": null,
+      "I": null,
+      "P": null,
+      "W": null,
+      "NI": null,
+      "NR": null,
+      "N": null,
+      "R": null,
+      "S": null,
+      "UE": null,
+      "U": null,
+      "AUD": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.000.",
+      "A-": "A- = 3.667.",
+      "B+": "B+ = 3.333.",
+      "B": "B = 3.000.",
+      "B-": "B- = 2.667.",
+      "C+": "C+ = 2.333.",
+      "C": "C = 2.000.",
+      "C-": "C- = 1.667.",
+      "D+": "D+ = 1.333.",
+      "D": "D = 1.000.",
+      "F": "F = 0.000; its quality credits count in GPA.",
+      "IF": "Incomplete-Failing is excluded while recorded as IF.",
+      "IP": "Incomplete-Passing is excluded while recorded as IP.",
+      "I": "Incomplete is temporary and excluded until replaced by a final grade.",
+      "P": "Pass is excluded from GPA.",
+      "W": "Official withdrawal is excluded from GPA.",
+      "NI": "Need Improvement is a midterm mark and excluded.",
+      "NR": "No Record is excluded from GPA, though it can affect academic-progress review.",
+      "N": "No Credit / Unofficial Withdrawal is excluded from GPA.",
+      "R": "Registered Auditor is excluded from GPA.",
+      "S": "Satisfactory is excluded from GPA.",
+      "UE": "Unable to Evaluate is a midterm mark and excluded.",
+      "U": "Unsatisfactory Progress is excluded from GPA.",
+      "AUD": "Auditor Status is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "NYU course, standard University grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final NYU grade and NYU credits shown for the course."
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Grades from other post-secondary institutions normally do not enter the NYU GPA."
+      },
+      {
+        "name": "Designated exchange program",
+        "grades": [],
+        "excluded": false,
+        "note": "Some designated exchange grades are converted to the NYU scale and included; use the posted NYU record or school guidance.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is unavailable because NYU repeat rules differ by school. Check your school’s repeat policy.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "NYU New York undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "Writing Seminar",
+        "units": "3",
+        "grade": "A-",
+        "special": "NYU course, standard University grading",
+        "planned": false
+      },
+      {
+        "name": "Economics",
+        "units": "3",
+        "grade": "B+",
+        "special": "NYU course, standard University grading",
+        "planned": false
+      },
+      {
+        "name": "Calculus",
+        "units": "3",
+        "grade": "F",
+        "special": "NYU course, standard University grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "History",
+        "units": "4",
+        "grade": "A",
+        "special": "NYU course, standard University grading",
+        "planned": true
+      },
+      {
+        "name": "Psychology",
+        "units": "4",
+        "grade": "B+",
+        "special": "NYU course, standard University grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "01dfeb69db84"
+}

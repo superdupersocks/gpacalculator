@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "notre-dame",
+  "universityName": "University of Notre Dame",
+  "pageTitle": "Calculate Your Notre Dame GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades and GPA treatment",
+      "url": "https://registrar.nd.edu/exams-grading/grades/"
+    },
+    {
+      "label": "GPA formula",
+      "url": "https://registrar.nd.edu/exams-grading/grades/calculate-gpa/"
+    },
+    {
+      "label": "Undergraduate Academic Code",
+      "url": "https://provost.nd.edu/assets/625365/undergraduate_academic_code_2025_final.pdf"
+    },
+    {
+      "label": "Transfer admission and GPA",
+      "url": "https://admissions.nd.edu/admitted-transfers/policy-statement/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://financialaid.nd.edu/contact/resources/policies/satisfactory-academic-progress/"
+    },
+    {
+      "label": "Dean’s List",
+      "url": "https://registrar.nd.edu/exams-grading/deans-list/"
+    },
+    {
+      "label": "Latin honors",
+      "url": "https://registrar.nd.edu/graduation/latin-honors/"
+    },
+    {
+      "label": "First-year admission GPA",
+      "url": "https://admissions.nd.edu/apply/faqs/"
+    },
+    {
+      "label": "Transfer applicants",
+      "url": "https://admissions.nd.edu/apply/resources-for/transfer-applicants/"
+    }
+  ],
+  "helpIntro": "Notre Dame uses a 4.0 scale weighted by semester credit hours. Enter final Notre Dame grades and credits to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For undergraduate institutional GPA. External transfer grades are excluded. University-sponsored study-away and Saint Mary’s co-exchange Notre Dame course grades can count. Repeat Impact is unavailable because both graded attempts count.",
+  "helpExample": "A 3-credit A earns 12.000 quality points; a 3-credit B earns 9.000. Together, 21.000 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.667,
+      "B+": 3.333,
+      "B": 3,
+      "B-": 2.667,
+      "C+": 2.333,
+      "C": 2,
+      "C-": 1.667,
+      "D": 1,
+      "X": 0,
+      "I": 0,
+      "F": 0,
+      "F*": 0,
+      "S": null,
+      "U": null,
+      "V": null,
+      "W": null,
+      "P": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.000 quality points per credit hour.",
+      "A-": "A- = 3.667 quality points per credit hour.",
+      "B+": "B+ = 3.333 quality points per credit hour.",
+      "B": "B = 3.000 quality points per credit hour.",
+      "B-": "B- = 2.667 quality points per credit hour.",
+      "C+": "C+ = 2.333 quality points per credit hour.",
+      "C": "C = 2.000 quality points per credit hour.",
+      "C-": "C- = 1.667 quality points per credit hour.",
+      "D": "D = 1.000 quality points per credit hour.",
+      "X": "Temporary grade shown by Registrar at 0.000; resolve to final grade when updated.",
+      "I": "Incomplete shown by Registrar at 0.000; use the final grade after resolution.",
+      "F": "F = 0.000 quality points per credit hour.",
+      "F*": "Registrar-assigned failing placeholder when no grade is submitted; 0.000.",
+      "S": "Satisfactory; excluded from GPA.",
+      "U": "Unsatisfactory in S/U course; excluded from GPA.",
+      "V": "Auditor (graduate only); excluded from GPA.",
+      "W": "Discontinued with permission; excluded from GPA hours attempted and earned.",
+      "P": "Pass in pass/fail course; excluded from GPA.",
+      "NR": "Not reported; excluded from GPA until resolved."
+    },
+    "specialTypes": [
+      {
+        "name": "Notre Dame course",
+        "grades": null,
+        "excluded": false,
+        "note": "Standard Notre Dame course grade."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "External institution grades do not enter Notre Dame GPA."
+      },
+      {
+        "name": "University-sponsored study away",
+        "grades": null,
+        "excluded": false,
+        "note": "Notre Dame course grades earned while maintaining University enrollment are included."
+      },
+      {
+        "name": "Saint Mary’s co-exchange course",
+        "grades": null,
+        "excluded": false,
+        "note": "Co-exchange grades posted as Notre Dame credit are included."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter both graded attempts as separate completed courses. Both grades count in GPA; consult your dean about repeat eligibility and degree credit.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CHEM 101",
+        "units": "3",
+        "grade": "A-",
+        "special": "Notre Dame course",
+        "planned": false
+      },
+      {
+        "name": "MATH 102",
+        "units": "3",
+        "grade": "B+",
+        "special": "Notre Dame course",
+        "planned": false
+      },
+      {
+        "name": "PHIL 101",
+        "units": "3",
+        "grade": "F",
+        "special": "Notre Dame course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 201",
+        "units": "3",
+        "grade": "A",
+        "special": "Notre Dame course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "6441549b0359"
+}

@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "udel",
+  "universityName": "University of Delaware",
+  "pageTitle": "Calculate Your University of Delaware GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading scale and transcript legend",
+      "url": "https://www.udel.edu/content/dam/udelImages/registrar/Students/Transcripts/Official-Transcript-Legend_Update_9_6_2024.pdf"
+    },
+    {
+      "label": "Current grading and temporary grades",
+      "url": "https://www.udel.edu/academics/registrar/faculty-staff/grading-registration/grades/"
+    },
+    {
+      "label": "Grade forgiveness",
+      "url": "https://www.udel.edu/academics/registrar/students/grading-registration/grade-forgiveness-faqs/"
+    },
+    {
+      "label": "Undergraduate transfer credit",
+      "url": "https://www.udel.edu/academics/registrar/students/transfer-credit/how-to/"
+    },
+    {
+      "label": "Transfer/test credit record treatment",
+      "url": "https://www.udel.edu/academics/registrar/students/academic-advisement/advisement-tools/"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://www.udel.edu/academics/registrar/students/policy-info/acadstand/"
+    },
+    {
+      "label": "Graduate academic policies",
+      "url": "https://www.udel.edu/academics/colleges/grad/current-students/academic-support/policies/"
+    },
+    {
+      "label": "Graduation and Latin honors",
+      "url": "https://www.udel.edu/academics/registrar/students/degrees-graduation/degrees-graduation/"
+    },
+    {
+      "label": "Financial aid and merit renewal",
+      "url": "https://www.udel.edu/students/student-financial-services/policies/"
+    }
+  ],
+  "helpIntro": "UD uses a 4.0 credit-weighted scale with plus/minus grades. Enter finalized UD grades and semester credits to estimate your current or projected GPA.",
+  "helpNote": "Transfer and test-credit grades do not enter the UD GPA. Repeat Impact is disabled because grade forgiveness is conditional, limited to eligible undergraduate coursework, and must be requested.",
+  "helpExample": "A 3-credit A earns 12.000 quality points and a 3-credit B+ earns 9.999; 21.999 ÷ 6 = 3.6665 (about 3.667).",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.667,
+      "B+": 3.333,
+      "B": 3,
+      "B-": 2.667,
+      "C+": 2.333,
+      "C": 2,
+      "C-": 1.667,
+      "D+": 1.333,
+      "D": 1,
+      "D-": 0.667,
+      "F": 0,
+      "X": 0,
+      "Z": 0,
+      "P": null,
+      "L": null,
+      "LW": null,
+      "NR": null,
+      "W": null,
+      "T": null,
+      "CR": null,
+      "I": null,
+      "S": null,
+      "U": null,
+      "N": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.000 quality points per credit.",
+      "A-": "A- = 3.667.",
+      "B+": "B+ = 3.333.",
+      "B": "B = 3.000.",
+      "B-": "B- = 2.667.",
+      "C+": "C+ = 2.333.",
+      "C": "C = 2.000.",
+      "C-": "C- = 1.667.",
+      "D+": "D+ = 1.333.",
+      "D": "D = 1.000.",
+      "D-": "D- = 0.667.",
+      "F": "F = 0.000; credits remain in GPA denominator.",
+      "X": "Academic-dishonesty failure; 0.000 per credit.",
+      "Z": "Historical unofficial-withdrawal failure through August 2024; 0.000 per credit.",
+      "P": "Passing; excluded from GPA index.",
+      "L": "Listener/audit; no credit or grade.",
+      "LW": "Listener withdrawn; excluded.",
+      "NR": "No grade required; excluded.",
+      "W": "Official withdrawal; excluded.",
+      "T": "Accepted transfer credit; transfer grades do not enter UD GPA.",
+      "CR": "Accepted test credit; excluded from GPA.",
+      "I": "Incomplete is temporary; use the final grade once posted.",
+      "S": "Temporary satisfactory progress; excluded until final grade.",
+      "U": "Temporary unsatisfactory progress; excluded until final grade.",
+      "N": "Temporary no-grade-reported notation; excluded until replaced."
+    },
+    "specialTypes": [
+      {
+        "name": "UD course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use finalized UD grades and semester credits."
+      },
+      {
+        "name": "Accepted transfer or test credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external grades and test credit do not enter the UD GPA."
+      },
+      {
+        "name": "Repeated course / grade forgiveness review",
+        "grades": [],
+        "excluded": false,
+        "note": "Grade forgiveness is conditional, limited, and requires a request; confirm eligibility before excluding an attempt.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled because UD grade forgiveness is not automatic. Confirm eligibility and approval with the Registrar/advisor.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate institutional GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "CISC 108",
+        "units": "3",
+        "grade": "A",
+        "special": "UD course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 221",
+        "units": "4",
+        "grade": "B+",
+        "special": "UD course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ENGL 110",
+        "units": "3",
+        "grade": "A-",
+        "special": "UD course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "40610dda8d38"
+}

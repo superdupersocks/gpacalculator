@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "vanderbilt",
+  "universityName": "Vanderbilt University",
+  "pageTitle": "Calculate Your Vanderbilt GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grading, GPA formula, exclusions, graduation",
+      "url": "https://registrar.vanderbilt.edu/documents/Undergraduate-Catalog-2025-26.pdf"
+    },
+    {
+      "label": "Transcript grade values and symbols",
+      "url": "https://registrar.vanderbilt.edu/transcripts/transcript-key.php"
+    },
+    {
+      "label": "Undergraduate transfer credit",
+      "url": "https://registrar.vanderbilt.edu/transfer-credit/policies.php"
+    },
+    {
+      "label": "Undergraduate repeat policy",
+      "url": "https://www.vanderbilt.edu/enrollmentbulletin/academic-regulations/repeat-credit-no-credit/"
+    },
+    {
+      "label": "Undergraduate financial aid SAP",
+      "url": "https://www.vanderbilt.edu/financialaid/undergraduate/satisfactory-progress/"
+    },
+    {
+      "label": "Graduate School grading",
+      "url": "https://registrar.vanderbilt.edu/documents/Graduate-School-Catalog-2025-26.pdf"
+    }
+  ],
+  "helpIntro": "Vanderbilt undergraduate GPA is credit-hour weighted on a 4.0 scale. Enter final grades and credit hours to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "A+ is used by Engineering and is worth 4.0. Pass, transfer, study-abroad, withdrawal, and temporary I/M work are excluded. Repeat Impact is disabled because repeat eligibility varies by school.",
+  "helpExample": "A 3-credit A earns 12.0 points and a 3-credit B+ earns 9.9; together, 21.9 ÷ 6 = 3.65.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "I": null,
+      "M": null,
+      "W": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.0 grade points per credit hour.",
+      "A-": "A- = 3.7 grade points per credit hour.",
+      "B+": "B+ = 3.3 grade points per credit hour.",
+      "B": "B = 3.0 grade points per credit hour.",
+      "B-": "B- = 2.7 grade points per credit hour.",
+      "C+": "C+ = 2.3 grade points per credit hour.",
+      "C": "C = 2.0 grade points per credit hour.",
+      "C-": "C- = 1.7 grade points per credit hour.",
+      "D+": "D+ = 1.3 grade points per credit hour.",
+      "D": "D = 1.0 grade points per credit hour.",
+      "D-": "D- = 0.7 grade points per credit hour.",
+      "F": "F earns zero grade points and its credit hours count in GPA unless a valid repeat replacement applies.",
+      "P": "Pass is excluded from the Vanderbilt GPA.",
+      "I": "Incomplete is temporary and excluded until replaced by a final grade.",
+      "M": "Missed final examination is temporary and excluded until resolved.",
+      "W": "Withdrawal is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "A&S, Blair, or Peabody undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the standard undergraduate grade map. A+ is not part of this source."
+      },
+      {
+        "name": "School of Engineering undergraduate course",
+        "grades": [
+          "A+",
+          "A",
+          "A-",
+          "B+",
+          "B",
+          "B-",
+          "C+",
+          "C",
+          "C-",
+          "D+",
+          "D",
+          "D-",
+          "F",
+          "P",
+          "I",
+          "M",
+          "W"
+        ],
+        "excluded": false,
+        "note": "Engineering also uses A+, worth 4.0 points per credit hour.",
+        "gradePoints": {
+          "A+": 4,
+          "A": 4,
+          "A-": 3.7,
+          "B+": 3.3,
+          "B": 3,
+          "B-": 2.7,
+          "C+": 2.3,
+          "C": 2,
+          "C-": 1.7,
+          "D+": 1.3,
+          "D": 1,
+          "D-": 0.7,
+          "F": 0,
+          "P": null,
+          "I": null,
+          "M": null,
+          "W": null
+        }
+      },
+      {
+        "name": "External transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Transfer grades do not affect the Vanderbilt GPA."
+      },
+      {
+        "name": "Study abroad course",
+        "grades": null,
+        "excluded": true,
+        "note": "The undergraduate GPA formula excludes courses taken in a study abroad program."
+      },
+      {
+        "name": "Graduate course reserved for future graduate credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Reserved graduate credit does not enter the undergraduate GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Check school eligibility first; only the most recent eligible final grade counts in GPA.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ECON 1010",
+        "units": "3",
+        "grade": "A",
+        "special": "A&S, Blair, or Peabody undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MATH 1200",
+        "units": "4",
+        "grade": "B+",
+        "special": "A&S, Blair, or Peabody undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 1010",
+        "units": "3",
+        "grade": "A-",
+        "special": "A&S, Blair, or Peabody undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "ff2beebfe1b5"
+}

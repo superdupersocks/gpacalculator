@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "syracuse",
+  "universityName": "Syracuse University",
+  "pageTitle": "Calculate Your Syracuse University GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate GPA formula and academic rules",
+      "url": "https://coursecatalog.syracuse.edu/undergraduate/academic-rules/"
+    },
+    {
+      "label": "Grade scale and GPA-bearing marks",
+      "url": "https://www.syracuse.edu/documents/83/Appendix-D-FYS-101-Syllabus.pdf"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://artsandsciences.syracuse.edu/student-success/transfer-students/transfer-credit-frequently-asked-questions/"
+    },
+    {
+      "label": "Repeat / withdrawal behavior",
+      "url": "https://projectadvance.syracuse.edu/dropwd/"
+    },
+    {
+      "label": "Undergraduate repeat flagging rules",
+      "url": "https://coursecatalog.syracuse.edu/undergraduate/academic-rules/"
+    },
+    {
+      "label": "College of Law grading rules",
+      "url": "https://law.syracuse.edu/academic-rules/jd-program-rules"
+    },
+    {
+      "label": "Graduate academic rules",
+      "url": "https://coursecatalog.syracuse.edu/graduate/academic-rules/"
+    },
+    {
+      "label": "Financial aid SAP and merit renewal",
+      "url": "https://financialaid.syr.edu/policy/"
+    },
+    {
+      "label": "Engineering academic standing",
+      "url": "https://ecs.syracuse.edu/student-services/undergraduate-resources/student-records/academic-probation-and-suspension-policy"
+    },
+    {
+      "label": "Dean list example",
+      "url": "https://ecs.syracuse.edu/about/news/category/college-news"
+    },
+    {
+      "label": "Transfer admission",
+      "url": "https://www.syracuse.edu/admissions-aid/application-process/transfer/requirements/"
+    }
+  ],
+  "helpIntro": "Syracuse University uses a 4.0 scale with plus/minus grades. Enter GPA-bearing Syracuse credits and grades to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For standard undergraduate work outside the College of Law. Transfer grades do not enter the Syracuse GPA. Incompletes can affect GPA as failing work until resolved. Repeat/flagging rules vary by school or college, so Repeat Impact is not offered.",
+  "helpExample": "A 3-credit A earns 12 grade points and a 3-credit B+ earns 9.999; together, 21.999 ÷ 6 = 3.667.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.667,
+      "B+": 3.333,
+      "B": 3,
+      "B-": 2.667,
+      "C+": 2.333,
+      "C": 2,
+      "C-": 1.667,
+      "D": 1,
+      "F": 0,
+      "I": 0,
+      "P": null,
+      "AU": null,
+      "NA": null,
+      "NR": null,
+      "RM": null,
+      "V": null,
+      "WD": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.000 grade points per credit.",
+      "A-": "A- = 3.667 grade points per credit.",
+      "B+": "B+ = 3.333 grade points per credit.",
+      "B": "B = 3.000 grade points per credit.",
+      "B-": "B- = 2.667 grade points per credit.",
+      "C+": "C+ = 2.333 grade points per credit.",
+      "C": "C = 2.000 grade points per credit.",
+      "C-": "C- = 1.667 grade points per credit.",
+      "D": "D = 1.000 grade points per credit.",
+      "F": "F earns 0 grade points and its credits remain GPA-bearing.",
+      "I": "Incomplete currently calculates as failing work for GPA purposes until a final grade is posted.",
+      "P": "Pass earns credit but is excluded from grade-point calculations.",
+      "AU": "Audit is excluded from GPA.",
+      "NA": "Non-attendance notation is not assigned grade points in this calculator; review the official record if applicable.",
+      "NR": "Not Required is excluded from GPA.",
+      "RM": "Remedial notation is excluded from GPA.",
+      "V": "Variable-length course grade not yet due; excluded until a final grade is posted.",
+      "WD": "Withdrawal is recorded without grade points and is excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "Syracuse University undergraduate course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the posted Syracuse grade and course credits."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer credits may apply to the degree, but outside grades do not calculate in the Syracuse University GPA."
+      },
+      {
+        "name": "College of Law course / law record",
+        "grades": [],
+        "excluded": false,
+        "note": "College of Law has separate GPA, repeat, graduation, and grading rules; use the Law record and official rules instead of this undergraduate calculator.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Check your home school/college flagging rule before estimating a repeated course.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA (non-Law)"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "WRT 105",
+        "units": "3",
+        "grade": "A",
+        "special": "Syracuse University undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "MAT 295",
+        "units": "3",
+        "grade": "B+",
+        "special": "Syracuse University undergraduate course",
+        "planned": false
+      },
+      {
+        "name": "HST 101",
+        "units": "3",
+        "grade": "B",
+        "special": "Syracuse University undergraduate course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "SOC 101",
+        "units": "3",
+        "grade": "A",
+        "special": "Syracuse University undergraduate course",
+        "planned": true
+      },
+      {
+        "name": "PSY 205",
+        "units": "3",
+        "grade": "B+",
+        "special": "Syracuse University undergraduate course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "38e5a4abcb86"
+}

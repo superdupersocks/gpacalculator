@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "upenn",
+  "universityName": "University of Pennsylvania",
+  "pageTitle": "Calculate Your UPenn GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "GPA formula, transcript levels, grade systems",
+      "url": "https://srfs.upenn.edu/student-records/transcript-key"
+    },
+    {
+      "label": "Undergraduate grade and GPA policies",
+      "url": "https://catalog.upenn.edu/undergraduate/policies-procedures/grade-gpa/"
+    },
+    {
+      "label": "College GPA calculation and scale",
+      "url": "https://www.college.upenn.edu/advising-resources/policies-and-procedures/policies-governing-credits-and-grades/grade-point-average"
+    },
+    {
+      "label": "Pass/fail treatment",
+      "url": "https://srfs.upenn.edu/student-records/student-grades/grade-mode-change"
+    },
+    {
+      "label": "External credit",
+      "url": "https://srfs.upenn.edu/student-records/external-credit"
+    },
+    {
+      "label": "College retaking courses",
+      "url": "https://www.college.upenn.edu/advising-resources/policies-and-procedures/policies-governing-courses-and-registration/courseload"
+    },
+    {
+      "label": "Wharton retaking courses",
+      "url": "https://undergrad-inside.wharton.upenn.edu/retaking-courses/"
+    },
+    {
+      "label": "Wharton grading system",
+      "url": "https://undergrad-inside.wharton.upenn.edu/grades/"
+    },
+    {
+      "label": "Penn Nursing grading system",
+      "url": "https://www.nursing.upenn.edu/students/handbooks-forms/bsn-handbook/courses-exam-related-policies/"
+    },
+    {
+      "label": "Undergraduate graduation honors and College graduation GPA",
+      "url": "https://www.college.upenn.edu/advising-resources/policies-and-procedures/policies-governing-graduation"
+    },
+    {
+      "label": "Wharton degree GPA requirements",
+      "url": "https://undergrad-inside.wharton.upenn.edu/degree-requirements/"
+    },
+    {
+      "label": "Federal aid satisfactory academic progress",
+      "url": "https://srfs.upenn.edu/policies/satisfactory-academic-progress"
+    }
+  ],
+  "helpIntro": "Penn’s standard undergraduate GPA uses a 4.0 scale and course-unit weighting. Enter final grades and course units to estimate current or cumulative GPA.",
+  "helpNote": "A+ and A are both 4.0; there is no undergraduate D-. P and most non-final notations are excluded, while F counts at 0. Repeat rules and some study-abroad, graduate, and professional-school records require separate review.",
+  "helpExample": "A 1 c.u. A earns 4.0 quality points and a 1 c.u. B+ earns 3.3. Together, 7.3 ÷ 2 c.u. = 3.65.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "F": 0,
+      "P": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "II": null,
+      "I*": null,
+      "W": null,
+      "AUD": null,
+      "NR": null,
+      "GR": null,
+      "PR": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ earns 4.0 quality points per c.u.",
+      "A": "A earns 4.0 quality points per c.u.",
+      "A-": "A- earns 3.7 quality points per c.u.",
+      "B+": "B+ earns 3.3 quality points per c.u.",
+      "B": "B earns 3.0 quality points per c.u.",
+      "B-": "B- earns 2.7 quality points per c.u.",
+      "C+": "C+ earns 2.3 quality points per c.u.",
+      "C": "C earns 2.0 quality points per c.u.",
+      "C-": "C- earns 1.7 quality points per c.u.",
+      "D+": "D+ earns 1.3 quality points per c.u.",
+      "D": "D earns 1.0 quality point per c.u.; Penn undergraduate scale has no D-.",
+      "F": "F earns 0 quality points and its GPA hours still count.",
+      "P": "Pass is excluded from cumulative GPA; credit rules depend on school.",
+      "S": "Satisfactory/progress notation is not assigned undergraduate grade points in the standard scale.",
+      "U": "Unsatisfactory/progress notation has no standard undergraduate grade-point value; confirm the final course outcome.",
+      "I": "Incomplete is unresolved; use the final grade when posted.",
+      "II": "Extended Incomplete is unresolved; use the final grade when posted.",
+      "I*": "Permanent Incomplete has no standard undergraduate grade-point value in this calculator.",
+      "W": "Withdrawal is excluded from GPA.",
+      "AUD": "Audit is excluded from GPA.",
+      "NR": "No grade reported; wait for the final grade.",
+      "GR": "No grade reported for student; wait for the final grade.",
+      "PR": "In progress; use the final grade when completed."
+    },
+    "specialTypes": [
+      {
+        "name": "Penn undergraduate course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard undergraduate Penn courses on the common 4.0 scale."
+      },
+      {
+        "name": "External transfer or credit-away course",
+        "grades": null,
+        "excluded": true,
+        "note": "External transfer/credit-away grades generally do not enter Penn cumulative GPA."
+      },
+      {
+        "name": "Penn-approved study abroad course",
+        "grades": [],
+        "excluded": false,
+        "note": "Penn states approved study-abroad grades become part of the transcript and Penn GPA; confirm the posted Penn course units and grade treatment before calculating.",
+        "manualReview": true
+      },
+      {
+        "name": "Graduate or professional-school course/record",
+        "grades": [],
+        "excluded": false,
+        "note": "Penn uses different grading systems across transcript levels and schools; do not force the undergraduate scale onto these records.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Penn repeat treatment depends on your undergraduate school and the original result; enter only attempts that your school counts in GPA and confirm unusual cases with your advisor.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Standard undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "10",
+    "completed": [
+      {
+        "name": "MATH 1400",
+        "units": "1",
+        "grade": "A",
+        "special": "Penn undergraduate course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "ECON 0100",
+        "units": "1",
+        "grade": "B+",
+        "special": "Penn undergraduate course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "WRIT 0020",
+        "units": "0.5",
+        "grade": "A-",
+        "special": "Penn undergraduate course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "STAT 1010",
+        "units": "1",
+        "grade": "A",
+        "special": "Penn undergraduate course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "93329ae13a3b"
+}

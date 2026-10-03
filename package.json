@@ -1,0 +1,12 @@
+{
+  "name": "gpacalculator",
+  "private": true,
+  "description": "gpacalculator.net child theme, plugin and calculator QA",
+  "scripts": {
+    "qa": "python3 tests/run_all.py",
+    "package": "bash scripts/package.sh"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "^5.2.0"
+  }
+}

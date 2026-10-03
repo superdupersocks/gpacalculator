@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "cu-boulder",
+  "universityName": "University of Colorado Boulder",
+  "pageTitle": "Calculate Your CU Boulder GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade scale; GPA formula; symbols",
+      "url": "https://catalog.colorado.edu/undergraduate/credits-grading/"
+    },
+    {
+      "label": "Grade replacement policy",
+      "url": "https://www.colorado.edu/compliance/grade-replacement-policy"
+    },
+    {
+      "label": "Student grade replacement guidance",
+      "url": "https://www.colorado.edu/registrar/students/degree-planning/grade-replacement"
+    },
+    {
+      "label": "Academic standing",
+      "url": "https://catalog.colorado.edu/undergraduate/academic-records/"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://www.colorado.edu/financialaid/policies/satisfactory-academic-progress-sap-policy"
+    },
+    {
+      "label": "Transfer admission / external context",
+      "url": "https://www.colorado.edu/admissions/process/transfer/timeline/admissions-criteria"
+    },
+    {
+      "label": "Bachelor degree minimum",
+      "url": "https://catalog.colorado.edu/undergraduate/academic-offerings/"
+    }
+  ],
+  "helpIntro": "CU Boulder uses a 4.0 scale. Enter CU credit hours and final letter grades to estimate your current, cumulative, projected and target GPA.",
+  "helpNote": "P/P+, CR, NC, W, I and IP are excluded from GPA while unresolved; F counts at 0.0. Transcript GPA is shown to three decimals without rounding up. Repeat replacement is conditional and must be verified on the official record.",
+  "helpExample": "A 3-credit A earns 12.0 quality points and a 3-credit B earns 9.0; together, 21 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "P+": null,
+      "CR": null,
+      "NC": null,
+      "I": null,
+      "IP": null,
+      "W": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4 grade points per credit hour.",
+      "A-": "A- = 3.7 grade points per credit hour.",
+      "B+": "B+ = 3.3 grade points per credit hour.",
+      "B": "B = 3 grade points per credit hour.",
+      "B-": "B- = 2.7 grade points per credit hour.",
+      "C+": "C+ = 2.3 grade points per credit hour.",
+      "C": "C = 2 grade points per credit hour.",
+      "C-": "C- = 1.7 grade points per credit hour.",
+      "D+": "D+ = 1.3 grade points per credit hour.",
+      "D": "D = 1 grade points per credit hour.",
+      "D-": "D- = 0.7 grade points per credit hour.",
+      "F": "F counts as 0.0 grade points and its credit hours count in GPA.",
+      "P": "Pass is excluded from GPA.",
+      "P+": "Pass Plus is excluded from GPA.",
+      "CR": "Credit is excluded from GPA.",
+      "NC": "No Credit is excluded from GPA.",
+      "I": "Incomplete is excluded until resolved; after one year an unresolved I converts to F.",
+      "IP": "In Progress is excluded from GPA.",
+      "W": "Withdrawal is excluded from GPA.",
+      "NR": "Grade not reported; excluded until a final grade posts."
+    },
+    "specialTypes": [
+      {
+        "name": "CU course in undergraduate career",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the posted CU grade and credit hours."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external transfer credit does not contribute external grades to the CU GPA."
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Use the official record after grade replacement posts. For a repeat estimate, verify eligibility first; the calculator does not automate CU Boulder repeat replacement.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate career"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ECON 2010",
+        "units": "3",
+        "grade": "A",
+        "special": "CU course in undergraduate career",
+        "planned": false
+      },
+      {
+        "name": "MATH 1300",
+        "units": "3",
+        "grade": "B+",
+        "special": "CU course in undergraduate career",
+        "planned": false
+      },
+      {
+        "name": "HIST 1015",
+        "units": "3",
+        "grade": "C",
+        "special": "CU course in undergraduate career",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "PSYC 1001",
+        "units": "15",
+        "grade": "A",
+        "special": "CU course in undergraduate career",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "ec793bb4aae9"
+}

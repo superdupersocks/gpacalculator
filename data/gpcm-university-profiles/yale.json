@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "yale",
+  "universityName": "Yale University",
+  "pageTitle": "Calculate Your Yale GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values and General Honors GPA",
+      "url": "https://catalog.yale.edu/ycps/yale-college/honors/"
+    },
+    {
+      "label": "Yale College grades and Credit/D/Fail",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/grades/"
+    },
+    {
+      "label": "Financial-aid SAP",
+      "url": "https://finaid.yale.edu/policies"
+    },
+    {
+      "label": "Repeated enrollment",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/registration-enrollment-courses/"
+    },
+    {
+      "label": "Course credit values",
+      "url": "https://catalog.yale.edu/ycps/key-to-course-listings/"
+    },
+    {
+      "label": "Transfer students",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/transfer-students/"
+    },
+    {
+      "label": "Credit from other universities",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/credit-from-other-universities/"
+    },
+    {
+      "label": "Graduate/professional courses for undergraduates",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/special-academic-arrangements/"
+    },
+    {
+      "label": "Promotion and good standing",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/promotion-good-standing/"
+    },
+    {
+      "label": "Academic penalties and restrictions",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/academic-penalties-restrictions/"
+    },
+    {
+      "label": "Bachelor degree requirements",
+      "url": "https://catalog.yale.edu/ycps/academic-regulations/requirements-for-ba-bs-degree/"
+    },
+    {
+      "label": "Yale School of Public Health grading",
+      "url": "https://catalog.yale.edu/ysph/academic-policies/grading-system/"
+    }
+  ],
+  "helpIntro": "Yale College uses a 4.00 GPA scale with A=4.00 and no A+. Enter Yale course credits and final grades to estimate current, cumulative, projected, and target GPA.",
+  "helpNote": "For Yale College undergraduate planning. CR, P, and W are excluded from GPA; F counts as 0.00. Both grades count after a repeated course. Fractional 0.5/1.5-credit courses require manual review until the shared calculator supports fractional credit entry.",
+  "helpExample": "A 1-credit A earns 4.00 grade points and a 1-credit B+ earns 3.33. Together, 7.33 ÷ 2 = 3.665.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 20,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "CR": null,
+      "P": null,
+      "W": null,
+      "TI": null,
+      "ABX": null,
+      "NM": null,
+      "SAT": null,
+      "NSAT": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 points per Yale course credit.",
+      "A-": "A- = 3.67 points per Yale course credit.",
+      "B+": "B+ = 3.33 points per Yale course credit.",
+      "B": "B = 3.00 points per Yale course credit.",
+      "B-": "B- = 2.67 points per Yale course credit.",
+      "C+": "C+ = 2.33 points per Yale course credit.",
+      "C": "C = 2.00 points per Yale course credit.",
+      "C-": "C- = 1.67 points per Yale course credit.",
+      "D+": "D+ = 1.33 points per Yale course credit.",
+      "D": "D = 1.00 point per Yale course credit.",
+      "D-": "D- = 0.67 points per Yale course credit; D- is passing.",
+      "F": "F = 0.00 points and counts in the Yale GPA when it is a GPA-bearing course.",
+      "CR": "Credit from Yale College Credit/D/Fail is excluded from GPA.",
+      "P": "Pass in a Pass/Fail course is excluded from the Yale College GPA.",
+      "W": "Withdrawal is neutral, carries no course credit, and is excluded from GPA.",
+      "TI": "Authorized Temporary Incomplete; use the final grade after it is resolved.",
+      "ABX": "Authorized Absence from Final Examination; use the final grade after it is resolved.",
+      "NM": "No Mark is not included in the qualitative GPA calculation; consult your dean/registrar about resolution.",
+      "SAT": "Interim satisfactory mark in certain credit/year sequences; do not treat as a numerical GPA grade.",
+      "NSAT": "Interim not-satisfactory mark in certain credit/year sequences; do not assign a numerical GPA value."
+    },
+    "specialTypes": [
+      {
+        "name": "Yale College course (whole credit)",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard Yale College courses carrying whole-number course credits."
+      },
+      {
+        "name": "Yale course with 0.5 or 1.5 credit",
+        "grades": [],
+        "excluded": false,
+        "note": "Current shared calculator cannot enter fractional course credits safely. Calculate manually or wait for fractional-credit UI support.",
+        "manualReview": true
+      },
+      {
+        "name": "Transfer / outside university credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted outside credit can count toward degree requirements, but outside grades are not part of the Yale College GPA used for General Honors."
+      },
+      {
+        "name": "Professional-school course with nonletter grading",
+        "grades": [],
+        "excluded": false,
+        "note": "Professional-school grading can use Pass/Fail, SAT/NSAT, Credit/Fail, or other systems. Confirm the Yale College transcript treatment before calculating.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "retain",
+      "note": "Enter each graded attempt as a separate completed row. Do not use a grade-replacement estimate for the Yale College GPA.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Yale College GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.5",
+    "previousUnits": "20",
+    "completed": [
+      {
+        "name": "ENGL 120",
+        "units": "1",
+        "grade": "A",
+        "special": "Yale College course (whole credit)",
+        "planned": false
+      },
+      {
+        "name": "ECON 115",
+        "units": "1",
+        "grade": "B+",
+        "special": "Yale College course (whole credit)",
+        "planned": false
+      },
+      {
+        "name": "MATH 120",
+        "units": "1",
+        "grade": "F",
+        "special": "Yale College course (whole credit)",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 110",
+        "units": "1",
+        "grade": "A-",
+        "special": "Yale College course (whole credit)",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "cb1b008827f4"
+}

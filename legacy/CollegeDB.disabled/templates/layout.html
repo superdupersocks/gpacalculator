@@ -1,0 +1,114 @@
+<div ng-controller="MainCtrl">
+  <div class="form">
+    <h4>Search Filters</h4>
+
+    <form action="http://localhost/wordpress2/wp-admin/admin-ajax.php" role="form">
+      <div class="form-group">
+        <label for="cdb_state">Choose your state:</label>
+        <select ng-model="state"
+                ng-options="s as s for s in states"
+                class="form-control">
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="cdb_score_type">Select score type:</label>
+        <select ng-model="score_type"
+                ng-options="s as s.name for s in score_types"
+                class="form-control">
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="cdb_score">Pick your score:</label>
+
+        <div slider></div>
+        <div class="slider-sub min">
+          Min: <span ng-bind="slider_min"></span>
+        </div>
+        <div class="slider-sub max">
+          Max: <span ng-bind="slider_max"></span>
+        </div>
+
+        <br>
+
+        <p>Your Score:
+          <mark ng-bind="score | number:1"></mark>
+        </p>
+      </div>
+
+      <div class="form-group">
+        <div id="search_wrapper">
+          <input ng-click="search()" type="button" value="Search" id="cdb_search">
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+
+  <div class="cdb" id="cdb_table_wrapper">
+    <div ng-show="loading" id="cdb_overlay"></div>
+    <div class="table_wrapper">
+      <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+          <td>School</td>
+          <td>State</td>
+          <td>SAT 25</td>
+          <td>SAT 75</td>
+          <td>ACT 25</td>
+          <td>ACT 75</td>
+          <td>Avg GPA</td>
+          <td>Accept %</td>
+        </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="entry in tableEntries">
+            <td ng-switch="entry.url == ''">
+              <span ng-switch-when="false"><a href="{{entry.url}}">{{entry.school}}</a></span>
+              <span ng-switch-when="true">{{entry.school}}</span>
+            </td>
+            <td ng-bind="entry.state"></td>
+            <td ng-bind="entry.sat25"></td>
+            <td ng-bind="entry.sat75"></td>
+            <td ng-bind="entry.act25"></td>
+            <td ng-bind="entry.act75"></td>
+            <td ng-bind="entry.gpa"></td>
+            <td ng-bind="entry.acceptance_rate"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="cdb_pagination">
+      <div ng-repeat="i in pagination track by $index">
+        <div ng-switch="i == '...'">
+          <span ng-switch-when="true">...</span>
+          <span ng-switch-default
+                ng-bind="i"
+                ng-class="{current_page: i==page}"
+                ng-click="search(i)"
+                class="button"></span>
+        </div>
+      </div>
+    </div>
+
+    <div title="Change URL" id="dialog-form">
+      <form>
+        <fieldset>
+          <label>Name</label>
+
+          <p class="cdb_name_field"></p>
+
+          <label for="url">URL</label>
+          <input type="text" value="" class="cdb_url_field" name="url">
+
+          <!-- Allow form submission with keyboard without duplicating the dialog button -->
+          <input type="submit" style="position:absolute; top:-1000px" tabindex="-1">
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="clear"></div>

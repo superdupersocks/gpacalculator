@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "msu",
+  "universityName": "Michigan State University",
+  "pageTitle": "Calculate Your Michigan State GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grade values; GPA formula; precision; CR/NC/P/N",
+      "url": "https://reg.msu.edu/AcademicPrograms/Print.aspx?Section=112"
+    },
+    {
+      "label": "Incomplete, deferred and extension markers",
+      "url": "https://reg.msu.edu/AcademicPrograms/Print.aspx?Section=528"
+    },
+    {
+      "label": "Repeating a course",
+      "url": "https://reg.msu.edu/academicprograms/Print.aspx?Section=532"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://admissions.msu.edu/apply/transfer/transfer-credits"
+    },
+    {
+      "label": "Transcript key; College of Law alternate grading",
+      "url": "https://reg.msu.edu/transcripts/TranscriptKey.aspx"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://reg.msu.edu/academicprograms/Print.aspx?Section=270"
+    },
+    {
+      "label": "Dean’s List",
+      "url": "https://reg.msu.edu/academicprograms/Print.aspx?Section=295"
+    },
+    {
+      "label": "Graduation honors",
+      "url": "https://reg.msu.edu/roinfo/gradhonor/graduationhonors.aspx"
+    },
+    {
+      "label": "Financial aid SAP",
+      "url": "https://finaid.msu.edu/faqs"
+    },
+    {
+      "label": "First-year admission criteria",
+      "url": "https://admissions.msu.edu/apply/first-year/admission-criteria"
+    },
+    {
+      "label": "Transfer admission criteria",
+      "url": "https://admissions.msu.edu/apply/transfer/admission-criteria"
+    }
+  ],
+  "helpIntro": "Michigan State uses numerical grades from 4.0 to 0.0 in 0.5 steps. Enter semester credits and final MSU numerical grades to estimate your current and projected GPA.",
+  "helpNote": "For the standard undergraduate institutional GPA. MSU truncates official GPA to three decimals. CR/NC and P/N grades are excluded, external transfer grades do not enter MSU GPA, and professional-school records such as Law need separate rules.",
+  "helpExample": "A 3-credit 4.0 earns 12 grade points; a 3-credit 3.0 earns 9. Together, 21 ÷ 6 = 3.500.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 100,
+    "hasOfficialGpa": true,
+    "grades": {
+      "4.0": 4,
+      "3.5": 3.5,
+      "3.0": 3,
+      "2.5": 2.5,
+      "2.0": 2,
+      "1.5": 1.5,
+      "1.0": 1,
+      "0.0": 0,
+      "CR": null,
+      "NC": null,
+      "P": null,
+      "N": null,
+      "S": null,
+      "NS": null,
+      "I": null,
+      "DF": null,
+      "ET": null,
+      "V": null
+    },
+    "gradeExplanations": {
+      "4.0": "4.0 counts in GPA at 4 points per credit.",
+      "3.5": "3.5 counts in GPA at 3.5 points per credit.",
+      "3.0": "3.0 counts in GPA at 3 points per credit.",
+      "2.5": "2.5 counts in GPA at 2.5 points per credit.",
+      "2.0": "2.0 counts in GPA at 2 points per credit.",
+      "1.5": "1.5 counts in GPA at 1.5 points per credit.",
+      "1.0": "1.0 counts in GPA at 1 points per credit.",
+      "0.0": "0.0 counts in GPA at 0 points per credit.",
+      "CR": "Credit; excluded from GPA.",
+      "NC": "No Credit; excluded from GPA.",
+      "P": "Pass; excluded from GPA.",
+      "N": "No Grade; excluded from GPA.",
+      "S": "Pandemic-era Satisfactory; excluded from GPA.",
+      "NS": "Pandemic-era Not Satisfactory; excluded from GPA.",
+      "I": "Incomplete; excluded until replaced by a final grade.",
+      "DF": "Deferred; temporary marker.",
+      "ET": "Extension; temporary marker.",
+      "V": "Visitor; non-credit and excluded from GPA."
+    },
+    "specialTypes": [
+      {
+        "name": "MSU course, undergraduate numerical grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for finalized MSU numerical grades."
+      },
+      {
+        "name": "External transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted external credit does not enter MSU term or cumulative GPA."
+      },
+      {
+        "name": "College of Law or other professional grading system",
+        "grades": [],
+        "excluded": false,
+        "note": "Do not apply the undergraduate numerical scale to a professional-school record.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible repeat, the last grade and credits replace the previous grade in cumulative GPA. Confirm repeat eligibility and limits with MSU.",
+      "originalGrades": [
+        "4.0",
+        "3.5",
+        "3.0",
+        "2.5",
+        "2.0",
+        "1.5",
+        "1.0",
+        "0.0"
+      ],
+      "newGrades": [
+        "4.0",
+        "3.5",
+        "3.0",
+        "2.5",
+        "2.0",
+        "1.5",
+        "1.0",
+        "0.0"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate institutional GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "WRA 101",
+        "units": "3",
+        "grade": "4.0",
+        "special": "MSU course, undergraduate numerical grading",
+        "planned": false
+      },
+      {
+        "name": "MTH 132",
+        "units": "3",
+        "grade": "3.5",
+        "special": "MSU course, undergraduate numerical grading",
+        "planned": false
+      },
+      {
+        "name": "CEM 141",
+        "units": "3",
+        "grade": "2.0",
+        "special": "MSU course, undergraduate numerical grading",
+        "planned": false
+      },
+      {
+        "name": "PSY 101",
+        "units": "3",
+        "grade": "0.0",
+        "special": "MSU course, undergraduate numerical grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ISS 210",
+        "units": "3",
+        "grade": "4.0",
+        "special": "MSU course, undergraduate numerical grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "b0c6c7819311"
+}

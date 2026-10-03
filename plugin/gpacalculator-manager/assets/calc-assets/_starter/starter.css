@@ -1,0 +1,5 @@
+/* Starter calculator v1.0.0: copy and rename the .stx prefix for a new calculator. */
+@import url('../core/calc-core.css');
+
+#root .stx { --calc-cols: 2fr 1fr 1fr auto; }
+#root .stx .calc-plan-out { margin-top: 14px; }

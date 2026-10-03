@@ -1,0 +1,91 @@
+# Grade + GPA university profiles live on gpacalculator.net (WP admin list, 2026-10-01).
+# Profiles are stored in the gpcm_university_profiles option, not in plugin code (stanford is also bundled).
+# Every id here must keep rendering through [gpcm_calculator id="..."]. Never remove a line.
+# university	id	rules_version	qa_status
+The University of Alabama	alabama	f013562122af	QA passed
+Arizona State University	asu	b76bc4b6d49d	QA passed
+Baylor University	baylor	987b1de48423	QA passed
+Boston University	bu	dfb1f1936edc	QA passed
+California Institute of Technology	caltech	33ce2886f86a	QA passed
+Case Western Reserve University	case-western	e6dec26e1e14	QA passed
+Clemson University	clemson	737e068c1010	QA passed
+Carnegie Mellon University	cmu	9a564974b851	QA passed
+Columbia University	columbia	e466aa47a6c0	QA passed
+Cornell University	cornell	359cd4675993	QA passed
+University of Colorado Boulder	cu-boulder	ec793bb4aae9	QA passed
+Dartmouth College	dartmouth	cf29c8d0f37c	QA passed
+Drexel University	drexel	170ab6e27013	QA passed
+Duke University	duke	aa83ae0d4019	QA passed
+Emory University	emory	e8dc73fee995	QA passed
+Florida State University	fsu	ef3d8c76e8b2	QA passed
+Georgetown University	georgetown	14736388f639	QA passed
+Georgia Institute of Technology	georgia-tech	55801b0a005e	QA passed
+Harvard University	harvard	9be346a5d846	QA passed
+Illinois Institute of Technology	iit	e999fe7ccd54	QA passed
+Iowa State University	iowa-state	1318c333186b	QA passed
+Indiana University Bloomington	iu	31a21afa891c	QA passed
+Johns Hopkins University	jhu	e05bded4b542	QA passed
+University of Kentucky	kentucky	ec2f6731d807	QA passed
+University of Kansas	ku	3e02a46818bc	QA passed
+Marquette University	marquette	89a714d014db	QA passed
+Michigan Technological University	michigan-tech	e6a982c634f8	QA passed
+Massachusetts Institute of Technology	mit	42a0b24e9a78	QA passed
+University of Missouri	mizzou	eeeec220c9b4	QA passed
+Michigan State University	msu	b0c6c7819311	QA passed
+Northeastern University	northeastern	0947f0c7c7ad	QA passed
+Northwestern University	northwestern	b0866b83f11f	QA passed
+University of Notre Dame	notre-dame	6441549b0359	QA passed
+New York University	nyu	01dfeb69db84	QA passed
+The Ohio State University	ohio-state	bb44d246f541	QA passed
+University of Oklahoma	ou	00df4b22af4e	QA passed
+Penn State	penn-state	b7b3b63b1396	QA passed
+University of Pittsburgh	pitt	3b959f78c374	QA passed
+Princeton University	princeton	545619e07293	QA passed
+Purdue University	purdue	7a3712dfd8f3	QA passed
+Rice University	rice	1d57fe8a4159	QA passed
+University of Rochester	rochester	fcc3b4371c0f	QA passed
+Rutgers University-New Brunswick	rutgers	c0a38901a327	QA passed
+Stanford University	stanford	stanford-rules-v1	Staging QA pending
+Syracuse University	syracuse	38e5a4abcb86	QA passed
+Texas Christian University	tcu	f5a8ef85aba0	QA passed
+Texas A&M University	texas-am	73bf245934a3	QA passed
+Tufts University	tufts	4d0c6cea65c5	QA passed
+University of California, Berkeley	uc-berkeley	c60789ee9db6	QA passed
+University of California, Davis	uc-davis	1c95cfe595b8	QA passed
+University of Central Florida	ucf	52c1cc156d94	QA passed
+University of Chicago	uchicago	8a40c52194ff	QA passed
+University of California, Irvine	uci	567dfe18c4ca	QA passed
+University of California, Los Angeles	ucla	b4dd756ab91d	QA passed
+University of Connecticut	uconn	cf5854c81a46	QA passed
+University of California, Santa Barbara	ucsb	a8553df4f3c7	QA passed
+University of California, San Diego	ucsd	f3d362df8d7d	QA passed
+University of Delaware	udel	40610dda8d38	QA passed
+University of Florida	uf	ee593bcb9d28	QA passed
+University of Georgia	uga	9a439307a364	QA passed
+University of Iowa	uiowa	1f485fc7de29	QA passed
+University of Illinois Urbana-Champaign	uiuc	403beccd85d0	QA passed
+University of Massachusetts Amherst	umass-amherst	97198dda33d4	QA passed
+University of Maryland, College Park	umd	4189175897ff	QA passed
+University of Michigan	umich	6af432db0c08	QA passed
+University of Minnesota Twin Cities	umn	28a3e715b91a	QA passed
+University of North Carolina at Chapel Hill	unc	71399b15dbc3	QA passed
+University of New Hampshire	unh	d0cd1b0dae7b	QA passed
+University of Miami	university-of-miami	5e7a7c5b13bd	QA passed
+University of Nebraska–Lincoln	unl	ae03515c6baa	QA passed
+University of Oregon	uo	2ed6bcc3867c	QA passed
+University of Pennsylvania	upenn	93329ae13a3b	QA passed
+University of Rhode Island	uri	2fa5258f6d01	QA passed
+University of Southern California	usc	28a219fca667	QA passed
+University of San Diego	usd	d09ed7f55a5f	QA passed
+University of South Florida	usf	b3652f702d21	QA passed
+The University of Texas at Austin	ut-austin	a7f88ea63cae	QA passed
+University of Utah	utah	7ac5bd88fdd3	QA passed
+University of Tennessee, Knoxville	utk	96dbd8c49e43	QA passed
+University of Virginia	uva	7afd74e99966	QA passed
+University of Vermont	uvm	3915a7f63be1	QA passed
+University of Washington	uw	c3326cc3c68f	QA passed
+University of Wisconsin–Madison	uw-madison	a3ebfdd3ba07	QA passed
+Vanderbilt University	vanderbilt	ff2beebfe1b5	QA passed
+Washington University in St. Louis	washu	9c8a14e0865b	QA passed
+Wake Forest University	wfu	16603c90a40f	QA passed
+Yale University	yale	cb1b008827f4	QA passed

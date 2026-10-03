@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "uci",
+  "universityName": "University of California, Irvine",
+  "pageTitle": "Calculate Your UC Irvine GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades, GPA formula, P/NP, temporary grades, academic standing",
+      "url": "https://catalogue.uci.edu/informationforadmittedstudents/academicregulationsandprocedures/"
+    },
+    {
+      "label": "Undergraduate and graduate repeat rules",
+      "url": "https://catalogue.uci.edu/informationforadmittedstudents/academicregulationsandprocedures/#repetitionofcoursestext"
+    },
+    {
+      "label": "Transferred credit and UC GPA",
+      "url": "https://www.reg.uci.edu/services/non-uc.html"
+    },
+    {
+      "label": "Bachelor degree GPA requirements",
+      "url": "https://catalogue.uci.edu/informationforadmittedstudents/requirementsforabachelorsdegree/"
+    },
+    {
+      "label": "Undergraduate financial-aid SAP",
+      "url": "https://ofas.uci.edu/assets/pdfs/SAPDisclosureForUndergraduates.pdf"
+    },
+    {
+      "label": "Latin honors",
+      "url": "https://reg.uci.edu/grades/latinhonors.html"
+    },
+    {
+      "label": "Transfer admission requirements",
+      "url": "https://admissions.uci.edu/apply/transfer-students/index.php"
+    },
+    {
+      "label": "Graduate academic standards",
+      "url": "https://catalogue.uci.edu/graduatedivision/"
+    },
+    {
+      "label": "Transcript grading notations",
+      "url": "https://reg.uci.edu/services/transcripts/notations.html"
+    }
+  ],
+  "helpIntro": "UC Irvine uses a 4.0 UC GPA scale. Enter quarter units and finalized grades; A+/A=4.0, plus/minus grades adjust by 0.3, and F=0. P/NP and temporary notations are excluded while unresolved.",
+  "helpNote": "For standard undergraduate UC GPA planning. The calculator displays three decimals. Repeat Impact is disabled because UCI replacement applies only to the first 16 repeated units and depends on transcript history. Graduate and PharmD contexts need separate review.",
+  "helpExample": "A 4-unit A earns 16.0 grade points and a 4-unit B+ earns 13.2; 29.2 ÷ 8 = 3.650.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "NP": null,
+      "S": null,
+      "U": null,
+      "I": null,
+      "IP": null,
+      "NR": null,
+      "W": null,
+      "UR": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ is 4.0 points per unit.",
+      "A": "A is 4.0 points per unit.",
+      "A-": "A- is 3.7 points per unit.",
+      "B+": "B+ is 3.3 points per unit.",
+      "B": "B is 3.0 points per unit.",
+      "B-": "B- is 2.7 points per unit.",
+      "C+": "C+ is 2.3 points per unit.",
+      "C": "C is 2.0 points per unit.",
+      "C-": "C- is 1.7 points per unit.",
+      "D+": "D+ is 1.3 points per unit.",
+      "D": "D is 1.0 point per unit.",
+      "D-": "D- is 0.7 points per unit.",
+      "F": "F earns zero grade points and its units count in the GPA denominator.",
+      "P": "Pass is excluded from GPA; unit credit is earned.",
+      "NP": "Not Pass is excluded from GPA and earns no unit credit.",
+      "S": "Satisfactory is excluded from GPA.",
+      "U": "Unsatisfactory is excluded from GPA.",
+      "I": "Incomplete is excluded while unresolved; it can later convert to the applicable permanent grade.",
+      "IP": "In Progress is excluded until the sequence receives final grades.",
+      "NR": "No Report is excluded while unresolved and can later convert to F, NP, or U.",
+      "W": "Withdrawal carries no grade points and is excluded from the UC GPA.",
+      "UR": "Unauthorized Repeat carries no credit or grade points."
+    },
+    "specialTypes": [
+      {
+        "name": "UCI course, standard letter/P-NP grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Use for standard UCI undergraduate courses with finalized transcript grades."
+      },
+      {
+        "name": "Course from another UC campus included in UC GPA",
+        "grades": null,
+        "excluded": false,
+        "note": "Use only when the course and grade are on your UC record and included in the UC GPA."
+      },
+      {
+        "name": "Non-UC transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted non-UC transfer units do not enter the UC GPA."
+      },
+      {
+        "name": "Repeated course needing transcript review",
+        "grades": [],
+        "excluded": false,
+        "note": "UCI replaces eligible deficient grades only within the first 16 repeated units; later repetitions and multiple attempts require record-specific review.",
+        "manualReview": true
+      },
+      {
+        "name": "PharmD H/F course or other professional grading",
+        "grades": [],
+        "excluded": false,
+        "note": "PharmD H/F grades are not calculated like the standard undergraduate letter-grade GPA.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": false,
+      "mode": "none",
+      "note": "Repeat Impact is disabled. Use your official UC GPA baseline or confirm which attempts count on your transcript before modeling repeated work.",
+      "originalGrades": [],
+      "newGrades": []
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate UC GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "BIO 93",
+        "units": "4",
+        "grade": "A",
+        "special": "UCI course, standard letter/P-NP grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 2A",
+        "units": "4",
+        "grade": "B+",
+        "special": "UCI course, standard letter/P-NP grading",
+        "planned": false
+      },
+      {
+        "name": "CHEM 1A",
+        "units": "4",
+        "grade": "F",
+        "special": "UCI course, standard letter/P-NP grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "WRITING 60",
+        "units": "4",
+        "grade": "A-",
+        "special": "UCI course, standard letter/P-NP grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "567dfe18c4ca"
+}

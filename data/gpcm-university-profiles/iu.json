@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "iu",
+  "universityName": "Indiana University Bloomington",
+  "pageTitle": "Calculate Your Indiana University GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Grades and grading; grade values; non-GPA marks; X replacement; distinction",
+      "url": "https://policies.iu.edu/policies/aca-66-grades-and-grading/index.html"
+    },
+    {
+      "label": "IU Bloomington grading system and GPA inclusion",
+      "url": "https://studentcentral.indiana.edu/grades/grading-system/index.html"
+    },
+    {
+      "label": "IU Bloomington retaking classes / X grade replacement",
+      "url": "https://studentcentral.indiana.edu/grades/grade-changes.html"
+    },
+    {
+      "label": "Transfer admission and transfer-credit GPA treatment",
+      "url": "https://bloomington.iu.edu/admissions/apply/transfer/admission-standards.html"
+    },
+    {
+      "label": "Fresh Start academic renewal",
+      "url": "https://studentcentral.indiana.edu/grades/fresh-start.html"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://studentcentral.indiana.edu/pay-for-college/manage-financial-aid/keep-grants-loans.html"
+    },
+    {
+      "label": "Graduate grading and standing example",
+      "url": "https://bulletin.iu.edu/iub/sice/2026-2027/policies/graduate/grading-system.shtml"
+    },
+    {
+      "label": "Graduate School admission",
+      "url": "https://www.bulletin.iu.edu/iu/gradschool/2026-2027/admission/index.shtml"
+    }
+  ],
+  "helpIntro": "IU Bloomington uses a 4.0 scale. Enter IU credit hours and final grades; A+ and A are 4.0, and F counts as 0.0 with its credit hours included.",
+  "helpNote": "For IU Bloomington undergraduate institutional GPA planning. Non-IU transfer grades, P/S, I, W and other non-GPA marks are excluded. Repeat Impact is only an estimate for an approved X replacement; Fresh Start and program-specific rules require record review.",
+  "helpExample": "A 3-credit A earns 12.0 grade points and a 3-credit B- earns 8.1. Together, 20.1 ÷ 6 = 3.350.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 30,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A+": 4,
+      "A": 4,
+      "A-": 3.7,
+      "B+": 3.3,
+      "B": 3,
+      "B-": 2.7,
+      "C+": 2.3,
+      "C": 2,
+      "C-": 1.7,
+      "D+": 1.3,
+      "D": 1,
+      "D-": 0.7,
+      "F": 0,
+      "P": null,
+      "S": null,
+      "I": null,
+      "R": null,
+      "W": null,
+      "NC": null,
+      "NR": null,
+      "NY": null,
+      "X": null,
+      "FX": null
+    },
+    "gradeExplanations": {
+      "A+": "A+ = 4.0; IU caps the scale at 4.0.",
+      "A": "A = 4.0.",
+      "A-": "A- = 3.7.",
+      "B+": "B+ = 3.3.",
+      "B": "B = 3.0.",
+      "B-": "B- = 2.7.",
+      "C+": "C+ = 2.3.",
+      "C": "C = 2.0.",
+      "C-": "C- = 1.7.",
+      "D+": "D+ = 1.3.",
+      "D": "D = 1.0.",
+      "D-": "D- = 0.7, the lowest passing letter grade.",
+      "F": "F = 0.0; its GPA credit hours still count.",
+      "P": "Pass is excluded from GPA.",
+      "S": "Satisfactory is excluded from GPA.",
+      "I": "Incomplete is excluded until replaced by a final grade; normally becomes F after the allowed period if unresolved.",
+      "R": "Deferred grade is excluded until replaced by a final grade.",
+      "W": "Withdrawal is excluded from GPA.",
+      "NC": "Non-credit/audit notation is excluded from GPA.",
+      "NR": "No Report is temporary and excluded until a grade is submitted.",
+      "NY": "Special-program enrollment notation is excluded until credit/grade is recorded.",
+      "X": "X marks a prior undergraduate attempt removed from GPA under an approved grade replacement.",
+      "FX": "Legacy failure-replaced notation is excluded from GPA calculations."
+    },
+    "specialTypes": [
+      {
+        "name": "Indiana University course",
+        "grades": null,
+        "excluded": false,
+        "note": "Use the final IU transcript grade. IU coursework across campuses can contribute to the university GPA, subject to record rules."
+      },
+      {
+        "name": "Non-IU transfer course",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted non-IU transfer credit may count toward a degree but its grade does not enter the IU GPA."
+      },
+      {
+        "name": "Credit by examination / assessed prior learning",
+        "grades": null,
+        "excluded": true,
+        "note": "Credit earned by examination or assessment is not GPA-bearing; an A used to denote superior examination performance is not included in GPA."
+      },
+      {
+        "name": "Fresh Start / academic renewal record",
+        "grades": [],
+        "excluded": false,
+        "note": "Fresh Start can remove pre-return grades from GPA for eligible returning Bloomington undergraduates; use your recalculated official baseline rather than guessing course-by-course.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "Repeat Impact is an estimate only. Use it only if your school confirms X eligibility and the replacement is approved; Bloomington limits the option to three courses or 10 credits, whichever is less.",
+      "originalGrades": [
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ],
+      "newGrades": [
+        "A+",
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "IU Bloomington undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3",
+    "previousUnits": "30",
+    "completed": [
+      {
+        "name": "PSY-P 101",
+        "units": "3",
+        "grade": "C",
+        "special": "Indiana University course",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "ENG-W 131",
+        "units": "3",
+        "grade": "A",
+        "special": "Indiana University course",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "31a21afa891c"
+}

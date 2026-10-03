@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "qaStatus": "QA passed",
+  "slug": "unh",
+  "universityName": "University of New Hampshire",
+  "pageTitle": "Calculate Your UNH GPA",
+  "sourceLink": "https://gpacalculator.net",
+  "officialLinks": [
+    {
+      "label": "Undergraduate GPA formula and precision",
+      "url": "https://catalog.unh.edu/undergraduate/academic-policies-procedures/grades/grades.pdf"
+    },
+    {
+      "label": "Grade scale, GPA formula, AF and administrative grades",
+      "url": "https://www.unh.edu/registrar/enrollment-records/grades"
+    },
+    {
+      "label": "Repeated undergraduate courses",
+      "url": "https://catalog.unh.edu/undergraduate/academic-policies-procedures/repeated-courses/repeated-courses.pdf"
+    },
+    {
+      "label": "Undergraduate pass/fail",
+      "url": "https://catalog.unh.edu/undergraduate/academic-policies-procedures/pass-fail/pass-fail.pdf"
+    },
+    {
+      "label": "Transfer credit and GPA",
+      "url": "https://www.unh.edu/registrar/transfer-credit/transfer-credit-policies"
+    },
+    {
+      "label": "Undergraduate academic standing",
+      "url": "https://www.unh.edu/registrar/enrollment-records/academic-standing-actions-exclusion-suspension-dismissal"
+    },
+    {
+      "label": "Financial aid satisfactory academic progress",
+      "url": "https://www.unh.edu/financialaid/resources/satisfactory-academic-progress"
+    },
+    {
+      "label": "Academic honors",
+      "url": "https://www.unh.edu/registrar/graduation-planning-diplomas/academic-honors"
+    },
+    {
+      "label": "Graduate grading and repeats",
+      "url": "https://catalog.unh.edu/graduate/academic-regulations-degree-requirements/grading/grading.pdf"
+    },
+    {
+      "label": "First-year admissions GPA context",
+      "url": "https://admissions.unh.edu/apply/first-year"
+    }
+  ],
+  "helpIntro": "UNH uses a 4.0 plus/minus scale. Enter graded UNH semester credits and final grades to estimate your current and projected undergraduate GPA.",
+  "helpNote": "For standard undergraduate UNH GPA planning. The shared calculator displays three decimals, while UNH calculates the official GPA to two decimal places without rounding. Use the Pass/Fail course type when applicable; graduate and Law records need separate review.",
+  "helpExample": "A 3-credit A earns 12.00 grade points and a 3-credit B+ earns 9.99. Together, 21.99 / 6 = 3.665 in the planning display; UNH’s official two-decimal calculation is not rounded.",
+  "baseContext": {
+    "scaleMax": 4,
+    "scaleLabel": "4 scale",
+    "courseUnitMax": 1000,
+    "hasOfficialGpa": true,
+    "grades": {
+      "A": 4,
+      "A-": 3.67,
+      "B+": 3.33,
+      "B": 3,
+      "B-": 2.67,
+      "C+": 2.33,
+      "C": 2,
+      "C-": 1.67,
+      "D+": 1.33,
+      "D": 1,
+      "D-": 0.67,
+      "F": 0,
+      "AF": 0,
+      "CR": null,
+      "P": null,
+      "W": null,
+      "AU": null,
+      "IC": null,
+      "IA": null,
+      "IX": null,
+      "NR": null
+    },
+    "gradeExplanations": {
+      "A": "A = 4.00 grade points per credit.",
+      "A-": "A- = 3.67 grade points per credit.",
+      "B+": "B+ = 3.33 grade points per credit.",
+      "B": "B = 3.00 grade points per credit.",
+      "B-": "B- = 2.67 grade points per credit.",
+      "C+": "C+ = 2.33 grade points per credit.",
+      "C": "C = 2.00 grade points per credit.",
+      "C-": "C- = 1.67 grade points per credit.",
+      "D+": "D+ = 1.33 grade points per credit.",
+      "D": "D = 1.00 grade points per credit.",
+      "D-": "D- = 0.67 grade points per credit.",
+      "F": "Standard F counts at 0.00 and its graded credits remain in the GPA denominator.",
+      "AF": "Administrative Failure; treated the same as F in GPA calculation.",
+      "CR": "Credit grade; excluded from GPA.",
+      "P": "Pass; excluded from GPA.",
+      "W": "Withdrawn; excluded from GPA.",
+      "AU": "Audit; no credit and excluded from GPA.",
+      "IC": "Incomplete coursework; excluded until resolved; may become F if not completed by deadline.",
+      "IA": "Continuing course/thesis notation; excluded until replaced by final grade.",
+      "IX": "Grade not reported; excluded until resolved.",
+      "NR": "Not Resolved pending academic-integrity matter; excluded until resolved."
+    },
+    "specialTypes": [
+      {
+        "name": "UNH course, standard grading",
+        "grades": null,
+        "excluded": false,
+        "note": "Enter UNH graded credits and the final grade."
+      },
+      {
+        "name": "UNH course, Pass/Fail option",
+        "grades": [
+          "P",
+          "F"
+        ],
+        "excluded": false,
+        "note": "Choose P or F only. Both are excluded from GPA under the undergraduate Pass/Fail option.",
+        "gradePoints": {
+          "P": null,
+          "F": null
+        }
+      },
+      {
+        "name": "Approved external transfer credit",
+        "grades": null,
+        "excluded": true,
+        "note": "Accepted transfer credit does not enter the UNH GPA."
+      },
+      {
+        "name": "Graduate or Law course/record",
+        "grades": [],
+        "excluded": false,
+        "note": "Graduate and Law rules are outside this undergraduate profile.",
+        "manualReview": true
+      }
+    ],
+    "targetEnabled": true,
+    "repeatPolicy": {
+      "supported": true,
+      "mode": "replace",
+      "note": "For an eligible UNH undergraduate repeat, the former credits and grade points are removed from cumulative GPA and the repeated course is added. Both grades remain visible on the transcript.",
+      "originalGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F",
+        "AF"
+      ],
+      "newGrades": [
+        "A",
+        "A-",
+        "B+",
+        "B",
+        "B-",
+        "C+",
+        "C",
+        "C-",
+        "D+",
+        "D",
+        "D-",
+        "F",
+        "AF"
+      ]
+    }
+  },
+  "records": [
+    {
+      "name": "Undergraduate GPA"
+    }
+  ],
+  "sampleData": {
+    "previousGpa": "3.2",
+    "previousUnits": "60",
+    "completed": [
+      {
+        "name": "ENGL 401",
+        "units": "3",
+        "grade": "A",
+        "special": "UNH course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "BIOL 411",
+        "units": "4",
+        "grade": "B+",
+        "special": "UNH course, standard grading",
+        "planned": false
+      },
+      {
+        "name": "MATH 418",
+        "units": "3",
+        "grade": "F",
+        "special": "UNH course, standard grading",
+        "planned": false
+      }
+    ],
+    "planned": [
+      {
+        "name": "HIST 405",
+        "units": "3",
+        "grade": "A-",
+        "special": "UNH course, standard grading",
+        "planned": true
+      }
+    ]
+  },
+  "configVersion": "d0cd1b0dae7b"
+}

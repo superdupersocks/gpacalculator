@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)"
      https://claude.ai/code/artifact/1d396bba-2925-4cd3-95b4-7c5ce1bf894d
-     Synced 2026-10-03 from doc revision 32. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 33. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand.
      Check: everything below this comment is byte-identical to the export. -->
 # gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)
@@ -279,7 +279,7 @@ Sections are numbered (01, 02, 03) with CSS counters, the TOC uses the same numb
 - The links are in the HTML while collapsed, so Google reads them exactly as if the list were open.
 - Placement: under the calculator (calculator pages) or the key-facts box (college and GPA scale pages), above the first content section.
 - Server-rendered `<a href="#section-id">` links, never built by JavaScript. Rank Math TOC block stays the source on content pages (title tag `div`/`p`); generated templates output the same markup.
-- Exclude FAQ, "Keep planning", Similar colleges and Sources headings so the list matches the numbered H2s. Show it on pages with 4+ numbered sections.
+- Exclude FAQ, "Keep planning", Similar colleges and Sources headings so the list matches the numbered H2s. Show it on pages with 3+ numbered sections (site-wide, no exceptions); 24px space below the closed row before the first section.
 - Section headings get `scroll-margin-top: 80px` so the sticky header never covers them.
 
 **Headings and IDs (rule for every page)**

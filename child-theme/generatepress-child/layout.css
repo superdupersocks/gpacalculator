@@ -776,9 +776,10 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 #page .entry-content details.gpa-toc .wp-block-rank-math-toc-block > :is(h2, h3, h4, p, div):first-child { display: none !important; }
 #page .entry-content details.gpa-toc .wp-block-rank-math-toc-block li {
     gap: 14px;
-    padding: 6px 0 !important;
-    border-top: 0;
+    padding: 8px 0 !important;
+    border-top: 1px solid var(--gpa-divider);
 }
+#page .entry-content details.gpa-toc .wp-block-rank-math-toc-block li:first-child { border-top: 0; }
 #page .entry-content details.gpa-toc .wp-block-rank-math-toc-block li::before {
     width: 28px;
     height: 28px;

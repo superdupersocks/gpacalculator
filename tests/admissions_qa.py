@@ -33,6 +33,7 @@ import phase3_gpa_bands  # noqa: E402
 import phase3_names  # noqa: E402
 import phase4_websites  # noqa: E402
 import review_sources  # noqa: E402
+import tiering  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
 fails = []
@@ -1203,6 +1204,25 @@ eq("Cleanup check after the fixes: one 301 straight to its target (a hub search 
     "301 Rank Math > /admissions/adams-state-university/ | 200",
     "https://gpacalculator.net/admissions/adams-state-university/",
     "https://gpacalculator.net/admissions/?search=Adams"])
+
+_blind = {"admission_requirements_test_scores": "Not considered for admission, even if submitted (Test Blind)"}
+_figs = {"acceptance_rate": "0.5", "sat_composite_25": "1100", "sat_composite_75": "1300"}
+eq("Tiers: A needs a cited GPA, the acceptance rate and SAT/ACT (none when IPEDS lists the college as test blind); "
+   "open admission is C whatever the page shows; one or two of the three is B; none is C",
+   [tiering.tier(_figs, True), tiering.tier({"acceptance_rate": "0.5", **_blind}, True),
+    tiering.tier({**_figs, "adm_open_admission": "Yes"}, True)[0],
+    tiering.tier({"acceptance_rate": "0.5", "act_composite_25": "20", "act_composite_75": "26"}, False),
+    tiering.tier({"sat_math_25": "500", "sat_math_75": "600"}, True), tiering.tier(_blind, False),
+    tiering.tier({"emptied": "yes"}, False)[0]],
+   [("A", "cited GPA, acceptance rate and SAT/ACT"), ("A", "cited GPA, acceptance rate and test blind"), "C",
+    ("B", "no cited GPA"), ("B", "no acceptance rate"), ("C", "no cited GPA, acceptance rate or SAT/ACT"), "C"])
+_tiers = list(csv.DictReader(open(ROOT / "data" / "admissions" / "tiering" / "tiers.csv", encoding="utf-8")))
+eq("Tiers (the committed list): one row per published college page; A and B stay in search, C comes out unless the "
+   "page had a click in 12 months or shows a GPA the college reported",
+   (len(_tiers), len({r["slug"] for r in _tiers}), Counter(r["tier"] for r in _tiers)["A"],
+    [r["slug"] for r in _tiers if r["recommendation"] != (
+        "index" if r["tier"] in ("A", "B") or int(r["clicks_12m"]) or r["cited_gpa"] else "noindex")]),
+   (3085, 3085, 253, []))
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

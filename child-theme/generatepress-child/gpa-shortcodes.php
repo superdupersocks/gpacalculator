@@ -569,3 +569,58 @@ function gpa_scale_insert_weighted_card( $content ) {
 	return substr( $content, 0, $pos ) . $card . substr( $content, $pos );
 }
 add_action( 'init', function () { add_shortcode( 'gpa_scale_view', 'gpa_scale_view_shortcode' ); } );
+
+/**
+ * "On this page" on the GPA pages (Design System spec, In-page navigation; Digant 2026-10-03 19:41): a <details> row,
+ * collapsed by default at every size, summary "On this page · N sections", the links in the HTML (server-rendered,
+ * never built by JS), each link's text the H2's text word for word, one column, numbered like the sections. It lists
+ * the numbered H2s: not the FAQ, "Keep planning", Similar colleges or Sources headings, nor .gpa-no-number ones.
+ * Placed above the first content section. It keeps the Rank Math TOC class so the theme's JS builder
+ * (gpa_toc_builder() in functions.php) leaves the page alone; gpa-scale.css styles it. Shown from
+ * GPA_SCALE_TOC_MIN sections. The spec says 4+, but with the FAQ heading left out the GPA pages have 3 sections (4.0 has
+ * 4); at 4 the theme's JS builder would fill the gap with the old boxed list, so the GPA pages use 3.
+ */
+if ( ! defined( 'GPA_SCALE_TOC_MIN' ) ) {
+	define( 'GPA_SCALE_TOC_MIN', 3 );
+}
+add_filter( 'the_content', 'gpa_scale_on_this_page', 30 );
+function gpa_scale_on_this_page( $content ) {
+	if ( is_admin() || ! in_the_loop() || ! is_main_query() || false !== strpos( $content, 'gpa-onthispage' ) ) {
+		return $content;
+	}
+	if ( ! function_exists( 'gpa_scale_page_gpa' ) || ! gpa_scale_page_gpa() ) {
+		return $content;
+	}
+	$items = array();
+	$used  = array();
+	$out   = preg_replace_callback( '#<h2\b([^>]*)>(.*?)</h2>#s', function ( $h ) use ( &$items, &$used ) {
+		$text = trim( preg_replace( '/\s+/', ' ', html_entity_decode( wp_strip_all_tags( $h[2] ), ENT_QUOTES, 'UTF-8' ) ) );
+		if ( '' === $text || preg_match( '/class="[^"]*\bgpa-no-number\b/', $h[1] )
+			|| preg_match( '/frequently asked questions|\bFAQs?\b|keep planning|similar colleges|^sources$/i', $text ) ) {
+			return $h[0];
+		}
+		$attrs = $h[1];
+		if ( preg_match( '/\bid="([^"]+)"/', $attrs, $idm ) ) {
+			$id = $idm[1];
+		} else {
+			$base = sanitize_title( $text );
+			$id   = $base;
+			for ( $n = 2; in_array( $id, $used, true ); $n++ ) { $id = $base . '-' . $n; }
+			$attrs .= ' id="' . esc_attr( $id ) . '"';
+		}
+		$used[]  = $id;
+		$items[] = array( $id, $text );
+		return ( 1 === count( $items ) ? '<!--gpa-onthispage-->' : '' ) . '<h2' . $attrs . '>' . $h[2] . '</h2>';
+	}, $content );
+	$toc = '';
+	if ( count( $items ) >= GPA_SCALE_TOC_MIN ) {
+		$links = '';
+		foreach ( $items as $item ) {
+			$links .= '<li><a href="#' . esc_attr( $item[0] ) . '">' . esc_html( $item[1] ) . '</a></li>';
+		}
+		$toc = '<details class="wp-block-rank-math-toc-block gpa-onthispage"><summary>On this page <span class="gpa-onthispage__count">· '
+			. count( $items ) . ' sections</span></summary><nav aria-label="On this page"><ol>' . $links . '</ol></nav></details>';
+	}
+	return str_replace( '<!--gpa-onthispage-->', $toc, $out );
+}
+

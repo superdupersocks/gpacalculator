@@ -1021,11 +1021,3 @@ body.single-colleges #page .entry-content .rank-math-block summary.rank-math-que
 body.single-colleges #page .entry-content .rank-math-block .gpa-faq-item[open] > .rank-math-question::after { transform: rotate(180deg); }
 
 
-/* "Jump to" chips (.gpa-jump, components.css 12) on the text edge like the other text blocks (layout.css 1 doesn't list
-   the component yet): 40px in on desktop and tablet; on phones the content area already carries the 20px. */
-@media (min-width: 641px) {
-    body.single-colleges #page .entry-content > nav.gpa-jump { max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important; }
-}
-@media (min-width: 641px) and (max-width: 880px) {
-    body.single-colleges #page .entry-content > nav.gpa-jump { max-width: 100% !important; }
-}

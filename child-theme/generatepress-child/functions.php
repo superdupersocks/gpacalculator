@@ -3683,7 +3683,7 @@ function gpa_faq_accordion() {
 /**
  * Design overhaul: "On this page" table of contents under the calculator (or above the first numbered section on
  * pages without one), listing exactly the H2s that layout.css section 10 numbers, so the numbers always match.
- * Shown on pages with 4 or more numbered sections; pages that already have a Rank Math TOC block keep theirs.
+ * Shown on pages with 3 or more numbered sections (site-wide rule, Digant 2026-10-03); pages that already have a Rank Math TOC block keep theirs.
  * Built in the browser from the numbered headings, so no page content changes. Styles: layout.css section 11.
  */
 add_action( 'wp_footer', 'gpa_toc_builder', 31 );
@@ -3704,7 +3704,7 @@ function gpa_toc_builder() {
 	var heads = [].filter.call(c.querySelectorAll('h2'), function (h) {
 		return /gpa-sec/.test(getComputedStyle(h, '::before').content || '');
 	});
-	if (heads.length < 4) { toc.remove(); return; }
+	if (heads.length < 3) { toc.remove(); return; }
 	var top = function (el) { while (el.parentElement && el.parentElement !== c) { el = el.parentElement; } return el; };
 	var root = c.querySelector('#root, .gpacalc-mount, .frm_forms');
 	var before = root ? top(root).nextElementSibling : top(heads[0]);

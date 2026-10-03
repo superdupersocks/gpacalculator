@@ -47,6 +47,11 @@
         return Number(n).toFixed(d);
     }
 
+    // "a weighted", "an unweighted"
+    function an(word) {
+        return (/^[aeiou]/i.test(word) ? 'an ' : 'a ') + word;
+    }
+
     // Position of a score in the middle 50%: 0 below the 25th, 1 in the lower half, 2 in the upper half, 3 above the 75th
     function testPosition(score, p) {
         if (score > p[2]) {
@@ -116,7 +121,7 @@
                 parts.push('Your ' + state.scale + ' ' + fmt(g, 2) + ' is ' + (pos === 1 ? 'above' : (pos === 0.6 ? 'close to' : 'below')) +
                     ' the ' + c.basis + ' average of ' + fmt(c.gpa, 2) + ' that ' + c.name + ' reported for ' + c.gpaYear + '.');
             } else if (c.gpa !== null) {
-                parts.push(c.name + ' reported a ' + c.basis + ' average (' + fmt(c.gpa, 2) + '), so a ' + state.scale +
+                parts.push(c.name + ' reported ' + an(c.basis) + ' average (' + fmt(c.gpa, 2) + '), so ' + an(state.scale) +
                     ' GPA can’t be compared with it directly. Switch to ' + c.basis + ' if you know yours.');
             } else if (c.gpaUnstated) {
                 parts.push(c.name + ' doesn’t say whether its average GPA is weighted or unweighted, so we can’t place your ' + fmt(g, 2) + ' against it.');

@@ -56,10 +56,10 @@ Every calculator must look and behave like one product. Build on the shared calc
 
 ### Size and shape
 
-- **Width: 800px max** (`max-width: 800px; margin: 0 auto`), even though the content column is 900px.
+- **Width: 800px max** (`max-width: 800px; margin: 0 auto`), exactly as wide as the white content column (800px).
 - Card: radius 16px, 1px border, the only element on the page with a shadow.
 - Inputs/selects: 44px tall, radius 8px, 2px focus ring. Buttons and tap targets ≥44px.
-- Mobile (≤640px): rows stack (name full width, grade + credits side by side), 12px side margin on the card. On a 390×844 phone the first screen shows at least three course rows plus the result.
+- Mobile (≤640px): rows stack (name full width, grade + credits side by side), 14px side margin on the card. On a 390×844 phone the first screen shows at least three course rows plus the result.
 - Check that a long course name ("Introduction to Organic Chemistry") stays readable at 375px. Lexend is wide.
 
 ### Page fit

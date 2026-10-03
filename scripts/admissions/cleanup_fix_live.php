@@ -13,10 +13,13 @@
  *
  * fixes.csv (data/admissions/cleanup_qa/fixes.csv, from scripts/admissions/cleanup_qa.py report) has one row per
  * address (admissions/<slug> or admission/<slug>): what it answers today (now), what it should answer (code 301 with a
- * target, or 410) and why. An address the active Rank Math rule answers gets that rule changed, when every address
- * the rule covers is listed with the same answer; an address no active rule answers gets a new rule. A row is skipped,
- * and reported, when a published college page has the address, a 301 target isn't one published college page (or the
- * /admissions/ hub), more than one active rule answers it, or its rule also covers addresses the list doesn't change.
+ * target, or 410) and why. An address no active rule answers gets a new rule. An address the active Rank Math rule
+ * answers gets that rule changed when every address the rule covers needs the same new answer; when the rule also
+ * covers addresses that keep its answer (ones the list leaves out, or lists with that answer), the addresses that need
+ * another answer move out of it into a new rule (a split), and the rule keeps the rest. A rule that redirects to an
+ * /admissions/ address no published college page has any more (a dead end) gives the addresses the list leaves out a
+ * 410 as well. A row is skipped, and reported, when a published college page has the address, a 301 target isn't one
+ * published college page (or the /admissions/ hub), or more than one active rule answers it.
  *
  * The pages left under /admissions/ are WordPress pages (children of the old "Admissions" page, last saved 2026-07-15)
  * whose addresses the colleges post type answers, so no visitor sees them; but the page sitemap lists them, and
@@ -217,6 +220,27 @@ function cf_drop_sources( $fh, $rule, array $addresses ) {
 	}
 }
 
+// The answer a rule gives: [code, target], a 410's target ''.
+function cf_rule_answer( $rule ) {
+	return array( (int) $rule->header_code, 410 === (int) $rule->header_code ? '' : (string) $rule->url_to );
+}
+
+// Whether two answers are the same: the code, and a redirect's target with its query (?search=Virginia counts).
+function cf_same( array $a, array $b ) {
+	$key = function ( $u ) {
+		$u = strtolower( rawurldecode( preg_replace( '#^https?://[^/]+#', '', (string) $u ) ) );
+		return rtrim( str_replace( '/?', '?', $u ), '/' );
+	};
+	return (int) $a[0] === (int) $b[0] && ( 410 === (int) $a[0] || $key( $a[1] ) === $key( $b[1] ) );
+}
+
+// A redirect to an /admissions/<slug> address that no published college page has any more.
+function cf_dead_end( $rule ) {
+	$path = cf_norm( $rule->url_to );
+	return in_array( (int) $rule->header_code, array( 301, 302, 307, 308 ), true )
+		&& preg_match( '#^admissions/([a-z0-9-]+)$#', $path, $m ) && ! cf_one_published( $m[1] );
+}
+
 // Fixes ------------------------------------------------------------------------------------------------------------
 
 // The work for the whole list: [ops, skipped]. An op is a rule to set, or addresses that need a new rule.
@@ -245,8 +269,8 @@ function cf_fix_ops( array $rows ) {
 		}
 		$want[ $a ] = array( $code, 301 === $code ? $row['target'] : '' );
 	}
-	$ops  = array();
-	$seen = array();
+	$ops     = array();
+	$by_rule = array();
 	foreach ( $want as $a => $answer ) {
 		$rules = cf_rules_on( array( $a ) );
 		if ( count( $rules ) > 1 ) {
@@ -259,27 +283,34 @@ function cf_fix_ops( array $rows ) {
 			$ops[ 'add ' . $key ]['answer']      = $answer;
 			continue;
 		}
-		$rule = current( $rules );
-		if ( isset( $seen[ $rule->id ] ) ) {
-			continue;
-		}
-		$seen[ $rule->id ] = true;
-		$others            = array();
+		$rule                               = current( $rules );
+		$by_rule[ $rule->id ]['rule']       = $rule;
+		$by_rule[ $rule->id ]['want'][ $a ] = $answer;
+	}
+	foreach ( $by_rule as $id => $g ) {
+		$rule  = $g['rule'];
+		$now   = cf_rule_answer( $rule );
+		$dead  = cf_dead_end( $rule );
+		$moves = array(); // answer => addresses that need it
+		$stay  = array(); // addresses that keep the rule's answer
 		foreach ( cf_sources( $rule ) as $s ) {
-			$p = cf_norm( $s['pattern'] ?? '' );
-			if ( ! isset( $want[ $p ] ) || $want[ $p ] !== $answer ) {
-				$others[] = $p;
+			$p   = cf_norm( $s['pattern'] ?? '' );
+			$ans = $g['want'][ $p ] ?? ( $dead && 'exact' === ( $s['comparison'] ?? '' ) ? array( 410, '' ) : null );
+			if ( null === $ans || cf_same( $ans, $now ) ) {
+				$stay[] = $p;
+				continue;
 			}
+			$k                          = $ans[0] . ' ' . $ans[1];
+			$moves[ $k ]['answer']      = $ans;
+			$moves[ $k ]['addresses'][] = $p;
 		}
-		if ( $others ) {
-			$skip[] = "$a: its rule " . cf_describe( $rule ) . ' also covers ' . implode( ', ', $others ) . ', which the list answers differently';
-			continue;
+		if ( ! $moves ) {
+			$ops[ 'done ' . $id ] = array( 'rule' => $rule, 'answer' => $now );
+		} elseif ( ! $stay && 1 === count( $moves ) ) {
+			$ops[ 'set ' . $id ] = array( 'rule' => $rule, 'answer' => current( $moves )['answer'] );
+		} else {
+			$ops[ 'split ' . $id ] = array( 'rule' => $rule, 'moves' => array_values( $moves ), 'stay' => $stay );
 		}
-		if ( (int) $rule->header_code === $answer[0] && cf_norm( $rule->url_to ) === cf_norm( $answer[1] ) ) {
-			$ops[ 'done ' . $rule->id ] = array( 'rule' => $rule, 'answer' => $answer );
-			continue;
-		}
-		$ops[ 'set ' . $rule->id ] = array( 'rule' => $rule, 'answer' => $answer );
 	}
 	return array( $ops, $skip );
 }
@@ -293,7 +324,7 @@ function cf_plan( $file ) {
 		WP_CLI::warning( $p );
 	}
 	list( $ops, $skip ) = cf_fix_ops( cf_csv( $file, array( 'address', 'code', 'target' ) ) );
-	$n                  = array( 'set' => 0, 'add' => 0, 'done' => 0 );
+	$n                  = array( 'set' => 0, 'split' => 0, 'add' => 0, 'done' => 0 );
 	foreach ( $ops as $key => $op ) {
 		$kind = strtok( $key, ' ' );
 		++$n[ $kind ];
@@ -301,12 +332,18 @@ function cf_plan( $file ) {
 			WP_CLI::log( 'add  ' . implode( ' + ', $op['addresses'] ) . ' -> ' . cf_answer( $op['answer'] ) );
 		} elseif ( 'set' === $kind ) {
 			WP_CLI::log( 'set  ' . cf_describe( $op['rule'] ) . '  =>  ' . cf_answer( $op['answer'] ) );
+		} elseif ( 'split' === $kind ) {
+			$parts = array();
+			foreach ( $op['moves'] as $m ) {
+				$parts[] = implode( ' + ', $m['addresses'] ) . ' -> ' . cf_answer( $m['answer'] );
+			}
+			WP_CLI::log( 'split ' . cf_describe( $op['rule'] ) . '  =>  new rules: ' . implode( '; ', $parts ) . '; ' . ( $op['stay'] ? 'the rule keeps ' . implode( ' + ', $op['stay'] ) : 'the rule goes (nothing left in it)' ) );
 		}
 	}
 	foreach ( $skip as $s ) {
 		WP_CLI::log( "SKIP $s" );
 	}
-	WP_CLI::log( "{$n['set']} rules to change, {$n['add']} to add, {$n['done']} already right, " . count( $skip ) . ' skipped' );
+	WP_CLI::log( "{$n['set']} rules to change, {$n['split']} to split, {$n['add']} to add, {$n['done']} already right, " . count( $skip ) . ' skipped' );
 }
 
 function cf_apply( $file, $log ) {
@@ -319,12 +356,30 @@ function cf_apply( $file, $log ) {
 	if ( ! $fh ) {
 		WP_CLI::error( "can't write $log" );
 	}
-	$n       = array( 'set' => 0, 'add' => 0, 'done' => 0 );
+	$n       = array( 'set' => 0, 'split' => 0, 'add' => 0, 'done' => 0 );
 	$touched = array();
 	foreach ( $ops as $key => $op ) {
 		$kind = strtok( $key, ' ' );
 		if ( 'set' === $kind ) {
 			cf_set_rule( $fh, $op['rule'], $op['answer'][0], $op['answer'][1] );
+			$touched[] = $op['rule']->id;
+		} elseif ( 'split' === $kind ) {
+			// The new rules first, so an address is never left without one; then out of the old rule
+			$out = array();
+			foreach ( $op['moves'] as $m ) {
+				$id = cf_add_rule( $m['addresses'], $m['answer'][0], $m['answer'][1] );
+				if ( ! $id ) {
+					WP_CLI::warning( 'not added: ' . implode( ' + ', $m['addresses'] ) );
+					continue;
+				}
+				cf_log( $fh, array( 'add', $id ) );
+				$touched[] = $id;
+				$out       = array_merge( $out, $m['addresses'] );
+			}
+			if ( ! $out ) {
+				continue;
+			}
+			cf_drop_sources( $fh, $op['rule'], $out );
 			$touched[] = $op['rule']->id;
 		} elseif ( 'add' === $kind ) {
 			$id = cf_add_rule( $op['addresses'], $op['answer'][0], $op['answer'][1] );
@@ -342,7 +397,7 @@ function cf_apply( $file, $log ) {
 	foreach ( $skip as $s ) {
 		WP_CLI::warning( "skipped $s" );
 	}
-	WP_CLI::log( "changed {$n['set']} rules, added {$n['add']}, {$n['done']} already right, " . count( $skip ) . " skipped; log $log" );
+	WP_CLI::log( "changed {$n['set']} rules, split {$n['split']}, added {$n['add']}, {$n['done']} already right, " . count( $skip ) . " skipped; log $log" );
 }
 
 // Pages ------------------------------------------------------------------------------------------------------------

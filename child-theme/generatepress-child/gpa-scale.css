@@ -171,6 +171,21 @@ body.gpa-hero-band .entry-header .gpa-updated {
 }
 #page .entry-content .gpa-quickconv__link[hidden] { display: none; }
 
+/* Hub converter + its letter-grade table at body text width, the paragraphs' left edge, like the GPA pages' card
+   and chart (Digant 2026-10-03 08:46); same card padding and corners as the GPA page card */
+#page .entry-content .gpa-quickconv,
+#page .entry-content .gpa-quickconv + figure.wp-block-table {
+    max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+#page .entry-content .gpa-quickconv { padding: 24px !important; border-radius: 16px !important; }
+@media (max-width: 640px) {
+    #page .entry-content .gpa-quickconv,
+    #page .entry-content .gpa-quickconv + figure.wp-block-table { max-width: 100% !important; }
+    #page .entry-content .gpa-quickconv { padding: 16px !important; }
+}
+
 #page .entry-content .gpa-lookup__group {
     margin: 24px 0 12px !important;
     font-size: 17px !important;

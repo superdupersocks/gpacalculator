@@ -36,7 +36,7 @@ export default {
     { id: 'hon', label: 'Honors', short: 'Hon' },
     { id: 'ap', label: 'AP', short: 'AP' },
     { id: 'ib', label: 'IB', short: 'IB' },
-    { id: 'de', label: 'Dual Enrollment', short: 'DE' },
+    { id: 'de', label: 'Dual Enrollment', short: 'DE', select: 'Dual Enroll.' }, // select: the shorter desktop label
   ],
   // Course features (Calculator Design Standard, opt-in): name suggestions with nicknames, and the level set
   // from the course name unless the student picked one by hand.

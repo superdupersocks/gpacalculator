@@ -47,7 +47,7 @@
 :is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 1fr) 128px 104px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols: minmax(0, 1fr) 128px 104px 56px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols: minmax(0, 1.3fr) 120px 96px minmax(0, 1fr) var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-cols.has-level { --calc-cols: minmax(0, 1fr) 120px 88px 168px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-level { --calc-cols: minmax(0, 1fr) 120px 88px 184px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols: minmax(0, 1.3fr) 120px 96px minmax(0, 1fr) 56px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-row .calc-field { min-width: 0; }
 :is(#root, .gpacalc-mount) .gpa-major { justify-content: center; }

@@ -362,7 +362,7 @@ export function mountGpa(root, profile, opts = {}) {
     let levelBtn = null;
     if (levels) {
       levelSel = h('select', { class: 'calc-select gpa-level', id: `${id}-l`, 'aria-label': `Course ${i + 1} level` });
-      for (const l of levels) levelSel.append(h('option', { value: l.id }, boostOf(l.id) ? `${l.label} (${boostText(boostOf(l.id))})` : l.label));
+      for (const l of levels) levelSel.append(h('option', { value: l.id }, boostOf(l.id) ? `${l.select || l.label} ${boostText(boostOf(l.id))}` : l.label));
       levelSel.value = row.level || 'reg';
       levelBtn = h('button', { type: 'button', class: 'calc-select gpa-level-btn', 'aria-haspopup': 'dialog', 'aria-label': `Course ${i + 1} level` });
     }

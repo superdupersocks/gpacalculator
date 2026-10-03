@@ -244,6 +244,10 @@ switch ( $mode ) {
 					} else {
 						echo ( $r[1] ? '    ' : '  ' ) . "{$r[0][0]} -> {$res['url']}\n";
 						$pid = ! empty( $res['id'] ) ? $res['id'] : url_to_postid( $res['url'] );
+						if ( ! $pid && '#' !== $res['url'] ) {   // /admissions/ is the colleges archive, so url_to_postid gives 0
+							$pg  = get_page_by_path( trim( (string) wp_parse_url( $res['url'], PHP_URL_PATH ), '/' ) );
+							$pid = $pg ? $pg->ID : 0;
+						}
 						if ( $pid ) {
 							$linked[ $pid ] = true;
 						}

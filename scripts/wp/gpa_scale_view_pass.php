@@ -160,8 +160,9 @@ if ( $render ) {
 }
 if ( $save ) {
 	foreach ( $plan as $slug => list( $id, $content ) ) {
-		$r = wp_update_post( array( 'ID' => $id, 'post_content' => wp_slash( $content ) ), true );
-		echo "$slug: " . ( is_wp_error( $r ) ? 'SAVE FAILED ' . $r->get_error_message() : 'saved' ) . "\n";
+		$before = wp_save_post_revision( $id ); // the current version, if no revision holds it yet
+		$r      = wp_update_post( array( 'ID' => $id, 'post_content' => wp_slash( $content ) ), true );
+		echo "$slug: " . ( is_wp_error( $r ) ? 'SAVE FAILED ' . $r->get_error_message() : 'saved; revisions ' . (int) $before . ' → ' . (int) wp_save_post_revision( $id ) ) . "\n";
 	}
 }
 echo count( $plan ) . ' pages ' . ( $save ? 'saved' : 'ready (dry run)' ) . "\n";

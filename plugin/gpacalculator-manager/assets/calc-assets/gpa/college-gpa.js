@@ -11,7 +11,6 @@ import college from '../profiles/college.js';
 
 const profile = {
   ...college,
-  upcomingDefault: 15,
   legacy: {
     keys: ['gpa_calc_draft_v1', 'gpa_calc_saved_v1'],
     convert(draft, saved) {

@@ -52,8 +52,21 @@ export default {
     { title: 'Semester grade', sub: 'Work out a course grade from your scores.', href: '/semester-grade-calculator/', icon: 'calc' },
   ],
 
+  // Goal tracker presets (Calculator Design Standard); every value is editable when added, since schools differ.
+  goals: [
+    { id: 'deans-list', label: 'Dean’s List', kind: 'term', value: 3.5 },
+    { id: 'cum-laude', label: 'Cum laude', kind: 'cumulative', value: 3.5 },
+    { id: 'magna', label: 'Magna cum laude', kind: 'cumulative', value: 3.7 },
+    { id: 'summa', label: 'Summa cum laude', kind: 'cumulative', value: 3.9 },
+    { id: 'scholarship', label: 'Scholarship minimum', kind: 'cumulative', value: null },
+    { id: 'standing', label: 'Good standing', kind: 'cumulative', value: 2.0 },
+    { id: 'custom', label: 'Custom target', kind: 'cumulative', value: null },
+  ],
+  upcomingDefault: 15,
+
   sample: {
     scale: 'standard',
+    showMajor: true,
     prior: { gpa: '', credits: '' },
     terms: [
       { name: 'Fall', rows: [

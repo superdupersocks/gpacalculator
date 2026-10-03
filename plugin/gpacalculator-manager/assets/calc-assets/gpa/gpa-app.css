@@ -1,65 +1,110 @@
-/* GPA calculator screen v1.0.0 (gpa/gpa-app.js). Only what is specific to GPA calculators:
- * the course-row columns, term blocks and the previous-GPA fields. Everything else is calc-core.css.
- * Tokens only, no colors of its own. */
+/* GPA calculator screen v1.1.0 (gpa/gpa-app.js). Only what is specific to GPA calculators: the course-row
+ * columns, semester headers, settings line, history chart and goals. Everything else is calc-core.css.
+ * Spacing follows the Calculator Design Standard; tokens only, no colors of its own. */
 
-/* Row columns: course, grade, credits, [type], [major], remove */
-:is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 0.8fr) var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 0.8fr) 76px var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols: minmax(0, 1.8fr) minmax(0, 0.9fr) minmax(0, 0.7fr) minmax(0, 1.3fr) var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols: minmax(0, 1.8fr) minmax(0, 0.9fr) minmax(0, 0.7fr) minmax(0, 1.3fr) 76px var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-row .calc-field { min-width: 0; }
-:is(#root, .gpacalc-mount) .gpa-major { justify-content: flex-start; }
-/* The column head says "Major" on wider screens; the checkbox's own word shows on phones only */
-@media (min-width: 641px) {
-  :is(#root, .gpacalc-mount) .gpa-major span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-}
-:is(#root, .gpacalc-mount) .gpa-row .calc-input.is-num { text-align: left; }
+/* Top line: steps on the left, My saves + Save on the right */
+:is(#root, .gpacalc-mount) .gpa-top { flex-wrap: nowrap; margin-bottom: var(--calc-section-gap); }
+:is(#root, .gpacalc-mount) .gpa-top .calc-steps,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-top .calc-steps { margin: 0 !important; flex: 1 1 auto; min-width: 0; }
+:is(#root, .gpacalc-mount) .gpa-top .calc-step { flex: 0 1 auto; padding: 0 12px; min-height: var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-top .calc-toolbar-group { gap: 8px; flex: none; }
+:is(#root, .gpacalc-mount) .calc-save-name { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Settings: grading scale + "Add your current GPA" */
-:is(#root, .gpacalc-mount) .gpa-settings { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-:is(#root, .gpacalc-mount) .gpa-settings:empty { display: none; }
-:is(#root, .gpacalc-mount) .gpa-scale-field { flex: 1 1 260px; max-width: 360px; margin: 0; }
+/* Settings line: scale, current GPA, major GPA */
+:is(#root, .gpacalc-mount) .gpa-settings { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-bottom: var(--calc-section-gap); }
+:is(#root, .gpacalc-mount) .gpa-scale-field { flex: 0 1 260px; }
+:is(#root, .gpacalc-mount) .gpa-major-on { min-height: var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-prior[hidden] { display: none; }
 :is(#root, .gpacalc-mount) .gpa-prior {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 0 0 16px;
+  gap: var(--calc-field-gap);
+  margin: 0 0 var(--calc-section-gap);
   padding: 14px 16px;
   background: var(--calc-tint);
-  border-radius: var(--calc-radius-md);
+  border-radius: var(--calc-radius);
 }
 :is(#root, .gpacalc-mount) .gpa-prior .calc-field { margin: 0; }
 
-/* Terms (semesters, or a university's completed / planned courses) */
-:is(#root, .gpacalc-mount) .gpa-term { padding: 16px 0 6px; border-top: 1px solid var(--calc-line); }
-:is(#root, .gpacalc-mount) .gpa-term:first-child { border-top: 0; padding-top: 0; }
-:is(#root, .gpacalc-mount) .gpa-term-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+/* Semester header: renamable title + semester GPA on one line, 16px above its rows */
+:is(#root, .gpacalc-mount) .gpa-term + .gpa-term { margin-top: 24px; }
+:is(#root, .gpacalc-mount) .gpa-term-head { display: flex; align-items: center; gap: 12px; margin-bottom: var(--calc-section-gap); }
 :is(#root, .gpacalc-mount) .gpa-term-name.calc-input { flex: 0 1 220px; font-weight: 600; color: var(--calc-ink); }
 :is(#root, .gpacalc-mount) .gpa-term-title,
 #page .entry-content :is(#root, .gpacalc-mount) .gpa-term-title { margin: 0 !important; font: 600 17px/1.3 var(--gpa-calc-font); color: var(--calc-ink); }
 :is(#root, .gpacalc-mount) .gpa-term-title em { font-style: normal; font-weight: 500; color: var(--calc-muted); }
-:is(#root, .gpacalc-mount) .gpa-term-gpa { font-size: 14px; font-weight: 600; color: var(--gpa-calc-result-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
-:is(#root, .gpacalc-mount) .gpa-term-tools { margin-left: auto; display: flex; gap: 4px; }
-:is(#root, .gpacalc-mount) .gpa-term-body[hidden] { display: none; }
-:is(#root, .gpacalc-mount) .gpa-term.is-planned .gpa-add-row { border-style: dashed; }
-:is(#root, .gpacalc-mount) .gpa-add-row { margin-top: 2px; }
-:is(#root, .gpacalc-mount) .gpa-actions { justify-content: space-between; }
+:is(#root, .gpacalc-mount) .gpa-term-gpa { font-size: 15px; font-weight: 600; color: var(--gpa-calc-result-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
+:is(#root, .gpacalc-mount) .gpa-del-term { margin-left: auto; }
 
-/* Result extras */
-:is(#root, .gpacalc-mount) .calc-result-top .gpa-letter { min-width: 56px; padding: 10px 14px; font-size: 22px; font-weight: 700; border-radius: var(--calc-radius-md); box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent); }
+/* Rows: one line on desktop (course · grade · credits · [type] · [major] · remove) */
+:is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) 56px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols: minmax(0, 1.9fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols: minmax(0, 1.9fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) 56px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-row .calc-field { min-width: 0; }
+:is(#root, .gpacalc-mount) .gpa-major { justify-content: center; }
+:is(#root, .gpacalc-mount) .gpa-major span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:is(#root, .gpacalc-mount) .gpa-term.is-planned .gpa-add-row { border-style: dashed; }
+:is(#root, .gpacalc-mount) .gpa-rows:empty { display: none; }
+
+/* Action row: Add semester, Start over, Try a sample, "Saved on this device" */
+:is(#root, .gpacalc-mount) .gpa-sample.is-small { font-size: 14px; font-weight: 500; }
+:is(#root, .gpacalc-mount) .gpa-sample[hidden] { display: none; }
+
+/* Result */
+:is(#root, .gpacalc-mount) .calc-result-top .gpa-letter { min-width: 56px; padding: 10px 14px; font-size: 22px; font-weight: 700; border-radius: 12px; box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent); }
+:is(#root, .gpacalc-mount) .calc-verdict .is-danger { color: var(--gpa-danger); font-weight: 600; }
 :is(#root, .gpacalc-mount) .gpa-next-links { display: inline-flex; flex-wrap: wrap; gap: 6px 16px; }
-:is(#root, .gpacalc-mount) .gpa-trend[hidden] { display: none; }
+
+/* History chart + goals (under the result, above the planner) */
+:is(#root, .gpacalc-mount) .gpa-history[hidden],
+:is(#root, .gpacalc-mount) .gpa-trend[hidden],
+:is(#root, .gpacalc-mount) .gpa-goals-wrap[hidden],
+:is(#root, .gpacalc-mount) .gpa-chart-hint[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .gpa-history { margin-top: var(--calc-section-gap); }
+:is(#root, .gpacalc-mount) .gpa-chart-hint { margin: 0; }
+:is(#root, .gpacalc-mount) .gpa-trend { margin-top: 0; }
+:is(#root, .gpacalc-mount) .gpa-chart-host { min-height: 200px; }
+:is(#root, .gpacalc-mount) .gpa-goals,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-goals { list-style: none !important; margin: 8px 0 0 !important; padding: 0 !important; }
+:is(#root, .gpacalc-mount) .gpa-goals li { display: flex; align-items: center; gap: 4px; margin: 0 !important; padding: 0 !important; list-style: none !important; }
+:is(#root, .gpacalc-mount) .gpa-goals li::before { content: none !important; display: none !important; }
+:is(#root, .gpacalc-mount) .gpa-goal {
+  flex: 1;
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  font: 500 15px/1.4 var(--gpa-calc-font);
+  color: var(--gpa-text-strong);
+  cursor: pointer;
+}
+:is(#root, .gpacalc-mount) .gpa-goal:hover { text-decoration: underline; }
+:is(#root, .gpacalc-mount) .gpa-goal.is-met { color: var(--gpa-success); }
+:is(#root, .gpacalc-mount) .gpa-goal.is-warn { color: var(--gpa-warning); }
+:is(#root, .gpacalc-mount) .gpa-goal.is-danger { color: var(--gpa-danger); }
+:is(#root, .gpacalc-mount) .calc-goal-add[hidden] { display: none; }
 
 @media (max-width: 640px) {
-  :is(#root, .gpacalc-mount) .gpa-cols { --calc-cols-mobile: minmax(0, 1fr) minmax(0, 1fr) var(--calc-control-h); }
-  :is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols-mobile: minmax(0, 1fr) minmax(0, 0.8fr) auto var(--calc-control-h); }
-  :is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols-mobile: minmax(0, 1fr) minmax(0, 0.8fr) var(--calc-control-h); }
-  :is(#root, .gpacalc-mount) .gpa-cols.has-type .gpa-f-type { grid-column: 1 / -1; grid-row: 3; }
-  :is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols-mobile: minmax(0, 1fr) minmax(0, 0.8fr) auto var(--calc-control-h); }
-  :is(#root, .gpacalc-mount) .gpa-major { align-self: end; }
-  :is(#root, .gpacalc-mount) .gpa-row .calc-btn-icon { align-self: end; }
-  :is(#root, .gpacalc-mount) .gpa-row { padding-bottom: 10px; border-bottom: 1px solid var(--calc-line); }
-  :is(#root, .gpacalc-mount) .gpa-prior { grid-template-columns: 1fr; }
+  /* Stacked rows: course name full width with remove beside it, then grade + credits (+ major), then type */
+  :is(#root, .gpacalc-mount) .gpa-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name rm' 'grade cr cr'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-major { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; grid-template-areas: 'name name rm' 'grade cr major'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-type { grid-template-areas: 'name name rm' 'grade cr cr' 'type type type'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-type.has-major { grid-template-areas: 'name name rm' 'grade cr major' 'type type type'; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-name { grid-area: name; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-grade { grid-area: grade; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-cr { grid-area: cr; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-type { grid-area: type; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-major { grid-area: major; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-rm { grid-area: rm; }
+  :is(#root, .gpacalc-mount) .gpa-row > .calc-row-msg { grid-column: 1 / -1; margin-top: 0; }
+  :is(#root, .gpacalc-mount) .gpa-major span { position: static; width: auto; height: auto; clip: auto; }
+  :is(#root, .gpacalc-mount) .gpa-major { gap: 4px; }
+  :is(#root, .gpacalc-mount) .gpa-top .calc-step { padding: 0 8px; white-space: nowrap; }
   :is(#root, .gpacalc-mount) .gpa-term-name.calc-input { flex: 1 1 auto; }
+  :is(#root, .gpacalc-mount) .gpa-prior { grid-template-columns: 1fr 1fr; }
+  :is(#root, .gpacalc-mount) .gpa-scale-field { flex: 1 1 100%; }
+  :is(#root, .gpacalc-mount) .calc-save-name { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-chart-host { min-height: 180px; }
 }

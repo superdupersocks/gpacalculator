@@ -303,28 +303,34 @@ def shortcode_mount_tests(s, R):
 
 
 def token_tests(s, R):
-    """Calculators read the theme's brand tokens, with built-in fallbacks when they're missing."""
+    """Calculators read the theme's tokens only (core v2: no hex fallbacks), so a palette change
+    re-colors them and a page without the theme's tokens falls back to the page's own styles."""
     probe = """() => { const b = document.querySelector('#root .calc-btn-text');
         const c = document.querySelector('#root .calc');
-        return { color: getComputedStyle(b).color, font: getComputedStyle(c).fontFamily.split(',')[0].trim(),
-                 radius: getComputedStyle(document.querySelector('#root .calc-card')).borderTopLeftRadius }; }"""
-    # With the theme: the design system's calculator tokens (primary blue, Lexend, 16px cards).
-    # Without it: the calculator's own built-in fallbacks.
-    wants = {"": {"color": "rgb(37, 99, 235)", "font": "Lexend", "radius": "16px"},
-             "?tokens=off": {"color": "rgb(124, 58, 237)", "font": "Inter", "radius": "24px"}}
-    for label, qs in [("theme tokens", ""), ("no theme tokens (fallbacks)", "?tokens=off")]:
-        want = wants[qs]
-        ctx = s.context()
-        page = s.page(ctx, PAGE.replace(".html", f".html{qs}"))
-        page.wait_for_selector("#root .calc")
-        R.check(label, page.evaluate(probe), want)
-        theme_var = page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--gpa-calc-brand-1').trim()")
-        R.check(f"{label}: --gpa-brand-1 present", bool(theme_var), not qs)
-        ctx.close()
+        const root = getComputedStyle(document.documentElement);
+        const probe = document.createElement('span'); probe.style.color = 'var(--gpa-link)'; document.body.append(probe);
+        const link = getComputedStyle(probe).color; probe.remove();
+        return { color: getComputedStyle(b).color, link, font: getComputedStyle(c).fontFamily.split(',')[0].trim().replace(/"/g, ''),
+                 brand: getComputedStyle(c).getPropertyValue('--calc-brand').trim() }; }"""
+    ctx = s.context()
+    page = s.page(ctx, PAGE)
+    page.wait_for_selector("#root .calc")
+    got = page.evaluate(probe)
+    R.check("theme tokens: text button uses --gpa-link", got["color"], got["link"])
+    R.check("theme tokens: Lexend", got["font"], "Lexend")
+    R.ok("theme tokens: brand token present", bool(got["brand"]))
+    ctx.close()
+    ctx = s.context()
+    page = s.page(ctx, PAGE.replace(".html", ".html?tokens=off"))
+    page.wait_for_selector("#root .calc")
+    got = page.evaluate(probe)
+    R.check("no theme tokens: no built-in brand color", got["brand"], "")
+    R.ok("no theme tokens: font comes from the page, not the calculator", got["font"] != "Lexend")
+    ctx.close()
     ctx = s.context()
     page = s.page(ctx, f"{PAGE}?brand=%23dc2626")
     page.wait_for_selector("#root .calc")
-    R.check("brand token override restyles calculator", page.evaluate(probe)["color"], "rgb(220, 38, 38)")
+    R.check("brand token override reaches the calculator", page.evaluate(probe)["brand"].lower(), "#dc2626")
     ctx.close()
 
 

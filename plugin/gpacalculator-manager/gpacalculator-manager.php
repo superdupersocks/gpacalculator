@@ -103,6 +103,13 @@ function gpcm_shortcode( $attributes ) {
 
     $profile = gpcm_profile( $id );
     if ( $profile ) {
+        // New GPA engine for this university when its switch is on (Grade + GPA > New calculators).
+        // Checked before the old engine is enqueued, so the old engine never mounts into the new host.
+        $switch = class_exists( 'GPACalc_Switch' ) ? GPACalc_Switch::gpcm_switch( $id ) : '';
+        if ( $switch && GPACalc_Switch::is_new( $switch ) ) {
+            $json = wp_json_encode( $profile, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT );
+            return $json ? GPACalc_Switch::gpcm_markup( $id, $json ) : '';
+        }
         $js = gpcm_shared_asset( 'js' );
         $css = gpcm_shared_asset( 'css' );
         $js_url = gpcm_asset_url( $js, 'js' );

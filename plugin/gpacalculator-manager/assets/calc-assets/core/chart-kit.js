@@ -11,42 +11,72 @@ const el = (tag, attrs, text) => {
 };
 
 /**
- * Line chart. series = [{ name, cls: 'ck-s1', points: [{ label, y }] }]. All series share the x labels.
- * opts = { yMin, yMax, ticks: [..], format(y), title (for screen readers) }
+ * Line chart. series = [{ name, cls, points: [{ label, y }] }]; all series share the x labels.
+ * opts = { yMin, yMax, ticks, format(y), title (aria-label), height (px, default 200),
+ *          goals: [{ y, label }] (dashed horizontal lines labeled at the right edge),
+ *          projection: { label, y, from: series index } (one more x step, drawn dashed with a hollow point) }
+ * Drawn at the host's current width so text keeps its size; call again on resize.
+ * Hover or tap a point to see its value.
  */
 export function lineChart(host, series, opts = {}) {
-  const W = 640;
-  const H = 220;
-  const pad = { l: 40, r: 56, t: 14, b: 30 };
-  const labels = (series[0] && series[0].points.map((p) => p.label)) || [];
+  const W = Math.max(280, Math.round(host.clientWidth || 640));
+  const H = opts.height || 200;
+  const pad = { l: 40, r: opts.goals && opts.goals.length ? 96 : 48, t: 12, b: 28 };
+  const proj = opts.projection && Number.isFinite(opts.projection.y) ? opts.projection : null;
+  const labels = ((series[0] && series[0].points.map((p) => p.label)) || []).concat(proj ? [proj.label] : []);
   const n = labels.length;
   const yMin = opts.yMin ?? 0;
   const yMax = opts.yMax ?? 4;
   const fmt = opts.format || ((y) => y.toFixed(2));
   const X = (i) => pad.l + (n <= 1 ? (W - pad.l - pad.r) / 2 : (i * (W - pad.l - pad.r)) / (n - 1));
   const Y = (y) => pad.t + (1 - (Math.max(yMin, Math.min(yMax, y)) - yMin) / (yMax - yMin)) * (H - pad.t - pad.b);
-  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': opts.title || 'Chart' });
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img', 'aria-label': opts.title || 'Chart' });
   const ticks = opts.ticks || [yMin, (yMin + yMax) / 2, yMax];
   for (const t of ticks) {
     svg.append(el('line', { class: 'ck-grid', x1: pad.l, x2: W - pad.r, y1: Y(t), y2: Y(t) }));
     svg.append(el('text', { class: 'ck-axis', x: pad.l - 8, y: Y(t) + 4, 'text-anchor': 'end' }, fmt(t)));
   }
+  for (const g of opts.goals || []) {
+    if (!(g.y >= yMin && g.y <= yMax)) continue;
+    svg.append(el('line', { class: 'ck-goal', x1: pad.l, x2: W - pad.r + 6, y1: Y(g.y), y2: Y(g.y) }));
+    svg.append(el('text', { class: 'ck-goal-label', x: W - pad.r + 10, y: Y(g.y) + 4 }, g.label));
+  }
+  const step = Math.max(1, Math.ceil(n / Math.max(1, Math.floor((W - pad.l - pad.r) / 70))));
   labels.forEach((lb, i) => {
+    if (i % step && i !== n - 1) return;
     const short = String(lb).length > 12 ? `${String(lb).slice(0, 11)}…` : lb;
     svg.append(el('text', { class: 'ck-axis', x: X(i), y: H - 8, 'text-anchor': 'middle' }, short));
   });
-  const ends = [];
-  for (const s of series) {
-    const pts = s.points.map((p, i) => [X(i), Y(p.y)]);
-    if (pts.length > 1) svg.append(el('polyline', { class: `ck-line ${s.cls}`, points: pts.map((p) => p.join(',')).join(' ') }));
-    pts.forEach(([x, y]) => svg.append(el('circle', { class: `ck-dot ${s.cls}`, cx: x, cy: y, r: 5 })));
-    const last = pts[pts.length - 1];
-    if (last) ends.push({ x: last[0] + 10, y: last[1] + 4, cls: s.cls, text: fmt(s.points[s.points.length - 1].y) });
+  const dots = [];
+  series.forEach((s, si) => {
+    const pts = s.points.map((p, i) => [X(i), Y(p.y), p]);
+    if (pts.length > 1) svg.append(el('polyline', { class: `ck-line ${s.cls}`, points: pts.map((p) => `${p[0]},${p[1]}`).join(' ') }));
+    if (proj && (proj.from ?? 0) === si && pts.length) {
+      const last = pts[pts.length - 1];
+      svg.append(el('line', { class: `ck-line ck-proj ${s.cls}`, x1: last[0], y1: last[1], x2: X(n - 1), y2: Y(proj.y) }));
+      dots.push([X(n - 1), Y(proj.y), `${proj.label}: ${fmt(proj.y)}`, `ck-dot ck-dot-proj ${s.cls}`]);
+    }
+    pts.forEach(([x, y, p]) => dots.push([x, y, `${s.name}, ${p.label}: ${fmt(p.y)}`, `ck-dot ${s.cls}`]));
+  });
+  const tip = el('text', { class: 'ck-tip', 'text-anchor': 'middle', visibility: 'hidden' });
+  for (const [x, y, label, cls] of dots) {
+    const c = el('circle', { class: cls, cx: x, cy: y, r: 5, 'data-tip': label });
+    c.append(el('title', null, label));
+    svg.append(c);
   }
-  // End labels never overlap: keep them at least 14px apart.
-  ends.sort((a, b) => a.y - b.y);
-  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
-  for (const e of ends) svg.append(el('text', { class: `ck-label ${e.cls}`, x: e.x, y: e.y }, e.text));
+  svg.append(tip);
+  const show = (e) => {
+    const c = e.target.closest && e.target.closest('circle[data-tip]');
+    if (!c) { tip.setAttribute('visibility', 'hidden'); return; }
+    const x = Math.min(W - 60, Math.max(60, Number(c.getAttribute('cx'))));
+    tip.setAttribute('x', x);
+    tip.setAttribute('y', Math.max(14, Number(c.getAttribute('cy')) - 12));
+    tip.textContent = c.getAttribute('data-tip').replace(/^[^,]*, /, '');
+    tip.setAttribute('visibility', 'visible');
+  };
+  svg.addEventListener('pointerover', show);
+  svg.addEventListener('click', show);
+  svg.addEventListener('pointerleave', () => tip.setAttribute('visibility', 'hidden'));
   host.replaceChildren(svg);
   return svg;
 }

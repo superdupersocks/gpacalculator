@@ -81,7 +81,7 @@ def ctx_for(s, width=1440, height=900, mobile=False, init=None, clipboard=False)
 
 def open_page(s, c, name):
     p = s.page(c, f"/tests/.artifacts/calc-v2/{name}.html")
-    p.on("dialog", lambda d: d.accept(DIALOG.get("text", "")) if d.type == "prompt" else d.accept())
+    p.on("dialog", lambda d: d.accept(DIALOG["text"] if DIALOG.get("text") is not None else d.default_value) if d.type == "prompt" else d.accept())
     p.wait_for_selector(".calc .calc-card")
     return p
 
@@ -143,9 +143,11 @@ def fill_college(p, case):
         p.click(".gpa-prior-toggle")
         p.fill("#college-prior-gpa", case["prior"][0])
         p.fill("#college-prior-cr", case["prior"][1])
+    if any(r["major"] for rows in case["terms"] for r in rows):
+        p.check("#college-major-on")
     for ti, rows in enumerate(case["terms"]):
         if ti:
-            p.click("text=Add semester / year")
+            p.click(".gpa-add-term")
         term = p.locator(".gpa-term").nth(ti)
         for i, r in enumerate(rows):
             if i >= term.locator(".gpa-row").count():
@@ -164,9 +166,9 @@ def check_college(p, case, label):
     R.check(f"{label} cumulative", text(p, ".calc-score"), fmt(e["gpa"]))
     for i, g in enumerate(e["terms"]):
         R.check(f"{label} term {i + 1}", text(p, f".gpa-term:nth-child({i + 1}) .gpa-term-gpa"), f"GPA {fmt(g)}")
-    R.check(f"{label} credits", p.locator(".calc-stat").nth(1).locator(".calc-stat-v").inner_text(), fmt_num(e["credits"]))
-    R.check(f"{label} quality points", p.locator(".calc-stat").nth(2).locator(".calc-stat-v").inner_text(), fmt_num(e["points"]))
-    major = p.locator(".calc-stat").nth(3)
+    R.check(f"{label} credits", p.locator(".calc-stat").nth(0).locator(".calc-stat-v").inner_text(), fmt_num(e["credits"]))
+    R.check(f"{label} quality points", p.locator(".calc-stat").nth(1).locator(".calc-stat-v").inner_text(), fmt_num(e["points"]))
+    major = p.locator(".calc-stat").nth(2)
     R.check(f"{label} major", major.locator(".calc-stat-v").inner_text() if major.is_visible() else None,
             fmt(e["major"]) if e["major"] is not None else None)
     # planner
@@ -228,8 +230,8 @@ def check_ucla(p, case, label):
     R.check(f"{label} UCLA GPA", text(p, ".calc-score"), fmt(e["gpa"], 3) if e["gpa"] is not None else None)
     if e["gpa"] is None:
         return
-    R.check(f"{label} units", p.locator(".calc-stat").nth(1).locator(".calc-stat-v").inner_text(), fmt_num(e["credits"]))
-    proj = p.locator(".calc-stat").nth(4)
+    R.check(f"{label} units", p.locator(".calc-stat").nth(0).locator(".calc-stat-v").inner_text(), fmt_num(e["credits"]))
+    proj = p.locator(".calc-stat").nth(3)
     R.check(f"{label} with planned", proj.locator(".calc-stat-v").inner_text() if proj.is_visible() else None,
             fmt(e["projected"], 3) if e["projected"] is not None else None)
     R.check(f"{label} not-counted notes", p.locator(".calc-row-msg:not(.is-error)").filter(has_text="Not counted").count(), e["excluded"])
@@ -270,7 +272,7 @@ def math(s):
     row = p.locator(".gpa-row").first
     row.locator(".gpa-f-grade select").select_option("A-")
     row.locator(".gpa-f-cr input").fill("1,5")
-    R.check("edge decimal comma counts", text(p, ".calc-stat:nth-child(2) .calc-stat-v"), "1.5")
+    R.check("edge decimal comma counts", text(p, ".calc-stat:nth-child(1) .calc-stat-v"), "1.5")
     p.click(".gpa-prior-toggle")
     p.fill("#college-prior-gpa", "4.5")
     p.fill("#college-prior-cr", "30")
@@ -299,7 +301,7 @@ def math(s):
         check_ucla(p, case, f"ucla #{i + 1}")
     # The profile's own help example and the sample
     fresh(p)
-    p.click("text=Try a sample")
+    p.click(".gpa-sample")
     s_ = UCLA["sampleData"]
     pts = float(s_["previousGpa"]) * float(s_["previousUnits"]) + sum(UCLA_GRADES[r["grade"]] * float(r["units"]) for r in s_["completed"])
     cr = float(s_["previousUnits"]) + sum(float(r["units"]) for r in s_["completed"])
@@ -317,16 +319,34 @@ def events(p):
 def flow(s):
     c = ctx_for(s, clipboard=True)
     p = open_page(s, c, "college-gpa-calculator")
-    R.check("flow: first visit shows onboarding", p.locator(".calc-onboard").is_visible(), True)
+    R.check("flow: first visit offers a sample in the action row", text(p, ".calc-actions .gpa-sample"), "Try a sample")
+    R.check("flow: no banner on a first visit", p.locator(".calc-banner").is_visible(), False)
     R.check("flow: no result before input", p.locator(".calc-result").is_visible(), False)
-    p.click("text=Try a sample")
+    p.click(".gpa-sample")
     R.check("flow: sample result", text(p, ".calc-score"), "3.34")
-    R.check("flow: sample banner", "sample" in (text(p, ".calc-banner") or ""), True)
+    R.check("flow: sample banner", (text(p, ".calc-banner") or "").startswith("Viewing a sample"), True)
+    R.check("flow: sample link hidden while viewing it", p.locator(".gpa-sample").is_visible(), False)
     p.click(".calc-how > summary")
     p.wait_for_timeout(100)
     R.check("flow: worked example rows", p.locator(".calc-how .gpa-ex tbody tr").count(), 8)
     R.check("flow: worked example total", p.locator(".gpa-ex__tile--gpa .gpa-ex__value").inner_text(), "3.34")
     R.check("flow: trend chart drawn", p.locator(".gpa-trend svg polyline").count(), 2)
+    R.ok("flow: chart summary for screen readers", (p.locator(".gpa-trend svg").get_attribute("aria-label") or "").startswith("Down from 3.41 to 3.34 over 2 semesters"),
+         p.locator(".gpa-trend svg").get_attribute("aria-label"))
+    R.check("flow: chart floor at 2.0", p.locator(".gpa-trend svg .ck-axis").first.text_content(), "2.00")
+    # goals: Magna cum laude (3.70) at 15 upcoming credits
+    DIALOG["text"] = None
+    p.click(".calc-goal-add")
+    p.click(".gpa-goals-wrap .calc-menu >> text=Magna cum laude")
+    need = (3.7 * 41 - 86.8) / 15
+    R.check("flow: goal status (out of reach)", text(p, ".gpa-goal"),
+            f"Magna cum laude (3.70) — highest possible next semester is {fmt((86.8 + 60) / 41)}; reachable in {-(-int(-(-(3.7 * 26 - 86.8) // (4 - 3.7))) // 15)} semesters at 4.0" if need > 4 else
+            f"Magna cum laude (3.70) — you need a {fmt(need)} over your next 15 credits")
+    p.click(".calc-goal-add")
+    p.click(".gpa-goals-wrap .calc-menu >> text=Good standing")
+    R.check("flow: goal met", p.locator(".gpa-goal").nth(1).text_content(), f"Good standing — you're {fmt(86.8 / 26 - 2)} above it")
+    R.check("flow: goal lines on chart", p.locator(".gpa-trend svg .ck-goal").count(), 2)
+    p.locator(".gpa-goal-rm").nth(1).click()
     p.locator(".calc-next .calc-btn-primary").click()
     R.check("flow: planner open", p.locator(".calc-plan").is_visible(), True)
     R.check("flow: step 2 current", p.locator(".calc-step").nth(1).get_attribute("aria-current"), "step")
@@ -336,12 +356,13 @@ def flow(s):
     p.locator(".calc-whatif input[type=range]").fill("4")
     R.check("flow: what-if readout", text(p, ".calc-whatif output"), f"A 4.0 average next term → {fmt((86.8 + 60) / 41)} cumulative")
 
+    R.check("flow: projection point on chart", p.locator(".gpa-trend svg .ck-dot-proj").count(), 1)
     DIALOG["text"] = "Sample can't save"
-    p.click("text=My saves ▾")
+    p.click("[aria-label='My saves']")
     p.click(".calc-menu >> text=Save as…")
     R.check("flow: samples can't be saved", "can’t be saved" in (text(p, ".calc-toast") or ""), True)
 
-    p.click("text=Clear sample")
+    p.click(".calc-banner >> text=Clear")
     R.check("flow: sample cleared", p.locator(".calc-result").is_visible(), False)
     row = p.locator(".gpa-row")
     row.nth(0).locator(".gpa-f-grade select").select_option("A")
@@ -349,9 +370,9 @@ def flow(s):
     row.nth(1).locator(".gpa-f-grade select").select_option("B-")
     want = fmt((16 + 2.7 * 3) / 7)
     R.check("flow: own result", text(p, ".calc-score"), want)
+    R.check("flow: saved-on-device note", text(p, ".calc-saved-note"), "Saved on this device")
     DIALOG["text"] = "Fall test"
-    p.click("text=My saves ▾")
-    p.click(".calc-menu >> text=Save as…")
+    p.click("[aria-label='Save']")
     R.check("flow: saved name shown", text(p, ".calc-save-name"), "Fall test")
     row.nth(2).locator(".gpa-f-grade select").select_option("C")
     R.check("flow: unsaved changes flagged", text(p, ".calc-save-name"), "Fall test · unsaved changes")
@@ -361,24 +382,26 @@ def flow(s):
     seen = events(p)
     p.reload()
     p.wait_for_selector(".calc .calc-card")
-    R.check("flow: welcome back banner", "Welcome back" in (text(p, ".calc-banner") or ""), True)
+    R.check("flow: welcome back banner", (text(p, ".calc-banner") or "").startswith("Welcome back — we restored your last calculation"), True)
+    R.check("flow: returning visitor sees 'Show an example'", text(p, ".gpa-sample"), "Show an example")
     R.check("flow: restored result", text(p, ".calc-score"), want2)
     R.check("flow: restored save name", text(p, ".calc-save-name"), "Fall test · unsaved changes")
-    p.click("text=My saves ▾")
+    p.click("[aria-label='My saves']")
     R.check("flow: save listed", p.locator(".calc-menu li", has_text="Fall test").count() >= 1, True)
-    p.click(".calc-menu >> text=Save “Fall test”")
+    p.keyboard.press("Escape")
+    p.click("[aria-label='Save']")
     R.check("flow: saved again", text(p, ".calc-save-name"), "Fall test")
 
-    p.click("text=Share ▾")
+    p.click("[aria-label='My saves']")
     p.click(".calc-menu >> text=Copy link")
     link = p.evaluate("navigator.clipboard.readText()")
     R.ok("flow: share link has state", "#gpa=" in link, link)
-    p.click("text=Share ▾")
+    p.click("[aria-label='My saves']")
     p.click(".calc-menu >> text=Copy summary")
     summary = p.evaluate("navigator.clipboard.readText()")
     R.ok("flow: summary text", summary.startswith(f"My College GPA: {want2}"), summary)
     with p.expect_download() as d:
-        p.click("text=Share ▾")
+        p.click("[aria-label='My saves']")
         p.click(".calc-menu >> text=Download CSV")
     csv = Path(d.value.path()).read_text()
     R.ok("flow: CSV has the courses and GPA", "Cumulative GPA" in csv and want2 in csv and csv.count("\n") >= 6, csv[:200])
@@ -391,7 +414,7 @@ def flow(s):
     p2.goto(link.replace("http://127.0.0.1", "http://127.0.0.1"))
     p2.wait_for_selector(".calc .calc-card")
     R.check("flow: shared link result", text(p2, ".calc-score"), want2)
-    R.check("flow: shared banner", "shared" in (text(p2, ".calc-banner") or ""), True)
+    R.check("flow: shared banner", (text(p2, ".calc-banner") or "").startswith("Viewing a shared calculation"), True)
     R.check("flow: shared view writes no draft", p2.evaluate("localStorage.getItem('gpac:college:v1.draft')"), None)
     R.check("flow: shared GA4 event", "col_open_link" in events(p2), True)
     c2.close()
@@ -405,7 +428,7 @@ def flow(s):
     R.check("flow: undo restores save name", text(p, ".calc-save-name"), "Fall test")
 
     ev = seen + events(p)
-    for name in ("col_sample", "col_result", "col_step_2", "col_plan", "col_how", "col_save", "col_share", "col_reset", "gpa_export"):
+    for name in ("col_sample", "col_result", "col_step_2", "col_plan", "col_how", "col_save", "col_share", "col_reset", "col_goal_add", "gpa_export"):
         R.check(f"flow: GA4 {name}", name in ev, True)
     R.check("flow: calculator_used left to the theme inside #root", "calculator_used" in ev, False)
     p.close()
@@ -428,12 +451,13 @@ def flow(s):
     R.check("legacy: old draft restored", text(p, ".calc-score"), fmt((3.7 * 4 + 9) / 7))
     R.check("legacy: welcome back", "Welcome back" in (text(p, ".calc-banner") or ""), True)
     R.check("legacy: Major kept", p.locator(".gpa-major input").first.is_checked(), True)
-    p.click("text=My saves ▾")
+    p.click("[aria-label='My saves']")
     R.check("legacy: college save copied", p.locator(".calc-menu li", has_text="Freshman year").count(), 1)
     R.check("legacy: high school save not copied", p.locator(".calc-menu li", has_text="HS stuff").count(), 0)
     R.check("legacy: old draft untouched", json.loads(p.evaluate("localStorage.getItem('gpa_calc_draft_v1')")), old_draft)
     R.check("legacy: old saves untouched", json.loads(p.evaluate("localStorage.getItem('gpa_calc_saved_v1')")), old_saved)
-    p.click("text=Start fresh")
+    p.keyboard.press("Escape")
+    p.click(".calc-banner >> text=Start fresh")
     p.click(".calc-toast button") if False else None
     p.reload()
     p.wait_for_selector(".calc .calc-card")
@@ -461,36 +485,77 @@ def flow(s):
 
 # ---------- 3. Layout + screenshots ----------
 
+SIZES = ((390, 844, True), (768, 1024, False), (1366, 768, False), (1440, 900, False))
+
+
+def pill_state(p):
+    return p.evaluate("(() => { const b = document.querySelector('.calc-pill'); const r = b.getBoundingClientRect(); return [b.classList.contains('is-on'), b.innerText.replace(/\\s+/g, ' ').trim(), Math.round(innerHeight - r.bottom)]; })()")
+
+
 def layout(s, shots):
     SHOTS.mkdir(parents=True, exist_ok=True)
+    print("  above the fold (card top / 4 rows + result visible with data):")
     for name in ("college-gpa-calculator", "ucla-gpa-calculator"):
-        for w, h, mobile in ((390, 844, True), (1440, 900, False)):
-            c = ctx_for(s, w, h, mobile=mobile)
+        for w, hgt, mobile in SIZES:
+            c = ctx_for(s, w, hgt, mobile=mobile)
             p = open_page(s, c, name)
-            p.click("text=Try a sample")
-            p.wait_for_timeout(200)
+            host = p.locator("#root, .gpcm-host").first
+            top = p.evaluate("Math.round(document.querySelector('.calc-card').getBoundingClientRect().top + scrollY)")
+            if shots:
+                host.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-1-empty.png"))
+            # mid-typing: own grades in the first rows, scrolled so the result is below the screen
+            rows = p.locator(".gpa-row")
+            for i, (g, cr) in enumerate((("A", "4"), ("B+", "3"), ("A-", "3"), ("B", "4"))):
+                if i >= rows.count():
+                    p.locator(".gpa-add-row").first.click()
+                rows.nth(i).locator(".gpa-f-grade select").select_option(g)
+                rows.nth(i).locator(".gpa-f-cr input").fill(cr)
+            p.evaluate("scrollTo(0, 0)")
+            p.wait_for_timeout(250)
+            visible = p.evaluate("(() => { const r = document.querySelector('.calc-result').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; })()")
+            on, txt, gap = pill_state(p)
+            R.ok(f"pill {name} {w}: shows exactly when the result is off-screen", on != visible, f"pill {on}, result visible {visible}")
+            print(f"    {name} {w}x{hgt}: card top {top}px; result on first screen with 4 rows: {visible}; pill: {txt if on else 'hidden'}")
+            if on:
+                R.ok(f"pill {name} {w}: text", txt.startswith("GPA ") and "Details" in txt, txt)
+                R.ok(f"pill {name} {w}: 12px above the screen bottom (no ad here)", abs(gap - 12) <= 1, f"gap {gap}")
+                rows.nth(0).locator(".gpa-f-name input").focus()
+                p.wait_for_timeout(200)
+                R.check(f"pill {name} {w}: hides while typing a course name", pill_state(p)[0], False)
+                rows.nth(0).locator(".gpa-f-grade select").focus()
+                p.wait_for_timeout(200)
+                R.check(f"pill {name} {w}: back on a grade select", pill_state(p)[0], True)
+                if shots:
+                    p.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-2-typing-pill.png"))
+                p.click(".calc-pill")
+                p.wait_for_timeout(400)
+                R.check(f"pill {name} {w}: tap scrolls to the result", pill_state(p)[0], False)
+            # full result: the sample
+            p.evaluate("localStorage.clear()")
+            p.reload()
+            p.wait_for_selector(".calc .calc-card")
+            p.click(".gpa-sample")
+            p.wait_for_timeout(300)
             sw = p.evaluate("document.documentElement.scrollWidth")
             R.ok(f"layout {name} {w}: no sideways scroll", sw <= w, f"scrollWidth {sw}")
             box = p.locator(".calc-card").bounding_box()
-            col = p.evaluate("(() => { const e = document.querySelector('.entry-content'); const r = e.getBoundingClientRect(); return [r.left, r.width]; })()")
-            if mobile and name.startswith("college"):
+            col = p.evaluate("(() => { const r = document.querySelector('.entry-content').getBoundingClientRect(); return [r.left, r.width]; })()")
+            if mobile:
                 R.ok(f"layout {name} {w}: 14px from the screen edge", abs(box["x"] - 14) <= 1, f"x {box['x']}")
-            elif mobile:
-                # Shortcode mounts sit on the text edge (20px) until the theme's phone rule (calculator-page.css,
-                # design thread) adds .gpacalc-mount next to #root; requested 2026-10-03.
-                R.ok(f"layout {name} {w}: on the content edge (theme rule pending)", abs(box["x"] - 20) <= 1, f"x {box['x']}")
-            else:
-                R.ok(f"layout {name} {w}: as wide as the column", 677 <= box["width"] <= 800, f"width {box['width']}")
+            elif w >= 1260:
+                R.ok(f"layout {name} {w}: as wide as the column (677-800)", 677 <= box["width"] <= 800, f"width {box['width']}")
             R.ok(f"layout {name} {w}: inside the column", box["x"] >= col[0] - 15 and box["x"] + box["width"] <= col[0] + col[1] + 15, f"{box} {col}")
             font = p.evaluate("getComputedStyle(document.querySelector('.calc')).fontFamily")
-            R.ok(f"layout {name} {w}: Lexend", font.startswith("Lexend") or "Lexend" in font.split(",")[0], font)
+            R.ok(f"layout {name} {w}: Lexend", font.split(",")[0].strip("'\" ") == "Lexend", font)
+            long_name = p.locator(".gpa-row .gpa-f-name input").first
+            long_name.fill("Introduction to Organic Chemistry")
+            ov = long_name.evaluate("e => [getComputedStyle(e).textOverflow, getComputedStyle(e).whiteSpace]")
+            R.check(f"layout {name} {w}: long course names truncate with an ellipsis", ov[0], "ellipsis")
             if shots:
-                host = p.locator("#root, .gpcm-host").first
-                host.screenshot(path=str(SHOTS / f"{name}-{w}-sample.png"))
-                p.locator(".calc-next .calc-btn-primary").click()
-                p.click(".calc-how > summary")
-                p.wait_for_timeout(300)
-                host.screenshot(path=str(SHOTS / f"{name}-{w}-planner.png"))
+                if name.startswith("college"):
+                    p.locator(".calc-next .calc-btn-primary").click()
+                    p.wait_for_timeout(300)
+                host.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-3-result.png"))
             p.close()
             c.close()
 
@@ -500,7 +565,7 @@ def layout(s, shots):
 def recolor(s):
     c = ctx_for(s)
     p = open_page(s, c, "college-gpa-calculator")
-    p.click("text=Try a sample")
+    p.click(".gpa-sample")
     probe = """() => {
       const cta = getComputedStyle(document.querySelector('.calc-next .calc-btn-primary')).backgroundImage;
       const dot = getComputedStyle(document.querySelector('.calc-step[aria-current] .calc-step-dot')).backgroundImage;
@@ -551,8 +616,10 @@ def sizes():
         print(f"  size {k}: {v / 1024:.1f} KB gzipped")
     R.ok("size: core JS+CSS <= 25 KB gz", out["core JS (calc-core.js)"] + out["core CSS"] <= 25 * 1024)
     R.ok("size: one calculator's own code (profile + entry) <= 10 KB gz", out["College profile + entry"] <= 10 * 1024)
-    R.ok("size: shared GPA engine (screen + math + CSS) <= 16 KB gz",
-         out["GPA screen + engine (gpa-app.js, gpa-engine.js)"] + out["GPA CSS"] <= 16 * 1024)
+    total = sum(v for k, v in out.items() if not k.startswith("chart kit"))
+    old = sum(len(gzip.compress((CALC_ASSETS / f).read_bytes())) for f in ("college-gpa-calculator.js", "college-gpa-calculator.css"))
+    print(f"  size College page total (core + GPA engine + profile + CSS): {total / 1024:.1f} KB gzipped; old Bolt bundle {old / 1024:.1f} KB")
+    R.ok("size: College page total <= 40 KB gz and smaller than the old bundle", total <= 40 * 1024 and total < old)
     return out
 
 

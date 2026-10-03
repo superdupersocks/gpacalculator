@@ -26,9 +26,9 @@ SITE = SNAP / "site"
 CALC = REPO / "plugin/gpacalculator-manager/assets/calc-assets"
 CALC_URL = "/plugin/gpacalculator-manager/assets/calc-assets"
 # Theme stylesheets come from the design branch at this commit: everything deployed since the snapshot
-# (column tiers, phone spacing, component library) plus e3b337a, the not-yet-deployed change that lets
-# the library's worked example and related-tools cards style inside calculators.
-THEME_REF = "e3b337a"
+# (column tiers, phone spacing, component library) plus e3b337a and 5ca342b, not yet deployed: library styles inside calculators,
+# the standard's calculator tokens and 14px phone spacing for shortcode calculators.
+THEME_REF = "5ca342b"
 HOST = "https://gpacalculator.net"
 DROP_INLINE = re.compile(r"freestar|pubfig|googletag|gtag\(|dataLayer|speculationrules", re.I)
 

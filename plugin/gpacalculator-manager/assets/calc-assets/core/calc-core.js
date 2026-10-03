@@ -450,18 +450,42 @@ export function createToast(host) {
   };
 }
 
+/* Sticky ad footer on phones (Freestar); the pill and toasts sit above it, never over it. */
+const AD_FOOTER = '#fs-sticky-footer, .fs-sticky-footer, [id*="sticky_footer"], [id*="sticky-footer"], [data-freestar-ad*="sticky"]';
+
+/** Height of whatever is fixed to the bottom of the screen (the sticky ad), in px; 0 when none shows. */
+export function bottomObstruction() {
+  let max = 0;
+  for (const el of document.querySelectorAll(AD_FOOTER)) {
+    const r = el.getBoundingClientRect();
+    if (r.height > 0 && r.bottom >= window.innerHeight - 2) max = Math.max(max, window.innerHeight - r.top);
+  }
+  return Math.max(0, Math.round(max));
+}
+
 /**
- * Floating "live result" pill. Shows while `target` (the result card) is below the
- * viewport and has content; tap scrolls to it. Returns { update(text), enable(bool) }.
+ * Sticky result pill (Calculator Design Standard): fixed at the bottom while the result panel is
+ * off-screen (above or below), zero layout height, one button that scrolls to the result, hidden while
+ * a text input has focus (iOS keyboards move fixed elements), 12px above the sticky ad.
+ * set({ label, value, label2, value2, aria }) fills it; with two values the "Details" chip is dropped.
+ * update(text) is the v1 one-value form. enable(bool) turns it on once there is a result.
  */
 export function createLivePill(host, target, { label = 'Live grade', onOpen } = {}) {
-  const num = h('span', { class: 'calc-pill-num' });
-  const pill = h('button', { type: 'button', class: 'calc-pill', 'aria-hidden': 'true', tabindex: '-1' }, h('span', null, label), num);
-  host.append(h('div', { class: 'calc-pill-anchor' }, pill));
+  const l1 = h('span', { class: 'calc-pill-l' }, label);
+  const v1 = h('b', { class: 'calc-pill-v' });
+  const l2 = h('span', { class: 'calc-pill-l calc-pill-sep', hidden: true });
+  const v2 = h('b', { class: 'calc-pill-v', hidden: true });
+  const chip = h('span', { class: 'calc-pill-chip' }, 'Details →');
+  const pill = h('button', { type: 'button', class: 'calc-pill', 'aria-hidden': 'true', tabindex: '-1' }, l1, v1, l2, v2, chip);
+  host.append(pill);
+  document.documentElement.classList.add('calc-has-pill');
   let enabled = false;
-  let below = false;
+  let away = false;
+  let typing = false;
+  const place = () => pill.style.setProperty('--calc-pill-offset', `${bottomObstruction() + 12}px`);
   const sync = () => {
-    const on = enabled && below;
+    const on = enabled && away && !typing;
+    if (on) place();
     pill.classList.toggle('is-on', on);
     pill.setAttribute('aria-hidden', on ? 'false' : 'true');
     pill.tabIndex = on ? 0 : -1;
@@ -472,13 +496,27 @@ export function createLivePill(host, target, { label = 'Live grade', onOpen } = 
   });
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => {
-      below = !e.isIntersecting && e.boundingClientRect.top > 0;
+      away = !e.isIntersecting;
       sync();
     }).observe(target);
   }
+  const isText = (t) => t instanceof HTMLInputElement && !['checkbox', 'radio', 'range', 'button'].includes(t.type) && t.inputMode !== 'decimal';
+  host.addEventListener('focusin', (e) => { typing = isText(e.target); sync(); });
+  host.addEventListener('focusout', () => { typing = false; sync(); });
+  window.addEventListener('resize', () => enabled && place(), { passive: true });
   return {
     update(text) {
-      setText(num, text);
+      setText(v1, text);
+    },
+    set({ label: a, value, label2, value2, aria }) {
+      setText(l1, a);
+      setText(v1, value);
+      const two = label2 != null;
+      l2.hidden = !two;
+      v2.hidden = !two;
+      chip.hidden = two;
+      if (two) { setText(l2, label2); setText(v2, value2); }
+      pill.setAttribute('aria-label', aria || `${a} ${value}${two ? `, ${label2} ${value2}` : ''}, go to result`);
     },
     enable(on) {
       enabled = !!on;
@@ -772,6 +810,7 @@ export function createActionToast(host) {
       btn.hidden = !action;
       btn.textContent = action || '';
       fn = onAction || null;
+      el.style.setProperty('--calc-toast-offset', `${bottomObstruction() + 72}px`);
       el.hidden = false;
       clearTimeout(t);
       t = setTimeout(hide, ms);

@@ -187,8 +187,16 @@ so it carries PR #1's plugin 0.6.0 + core 1.3.0 and the live design tokens). Dig
 | Step | What | State |
 | --- | --- | --- |
 | 0 | Setup: skill in the repo, inventory of existing core / merge work | Done 2026-10-03; skill corrected to 800px column, 14px phone margin. Live-vs-repo comparison done 05:23 by the design thread's Mac: nothing live is newer; only the plugin main file and README differ (repo ahead) |
-| 1 | One-page design note ([Claude Doc](https://claude.ai/code/artifact/94e4ec9f-935e-4109-8bd7-2e63bf2b4ab8)): core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Drafted 2026-10-03, awaiting Digant's OK |
-| 2 | Core + GPA engine; College GPA (generic profile) and UCLA (university profile); tests, QA, screenshots; College live behind the per-page switch | Not started |
+| 1 | One-page design note ([Claude Doc](https://claude.ai/code/artifact/94e4ec9f-935e-4109-8bd7-2e63bf2b4ab8)): core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Approved by Digant 2026-10-03 05:57 ("go step 2"). Where it differs, the Calculator Design Standard (`docs/calculator-design-standard.md`) wins |
+| 2 | Core + GPA engine; College GPA (generic profile) and UCLA (university profile); tests, QA, screenshots; College live behind the per-page switch | Built 2026-10-03, at checkpoint (waits on Digant's go). Core v2 + `engines/gpa-engine.js` + `gpa/gpa-app.js` + `profiles/college.js`, `profiles/from-gpcm.js`; per-page switch `includes/calc-switch.php` (Grade + GPA > New calculators, all off by default, `?calc=old` fallback, `?calc=new` editor preview). Tests: `node --test tests/js/gpa-engine.test.mjs`, `php tests/php/calc_switch_test.php`, `python3 tests/gpa_v2_qa.py --cases 60 --shots` (671/671), `tests/core_qa.py`. Previews: `python3 scripts/calc/build_preview.py OUTDIR` |
+
+College go-live needs, in order: Digant's typed go in the unification thread; the design deploy carrying 5ca342b
+(calculator tokens, `.gpacalc-mount` column width and 14px phone margin); a plugin upload from a Mac session;
+ticking College in Grade + GPA > New calculators; a cache purge; a `docs/LIVE_CHANGELOG.md` entry (undo = untick).
+
+Step 3 notes from Digant (05:57, not blocking step 2): inventory the ~50 Formidable / inline-script calculator pages
+with GA4 views and keep / merge / retire; give weighted-gpa, target-gpa, medical-school (AMCAS) and pharmacy-school
+(PharmCAS) their own profiles instead of the homepage bundle. Build every calculator with the component library (06:00).
 
 Starting point found in step 0 (2026-10-03):
 - The calculator skill now lives in the repo at `.claude/skills/calculator-skill/SKILL.md` (copied from Digant's

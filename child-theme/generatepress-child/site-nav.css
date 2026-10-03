@@ -129,6 +129,9 @@
 /* Freestar's sticky footer ad (#fs-sticky-footer, fixed, up to 100px tall) covered the end of the page: keep the
    bottom bar clear of it. */
 body:has(#fs-sticky-footer) .site-footer .site-info { padding-bottom: 124px !important; }
+/* Calculator pages also float the result pill (.calc-pill, 48px, fixed above the sticky ad) once the calculator is
+   off screen: clear both. */
+body:has(.calc-pill.is-on) .site-footer .site-info { padding-bottom: 184px !important; }
 /* Freestar's consent button (#pmLink): hidden until Freestar's script labels it for the visitor's region and sets
    an inline visibility: visible; where it never does, the bar shows no gap or stray separator. Styled as a bar link. */
 .site-footer .site-info #pmLink.gpa-legal__pm { display: none; }

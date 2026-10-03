@@ -3013,11 +3013,13 @@ function gpa_freestar_siderails() {
 		var h = bottom - top;
 		if (h < AD_H) { return null; }
 		// Space beside the column: the rail must fit at its tier width, with at least GAP_MIN to the column and EDGE to the screen edge.
-		var gl = Math.min(GAP_MAX, c.left - EDGE - w), gr = Math.min(GAP_MAX, vw - c.right - EDGE - w);
+		// The column tiers leave exactly GAP_MIN beside a full-width rail, so allow 1px for subpixel layout (zoom, odd widths);
+		// a strict check hid one side at random.
+		var gl = Math.min(GAP_MAX, c.left - EDGE - w), gr = Math.min(GAP_MAX, vw - c.right - EDGE - w), ok = GAP_MIN - 1;
 		return {
 			top: Math.round(top), h: Math.round(h), two: h >= SEG2_MIN,
-			left: gl >= GAP_MIN ? Math.round(window.pageXOffset + c.left - gl - w) : null,
-			right: gr >= GAP_MIN ? Math.round(window.pageXOffset + c.right + gr) : null
+			left: gl >= ok ? Math.round(window.pageXOffset + c.left - gl - w) : null,
+			right: gr >= ok ? Math.round(window.pageXOffset + c.right + gr) : null
 		};
 	}
 
@@ -3025,12 +3027,14 @@ function gpa_freestar_siderails() {
 		if (!p || p[side] === null || !PLACEMENTS[side][w]) { return []; }
 		return PLACEMENTS[side][w].slice(0, p.two ? 2 : 1);
 	}
-	function sync(ids) { // request newly shown slots, delete hidden ones
+	// Request newly shown slots. Slots are deleted only on a tier change (reset): a rail hidden for a moment while the
+	// page loads keeps its ad, since deleting and re-requesting it left rails blank.
+	function sync(ids, reset) {
 		var add = ids.filter(function (id) { return !requested[id]; });
-		var del = Object.keys(requested).filter(function (id) { return ids.indexOf(id) < 0; });
+		var del = reset ? Object.keys(requested) : [];
 		if (!window.freestar || (!add.length && !del.length)) { return; }
+		if (reset) { requested = {}; }
 		add.forEach(function (id) { requested[id] = 1; });
-		del.forEach(function (id) { delete requested[id]; });
 		freestar.queue.push(function () {
 			if (del.length) { freestar.deleteAdSlots(del); }
 			if (add.length) { freestar.newAdSlots(add.map(function (id) { return { placementName: id, slotId: id }; })); }
@@ -3049,7 +3053,7 @@ function gpa_freestar_siderails() {
 		raf = 0;
 		var w = tierNow();
 		sendTier(w);
-		if (curTier !== null && w !== curTier) { sync([]); } // tier changed: drop every slot, re-request for the new tier
+		if (curTier !== null && w !== curTier) { sync([], true); } // tier changed: drop every slot, re-request for the new tier
 		curTier = w;
 		if (loadTier === null) { loadTier = w; }
 		// Freestar fixes a slot's sizes at page load (re-created slots keep the load-time size list), so after a resize

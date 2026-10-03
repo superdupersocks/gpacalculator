@@ -752,17 +752,20 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 #page .entry-content details.gpa-toc > summary::-webkit-details-marker { display: none; }
 #page .entry-content details.gpa-toc > summary::marker { content: ""; }
 #page .entry-content details.gpa-toc > summary .gpa-toc__count { font-weight: 400; color: var(--gpa-text-muted); }
+/* Chevron in a 32px round tinted button (same tint as the number badges) so the row reads as openable;
+   the whole row stays the click/tap target. Chevron stroke = --gpa-accent (#4338CA). */
 #page .entry-content details.gpa-toc > summary::after {
     content: "";
-    width: 8px;
-    height: 8px;
-    margin: -4px 4px 0 auto;
-    border-right: 2px solid var(--gpa-link);
-    border-bottom: 2px solid var(--gpa-link);
-    transform: rotate(45deg);
-    transition: transform .15s ease;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    border-radius: 50%;
+    background: var(--gpa-tint-indigo) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='%234338CA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
+    transition: transform .15s ease, background-color .15s ease;
 }
-#page .entry-content details.gpa-toc[open] > summary::after { transform: rotate(-135deg); margin-top: 4px; }
+#page .entry-content details.gpa-toc > summary:hover::after { background-color: var(--gpa-indigo-100); }
+#page .entry-content details.gpa-toc[open] > summary::after { transform: rotate(180deg); }
 #page .entry-content details.gpa-toc > summary:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce) { #page .entry-content details.gpa-toc > summary::after { transition: none; } }
 /* The Rank Math list inside: no box, no second title, numbers in the same tinted badge as the H2s; only the heading text is the link */

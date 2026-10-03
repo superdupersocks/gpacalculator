@@ -378,7 +378,7 @@ function gpa_scale_lookup_shortcode() {
  * Attributes: home_anchor (the page's homepage link text).
  */
 /**
- * GPA pages on the v6 layout (Digant 2026-10-03 18:43: "go v6 on the 3.7 page only"): the static answer card and the
+ * GPA pages on the v6 layout (3.7 only from 18:43, every GPA page from 19:17, Digant 2026-10-03): the static answer card and the
  * "Is your X weighted?" card. Every other GPA page keeps the Unweighted | Weighted view (gpa_scale_view_legacy()).
  * Filter 'gpa_scale_v6_pages' to roll it out further.
  */
@@ -387,7 +387,10 @@ function gpa_scale_v6( $slug = null ) {
 		$q    = get_queried_object();
 		$slug = $q instanceof WP_Post ? $q->post_name : '';
 	}
-	return in_array( $slug, (array) apply_filters( 'gpa_scale_v6_pages', array( '3-7-gpa' ) ), true );
+	// Digant 19:17 "go v6 on all GPA pages": every /gpa-scale/<x-y>-gpa/ page. The filter can still hold pages back
+	// (return an array of slugs) or keep everything on the legacy view (return an empty array).
+	$pages = apply_filters( 'gpa_scale_v6_pages', null );
+	return null === $pages ? (bool) preg_match( '/^[0-4]-[0-9]-gpa$/', (string) $slug ) : in_array( $slug, (array) $pages, true );
 }
 
 /** The Unweighted | Weighted view as deployed on 2026-10-03 (b9586a0), for GPA pages not yet on v6. */

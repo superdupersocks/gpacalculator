@@ -1,45 +1,55 @@
 <?php
 /**
  * Admissions step 3, on the server: each college page's official admissions link for template v2
- * (college_admissions_url, and college_admissions_url_kind = admissions or website). scripts/admissions/step3_links_live.sh
- * uploads data/admissions/audit/step3_admissions_links.csv (ipeds_unitid, college_admissions_url,
- * college_admissions_url_kind; made by scripts/admissions/step3_links.py pick from the links check) and pipes this file
- * to `wp eval-file -` with one of:
+ * (college_admissions_url, and college_admissions_url_kind = admissions or website) and its IPEDS street address and
+ * ZIP code for the CollegeOrUniversity schema (college_street, college_zip). scripts/admissions/step3_links_live.sh
+ * uploads data/admissions/audit/step3_admissions_links.csv (ipeds_unitid and those four; made by
+ * scripts/admissions/step3_links.py pick) and pipes this file to `wp eval-file -` with one of:
  *
  *   plan   <links.csv>            dry run: how many published college pages would get or change the fields
  *   apply  <links.csv> <log.tsv>  write them, logging each page's old values first
  *   revert <log.tsv>              put every logged value back, removing a field where there was none
  *
- * Only those two fields change, and only on pages with an IPEDS ID. A page whose college has no checked link loses a
- * stale one. No revision, no save_post, no change to the page's modified date. Template v1 doesn't read the fields.
+ * Only those four fields change, and only on pages with an IPEDS ID. A field the file leaves empty for a page's college
+ * is removed if the page has one (a stale link). No revision, no save_post, no change to the page's modified date.
+ * Template v1 doesn't read the fields.
  */
 
-const STEP3_FIELDS = array( 'college_admissions_url', 'college_admissions_url_kind' );
+const STEP3_FIELDS = array( 'college_admissions_url', 'college_admissions_url_kind', 'college_street', 'college_zip' );
 
-// ipeds_unitid => [url, kind], from the CSV.
+// ipeds_unitid => [url, kind, street, zip], from the CSV.
 function step3_links_map( $file ) {
 	$fh = fopen( $file, 'r' );
 	if ( ! $fh ) {
 		WP_CLI::error( "can't read $file" );
 	}
-	if ( array( 'ipeds_unitid', 'college_admissions_url', 'college_admissions_url_kind' ) !== fgetcsv( $fh ) ) {
-		WP_CLI::error( "$file: expected the columns ipeds_unitid,college_admissions_url,college_admissions_url_kind" );
+	if ( array_merge( array( 'ipeds_unitid' ), STEP3_FIELDS ) !== fgetcsv( $fh ) ) {
+		WP_CLI::error( "$file: expected the columns ipeds_unitid," . implode( ',', STEP3_FIELDS ) );
 	}
 	$map = array();
 	while ( false !== ( $row = fgetcsv( $fh ) ) ) {
-		if ( 3 === count( $row ) && ctype_digit( $row[0] ) && preg_match( '#^https?://[^\s@]+$#', $row[1] ) && in_array( $row[2], array( 'admissions', 'website' ), true ) ) {
-			$map[ $row[0] ] = array( $row[1], $row[2] );
+		if ( 5 !== count( $row ) || ! ctype_digit( $row[0] ) ) {
+			continue;
+		}
+		$link = ( '' === $row[1] && '' === $row[2] )
+			|| ( preg_match( '#^https?://[^\s@]+$#', $row[1] ) && in_array( $row[2], array( 'admissions', 'website' ), true ) );
+		$addr = ( '' === $row[3] && '' === $row[4] )
+			|| ( '' !== trim( $row[3] ) && strlen( $row[3] ) <= 200 && false === strpbrk( $row[3], "<>\t\n" ) && preg_match( '/^\d{5}(-\d{4})?$/', $row[4] ) );
+		if ( $link && $addr ) {
+			$map[ $row[0] ] = array_slice( $row, 1 );
 		}
 	}
 	fclose( $fh );
 	return $map;
 }
 
-// The published college pages whose fields would change: [ID, slug, had url, old url, had kind, old kind, new url, new kind].
+// The published college pages whose fields would change: [ID, slug, then had (1/0) and old value for each field, then
+// each new value].
 function step3_links_changes( $map ) {
 	$ids     = get_posts( array( 'post_type' => 'colleges', 'post_status' => 'publish', 'fields' => 'ids', 'posts_per_page' => -1, 'orderby' => 'ID', 'order' => 'ASC' ) );
 	$changes = array();
-	$counts  = array( 'pages' => count( $ids ), 'no IPEDS ID' => 0, 'no checked link' => 0, 'already right' => 0 );
+	$counts  = array( 'pages' => count( $ids ), 'no IPEDS ID' => 0, 'not in the file' => 0, 'already right' => 0 );
+	$empty   = array_fill( 0, count( STEP3_FIELDS ), '' );
 	foreach ( array_chunk( $ids, 500 ) as $chunk ) {
 		update_meta_cache( 'post', $chunk );
 		foreach ( $chunk as $id ) {
@@ -48,19 +58,21 @@ function step3_links_changes( $map ) {
 				++$counts['no IPEDS ID'];
 				continue;
 			}
-			$new = isset( $map[ $unitid ] ) ? $map[ $unitid ] : array( '', '' );
-			$old = array();
-			foreach ( STEP3_FIELDS as $key ) {
-				$had   = metadata_exists( 'post', $id, $key );
-				$old[] = $had ? 1 : 0;
-				$old[] = $had ? (string) get_post_meta( $id, $key, true ) : '';
-			}
 			if ( ! isset( $map[ $unitid ] ) ) {
-				++$counts['no checked link'];
-				if ( ! $old[0] && ! $old[2] ) {
-					continue;
-				}
-			} elseif ( $old[0] && $old[2] && $old[1] === $new[0] && $old[3] === $new[1] ) {
+				++$counts['not in the file'];
+			}
+			$new  = isset( $map[ $unitid ] ) ? $map[ $unitid ] : $empty;
+			$old  = array();
+			$same = true;
+			foreach ( STEP3_FIELDS as $i => $key ) {
+				$had   = metadata_exists( 'post', $id, $key );
+				$value = $had ? (string) get_post_meta( $id, $key, true ) : '';
+				$old[] = $had ? 1 : 0;
+				$old[] = $value;
+				// Right as it is: the field holds the new value, or is absent where the new value is empty
+				$same = $same && ( $had ? ( '' !== $new[ $i ] && $value === $new[ $i ] ) : '' === $new[ $i ] );
+			}
+			if ( $same ) {
 				++$counts['already right'];
 				continue;
 			}
@@ -68,16 +80,23 @@ function step3_links_changes( $map ) {
 		}
 	}
 	$parts = array();
-	foreach ( $counts as $what => $n ) {
-		$parts[] = "$what $n";
+	foreach ( $counts as $what => $count ) {
+		$parts[] = "$what $count";
 	}
 	WP_CLI::log( 'published college pages: ' . implode( ', ', $parts ) . '; to write ' . count( $changes ) );
 	return $changes;
 }
 
+// Where a change row's new values start
+function step3_new_at() {
+	return 2 + 2 * count( STEP3_FIELDS );
+}
+
 function step3_links_plan( $file ) {
+	$k = step3_new_at();
 	foreach ( array_slice( step3_links_changes( step3_links_map( $file ) ), 0, 5 ) as $c ) {
-		WP_CLI::log( "  e.g. {$c[1]} (post {$c[0]}): " . ( $c[2] ? "\"{$c[3]}\"" : 'none' ) . ' -> ' . ( '' !== $c[6] ? "{$c[6]} ({$c[7]})" : 'none' ) );
+		WP_CLI::log( "  e.g. {$c[1]} (post {$c[0]}): link " . ( $c[2] ? "\"{$c[3]}\"" : 'none' ) . ' -> ' . ( '' !== $c[ $k ] ? "{$c[$k]} ({$c[$k + 1]})" : 'none' )
+			. '; address ' . ( '' !== $c[ $k + 2 ] ? "{$c[$k + 2]}, {$c[$k + 3]}" : 'none' ) );
 	}
 }
 
@@ -87,21 +106,22 @@ function step3_links_apply( $file, $log ) {
 	if ( ! $fh ) {
 		WP_CLI::error( "can't write $log" );
 	}
+	$k = step3_new_at();
 	$n = 0;
 	foreach ( $changes as $c ) {
 		fwrite( $fh, implode( "\t", $c ) . "\n" );
 		fflush( $fh );
 		foreach ( STEP3_FIELDS as $i => $key ) {
-			if ( '' === $c[6 + $i] ) {
+			if ( '' === $c[ $k + $i ] ) {
 				delete_post_meta( $c[0], $key );
 			} else {
-				update_post_meta( $c[0], $key, $c[6 + $i] );
+				update_post_meta( $c[0], $key, $c[ $k + $i ] );
 			}
 		}
 		++$n;
 	}
 	fclose( $fh );
-	WP_CLI::log( "wrote the admissions link on $n pages; log $log" );
+	WP_CLI::log( "wrote the admissions link and address fields on $n pages; log $log" );
 }
 
 function step3_links_revert( $log ) {
@@ -111,21 +131,25 @@ function step3_links_revert( $log ) {
 	}
 	$n = 0;
 	foreach ( $lines as $line ) {
-		$c = array_pad( explode( "\t", $line ), 8, '' );
-		if ( ! ctype_digit( $c[0] ) || ! in_array( $c[2], array( '0', '1' ), true ) || ! in_array( $c[4], array( '0', '1' ), true ) ) {
+		$c  = array_pad( explode( "\t", $line ), step3_new_at() + count( STEP3_FIELDS ), '' );
+		$ok = ctype_digit( $c[0] );
+		foreach ( STEP3_FIELDS as $i => $key ) {
+			$ok = $ok && in_array( $c[ 2 + 2 * $i ], array( '0', '1' ), true );
+		}
+		if ( ! $ok ) {
 			WP_CLI::warning( "can't read: $line" );
 			continue;
 		}
 		foreach ( STEP3_FIELDS as $i => $key ) {
-			if ( '1' === $c[2 + 2 * $i] ) {
-				update_post_meta( (int) $c[0], $key, $c[3 + 2 * $i] );
+			if ( '1' === $c[ 2 + 2 * $i ] ) {
+				update_post_meta( (int) $c[0], $key, $c[ 3 + 2 * $i ] );
 			} else {
 				delete_post_meta( (int) $c[0], $key );
 			}
 		}
 		++$n;
 	}
-	WP_CLI::log( "put back the admissions link on $n pages from $log" );
+	WP_CLI::log( "put back the admissions link and address fields on $n pages from $log" );
 }
 
 $cmd = isset( $args[0] ) ? $args[0] : '';

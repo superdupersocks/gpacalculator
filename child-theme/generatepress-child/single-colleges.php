@@ -7,8 +7,8 @@
  * gpa_college_profile_styles() in college-data.php, which also adds the content template's body classes.
  *
  * Tiers switched on in college-v2.php (template v2) also get the compare box under the quick facts, data-driven FAQs,
- * then, after the FAQ (unnumbered, like the two sections after it), the college's official admissions link ("Before you
- * apply"), similar colleges in the state and "Keep exploring".
+ * then, after the FAQ (unnumbered, like similar colleges), the college's official admissions link ("Before you apply")
+ * and similar colleges in the state. A location line ("City, ST · Public · 4-year") sits under the H1.
  *
  * Everything shown comes from college-data.php: gpa_college_view() (figures, with their years), gpa_college_sections(),
  * gpa_college_faqs() (which also feeds the page's FAQPage JSON-LD) and gpa_college_sources(). Pages the federal import
@@ -39,6 +39,9 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 				<header class="entry-header">
 					<?php gpa_render_breadcrumb(); ?>
 					<h1 class="entry-title"><?php echo esc_html( $v['name'] ); ?> <span class="gpa-college-h1-sub"><?php echo esc_html( gpa_college_h1_sub( $v ) ); ?></span></h1>
+					<?php if ( $v2 && '' !== ( $where = gpa_college_location_line( $post_id ) ) ) : ?>
+					<p class="gpa-college-where"><?php echo esc_html( $where ); ?></p>
+					<?php endif; ?>
 					<?php if ( '' !== $intro ) : ?>
 					<div class="rx-hero-intro"><p><?php echo esc_html( $intro ); ?></p></div>
 					<?php endif; ?>
@@ -103,7 +106,7 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					<?php endif; ?>
 
 					<?php if ( $v2 && $v['fresh'] ) : ?>
-					<?php echo gpa_college_similar_section( $v ) . gpa_college_next_section( $v ); // built from escaped values ?>
+					<?php echo gpa_college_similar_section( $v ); // built from escaped values ?>
 					<?php endif; ?>
 
 					<?php if ( $sources ) : ?>

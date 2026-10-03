@@ -82,8 +82,10 @@
         var parts = [];
         var signals = [];
 
-        // The primary button names the GPA as typed: "Colleges where a 3.4 fits"
-        fitsEl.textContent = gOk ? 'a ' + String(gpaIn.value).trim().replace(',', '.') : 'your GPA';
+        // The "Colleges where a 3.4 fits" button (when the band pages exist) names the GPA as typed
+        if (fitsEl) {
+            fitsEl.textContent = gOk ? 'a ' + String(gpaIn.value).trim().replace(',', '.') : 'your GPA';
+        }
         noteEl.hidden = !(gOk && state.scale === 'weighted' && g > 4 && c.basis !== 'weighted');
 
         if (!gOk && !sOk) {

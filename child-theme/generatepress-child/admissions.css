@@ -736,7 +736,7 @@ body.post-type-archive-colleges .gpa-hub {
     .gpa-hub-row__line { white-space: normal; }
 }
 
-/* ---------- 9. Template v2 (college-v2.php): compare box, section spacing, similar colleges, keep exploring ----------
+/* ---------- 9. Template v2 (college-v2.php): location line, compare box, section spacing, similar colleges ----------
    The compare box follows the step 3 mockup: a card as wide as the text (the acceptance meter's inset, 4), 2px indigo
    border, 24px corners, an indigo shadow; inputs on white, the result on an indigo-50 panel. As wide as the text
    (layout.css: the content area's own 20px padding on phones, 40px of inset from 641px up). Mockup colours the
@@ -804,6 +804,7 @@ body.post-type-archive-colleges .gpa-hub {
 }
 #page .entry-content .gpa-compare__toggle button:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; }
 #page .entry-content .gpa-compare p.gpa-compare__help { max-width: none !important; margin: 0 !important; font-size: 14px; line-height: 1.5; color: var(--gpa-gray-600); }
+#page .entry-content .gpa-compare p.gpa-compare__help--open { margin-top: 12px !important; }
 #page .entry-content .gpa-compare__result {
     padding: 22px;
     background: var(--gpa-indigo-50);
@@ -888,8 +889,8 @@ body.gpa-college-v2.single-colleges #primary #main .entry-content.entry-content 
     gap: 12px;
     padding: 0 !important;
 }
-#page #main .entry-content :is(ul.gpa-college-similar, ul.gpa-college-next) > li { margin: 0 !important; padding: 0; }
-#page #main .entry-content :is(ul.gpa-college-similar, ul.gpa-college-next) > li::before { content: none !important; display: none !important; }
+#page #main .entry-content ul.gpa-college-similar > li { margin: 0 !important; padding: 0; }
+#page #main .entry-content ul.gpa-college-similar > li::before { content: none !important; display: none !important; }
 #page .entry-content ul.gpa-college-similar a {
     display: block;
     height: 100%;
@@ -904,22 +905,19 @@ body.gpa-college-v2.single-colleges #primary #main .entry-content.entry-content 
 #page .entry-content .gpa-college-similar__name { display: block; font-weight: 600; color: var(--gpa-cmp-ink, var(--gpa-blue-950)); }
 #page .entry-content .gpa-college-similar__note { display: block; margin-top: 4px; font-size: 14px; color: var(--gpa-gray-600); }
 
-/* Keep exploring: pill links. */
-#page #main .entry-content ul.gpa-college-next { display: flex; flex-wrap: wrap; gap: 10px; padding: 0 !important; }
-#page .entry-content ul.gpa-college-next a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 0 16px;
-    border-radius: var(--gpa-radius-pill);
-    background: var(--gpa-blue-50);
-    color: var(--gpa-blue-900);
-    font-size: 15px;
-    font-weight: 500;
-    text-decoration: none;
-    box-sizing: border-box;
-}
-#page .entry-content ul.gpa-college-next a:hover { background: var(--gpa-indigo-100); }
 /* "Before you apply" opens the block after the FAQ, so it takes a section's spacing too. */
 body.gpa-college-v2 #primary #main .entry-content .gpa-college-official { margin-top: var(--gpa-hdr-above) !important; }
 #page .entry-content .gpa-college-official a { font-weight: 600; }
+
+/* Similar colleges' "See all colleges in {State} →", once the state hubs exist. */
+#page .entry-content p.gpa-college-similar__all a { font-weight: 600; }
+
+/* The location line under the H1 ("Cambridge, MA · Private · 4-year"), above the hero sentence. */
+html body.single-colleges .entry-header p.gpa-college-where {
+    margin: -4px auto 12px !important;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: var(--gpa-hero-text) !important;
+}

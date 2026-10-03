@@ -101,12 +101,12 @@ if ( ! function_exists( 'gpa_college_index' ) ) {
 
 if ( ! function_exists( 'gpa_college_similar' ) ) {
     /**
-     * Up to five colleges in the same state and of the same kind (4-year or 2-year) that search engines can index: the
+     * Up to six colleges in the same state and of the same kind (4-year or 2-year) that search engines can index: the
      * closest in acceptance rate and size for a college with a rate, other open-admission colleges of a similar size for
      * an open-admission one. Each: [id, title, note ("Hard · 16%
-     * admitted" or "Open admission")]. Empty without a state or with fewer than two matches.
+     * admitted" or "Open admission")]. Empty without a state or with fewer than four matches (Digant: 4–6).
      */
-    function gpa_college_similar( array $v, $limit = 5 ) {
+    function gpa_college_similar( array $v, $limit = 6 ) {
         $state = gpa_college_state( $v['location'] );
         $f     = $v['fresh'];
         if ( '' === $state || ! $f || ( ! $v['rate'] && ! $v['open'] ) ) {
@@ -135,7 +135,7 @@ if ( ! function_exists( 'gpa_college_similar' ) ) {
             return array( $a['d'], $a['tier'], $a['title'] ) <=> array( $b['d'], $b['tier'], $b['title'] );
         } );
         $out = array_slice( $out, 0, $limit );
-        if ( count( $out ) < 2 ) {
+        if ( count( $out ) < 4 ) {
             return array();
         }
         foreach ( $out as &$c ) {
@@ -212,21 +212,20 @@ if ( ! function_exists( 'gpa_college_compare_box' ) ) {
             return '';
         }
         $name  = esc_html( $v['name'] );
-        $state = gpa_college_state( $v['location'] );
-        $calc  = '<p class="gpa-compare__help">Don\'t know your GPA? <a href="' . esc_url( home_url( '/high-school-gpa-calculator/' ) ) . '">Calculate it with the high school GPA calculator</a></p>';
-        // The hub has no GPA filter (GPAs show only where a college published one), so "where a GPA fits" is the
-        // state's colleges that admit at least half of applicants or anyone who applies.
-        $fits  = add_query_arg( array_filter( array( 'search' => '' !== $state ? rawurlencode( $state ) : '', 'acceptance' => 'over_50' ) ), get_post_type_archive_link( 'colleges' ) );
+        $calc  = '<p class="gpa-compare__help">Don\'t know your GPA? <a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( gpa_college_calc_anchor( $v ) ) . '</a></p>';
+        // "Colleges where a {GPA} fits" waits for the GPA-band list pages (Digant, 2026-10-03 05:49): until a filter
+        // returns their URL, the box shows only "Plan the grades I need".
+        $fits  = (string) apply_filters( 'gpa_college_fits_url', '', $v );
         $ctas  = '<div class="gpa-compare__ctas">'
-            . '<a class="gpa-compare__cta gpa-compare__cta--primary" href="' . esc_url( $fits ) . '"><span>Colleges where <span class="gpa-compare__fits">your GPA</span> fits</span></a>'
-            . '<a class="gpa-compare__cta" href="' . esc_url( home_url( '/how-to-raise-gpa/' ) ) . '">Plan the grades I need</a>'
+            . ( '' !== $fits ? '<a class="gpa-compare__cta gpa-compare__cta--primary" href="' . esc_url( $fits ) . '"><span>Colleges where <span class="gpa-compare__fits">your GPA</span> fits</span></a>' : '' )
+            . '<a class="gpa-compare__cta' . ( '' === $fits ? ' gpa-compare__cta--primary' : '' ) . '" href="' . esc_url( home_url( '/how-to-raise-gpa/' ) ) . '">Plan the grades I need</a>'
             . '</div>';
         $fine  = '<p class="gpa-compare__fine">A guide based on reported data, not a prediction. ' . $name . ' reviews each application.</p>';
         if ( $d['open'] ) {
             return '<div class="gpa-compare gpa-compare--open"><div class="gpa-compare__result">'
                 . '<p class="gpa-compare__verdict"><span class="gpa-compare__label">Where you stand</span><strong>Any GPA meets the admission requirement</strong></p>'
                 . '<p class="gpa-compare__text">' . $name . ' has an open admission policy: it accepts any student who applies, so your GPA and test scores won\'t keep you out. Some programs can set their own requirements, so check the one you want with the college.</p>'
-                . $ctas . $fine
+                . str_replace( 'gpa-compare__help', 'gpa-compare__help gpa-compare__help--open', $calc ) . $ctas . $fine
                 . '</div></div>';
         }
         $tests = '';
@@ -501,8 +500,9 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
 }
 
 if ( ! function_exists( 'gpa_college_similar_section' ) ) {
-    // "Similar colleges in {State}": one heading over link cards (name, then difficulty and admit rate), as in the
-    // mockup. Unnumbered and out of the TOC (layout.css 10). Empty without at least two matches.
+    // "Similar colleges in {State}": one heading over 4–6 link cards (name, then difficulty and admit rate). Unnumbered
+    // and out of the TOC (layout.css 10). "See all colleges in {State} →" joins it once the state hubs exist (the
+    // gpa_college_state_hub_url filter returns their URL); until then the block has no other links.
     function gpa_college_similar_section( array $v ) {
         $similar = gpa_college_similar( $v );
         if ( ! $similar ) {
@@ -514,28 +514,70 @@ if ( ! function_exists( 'gpa_college_similar_section' ) ) {
             $items .= '<li><a class="gpa-college-similar__card" href="' . esc_url( get_permalink( $c['id'] ) ) . '"><span class="gpa-college-similar__name">' . esc_html( $c['title'] ) . '</span>'
                 . ( '' !== $c['note'] ? '<span class="gpa-college-similar__note">' . esc_html( $c['note'] ) . '</span>' : '' ) . '</a></li>';
         }
-        return '<h2 id="similar-colleges" class="gpa-no-number">Similar colleges' . ( '' !== $state ? ' in ' . esc_html( $state ) : '' ) . '</h2>'
+        $hub = (string) apply_filters( 'gpa_college_state_hub_url', '', $state, $v );
+        return '<h2 id="similar-colleges" class="gpa-no-number">Similar colleges in ' . esc_html( $state ) . '</h2>'
             . '<p class="gpa-college-similar__sub">' . ( $v['open'] ? 'Also open to anyone who applies.' : 'With a similar acceptance rate and size.' ) . '</p>'
-            . '<ul class="gpa-college-similar">' . $items . '</ul>';
+            . '<ul class="gpa-college-similar">' . $items . '</ul>'
+            . ( '' !== $hub ? '<p class="gpa-college-similar__all"><a href="' . esc_url( $hub ) . '">See all colleges in ' . esc_html( $state ) . ' →</a></p>' : '' );
     }
+}
 
-    // "Keep exploring": the state's colleges on the hub and the weighted GPA calculator, as pill links. The Raise GPA
-    // calculator is the compare box's "Plan the grades I need" and the high school GPA calculator its help line, so
-    // neither repeats here.
-    function gpa_college_next_section( array $v ) {
-        $state = gpa_college_state( $v['location'] );
-        $next  = array();
-        if ( '' !== $state ) {
-            $next[] = array( add_query_arg( 'search', rawurlencode( $state ), get_post_type_archive_link( 'colleges' ) ), 'All colleges in ' . $state );
-        } else {
-            $next[] = array( get_post_type_archive_link( 'colleges' ), 'All colleges' );
+if ( ! function_exists( 'gpa_college_calc_anchor' ) ) {
+    // The compare box's link to the homepage GPA calculator: one of six anchors, picked by the college's IPEDS ID (the
+    // post ID without one), so the anchors spread evenly and each page keeps its own (Digant, 2026-10-03 05:49).
+    function gpa_college_calc_anchor( array $v ) {
+        $anchors = array( 'Check my GPA', 'Check your GPA', 'GPA calculator', 'Online GPA calculator', 'Calculate your GPA', 'Calculate my GPA' );
+        $unitid  = trim( (string) get_post_meta( $v['id'], 'ipeds_unitid', true ) );
+        $key     = ctype_digit( $unitid ) ? (int) $unitid : (int) $v['id'];
+        return $anchors[ $key % count( $anchors ) ];
+    }
+}
+
+if ( ! function_exists( 'gpa_college_location_line' ) ) {
+    // The line under the H1: "Cambridge, MA · Private · 4-year", from the IPEDS fields the Phase 2 import wrote. Empty
+    // when the city or state is missing.
+    function gpa_college_location_line( $post_id ) {
+        $city    = trim( (string) get_post_meta( $post_id, 'college_city', true ) );
+        $st      = trim( (string) get_post_meta( $post_id, 'college_state', true ) );
+        $control = trim( (string) get_post_meta( $post_id, 'college_control', true ) );
+        $level   = trim( (string) get_post_meta( $post_id, 'college_level', true ) );
+        if ( '' === $city || ! preg_match( '/^[A-Z]{2}$/', $st ) ) {
+            return '';
         }
-        $next[] = array( home_url( '/weighted-gpa-calculator/' ), 'Weighted GPA calculator' );
-        $items  = '';
-        foreach ( $next as $n ) {
-            $items .= '<li><a class="gpa-college-next__pill" href="' . esc_url( $n[0] ) . '">' . esc_html( $n[1] ) . '</a></li>';
+        $bits = array( $city . ', ' . $st );
+        if ( '' !== $control ) {
+            $bits[] = 0 === stripos( $control, 'public' ) ? 'Public' : 'Private';
         }
-        return '<h2 id="keep-exploring" class="gpa-no-number">Keep exploring</h2><ul class="gpa-college-next">' . $items . '</ul>';
+        if ( 0 === stripos( $level, 'four' ) ) {
+            $bits[] = '4-year';
+        } elseif ( 0 === stripos( $level, 'at least 2' ) ) {
+            $bits[] = '2-year';
+        } elseif ( 0 === stripos( $level, 'less than 2' ) ) {
+            $bits[] = 'Under 2-year';
+        }
+        return implode( ' · ', $bits );
+    }
+}
+
+if ( ! function_exists( 'gpa_college_schema_address' ) ) {
+    // The CollegeOrUniversity address on template v2 pages: street and ZIP code from IPEDS (step 3's field file), city
+    // and state from the Phase 2 import. Null when the city or state is missing, so the caller keeps its own.
+    function gpa_college_schema_address( $post_id ) {
+        $city = trim( (string) get_post_meta( $post_id, 'college_city', true ) );
+        $st   = trim( (string) get_post_meta( $post_id, 'college_state', true ) );
+        if ( '' === $city || '' === $st ) {
+            return null;
+        }
+        $street = trim( (string) get_post_meta( $post_id, 'college_street', true ) );
+        $zip    = trim( (string) get_post_meta( $post_id, 'college_zip', true ) );
+        return array_filter( array(
+            '@type'           => 'PostalAddress',
+            'streetAddress'   => $street,
+            'addressLocality' => $city,
+            'addressRegion'   => $st,
+            'postalCode'      => $zip,
+            'addressCountry'  => 'US',
+        ), 'strlen' );
     }
 }
 

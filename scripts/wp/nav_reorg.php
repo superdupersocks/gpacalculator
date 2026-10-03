@@ -50,13 +50,13 @@ $GRADE = array(
 /* Top 6 indexed (tier A/B) college pages by GA4 page views, 2025-10-02 … 2026-10-02, /admission/ and /admissions/
    paths with renamed slugs mapped (data/nav/colleges-top6.csv). Digant 2026-10-03 19:49: "most high traffic colleges". */
 $COLLEGES = array(
-	array( 'Browse all colleges', 'url:/admissions/' ),
 	array( 'University of San Diego', 'college:san-diego' ),
 	array( 'University of Redlands', 'college:university-of-redlands' ),
 	array( 'University of Idaho', 'college:university-of-idaho' ),
 	array( 'Soka University of America', 'college:soka-university-of-america' ),
 	array( 'Alfred University', 'college:alfred-university' ),
 	array( 'Princeton', 'college:princeton' ),
+	array( 'All colleges →', 'url:/admissions/' ),
 );
 
 $MENUS = array(

@@ -1,7 +1,8 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)"
      https://claude.ai/code/artifact/1d396bba-2925-4cd3-95b4-7c5ce1bf894d
      Synced 2026-10-03 from doc revision 25. The doc is the source of truth: when it changes, re-export it
-     (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
+     (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand.
+     Check: everything below this comment is byte-identical to the export. -->
 
 # gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)
 

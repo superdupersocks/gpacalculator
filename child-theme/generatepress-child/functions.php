@@ -835,7 +835,7 @@ function gpa_college_page_schema($data, $jsonld) {
         $college_schema['alternateName'] = $former;
     }
     // The college's own website from IPEDS (Phase 4); our page is the WebPage node about it
-    $website = gpa_college_website( $post_id );
+    $website = function_exists( 'gpa_college_website' ) ? gpa_college_website( $post_id ) : '';
     if ( '' !== $website ) {
         $college_schema['url'] = $website;
     }

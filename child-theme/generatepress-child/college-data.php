@@ -543,7 +543,7 @@ if ( ! function_exists( 'gpa_college_h1_sub' ) ) {
 
 if ( ! function_exists( 'gpa_college_intro' ) ) {
     // The hero's sentence or two: what kind of college it is and where (and its former name), then how selective it is.
-    function gpa_college_intro( array $v ) {
+    function gpa_college_intro( array $v, $about_only = false ) {
         $f     = $v['fresh'];
         $type  = $v['type'];
         $parts = array();
@@ -554,6 +554,10 @@ if ( ! function_exists( 'gpa_college_intro' ) ) {
                 $s .= ', with ' . number_format( $f['enrollment'] ) . ' undergraduates';
             }
             $parts[] = $s . '.';
+        }
+        if ( $about_only ) {
+            // Template v2 shows only that first sentence, in the content (single-colleges.php), not in the hero
+            return implode( ' ', $parts );
         }
         if ( $v['rate'] ) {
             $parts[] = 'It admitted ' . $v['rate'] . ' of first-year applicants for ' . $f['fall'] . '.';

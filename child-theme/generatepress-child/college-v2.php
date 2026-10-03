@@ -477,6 +477,64 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
             );
         }
 
+        // Questions only some colleges get, each where its own data answers it (Digant, 2026-10-03 07:54: different
+        // per college, but meaningful), in this order, as many as fit under ten questions in all
+        $extra = array();
+        if ( $v['bands'] ) {
+            $high = 0.0;
+            $top  = $v['bands'][0];
+            foreach ( $v['bands'] as $b ) {
+                if ( in_array( $b[0], array( '4.0', '3.75–3.99', '3.50–3.74' ), true ) ) {
+                    $high += $b[1];
+                }
+                if ( $b[1] > $top[1] ) {
+                    $top = $b;
+                }
+            }
+            $extra[] = array(
+                'question' => 'What GPA do most ' . $college . ' students have?',
+                'answer'   => '<strong>' . esc_html( gpa_college_pct_cell( $high ) ) . '</strong> of ' . $name . '\'s first-year students who submitted a high school GPA had 3.50 or higher, and the largest group (' . esc_html( gpa_college_pct_cell( $top[1] ) ) . ') had '
+                    . ( '4.0' === $top[0] ? 'a 4.0' : esc_html( $top[0] ) ) . ', as the college reported in its ' . esc_html( $v['cds']['year'] ) . ' Common Data Set. The college doesn\'t say whether these GPAs are weighted or unweighted.',
+            );
+        }
+        $factor = function ( $key ) use ( $f ) {
+            return isset( $f['requirements'][ $key ] ) ? gpa_college_requirement_status( $f['requirements'][ $key ] )[0] : '';
+        };
+        if ( ! $v['open'] && '' !== $f['fall'] ) {
+            $legacy = $factor( 'admission_requirements_legacy_status' );
+            if ( 'Considered if submitted' === $legacy || 'Not considered' === $legacy ) {
+                $extra[] = array(
+                    'question' => 'Does ' . $college . ' consider legacy status?',
+                    'answer'   => ( 'Not considered' === $legacy
+                        ? 'No. ' . $name . ' doesn\'t consider whether a parent or other relative attended'
+                        : 'Yes. ' . $name . ' considers whether a parent or other relative attended, though it isn\'t required' )
+                        . ', according to what it reported to ' . $ed . $fall . '.',
+                );
+            }
+            $essay = $factor( 'admission_requirements_personal_statement_or_essay' );
+            $said  = array(
+                'Required'                => 'Yes. ' . $name . ' requires a personal statement or essay from first-year applicants',
+                'Recommended'             => 'It recommends one. ' . $name . ' recommends that first-year applicants send a personal statement or essay',
+                'Considered if submitted' => 'No, but it considers one. ' . $name . ' doesn\'t require a personal statement or essay but considers one if you send it',
+                'Not considered'          => 'No. ' . $name . ' doesn\'t consider a personal statement or essay',
+            );
+            if ( isset( $said[ $essay ] ) ) {
+                $extra[] = array(
+                    'question' => 'Does ' . $college . ' require an essay?',
+                    'answer'   => $said[ $essay ] . ', according to what it reported to ' . $ed . $fall . '.',
+                );
+            }
+            if ( 'Required' === $factor( 'admission_requirements_demonstration_of_competencies' ) ) {
+                $extra[] = array(
+                    'question' => 'Does ' . $college . ' require a portfolio or audition?',
+                    'answer'   => 'Yes, for admission: ' . $name . ' requires applicants to show specific skills, such as through a portfolio or an audition, according to what it reported to ' . $ed . $fall . '. Check what your program asks for with the college.',
+                );
+            }
+        }
+        // Room for AP credit and net price, which close the list
+        $closing = ( in_array( $f['ap'], array( 'Yes', 'No' ), true ) ? 1 : 0 ) + ( $f['net_price'] && '' !== $f['net_price_year'] ? 1 : 0 );
+        $faqs    = array_merge( $faqs, array_slice( $extra, 0, max( 0, 10 - count( $faqs ) - $closing ) ) );
+
         // AP credit and net price, as before
         $year = '' !== $f['credits_year'] ? ' for ' . esc_html( $f['credits_year'] ) : '';
         if ( 'Yes' === $f['ap'] || 'No' === $f['ap'] ) {

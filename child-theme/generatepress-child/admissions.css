@@ -823,6 +823,8 @@ body.post-type-archive-colleges .gpa-hub {
 }
 #page .entry-content .gpa-compare__verdict strong { display: block; margin-top: 4px; font-size: 26px; font-weight: 800; line-height: 1.25; color: var(--gpa-cmp-ink); }
 #page .entry-content .gpa-compare p.gpa-compare__text { margin: 8px 0 0 !important; font-size: 15px; line-height: 1.6; color: var(--gpa-gray-800, #1E293B); }
+/* The result's key figures (the average, where your GPA or score sits, the admit rate), set by college-compare.js. */
+#page .entry-content .gpa-compare p.gpa-compare__text strong { padding: 1px 4px; border-radius: 6px; background: var(--gpa-indigo-100); color: var(--gpa-indigo-800); font-weight: 700; white-space: nowrap; }
 #page .entry-content .gpa-compare__range { margin-top: 18px; }
 #page .entry-content .gpa-compare__scale { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.4; color: var(--gpa-gray-600); }
 #page .entry-content .gpa-compare__mid { text-align: center; }
@@ -902,8 +904,13 @@ body.gpa-college-v2.single-colleges #primary #main .entry-content.entry-content 
     text-decoration: none;
     box-sizing: border-box;
 }
-#page .entry-content ul.gpa-college-similar a:hover { border-color: var(--gpa-indigo-500); }
-#page .entry-content .gpa-college-similar__name { display: block; font-weight: 600; color: var(--gpa-cmp-ink, var(--gpa-blue-950)); }
+#page .entry-content ul.gpa-college-similar a:hover,
+#page .entry-content ul.gpa-college-similar a:focus-visible { border-color: var(--gpa-indigo-500); box-shadow: 0 4px 14px rgba(79, 70, 229, .12); }
+/* The name reads as a link (Digant, 2026-10-03 07:54): link color, an arrow, underlined on hover. */
+#page .entry-content .gpa-college-similar__name { display: block; padding-right: 22px; position: relative; font-weight: 600; color: var(--gpa-indigo-700); }
+#page .entry-content .gpa-college-similar__name::after { content: "→"; position: absolute; right: 0; top: 0; color: var(--gpa-indigo-500); transition: transform .15s; }
+#page .entry-content ul.gpa-college-similar a:hover .gpa-college-similar__name { text-decoration: underline; text-underline-offset: 3px; }
+#page .entry-content ul.gpa-college-similar a:hover .gpa-college-similar__name::after { transform: translateX(3px); }
 #page .entry-content .gpa-college-similar__note { display: block; margin-top: 4px; font-size: 14px; color: var(--gpa-gray-600); }
 
 /* "Before you apply" opens the block after the FAQ, so it takes a section's spacing too. */
@@ -922,3 +929,7 @@ html body.single-colleges .entry-header p.gpa-college-where {
     letter-spacing: .2px;
     color: var(--gpa-hero-text) !important;
 }
+
+/* v2's sentence about the college (type, place, undergraduates), moved from the hero to the end of the acceptance rate
+   section (single-colleges.php). */
+#page .entry-content p.gpa-college-about { margin-top: 16px !important; }

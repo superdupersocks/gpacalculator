@@ -47,6 +47,24 @@
         return Number(n).toFixed(d);
     }
 
+    // The result text's key figures in bold: hi() marks them, setRich() writes the text as text nodes and <strong>s
+    function hi(text) {
+        return '\u0001' + text + '\u0002';
+    }
+
+    function setRich(el, text) {
+        el.textContent = '';
+        text.split(/(\u0001[^\u0002]*\u0002)/).forEach(function (bit) {
+            if (bit.charAt(0) === '\u0001') {
+                var b = document.createElement('strong');
+                b.textContent = bit.slice(1, -1);
+                el.appendChild(b);
+            } else if (bit !== '') {
+                el.appendChild(document.createTextNode(bit));
+            }
+        });
+    }
+
     // "a weighted", "an unweighted"
     function an(word) {
         return (/^[aeiou]/i.test(word) ? 'an ' : 'a ') + word;
@@ -118,8 +136,8 @@
                 var diff = g - c.gpa;
                 var pos = diff >= 0.15 ? 1 : (diff > -0.15 ? 0.6 : 0.2);
                 signals.push(pos);
-                parts.push('Your ' + state.scale + ' ' + fmt(g, 2) + ' is ' + (pos === 1 ? 'above' : (pos === 0.6 ? 'close to' : 'below')) +
-                    ' the ' + c.basis + ' average of ' + fmt(c.gpa, 2) + ' that ' + c.name + ' reported for ' + c.gpaYear + '.');
+                parts.push('Your ' + state.scale + ' ' + fmt(g, 2) + ' is ' + hi(pos === 1 ? 'above' : (pos === 0.6 ? 'close to' : 'below')) +
+                    ' the ' + c.basis + ' average of ' + hi(fmt(c.gpa, 2)) + ' that ' + c.name + ' reported for ' + c.gpaYear + '.');
             } else if (c.gpa !== null) {
                 parts.push(c.name + ' reported ' + an(c.basis) + ' average (' + fmt(c.gpa, 2) + '), so ' + an(state.scale) +
                     ' GPA can’t be compared with it directly. Switch to ' + c.basis + ' if you know yours.');
@@ -137,8 +155,8 @@
             signals.push([0.1, 0.5, 0.75, 1][tp]);
             var label = state.test === 'ACT' ? p[0] + '–' + p[2] : 'about ' + p[0] + '–' + p[2];
             parts.push('Your ' + state.test + ' of ' + s + ' is ' +
-                ['below the middle 50% (' + label + ')', 'in the lower half of the middle 50% (' + label + ')',
-                    'in the upper half of the middle 50% (' + label + ')', 'above the middle 50% (' + label + ')'][tp] +
+                [hi('below') + ' the middle 50% (' + hi(label) + ')', hi('in the lower half') + ' of the middle 50% (' + hi(label) + ')',
+                    hi('in the upper half') + ' of the middle 50% (' + hi(label) + ')', hi('above') + ' the middle 50% (' + hi(label) + ')'][tp] +
                 ' of first-year students who sent scores.' +
                 (state.test === 'SAT' ? ' The SAT range is the two section ranges added together, so it’s approximate.' : '') +
                 (tp === 0 && c.tests === 'optional' ? ' Scores are optional here, so you could apply without them.' : ''));
@@ -156,7 +174,7 @@
         }
 
         if (c.rate !== null) {
-            parts.push(c.name + ' admitted ' + c.rateTxt + ' of applicants for ' + c.fall + '.');
+            parts.push(c.name + ' admitted ' + hi(c.rateTxt) + ' of applicants for ' + c.fall + '.');
         }
         if (!signals.length) {
             verdictEl.textContent = c.rate !== null && c.rate >= 75 ? 'Likely match' : (c.rate !== null && c.rate < 15 ? 'Reach' : 'Add a test score');
@@ -167,7 +185,7 @@
         if (c.rate !== null && c.rate < 15) {
             parts.push('At a college this selective, strong grades and scores don’t guarantee admission.');
         }
-        textEl.textContent = parts.join(' ');
+        setRich(textEl, parts.join(' '));
     }
 
     function press(group, attr, value) {

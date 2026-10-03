@@ -777,6 +777,11 @@ if ( is_readable( get_stylesheet_directory() . '/college-data.php' ) ) {
     require_once get_stylesheet_directory() . '/college-data.php';
 }
 
+// Header + footer navigation markup (footer <details> columns, dropdown a11y, bottom bar). Loaded only when present.
+if ( is_readable( get_stylesheet_directory() . '/site-nav.php' ) ) {
+    require_once get_stylesheet_directory() . '/site-nav.php';
+}
+
 add_filter('rank_math/json_ld', 'gpa_college_page_schema', 99, 2);
 function gpa_college_page_schema($data, $jsonld) {
     if ( ! is_singular('colleges') ) {

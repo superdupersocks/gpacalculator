@@ -10,6 +10,9 @@
 #   bash scripts/admissions/cleanup_fix_live.sh plan-pages | apply-pages
 #   bash scripts/admissions/cleanup_fix_live.sh plan-renames [group]    the new addresses alone (group: renamed, the
 #   bash scripts/admissions/cleanup_fix_live.sh apply-renames [group]   default; optional; or all)
+#   bash scripts/admissions/cleanup_fix_live.sh plan-followup | apply-followup
+#                                                                       the fixes the live re-check found not working yet
+#                                                                       (data/admissions/cleanup_qa/followup.csv)
 #   bash scripts/admissions/cleanup_fix_live.sh revert <log>            put everything in that log back
 #
 # Each apply writes its log (every rule, address and page status as it was) to ~/backups/ on the server and
@@ -26,6 +29,7 @@ LOCAL="$HOME/gpacalculator-backups"
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 PHP="$REPO/scripts/admissions/cleanup_fix_live.php"
 FIXES="$REPO/data/admissions/cleanup_qa/fixes.csv"
+FOLLOWUP="$REPO/data/admissions/cleanup_qa/followup.csv"
 RENAMES="$REPO/data/admissions/cleanup_qa/renames.csv"
 GROUP="${2:-renamed}"
 
@@ -66,6 +70,13 @@ case "${1:-}" in
     send
     run apply "~/backups/$NAME-fixes.csv" "$LOG"
     keep ;;
+  plan-followup)
+    "${SCP[@]}" "$FOLLOWUP" "$HOST:backups/$NAME-followup.csv"
+    run plan "~/backups/$NAME-followup.csv" ;;
+  apply-followup)
+    "${SCP[@]}" "$FOLLOWUP" "$HOST:backups/$NAME-followup.csv"
+    run apply "~/backups/$NAME-followup.csv" "$LOG"
+    keep ;;
   plan-pages)
     run plan-pages ;;
   apply-pages)
@@ -84,5 +95,5 @@ case "${1:-}" in
     run revert "~/backups/$OLD"
     after ;;
   *)
-    sed -n '2,17p' "$0"; exit 1 ;;
+    sed -n '2,20p' "$0"; exit 1 ;;
 esac

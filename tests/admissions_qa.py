@@ -1205,6 +1205,12 @@ eq("Cleanup check after the fixes: one 301 straight to its target (a hub search 
     "https://gpacalculator.net/admissions/adams-state-university/",
     "https://gpacalculator.net/admissions/?search=Adams"])
 
+_fu = list(csv.DictReader(open(ROOT / "data" / "admissions" / "cleanup_qa" / "followup.csv", encoding="utf-8")))
+_fx = {r["address"]: r for r in csv.DictReader(open(ROOT / "data" / "admissions" / "cleanup_qa" / "fixes.csv",
+                                                      encoding="utf-8"))}
+eq("Cleanup follow-up: every row is fixes.csv's own row for an address the live re-check found answering otherwise",
+   (len(_fu), [r["address"] for r in _fu if _fx.get(r["address"]) != r]), (14, []))
+
 _blind = {"admission_requirements_test_scores": "Not considered for admission, even if submitted (Test Blind)"}
 _figs = {"acceptance_rate": "0.5", "sat_composite_25": "1100", "sat_composite_75": "1300"}
 eq("Tiers: A needs a cited GPA, the acceptance rate and SAT/ACT (none when IPEDS lists the college as test blind); "

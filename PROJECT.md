@@ -200,10 +200,12 @@ Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
 1. **Cleanup QA**: done 2026-10-03 02:26 UTC on Digant's go (`data/admissions/cleanup_qa/report.md`; the admissions
    doc's "Step 1: cleanup QA" tab; log `admissions-cleanup-20261003-022611-log.tsv`). All 516 removed pages answered
    as planned; 330 old addresses fixed (86 rules changed, 98 added), 42 leftover WordPress pages under /admissions/
-   set to draft, 302 renamed colleges moved to addresses with their current name. 10 rows were skipped because their
-   rule also covers other addresses; `cleanup_fix_live.php` now splits such rules, and that runs with step 2's go.
-   Server steps: `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`. Live re-check: `cleanup_qa.py after` / `verify`
-   (`data/admissions/cleanup_qa/after/`).
+   set to draft, 302 renamed colleges moved to addresses with their current name. Live re-check of 3,188 addresses
+   (`cleanup_qa.py after` / `verify`, `data/admissions/cleanup_qa/after/verify.csv`): 3,171 answer as planned and no
+   link reaches a removed page; 14 old /admission/ addresses still answered the old way (rows skipped because their
+   rule covers other addresses, and addresses compared without decoding them the way Rank Math does).
+   `cleanup_fix_live.php` now matches like Rank Math and splits shared rules; the 14 (`followup.csv`) run with step
+   2's go. Server steps: `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`.
 2. **Tiering**: checkpoint ready 2026-10-03 (`data/admissions/tiering/summary.md`, every page in `tiers.csv`; the
    admissions doc's "Step 2: tiering" tab), waits on Digant's `go tiers`. A 253 (cited GPA, acceptance rate, SAT/ACT
    or test blind), B 1,355 (one or two of those), C 1,477 (open admission or none); A and B stay in search, C comes

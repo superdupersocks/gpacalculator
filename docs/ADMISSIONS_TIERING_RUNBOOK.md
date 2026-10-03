@@ -17,22 +17,29 @@ What runs:
   No Index, keeping the rest of what the page had; Rank Math then also leaves them out of the colleges sitemap. The
   pages stay published and on the hub. Only those two meta values change: no content, address, title or modified
   date. A row is skipped, and listed, unless exactly one published college page has its slug.
-- **Step 1 follow-up** (`scripts/admissions/cleanup_fix_live.sh plan` / `apply`, from `data/admissions/cleanup_qa/fixes.csv`):
-  the 10 redirect rows step 1 skipped because their Rank Math rule also covers addresses that answer differently. The
-  script now splits such a rule: the addresses that need a new answer move to a new rule, the rest stay. A 301 whose
-  target no longer has a page (a dead end) becomes a 410 for that address alone. Rows already answering as listed
-  count as already right.
+- **Step 1 follow-up** (`scripts/admissions/cleanup_fix_live.sh plan-followup` / `apply-followup`, from
+  `data/admissions/cleanup_qa/followup.csv`): the 14 old /admission/ addresses that the live re-check after step 1
+  (3,188 addresses, `data/admissions/cleanup_qa/after/verify.csv`) found still answering the old way: three DeVry
+  Keller campuses (6 addresses), three Globe University campuses whose addresses carry a "ˆ", Shorter's adult
+  programs, University of Phoenix Minneapolis-St. Paul, and the Texas A&M, University of Alaska and University of
+  Illinois system offices. Two causes: step 1 skipped rules that also cover other addresses, and it compared
+  addresses without decoding them or looking at looser rules, while Rank Math decodes the request and remembers which
+  rule answered an address before. The script now compares addresses the way Rank Math does, splits a shared rule
+  (the addresses that need a new answer move to a new rule, or just out when another rule already answers them as
+  listed), gives a dead end's other addresses a 410, makes the rule with the listed answer the newest where a looser
+  rule also matches, and clears Rank Math's remembered answers for these addresses.
 
 ## Steps
 
 1. Database backup: `SSH 'cd WP && wp db export - | gzip > ~/backups/gpacalculator-<UTC date-time>-pre-tiers.sql.gz'`,
    then `gunzip -t`, the dump ends with "-- Dump completed", copy it to `~/gpacalculator-backups/`, SHA-256 matches.
-2. `bash scripts/admissions/cleanup_fix_live.sh plan`. Expect "0 rules to change, N to split, M to add, K already
-   right, 0 skipped" with the split and set lines naming only the step 1 rows listed in the 02:26 changelog row
-   (Argosy Washington DC, Bethany, the DeVry Keller campuses, LIU Rockland, Shorter, the SIU systems office, UMDNJ,
-   University of Phoenix Minneapolis-St. Paul). Anything else (a "set" or "add" line for another address, or a
-   skipped row): stop and report the plan output.
-   Then `bash scripts/admissions/cleanup_fix_live.sh apply` (note the log name it prints).
+2. `bash scripts/admissions/cleanup_fix_live.sh plan-followup`. Expect a "note" line for each of the 14 addresses
+   (the rules that match it now), "set", "split", "add" or "touch" lines that name only those addresses and the rules
+   that hold them, and a last line ending "0 skipped". Addresses a split's "the rule keeps" names keep their answer.
+   Another address may get a 410 only where its rule redirects to a page that no longer exists (the rule's target
+   answers 410). Any other change to another address, or a skipped row: skip the apply, keep the plan output for the
+   report, and go on with step 3.
+   Then `bash scripts/admissions/cleanup_fix_live.sh apply-followup` (note the log name it prints).
 3. `bash scripts/admissions/tiering_live.sh plan`. Expect "N values to write (noindex: X, tier A: 253, tier B: 1355,
    tier C: 1477), 0 skipped" with X at most 1,318 (a page already set to No Index counts as right). "had a value"
    lines show robots settings pages already had; they are kept. Stop and report instead if the plan prints a LIFT line
@@ -46,8 +53,11 @@ What runs:
      (tier C, kept for its clicks): `index`, as before.
    - The colleges sitemaps listed in `/sitemap_index.xml` hold about 1,768 addresses in all (1,767 pages and the hub;
      3,086 before), and none of them is `/admissions/loma-linda-university/`.
-   - `curl -sI` on `/admission/devry-universitys-keller-graduate-school-of-management-michigan/`: 301 to
-     `/admissions/devry-university-illinois/`, which answers 200; `/admission/bethany-university/`: 410.
+   - If step 2 applied, `curl -sI` on
+     `/admission/devry-universitys-keller-graduate-school-of-management-michigan/` and
+     `/admission/the-texas-am-university-system-office/`: a 301 to `/admissions/devry-university-illinois/` and to
+     `/admissions/texas-a-and-m-university-college-station/`, each answering 200;
+     `/admission/globe-university%CB%86wausau/` and `/admission/bethany-university/`: 410 with no redirect first.
    Anything else: `bash scripts/admissions/tiering_live.sh revert <log>` (and `cleanup_fix_live.sh revert <log>` for
    the follow-up), then report.
 6. Changelog rows (the step 1 follow-up, the tiers) with each undo; push; report both log names in the thread. The

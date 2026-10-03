@@ -60,3 +60,11 @@ What runs, all from `scripts/admissions/cleanup_fix_live.sh` (the PHP is `cleanu
 - 18 optional renames (group `optional`) stay unless Digant asks: `plan-renames optional` / `apply-renames optional`.
 - Backlinks: Search Console > Links > "Top linked pages" (external) export; any retired address in it gets a 301 the
   same way (`cleanup_qa.py` rule: successor page, else the state's list, else the hub).
+
+## Follow-up after the live re-check (2026-10-03)
+
+The re-check of 3,188 addresses after the 02:26 run (`cleanup_qa.py after`, the GitHub check, then `cleanup_qa.py
+verify`: `data/admissions/cleanup_qa/after/verify.csv`) found 3,171 answering as planned, no links to removed pages,
+and 14 old /admission/ addresses still answering the old way (`cleanup_qa.py followup` writes them to `followup.csv`).
+`cleanup_fix_live.sh plan-followup` / `apply-followup` runs them with the fixed comparison (decoded addresses, every
+matching rule, Rank Math's remembered answers cleared); it runs as step 2 of `docs/ADMISSIONS_TIERING_RUNBOOK.md`.

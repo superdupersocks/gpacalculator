@@ -12,6 +12,8 @@ answers today, the redirect chains and 404s around it, its Search Console clicks
                                                       answer it should give now), after/pages.txt and
                                                       after/sitemap_colleges.csv for the same live check
     python scripts/admissions/cleanup_qa.py verify    read that check's results and write after/verify.csv
+    python scripts/admissions/cleanup_qa.py followup  write followup.csv: the rows of fixes.csv whose address still
+                                                      answers otherwise in verify.csv, for cleanup_fix_live.sh
 
 `urls` lists each address to check on the live site: both forms (/admissions/<slug>/ and the old /admission/<slug>/)
 of the 516 college pages published in the pre-cleanup export (data/colleges/, 2026-10-01) that the colleges sitemap
@@ -772,6 +774,28 @@ def cmd_verify():
         print("  " + line)
 
 
+def cmd_followup():
+    """The fixes the live check found not working yet: fixes.csv's rows for every address verify.csv marks differs."""
+    fixes = read_csv(os.path.join(OUT, "fixes.csv"))
+    key = lambda a: unquote(a or "").strip("/").lower()  # noqa: E731 (both encodings of an address are one address)
+    by_key = {key(r["address"]): r for r in fixes}
+    out, seen, other = [], set(), []
+    for r in read_csv(os.path.join(AFTER, "verify.csv")):
+        if r["result"] != "differs":
+            continue
+        k = key(re.sub(r"^https?://[^/]+/", "", r["url"]))
+        if k in by_key and k not in seen:
+            seen.add(k)
+            out.append(by_key[k])
+        elif k not in by_key:
+            other.append(r["url"])
+    with open(os.path.join(OUT, "followup.csv"), "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, list(fixes[0].keys()))
+        w.writeheader()
+        w.writerows(out)
+    print(f"{len(out)} fixes to run again; {len(other)} addresses that differ aren't in fixes.csv: {other[:10]}")
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "urls":
@@ -784,5 +808,7 @@ if __name__ == "__main__":
         cmd_after()
     elif cmd == "verify":
         cmd_verify()
+    elif cmd == "followup":
+        cmd_followup()
     else:
         sys.exit(__doc__)

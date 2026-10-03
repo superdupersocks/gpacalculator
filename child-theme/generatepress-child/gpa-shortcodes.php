@@ -85,32 +85,24 @@ function gpa_render_content_sample_table() {
 }
 
 /**
- * Worked GPA example (design: "B · Formula reads across" / "B · On a phone").
- * One real <table>: Course | Grade | → | Grade points | × | Credits | = | Quality points, the operator columns
- * aria-hidden, and the result (total quality points ÷ total credits = GPA) attached as the <tfoot>. Phones restyle the
- * same markup (components.css, section 4b). Totals and GPA are computed here, so the numbers always add up.
+ * Worked examples (component library: "Calculation example"). Design: "B · Formula reads across" / "B · On a phone".
+ * One real <table> (caption, thead, th scope): the row cells, then operator cells (aria-hidden) that make each row read
+ * as a formula, and the result strip as the <tfoot>. Phones restyle the same markup (components.css 4b).
+ * Every number in the result is computed here, so an example always adds up.
+ *
+ *   [gpa_example type="gpa" rows="ENG 101 — English Composition|A|3; MATH 121 — Calculus I|B+|4"]
+ *        Course|Grade|Credits[|Grade points]   points default to the 4.0 scale (A+ and A = 4.0 … F = 0.0)
+ *   [gpa_example type="weighted" rows="English 10|Regular|A|1; Biology|AP|A-|1"]
+ *        Course|Level|Grade|Credits            Honors +0.5, AP/IB/Dual +1.0 (boosts="honors:0.5,ap:1"); shows both GPAs
+ *   [gpa_example type="grade" rows="Homework|92|20; Quizzes|84|30; Tests|78|50"]
+ *        Category|Score %|Weight %             course grade = sum of score × weight ÷ total weight
+ *   Optional: caption="…" (screen readers and search), example="college|content" (built-in GPA examples).
  */
-function gpa_worked_example_data( $example ) {
-    $examples = array(
-        'college' => array(
-            'caption' => 'Worked example: a four-course college semester, from letter grades to a 3.41 GPA',
-            'courses' => array(
-                array( 'ENG 101 — English Composition', 'A', 4.0, 3 ),
-                array( 'MATH 121 — Calculus I', 'B+', 3.3, 4 ),
-                array( 'PSY 201 — Intro to Psychology', 'A-', 3.7, 3 ),
-                array( 'BIO 110 — General Biology', 'C+', 2.3, 2 ),
-            ),
-        ),
-        'content' => array(
-            'caption' => 'Worked example: a three-course semester, from letter grades to GPA',
-            'courses' => array(
-                array( 'English 101', 'A', 4.0, 3 ),
-                array( 'Math 121', 'B+', 3.3, 4 ),
-                array( 'Biology 110', 'B', 3.0, 3 ),
-            ),
-        ),
-    );
-    return isset( $examples[ $example ] ) ? $examples[ $example ] : $examples['college'];
+function gpa_points_for( $grade ) {
+    $map = array( 'A+' => 4.0, 'A' => 4.0, 'A-' => 3.7, 'B+' => 3.3, 'B' => 3.0, 'B-' => 2.7, 'C+' => 2.3, 'C' => 2.0,
+        'C-' => 1.7, 'D+' => 1.3, 'D' => 1.0, 'D-' => 0.7, 'F' => 0.0 );
+    $g = strtoupper( str_replace( array( '–', '−' ), '-', trim( $grade ) ) );
+    return isset( $map[ $g ] ) ? $map[ $g ] : null;
 }
 
 function gpa_grade_band( $grade ) {
@@ -118,47 +110,135 @@ function gpa_grade_band( $grade ) {
     return in_array( $l, array( 'A', 'B', 'C', 'D', 'F' ), true ) ? strtolower( $l ) : 'c';
 }
 
-function gpa_render_worked_example( $example = 'college' ) {
-    $d   = gpa_worked_example_data( $example );
-    $op  = function ( $sym ) { return '<td class="gpa-ex__op" aria-hidden="true">' . $sym . '</td>'; };
-    $num = function ( $n, $dec ) { return number_format( (float) $n, $dec, '.', '' ); };
-    $qp_total = 0.0;
-    $cr_total = 0;
-    $rows     = '';
-    foreach ( $d['courses'] as $c ) {
-        list( $name, $grade, $pts, $cr ) = $c;
-        $qp        = round( $pts * $cr, 1 );
-        $qp_total += $qp;
-        $cr_total += $cr;
-        $rows .= '<tr>'
-            . '<th scope="row" class="gpa-ex__course">' . esc_html( $name ) . '</th>'
-            . '<td class="gpa-ex__grade"><span class="gpa-ex__badge gpa-ex__badge--' . gpa_grade_band( $grade ) . '">' . esc_html( str_replace( '-', '–', $grade ) ) . '</span></td>'
-            . $op( '→' )
-            . '<td class="gpa-ex__pts">' . $num( $pts, 1 ) . '</td>'
-            . $op( '×' )
-            . '<td class="gpa-ex__cr">' . (int) $cr . '<span class="gpa-ex__unit" aria-hidden="true"> cr</span></td>'
-            . $op( '=' )
-            . '<td class="gpa-ex__qp">' . $num( $qp, 1 ) . '</td>'
-            . '</tr>';
+function gpa_ex_num( $n, $dec ) { return number_format( (float) $n, $dec, '.', '' ); }
+function gpa_ex_trim( $n ) { return rtrim( rtrim( gpa_ex_num( $n, 2 ), '0' ), '.' ); }
+
+function gpa_ex_rows( $raw ) {
+    $rows = array();
+    foreach ( preg_split( '/\s*;\s*/', (string) $raw ) as $line ) {
+        if ( '' === trim( $line ) ) { continue; }
+        $rows[] = array_map( 'trim', explode( '|', $line ) );
     }
-    $gpa = $cr_total ? $qp_total / $cr_total : 0;
-    $th_op = '<th class="gpa-ex__op" aria-hidden="true"></th>';
+    return $rows;
+}
+
+/* The shared renderer: $cols = array( array( label, kind ) ), kind course|op|cell|qp|badge|tag; $rows = cell arrays. */
+function gpa_ex_render( $caption, $mhead, $cols, $rows, $tiles, $note = '' ) {
+    $head = '';
+    foreach ( $cols as $c ) {
+        $head .= 'op' === $c[1]
+            ? '<th class="gpa-ex__op" aria-hidden="true"></th>'
+            : '<th scope="col"' . ( 'course' === $c[1] ? ' class="gpa-ex__course"' : '' ) . '>' . esc_html( $c[0] ) . '</th>';
+    }
+    $body = '';
+    foreach ( $rows as $r ) {
+        $body .= '<tr>';
+        foreach ( $cols as $k => $c ) {
+            $v = $r[ $k ];
+            switch ( $c[1] ) {
+                case 'course': $body .= '<th scope="row" class="gpa-ex__course">' . esc_html( $v ) . '</th>'; break;
+                case 'op':     $body .= '<td class="gpa-ex__op" aria-hidden="true">' . $v . '</td>'; break;
+                case 'qp':     $body .= '<td class="gpa-ex__qp">' . $v . '</td>'; break;
+                default:       $body .= '<td class="gpa-ex__' . esc_attr( $c[1] ) . '">' . $v . '</td>';
+            }
+        }
+        $body .= '</tr>';
+    }
+    $strip = '';
+    foreach ( $tiles as $k => $t ) {
+        if ( $k ) { $strip .= '<span class="gpa-ex__rop" aria-hidden="true">' . $t[2] . '</span>'; }
+        $mod = $k === count( $tiles ) - 1 ? ' gpa-ex__tile--gpa' : ( $k ? ' gpa-ex__tile--div' : '' );
+        $strip .= '<div class="gpa-ex__tile' . $mod . '"><span class="gpa-ex__label">' . esc_html( $t[0] ) . '</span> <span class="gpa-ex__value">' . esc_html( $t[1] ) . '</span></div>';
+    }
+    if ( '' !== $note ) { $strip .= '<p class="gpa-ex__note">' . wp_kses_post( $note ) . '</p>'; }
+    $strip = '<div class="gpa-ex__result">' . $strip . '</div>';
     return '<figure class="gpa-ex">'
-        . '<div class="gpa-ex__mhead" aria-hidden="true"><span>Grade → points × credits</span><span>Quality pts</span></div>'
-        . '<table class="gpa-ex__table">'
-        . '<caption class="screen-reader-text">' . esc_html( $d['caption'] ) . '</caption>'
-        . '<thead><tr>'
-        . '<th scope="col" class="gpa-ex__course">Course</th><th scope="col">Grade</th>' . $th_op
-        . '<th scope="col">Grade points</th>' . $th_op . '<th scope="col">Credits</th>' . $th_op
-        . '<th scope="col">Quality points</th>'
-        . '</tr></thead>'
-        . '<tbody>' . $rows . '</tbody>'
-        . '<tfoot><tr><td colspan="8"><div class="gpa-ex__result">'
-        . '<div class="gpa-ex__tile"><span class="gpa-ex__label">Total quality points</span> <span class="gpa-ex__value">' . $num( $qp_total, 1 ) . '</span></div>'
-        . '<span class="gpa-ex__rop" aria-hidden="true">÷</span>'
-        . '<div class="gpa-ex__tile gpa-ex__tile--div"><span class="gpa-ex__label">Total credits</span> <span class="gpa-ex__value">' . (int) $cr_total . '</span></div>'
-        . '<span class="gpa-ex__rop" aria-hidden="true">=</span>'
-        . '<div class="gpa-ex__tile gpa-ex__tile--gpa"><span class="gpa-ex__label">GPA</span> <span class="gpa-ex__value">' . $num( $gpa, 2 ) . '</span></div>'
-        . '</div></td></tr></tfoot>'
-        . '</table></figure>';
+        . '<div class="gpa-ex__mhead" aria-hidden="true"><span>' . esc_html( $mhead[0] ) . '</span><span>' . esc_html( $mhead[1] ) . '</span></div>'
+        . '<table class="gpa-ex__table"><caption class="screen-reader-text">' . esc_html( $caption ) . '</caption>'
+        . '<thead><tr>' . $head . '</tr></thead><tbody>' . $body . '</tbody>'
+        . '<tfoot><tr><td colspan="' . count( $cols ) . '">' . $strip . '</td></tr></tfoot></table></figure>';
+}
+
+function gpa_example_shortcode( $atts ) {
+    $a = shortcode_atts( array( 'type' => 'gpa', 'rows' => '', 'caption' => '', 'example' => '', 'boosts' => 'honors:0.5,ap:1,ib:1,dual:1,de:1' ), $atts, 'gpa_example' );
+    $presets = array(
+        'college' => 'ENG 101 — English Composition|A|3; MATH 121 — Calculus I|B+|4; PSY 201 — Intro to Psychology|A-|3; BIO 110 — General Biology|C+|2',
+        'content' => 'English 101|A|3; Math 121|B+|4; Biology 110|B|3',
+    );
+    if ( '' === $a['rows'] && isset( $presets[ $a['example'] ?: 'college' ] ) && 'gpa' === $a['type'] ) {
+        $a['rows'] = $presets[ $a['example'] ?: 'college' ];
+        if ( '' === $a['caption'] ) {
+            $a['caption'] = 'college' === ( $a['example'] ?: 'college' )
+                ? 'Worked example: a four-course college semester, from letter grades to a 3.41 GPA'
+                : 'Worked example: a three-course semester, from letter grades to GPA';
+        }
+    }
+    $rows = gpa_ex_rows( $a['rows'] );
+    if ( ! $rows ) { return ''; }
+    $badge = function ( $g ) { return '<span class="gpa-ex__badge gpa-ex__badge--' . gpa_grade_band( $g ) . '">' . esc_html( str_replace( '-', '–', $g ) ) . '</span>'; };
+
+    if ( 'grade' === $a['type'] ) {
+        $sum = 0.0; $wsum = 0.0; $out = array();
+        foreach ( $rows as $r ) {
+            list( $cat, $score, $w ) = array_pad( $r, 3, '0' );
+            $score = (float) $score; $w = (float) $w; $part = round( $score * $w / 100, 1 );
+            $sum += $part; $wsum += $w;
+            $out[] = array( $cat, gpa_ex_trim( $score ) . '%', '×', gpa_ex_trim( $w ) . '%', '=', gpa_ex_num( $part, 1 ) );
+        }
+        $grade = $wsum ? $sum / $wsum * 100 : 0;
+        return gpa_ex_render( $a['caption'] ?: 'Worked example: a course grade from weighted categories',
+            array( 'Score × weight', 'Points' ),
+            array( array( 'Category', 'course' ), array( 'Score', 'cell' ), array( '', 'op' ), array( 'Weight', 'cell' ), array( '', 'op' ), array( 'Points', 'qp' ) ),
+            $out,
+            array( array( 'Total points', gpa_ex_num( $sum, 1 ), '' ), array( 'Total weight', gpa_ex_trim( $wsum ) . '%', '÷' ), array( 'Course grade', gpa_ex_num( $grade, 1 ) . '%', '=' ) ) );
+    }
+
+    if ( 'weighted' === $a['type'] ) {
+        $boosts = array();
+        foreach ( explode( ',', $a['boosts'] ) as $pair ) {
+            $kv = array_map( 'trim', explode( ':', $pair ) );
+            if ( 2 === count( $kv ) ) { $boosts[ strtolower( $kv[0] ) ] = (float) $kv[1]; }
+        }
+        $qp = 0.0; $uqp = 0.0; $cr = 0.0; $out = array();
+        foreach ( $rows as $r ) {
+            list( $course, $level, $grade, $credits ) = array_pad( $r, 4, '1' );
+            $base = gpa_points_for( $grade );
+            if ( null === $base ) { return ''; }
+            $key = strtolower( preg_replace( '/[^a-z]/i', '', explode( '/', $level )[0] ) );
+            $boost = ( $base > 0 && isset( $boosts[ $key ] ) ) ? $boosts[ $key ] : 0.0;
+            $pts = $base + $boost; $c = (float) $credits; $q = round( $pts * $c, 1 );
+            $qp += $q; $uqp += round( $base * $c, 1 ); $cr += $c;
+            $tag = '<span class="gpa-ex__tag">' . esc_html( $level ) . ( $boost ? ' +' . gpa_ex_trim( $boost ) : '' ) . '</span>';
+            $out[] = array( $course, $badge( $grade ), $tag, '→', gpa_ex_num( $pts, 1 ), '×', gpa_ex_trim( $c ) . '<span class="gpa-ex__unit" aria-hidden="true"> cr</span>', '=', gpa_ex_num( $q, 1 ) );
+        }
+        $gpa = $cr ? $qp / $cr : 0; $ugpa = $cr ? $uqp / $cr : 0;
+        return gpa_ex_render( $a['caption'] ?: 'Worked example: weighted GPA with Honors and AP boosts',
+            array( 'Grade + level → points × credits', 'Quality pts' ),
+            array( array( 'Course', 'course' ), array( 'Grade', 'grade' ), array( 'Level', 'level' ), array( '', 'op' ), array( 'Weighted points', 'pts' ), array( '', 'op' ), array( 'Credits', 'cr' ), array( '', 'op' ), array( 'Quality points', 'qp' ) ),
+            $out,
+            array( array( 'Total quality points', gpa_ex_num( $qp, 1 ), '' ), array( 'Total credits', gpa_ex_trim( $cr ), '÷' ), array( 'Weighted GPA', gpa_ex_num( $gpa, 2 ), '=' ) ),
+            'Unweighted GPA, same grades without the level boost: <strong>' . gpa_ex_num( $uqp, 1 ) . ' ÷ ' . gpa_ex_trim( $cr ) . ' = ' . gpa_ex_num( $ugpa, 2 ) . '</strong>' );
+    }
+
+    // type="gpa"
+    $qp = 0.0; $cr = 0.0; $out = array();
+    foreach ( $rows as $r ) {
+        list( $course, $grade, $credits ) = array_pad( $r, 3, '1' );
+        $pts = isset( $r[3] ) && '' !== $r[3] ? (float) $r[3] : gpa_points_for( $grade );
+        if ( null === $pts ) { return ''; }
+        $c = (float) $credits; $q = round( $pts * $c, 1 ); $qp += $q; $cr += $c;
+        $out[] = array( $course, $badge( $grade ), '→', gpa_ex_num( $pts, 1 ), '×', gpa_ex_trim( $c ) . '<span class="gpa-ex__unit" aria-hidden="true"> cr</span>', '=', gpa_ex_num( $q, 1 ) );
+    }
+    $gpa = $cr ? $qp / $cr : 0;
+    return gpa_ex_render( $a['caption'] ?: 'Worked example: from letter grades to GPA',
+        array( 'Grade → points × credits', 'Quality pts' ),
+        array( array( 'Course', 'course' ), array( 'Grade', 'grade' ), array( '', 'op' ), array( 'Grade points', 'pts' ), array( '', 'op' ), array( 'Credits', 'cr' ), array( '', 'op' ), array( 'Quality points', 'qp' ) ),
+        $out,
+        array( array( 'Total quality points', gpa_ex_num( $qp, 1 ), '' ), array( 'Total credits', gpa_ex_trim( $cr ), '÷' ), array( 'GPA', gpa_ex_num( $gpa, 2 ), '=' ) ) );
+}
+add_action( 'init', function () { add_shortcode( 'gpa_example', 'gpa_example_shortcode' ); } );
+
+/* Kept for [gpa_table type="worked-example|quality-points|content-sample"] (page 22 uses it). */
+function gpa_render_worked_example( $example = 'college' ) {
+    return gpa_example_shortcode( array( 'type' => 'gpa', 'example' => $example ) );
 }

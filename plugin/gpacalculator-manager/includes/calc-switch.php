@@ -34,6 +34,7 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 					'entry'       => 'gpa/college-gpa.js',
 					'old_scripts' => array( 'main-js-college-gpa-calculator' ),
 					'old_styles'  => array( 'main-css-college-gpa-calculator' ),
+					'homescreen'  => true, // web app manifest for "Add to home screen" (Calculator Design Standard)
 				),
 				'uni-ucla' => array(
 					'label' => 'UCLA GPA calculator',
@@ -48,6 +49,57 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 			add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ), 1000 );
 			add_filter( 'script_loader_tag', array( __CLASS__, 'module_tag' ), 20, 2 );
 			add_action( 'admin_menu', array( __CLASS__, 'menu' ), 20 );
+			add_action( 'rest_api_init', array( __CLASS__, 'manifest_route' ) );
+		}
+
+		/* ---------- Add to home screen: a minimal web app manifest per calculator page (no service worker) ---------- */
+
+		/** The page whose new calculator opts into the home-screen hint (its manifest goes in the head). */
+		private static $manifest_page = 0;
+
+		public static function manifest_route() {
+			register_rest_route( 'gpacalc/v1', '/manifest/(?P<id>\\d+)', array(
+				'methods'             => 'GET',
+				'permission_callback' => '__return_true',
+				'callback'            => array( __CLASS__, 'manifest' ),
+			) );
+		}
+
+		/** The manifest for one calculator page: start_url is that page, so the home-screen icon opens it. */
+		public static function manifest_data( $page_id ) {
+			$url  = get_permalink( $page_id );
+			$icon = GPACalc_Calculator_Assets::url( 'a2hs/badge-%d.png' );
+			return array(
+				'name'             => 'GPA Calculator',
+				'short_name'       => 'GPA Calc',
+				'start_url'        => add_query_arg( 'source', 'homescreen', $url ),
+				'scope'            => '/',
+				'display'          => 'standalone',
+				'background_color' => '#ffffff',
+				'theme_color'      => '#ffffff',
+				'icons'            => array(
+					array( 'src' => sprintf( $icon, 192 ), 'sizes' => '192x192', 'type' => 'image/png' ),
+					array( 'src' => sprintf( $icon, 512 ), 'sizes' => '512x512', 'type' => 'image/png', 'purpose' => 'any' ),
+				),
+			);
+		}
+
+		public static function manifest( $request ) {
+			$id   = (int) $request['id'];
+			$post = get_post( $id );
+			if ( ! $post || 'page' !== $post->post_type || 'publish' !== $post->post_status ) {
+				return new WP_Error( 'gpacalc_no_page', 'No such calculator page.', array( 'status' => 404 ) );
+			}
+			$res = new WP_REST_Response( self::manifest_data( $id ) );
+			$res->header( 'Content-Type', 'application/manifest+json; charset=utf-8' );
+			$res->header( 'Cache-Control', 'public, max-age=86400' );
+			return $res;
+		}
+
+		public static function manifest_link() {
+			if ( self::$manifest_page ) {
+				printf( "<link rel=\"manifest\" href=\"%s\">\n", esc_url( rest_url( 'gpacalc/v1/manifest/' . self::$manifest_page ) ) );
+			}
 		}
 
 		/** Is the new version showing for this switch on this request? */
@@ -85,6 +137,10 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 					wp_dequeue_style( $h );
 				}
 				self::load( $id, $s );
+				if ( ! empty( $s['homescreen'] ) && ! self::$manifest_page ) {
+					self::$manifest_page = (int) get_queried_object_id();
+					add_action( 'wp_head', array( __CLASS__, 'manifest_link' ), 5 );
+				}
 			}
 		}
 

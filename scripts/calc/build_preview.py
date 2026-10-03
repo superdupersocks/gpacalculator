@@ -16,6 +16,7 @@ Default: the calculator JS is bundled inline with esbuild (one self-contained fi
 --modules: the page loads the real ES modules from the repo instead (served from the repo root by
 tests/qa_lib.py), which is what the Playwright QA uses.
 """
+import base64
 import json, os, re, subprocess, sys
 from pathlib import Path
 
@@ -139,7 +140,10 @@ def calc_tags(entry, modules):
     if modules:
         js = f"<script type='module' src='{CALC_URL}/{entry}'></script>"
     else:
-        js = f"<script type='module'>\n{bundle(CALC / entry)}\n</script>"
+        # Self-contained file: the home-screen hint's badge travels inline (the plugin serves it next to the module).
+        icon = base64.b64encode((CALC / "a2hs/badge-192.png").read_bytes()).decode()
+        js = (f"<script>window.GPACALC_A2HS_ICON='data:image/png;base64,{icon}';</script>\n"
+              f"<script type='module'>\n{bundle(CALC / entry)}\n</script>")
     return css, js
 
 

@@ -938,6 +938,126 @@ export function watchErrors(calc) {
   window.addEventListener('unhandledrejection', (e) => report(e.reason && e.reason.message, e.reason && e.reason.stack));
 }
 
+/* ---------- Add to home screen (Calculator Design Standard, "Add to home screen") ---------- */
+
+// Chrome/Android fires this once the page qualifies (manifest + icons). Keep it for the hint's Add button.
+let installEvent = null;
+const installWaiters = new Set();
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // no browser mini-infobar; the hint offers it at the right moment
+    installEvent = e;
+    installWaiters.forEach((f) => f());
+  });
+}
+
+const A2HS_KEY = 'gpac:a2hs:dismissed';
+const A2HS_COUNT = 'gpac:a2hs:calcs';
+const A2HS_DAYS = 30;
+const SHARE_ICON = 'M12 3v12M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1';
+
+function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage blocked: the hint just shows again */ } }
+
+/** Opened from the home screen (or an installed app window)? */
+export function launchedFromHomeScreen() {
+  try {
+    if (new URLSearchParams(window.location.search).get('source') === 'homescreen') return true;
+    if (window.navigator.standalone === true) return true;
+    return !!(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  } catch (e) {
+    return false;
+  }
+}
+
+const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+/**
+ * "Use this calculator again? Add it to your home screen." A dismissible bar placed in the page flow right
+ * after `after` (the calculator card), at its width. Phones only, after the second calculation or a Save,
+ * never on first load. iPhone: Share-sheet instructions; Android/Chrome: an Add button that opens the
+ * browser's install prompt (no bar if the browser never offers it). Returns { calculated(key), saved(), seen(key) }.
+ */
+export function createHomeScreenHint(after, { calc = '', icon = '' } = {}) {
+  const noop = { calculated() {}, saved() {}, seen() {}, el: null };
+  if (typeof window === 'undefined' || !after || !after.parentNode) return noop;
+  if (launchedFromHomeScreen()) {
+    sendEvent('a2hs_open', { calc });
+    return noop;
+  }
+  const phone = () => window.matchMedia('(max-width: 640px)').matches;
+  const dismissed = () => {
+    const t = Number(lsGet(A2HS_KEY));
+    return t > 0 && Date.now() - t < A2HS_DAYS * 864e5;
+  };
+  const ios = isIOS();
+  const close = h('button', { type: 'button', class: 'calc-btn calc-btn-icon calc-a2hs-x', 'aria-label': 'Dismiss' }, '×');
+  const text = h('div', { class: 'calc-a2hs-text' },
+    h('p', { class: 'calc-a2hs-title' }, 'Use this calculator again?'),
+    h('p', { class: 'calc-a2hs-sub' }, 'Add it to your home screen.'));
+  let add = null;
+  if (ios) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    for (const [k, v] of Object.entries({ viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', class: 'calc-a2hs-share' })) svg.setAttribute(k, v);
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', SHARE_ICON);
+    svg.append(path);
+    text.append(h('p', { class: 'calc-a2hs-how' }, 'Tap ', svg, ' ', h('strong', null, 'Share'), ', then ', h('strong', null, 'Add to Home Screen')));
+  } else {
+    add = h('button', { type: 'button', class: 'calc-a2hs-add' }, 'Add');
+  }
+  const bar = h('aside', { class: 'calc-a2hs', hidden: true, 'aria-label': 'Add to home screen' },
+    icon ? h('img', { class: 'calc-a2hs-icon', src: icon, alt: '', width: '40', height: '40' }) : null, text, add, close);
+  after.insertAdjacentElement('afterend', bar);
+
+  let wanted = false;
+  let shown = false;
+  const canShow = () => phone() && !dismissed() && !launchedFromHomeScreen() && (ios || !!installEvent);
+  const sync = () => {
+    const on = wanted && canShow();
+    bar.hidden = !on;
+    if (on && !shown) { shown = true; sendEvent('a2hs_shown', { calc, platform: ios ? 'ios' : 'android' }); }
+  };
+  installWaiters.add(sync);
+  window.addEventListener('appinstalled', () => { sendEvent('a2hs_installed', { calc }); wanted = false; lsSet(A2HS_KEY, String(Date.now())); sync(); });
+  close.addEventListener('click', () => { lsSet(A2HS_KEY, String(Date.now())); sendEvent('a2hs_dismiss', { calc }); wanted = false; sync(); });
+  if (add) {
+    add.addEventListener('click', async () => {
+      sendEvent('a2hs_add_click', { calc });
+      const e = installEvent;
+      if (!e) return;
+      installEvent = null;
+      try {
+        await e.prompt();
+        const choice = await e.userChoice;
+        if (choice && choice.outcome === 'accepted') { wanted = false; sync(); }
+      } catch (err) { /* the browser refused; leave the bar */ }
+    });
+  }
+
+  // A calculation counts once its inputs settle (1.5s), and only when the result is new.
+  let timer = null;
+  let lastKey = null;
+  let count = Number(lsGet(A2HS_COUNT)) || 0;
+  return {
+    el: bar,
+    calculated(key) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (key === lastKey) return;
+        lastKey = key;
+        count += 1;
+        lsSet(A2HS_COUNT, String(Math.min(count, 99)));
+        if (count >= 2) { wanted = true; sync(); }
+      }, 1500);
+    },
+    saved() { wanted = true; sync(); },
+    /** A restored or shared result: remember it without counting it as a calculation. */
+    seen(key) { clearTimeout(timer); lastKey = key; },
+  };
+}
+
 /**
  * Copy saves from a legacy calculator once (flag kept in the store). The legacy keys are only read,
  * never changed or deleted, so the old calculator and any other calculator sharing them keep working.

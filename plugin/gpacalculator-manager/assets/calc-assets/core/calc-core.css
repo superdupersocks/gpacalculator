@@ -582,3 +582,26 @@ html.calc-has-pill { scroll-padding-bottom: 80px; }
 
 /* Anything a calculator hides stays hidden, whatever display its classes give it */
 :is(#root, .gpacalc-mount) .calc [hidden] { display: none !important; }
+
+/* Add to home screen (phones only): in the page flow under the calculator card, never inside it, never fixed */
+:is(#root, .gpacalc-mount) .calc-a2hs {
+  display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px;
+  background: var(--gpa-tint-blue); border: 1px solid var(--gpa-calc-result-line); border-radius: 12px;
+}
+:is(#root, .gpacalc-mount) .calc-a2hs[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .calc-a2hs-icon { flex: none; width: 40px; height: 40px; border-radius: 10px; }
+:is(#root, .gpacalc-mount) .calc-a2hs-text { flex: 1 1 auto; min-width: 0; }
+:is(#root, .gpacalc-mount) .calc-a2hs-text p,
+#page .entry-content :is(#root, .gpacalc-mount) .calc-a2hs-text p { margin: 0 !important; font-size: 14px; line-height: 1.4; color: var(--gpa-text); }
+#page .entry-content :is(#root, .gpacalc-mount) .calc-a2hs-text .calc-a2hs-title { font-weight: 600; color: var(--gpa-heading); }
+:is(#root, .gpacalc-mount) .calc-a2hs-text .calc-a2hs-title { font-weight: 600; color: var(--gpa-heading); }
+#page .entry-content :is(#root, .gpacalc-mount) .calc-a2hs-text .calc-a2hs-how { margin-top: 4px !important; }
+:is(#root, .gpacalc-mount) .calc-a2hs-share { display: inline-block; width: 16px; height: 16px; vertical-align: -2px; color: var(--gpa-primary); }
+:is(#root, .gpacalc-mount) .calc-a2hs-add,
+#page .entry-content :is(#root, .gpacalc-mount) .calc-a2hs-add {
+  flex: none; height: 36px; margin: 0; padding: 0 16px; border: 0; border-radius: 999px;
+  background: var(--gpa-primary); color: var(--gpa-white); font: 600 14px/1 var(--gpa-calc-font); cursor: pointer;
+}
+:is(#root, .gpacalc-mount) .calc-a2hs-add:focus-visible { outline: 2px solid var(--calc-focus); outline-offset: 2px; }
+:is(#root, .gpacalc-mount) .calc-a2hs-x { flex: none; width: 36px; height: 36px; }
+@media (min-width: 641px) { :is(#root, .gpacalc-mount) .calc-a2hs { display: none !important; } }

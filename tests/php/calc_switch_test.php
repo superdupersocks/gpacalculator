@@ -20,6 +20,9 @@ function add_query_arg( $k, $v, $url ) { return $url . ( false === strpos( $url,
 function trailingslashit( $s ) { return rtrim( $s, '/' ) . '/'; }
 function wp_get_upload_dir() { return array( 'error' => false, 'basedir' => '/nonexistent', 'baseurl' => 'https://site/uploads' ); }
 function wp_unslash( $v ) { return $v; }
+function get_queried_object_id() { return 22; }
+function get_permalink( $id ) { return 22 === $id ? 'https://gpacalculator.net/college-gpa-calculator/' : false; }
+function rest_url( $p ) { return 'https://gpacalculator.net/wp-json/' . $p; }
 function wp_dequeue_script( $h ) { wp_scripts()->queue = array_values( array_diff( wp_scripts()->queue, array( $h ) ) ); }
 function wp_dequeue_style( $h ) { wp_styles()->queue = array_values( array_diff( wp_styles()->queue, array( $h ) ) ); }
 
@@ -58,6 +61,7 @@ list( $js, $css ) = college_page();
 check( 'college off: old script stays', $js, array( 'main-js-college-gpa-calculator' ) );
 check( 'college off: old style stays', in_array( 'main-css-college-gpa-calculator', $css, true ), true );
 check( 'college off: no new style', in_array( 'gpacalc-v2-0', $css, true ), false );
+check( 'college off: no manifest', in_array( array( 'GPACalc_Switch', 'manifest_link' ), $GLOBALS['hooks']['wp_head'] ?? array(), true ), false );
 
 // College on.
 list( $js, $css ) = college_page( array(), array( 'college' ) );
@@ -68,6 +72,17 @@ check( 'college on: core css after tokens', wp_styles()->registered['gpacalc-v2-
 check( 'college on: entry file', substr( wp_scripts()->registered['gpacalc-v2-college']->src, -30 ), 'calc-assets/gpa/college-gpa.js' );
 check( 'college on: entry exists', is_readable( GPACalc_Calculator_Assets::path( 'gpa/college-gpa.js' ) ), true );
 check( 'college on: versioned by file time', ctype_digit( (string) wp_scripts()->registered['gpacalc-v2-college']->ver ), true );
+
+// Add to home screen: the College page gets its own web app manifest (no service worker).
+check( 'college on: manifest link in the head', in_array( array( 'GPACalc_Switch', 'manifest_link' ), $GLOBALS['hooks']['wp_head'] ?? array(), true ), true );
+ob_start(); GPACalc_Switch::manifest_link(); $link = ob_get_clean();
+check( 'manifest link', $link, "<link rel=\"manifest\" href=\"https://gpacalculator.net/wp-json/gpacalc/v1/manifest/22\">\n" );
+check( 'manifest route hooked', in_array( array( 'GPACalc_Switch', 'manifest_route' ), $GLOBALS['hooks']['rest_api_init'], true ), true );
+$m = GPACalc_Switch::manifest_data( 22 );
+check( 'manifest names', array( $m['name'], $m['short_name'], $m['display'], $m['scope'] ), array( 'GPA Calculator', 'GPA Calc', 'standalone', '/' ) );
+check( 'manifest start_url', $m['start_url'], 'https://gpacalculator.net/college-gpa-calculator/?source=homescreen' );
+check( 'manifest icons', array_map( function ( $i ) { return array( $i['sizes'], basename( $i['src'] ) ); }, $m['icons'] ), array( array( '192x192', 'badge-192.png' ), array( '512x512', 'badge-512.png' ) ) );
+check( 'manifest icon files exist', is_readable( GPACalc_Calculator_Assets::path( 'a2hs/badge-192.png' ) ) && is_readable( GPACalc_Calculator_Assets::path( 'a2hs/badge-512.png' ) ), true );
 
 // Fallback and preview.
 list( $js ) = college_page( array( 'calc' => 'old' ), array( 'college' ) );

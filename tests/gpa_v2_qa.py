@@ -799,6 +799,129 @@ def sizes():
     return out
 
 
+# ---------- 5. Add to home screen (phones) ----------
+
+IPHONE_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1"
+ANDROID_UA = "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36"
+# Chrome fires beforeinstallprompt once a page qualifies; the test stands in for it.
+FAKE_INSTALL = ("window.__prompted=0;window.__fireInstall=()=>{const e=new Event('beforeinstallprompt');"
+                "e.prompt=()=>{window.__prompted++;return Promise.resolve();};e.userChoice=Promise.resolve({outcome:'dismissed'});"
+                "window.dispatchEvent(e);};")
+
+
+def phone_ctx(s, ua, w=390, hgt=844):
+    global FONT_CSS
+    FONT_CSS = FONT_CSS or lexend_css()
+    c = s.browser.new_context(viewport={"width": w, "height": hgt}, device_scale_factor=2, is_mobile=True, has_touch=True,
+                              reduced_motion="reduce", user_agent=ua)
+    c.route("**/fonts.googleapis.com/**", lambda r: r.fulfill(status=200, content_type="text/css", body=FONT_CSS))
+    c.route("**/gpacalculator.net/**", lambda r: r.fulfill(status=204, body=""))
+    c.add_init_script(FAKE_INSTALL)
+    return c
+
+
+def calc_once(p, g):
+    row = p.locator(".gpa-row").first
+    if row.locator(".gpa-row-sum").is_visible():
+        row.locator(".gpa-row-sum").click()  # phones: a finished row is one line until tapped
+    pick_grade(p, row, g)
+    p.wait_for_timeout(1800)  # a calculation counts once its inputs settle (1.5s)
+
+
+def a2hs_names(p):
+    return [e[1] for e in p.evaluate("window.__events") if e and e[0] == "event" and str(e[1]).startswith("a2hs_")]
+
+
+def a2hs(s, shots):
+    bar = ".calc-a2hs"
+    # Android / Chrome
+    c = phone_ctx(s, ANDROID_UA)
+    p = open_page(s, c, "college-gpa-calculator")
+    p.evaluate("window.__fireInstall()")
+    R.check("a2hs: hidden on first load", p.locator(bar).is_visible(), False)
+    calc_once(p, "A")
+    R.check("a2hs: hidden after one calculation", p.locator(bar).is_visible(), False)
+    p.reload(); p.wait_for_selector(".calc .calc-card"); p.evaluate("window.__fireInstall()"); p.wait_for_timeout(1800)
+    R.check("a2hs: a restored calculation isn't a new one", p.locator(bar).is_visible(), False)
+    calc_once(p, "B+")
+    R.check("a2hs: shown after the second calculation", p.locator(bar).is_visible(), True)
+    geo = p.evaluate("""(() => { const b = document.querySelector('.calc-a2hs'), card = document.querySelector('.calc-card');
+        const bb = b.getBoundingClientRect(), cb = card.getBoundingClientRect();
+        return { next: card.nextElementSibling === b, inside: card.contains(b), pos: getComputedStyle(b).position,
+                 gap: Math.round(bb.top - cb.bottom), w: Math.round(bb.width) === Math.round(cb.width) }; })()""")
+    R.check("a2hs: in the flow right under the card, card width, not fixed", geo, {"next": True, "inside": False, "pos": "static", "gap": 16, "w": True})
+    R.check("a2hs: copy", [t for t in p.locator(bar + " .calc-a2hs-text").inner_text().split("\n") if t.strip()], ["Use this calculator again?", "Add it to your home screen."])
+    R.check("a2hs: Android has the Add button", p.locator(bar + " .calc-a2hs-add").inner_text(), "Add")
+    p.locator(bar).scroll_into_view_if_needed()
+    p.wait_for_timeout(300)
+    if shots:
+        p.evaluate("window.scrollTo(0, document.querySelector('.calc-a2hs').getBoundingClientRect().bottom + scrollY - innerHeight + 140)")
+        p.wait_for_timeout(300)
+        p.screenshot(path=str(SHOTS / "a2hs-android-390x844.png"))
+    over = p.evaluate("""(() => { const a = document.querySelector('.calc-a2hs').getBoundingClientRect();
+        return [...document.querySelectorAll('.calc-pill.is-on, [id*="sticky"], .calc-sheet-wrap:not([hidden])')].filter((e) => {
+          const r = e.getBoundingClientRect(); return r.height > 0 && r.left < a.right && r.right > a.left && r.top < a.bottom && r.bottom > a.top; }).length; })()""")
+    R.check("a2hs: overlaps nothing fixed (pill, sticky ad, sheet)", over, 0)
+    p.click(bar + " .calc-a2hs-add")
+    R.check("a2hs: Add opens the browser's install prompt", p.evaluate("window.__prompted"), 1)
+    p.click(bar + " .calc-a2hs-x")
+    R.check("a2hs: × hides it", p.locator(bar).is_visible(), False)
+    R.ok("a2hs: dismissal remembered", (p.evaluate("Number(localStorage.getItem('gpac:a2hs:dismissed'))") or 0) > 0)
+    R.check("a2hs: GA4 events", a2hs_names(p), ["a2hs_shown", "a2hs_add_click", "a2hs_dismiss"])
+    p.reload(); p.wait_for_selector(".calc .calc-card"); p.evaluate("window.__fireInstall()")
+    calc_once(p, "C"); calc_once(p, "D")
+    R.check("a2hs: stays hidden for 30 days after ×", p.locator(bar).is_visible(), False)
+    p.evaluate("localStorage.setItem('gpac:a2hs:dismissed', String(Date.now() - 31 * 864e5))")
+    calc_once(p, "B")
+    R.check("a2hs: back after 30 days", p.locator(bar).is_visible(), True)
+    p.close(); c.close()
+
+    # No install offer from the browser: no bar. Save shows it at once. Home-screen launch: never, and counted.
+    c = phone_ctx(s, ANDROID_UA)
+    p = open_page(s, c, "college-gpa-calculator")
+    calc_once(p, "A"); calc_once(p, "B")
+    R.check("a2hs: no bar when the browser never offers install", p.locator(bar).is_visible(), False)
+    p.close(); c.close()
+    c = phone_ctx(s, ANDROID_UA)
+    p = open_page(s, c, "college-gpa-calculator")
+    p.evaluate("window.__fireInstall()")
+    calc_once(p, "A")
+    DIALOG["text"] = "Fall"
+    p.click("[aria-label='Save']")
+    R.check("a2hs: shown after Save", p.locator(bar).is_visible(), True)
+    p.goto(p.url.split("?")[0] + "?source=homescreen"); p.wait_for_selector(".calc .calc-card"); p.evaluate("window.__fireInstall()")
+    calc_once(p, "B"); calc_once(p, "C")
+    R.check("a2hs: hidden when opened from the home screen", p.locator(bar).is_visible(), False)
+    R.check("a2hs: home-screen open counted", "a2hs_open" in a2hs_names(p), True)
+    p.close(); c.close()
+
+    # Desktop: never
+    c = ctx_for(s)
+    c.add_init_script(FAKE_INSTALL)
+    p = open_page(s, c, "college-gpa-calculator")
+    p.evaluate("window.__fireInstall()")
+    calc_once(p, "A"); calc_once(p, "B")
+    R.check("a2hs: never on desktop", p.locator(bar).is_visible(), False)
+    p.close(); c.close()
+
+    # iPhone: Share-sheet line, no button
+    c = phone_ctx(s, IPHONE_UA)
+    p = open_page(s, c, "college-gpa-calculator")
+    calc_once(p, "A")
+    R.check("a2hs iOS: hidden after one calculation", p.locator(bar).is_visible(), False)
+    calc_once(p, "B+")
+    R.check("a2hs iOS: shown after the second", p.locator(bar).is_visible(), True)
+    R.check("a2hs iOS: Share instructions", p.locator(bar + " .calc-a2hs-how").inner_text().replace("\n", " ").replace("  ", " "), "Tap Share, then Add to Home Screen")
+    R.check("a2hs iOS: share icon", p.locator(bar + " .calc-a2hs-how svg").count(), 1)
+    R.check("a2hs iOS: no Add button", p.locator(bar + " .calc-a2hs-add").count(), 0)
+    R.check("a2hs iOS: badge icon loads", p.evaluate("(() => { const i = document.querySelector('.calc-a2hs-icon'); return !!i && i.complete && i.naturalWidth > 0; })()"), True)
+    if shots:
+        p.evaluate("window.scrollTo(0, document.querySelector('.calc-a2hs').getBoundingClientRect().bottom + scrollY - innerHeight + 140)")
+        p.wait_for_timeout(300)
+        p.screenshot(path=str(SHOTS / "a2hs-ios-390x844.png"))
+    p.close(); c.close()
+
+
 if __name__ == "__main__":
     subprocess.run([sys.executable, str(REPO / "scripts/calc/build_preview.py"), str(OUT), "--modules"], check=True, capture_output=True)
     literals()
@@ -808,5 +931,6 @@ if __name__ == "__main__":
         flow(s)
         layout(s, "--shots" in args)
         recolor(s)
+        a2hs(s, "--shots" in args)
         R.check("zero console errors", s.errors, [])
     sys.exit(0 if R.report() else 1)

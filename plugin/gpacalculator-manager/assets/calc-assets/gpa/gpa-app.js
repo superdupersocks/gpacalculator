@@ -6,7 +6,7 @@
 import {
   h, setText, createStore, readHash, shareUrl, clearHash, copyText, downloadCSV, createTracker,
   createLivePill, createMenu, createActionToast, createSheet, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
-  reducedMotion, watchErrors,
+  reducedMotion, watchErrors, createHomeScreenHint,
 } from '../core/calc-core.js';
 import * as E from '../engines/gpa-engine.js';
 
@@ -255,6 +255,10 @@ export function mountGpa(root, profile, opts = {}) {
   app.append(card, keep);
   const pill = createLivePill(app, result, { label: P.copy.pill || 'GPA', onOpen: () => track('pill', null, true) });
   const sheet = createSheet(app);
+  // Phones: "Add it to your home screen" under the card after the 2nd calculation or a Save (opt-in per profile).
+  const homeHint = P.homeScreenHint ? createHomeScreenHint(card, { calc: P.prefix, icon: P.homeScreenHint.icon || badgeUrl() }) : null;
+  let loading = false;
+  const resultKey = () => JSON.stringify(pack(state).terms);
   const phone = window.matchMedia('(max-width: 640px)');
 
   /* ----- rows and terms ----- */
@@ -608,6 +612,7 @@ export function mountGpa(root, profile, opts = {}) {
       if (how.open) renderHow();
       renderInsights();
       track('result', { gpa: E.roundHalf(g, 2) });
+      if (homeHint && mode === 'own' && !loading) homeHint.calculated(resultKey());
     } else {
       insights.textContent = '';
     }
@@ -888,7 +893,10 @@ export function mountGpa(root, profile, opts = {}) {
     syncPrior();
     syncOptions();
     renderTerms();
+    loading = true;
     update();
+    loading = false;
+    if (homeHint) homeHint.seen(resultKey()); // a restored calculation isn't a new one
   }
 
   function setBanner(kind) {
@@ -987,6 +995,7 @@ export function mountGpa(root, profile, opts = {}) {
     saveLabel();
     track('save', null, true);
     toast.show(`Saved “${name}”`);
+    if (homeHint) homeHint.saved();
   }
 
   function saveNow() {
@@ -997,6 +1006,7 @@ export function mountGpa(root, profile, opts = {}) {
     saveLabel();
     track('save', null, true);
     toast.show(`Saved “${currentSave}”`);
+    if (homeHint) homeHint.saved();
   }
 
   function okToLeave() {
@@ -1124,6 +1134,16 @@ export function mountGpa(root, profile, opts = {}) {
   syncSampleLink();
   store.markSeen();
   return { get state() { return state; }, get result() { return res; }, openPlanner, reset, load };
+}
+
+/** The 4.0 badge shipped with the plugin (assets/calc-assets/a2hs/), next to this module (a page may override it). */
+function badgeUrl() {
+  if (typeof window !== 'undefined' && window.GPACALC_A2HS_ICON) return window.GPACALC_A2HS_ICON;
+  try {
+    return new URL('../a2hs/badge-192.png', import.meta.url).href;
+  } catch (e) {
+    return '/wp-content/plugins/gpacalculator-manager/assets/calc-assets/a2hs/badge-192.png';
+  }
 }
 
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }

@@ -56,6 +56,8 @@ export default {
 
   // The planner's target is the saved goal (no separate goal list): it shows as one status line under the result.
   goalFromTarget: true,
+  // Phones: "Add it to your home screen" under the card after the 2nd calculation or a Save (core createHomeScreenHint).
+  homeScreenHint: {},
   upcomingDefault: 15,
 
   sample: {

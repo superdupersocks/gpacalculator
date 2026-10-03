@@ -1,7 +1,7 @@
 /* High school GPA profile: weighted and unweighted GPA with course levels (Honors +0.5, AP / IB / Dual
  * Enrollment +1.0). Used by the Homepage's high school mode; the High School page moves onto it next.
  * Everything here is data or copy; the math lives in engines/gpa-engine.js and the screen in gpa/gpa-app.js. */
-import { guessLevel, suggestCourses } from './hs-courses.js?v=396d419a7d';
+import { guessLevel, suggestCourses } from './hs-courses.js?v=da1cb432a2';
 
 const GRADES = { 'A+': 4, A: 4, 'A-': 3.7, 'B+': 3.3, B: 3, 'B-': 2.7, 'C+': 2.3, C: 2, 'C-': 1.7, 'D+': 1.3, D: 1, 'D-': 0.7, F: 0 };
 

@@ -781,7 +781,7 @@ def recolor(s):
 
 NEW_FILES = ["core/calc-core.css", "core/calc-core.js", "core/chart-kit.js", "engines/gpa-engine.js", "gpa/gpa-app.js",
              "gpa/gpa-app.css", "gpa/college-gpa.js", "gpa/uni-gpa.js", "gpa/home-gpa.js", "profiles/college.js", "profiles/from-gpcm.js",
-             "profiles/high-school.js", "profiles/hs-courses.js"]
+             "profiles/high-school.js", "profiles/hs-courses.js", "profiles/home.js", "gpa/home-v2.js"]
 NAMED = r"\b(white|black|red|green|blue|gray|grey|silver|navy|purple|orange|yellow|pink|teal)\b"
 
 
@@ -1085,6 +1085,197 @@ def home(s, shots):
     p.close(); c.close()
 
 
+# ---------- 8. Homepage v2 proposal: one calculator, scale menu, typed grades, insight line ----------
+
+PCT = [(97, "A+"), (93, "A"), (90, "A-"), (87, "B+"), (83, "B"), (80, "B-"), (77, "C+"), (73, "C"), (70, "C-"), (67, "D+"), (63, "D"), (60, "D-"), (0, "F")]
+V2_SCALES = {"standard": HS_PTS, "a-plus-433": {**HS_PTS, "A+": 4.33, "A-": 3.67, "B+": 3.33, "B-": 2.67, "C+": 2.33, "C-": 1.67, "D+": 1.33, "D-": 0.67},
+             "weighted-5": HS_PTS}
+LEVEL_NAMES = {"reg": "Regular", "hon": "Honors", "ap": "AP", "ib": "IB", "de": "Dual Enroll."}
+
+
+def pct_letter(v):
+    return next(l for m, l in PCT if v + 1e-9 >= m)
+
+
+def v2_reset(p):
+    for _ in range(2):
+        p.evaluate("localStorage.clear()")
+        p.reload()
+        p.wait_for_selector(".calc .calc-card")
+
+
+def v2_fill(p, i, name, grade, credits=None, level=None):
+    row = p.locator(".gpa-row").nth(i)
+    row.locator(".gpa-f-name input").fill(name)
+    g = row.locator(".gpa-grade-in")
+    g.click()
+    g.fill(grade)
+    g.press("Tab")
+    if credits is not None:
+        row.locator(".gpa-f-cr .calc-input:not(.gpa-cr-btn)").fill(str(credits))
+    if level is not None:
+        row.locator(".gpa-f-level select").select_option(level)
+    return row
+
+
+def v2_events(p):
+    return [e[1] for e in p.evaluate("window.__events") if e[0] == "event"]
+
+
+def home_v2(s, shots):
+    c = ctx_for(s)
+    p = open_page(s, c, "gpa-calculator-v2")
+    v2_reset(p)
+    R.check("v2: no level switch", p.locator(".gpa-home-switch, .calc-seg").count(), 0)
+    R.check("v2: scale menu in the header", p.locator(".gpa-top .gpa-scale-top option").all_inner_texts(), ["4.0", "4.33", "5.0 weighted"])
+    R.check("v2: columns", [x.strip() for x in p.locator(".calc-row-head").inner_text().split("\n") if x.strip()], ["Course (optional)", "Grade", "Credits", "Level"])
+    row = p.locator(".gpa-row").first
+    R.check("v2: credits default 1", row.locator(".gpa-f-cr .calc-input:not(.gpa-cr-btn)").input_value(), "1")
+    R.check("v2: level default Regular", row.locator(".gpa-f-level select").input_value(), "reg")
+    R.check("v2: no Options button (prior GPA in the action row)", (p.locator(".gpa-options-btn").count(), p.locator(".gpa-actions .gpa-prior-toggle").count()), (0, 1))
+
+    # Typed grades: letters or percentages
+    for typed, want in (("93", "A · 93%"), ("b+", "B+"), ("A−", "A−"), ("89.5", "B+ · 89.5%"), ("59", "F · 59%"), ("100", "A+ · 100%"), ("96.99", "A · 96.99%"), ("97", "A+ · 97%")):
+        v2_fill(p, 0, "Test", typed)
+        R.check(f"v2: typed grade {typed!r}", row.locator(".gpa-grade-in").input_value(), want)
+    v2_fill(p, 0, "Test", "150")
+    R.check("v2: 150 is not a grade", (row.locator(".calc-row-msg").inner_text(), row.locator(".gpa-grade-in").get_attribute("aria-invalid")),
+            ("Type a letter (A, B+) or a percentage from 0 to 100.", "true"))
+    v2_fill(p, 0, "Test", "Q")
+    R.check("v2: Q is not a grade", row.locator(".gpa-grade-in").get_attribute("aria-invalid"), "true")
+    g = row.locator(".gpa-grade-in")
+    g.click(); g.fill("")
+    g.type("87")
+    R.check("v2: typing a % previews its letter", p.locator(".gpa-f-grade .calc-suggest:not([hidden]) li").first.inner_text().split("\n")[0], "B+ · 87%")
+    g.press("Enter")
+    R.check("v2: Enter takes the previewed letter", (g.input_value(), p.locator(".calc-score").inner_text()), ("87", "3.30"))
+    g.press("Tab")
+    g.click(); g.fill("")
+    R.check("v2: empty box lists every grade", len(p.locator(".gpa-f-grade .calc-suggest:not([hidden]) li").all()), 16)
+    g.press("Escape"); g.press("Tab")
+
+    # Level follows the course name until picked by hand
+    v2_reset(p)
+    r0 = v2_fill(p, 0, "AP Calculus AB", "A")
+    R.check("v2: AP name sets AP", r0.locator(".gpa-f-level select").input_value(), "ap")
+    r0.locator(".gpa-f-level select").select_option("hon")
+    r0.locator(".gpa-f-name input").fill("AP Calculus BC")
+    R.check("v2: hand-picked level kept", r0.locator(".gpa-f-level select").input_value(), "hon")
+
+    # Math against an independent calculation, every scale
+    rng = random.Random(11)
+    for case in range(12):
+        v2_reset(p)
+        scale = ["standard", "a-plus-433", "weighted-5"][case % 3]
+        p.select_option(".gpa-scale-top select", scale)
+        rows = []
+        for i in range(rng.randint(2, 5)):
+            lvl = rng.choice(["reg", "reg", "hon", "ap", "ib", "de"])
+            cr = rng.choice([0.5, 1, 1, 2, 3, 4])
+            if rng.random() < 0.4:
+                v = rng.randint(55, 100)
+                typed, letter = str(v), pct_letter(v)
+            else:
+                letter = rng.choice(list(HS_PTS)); typed = letter
+            v2_fill(p, i, f"Class {i + 1}", typed, cr, lvl)
+            rows.append((letter, lvl, cr))
+        pts = V2_SCALES[scale]
+        C = sum(r[2] for r in rows)
+        u = sum(pts[r[0]] * r[2] for r in rows) / C
+        w = sum((pts[r[0]] + (HS_BOOST[r[1]] if pts[r[0]] > 0 else 0)) * r[2] for r in rows) / C
+        boosted = any(HS_BOOST[r[1]] and pts[r[0]] > 0 for r in rows)
+        lead_w = boosted and scale == "weighted-5"
+        got = (p.locator(".calc-kicker").inner_text(), p.locator(".calc-score").inner_text(),
+               p.locator(".calc-score2").inner_text().replace("\n", " ") if p.locator(".calc-score2").is_visible() else None)
+        kick = "Weighted GPA" if lead_w else "Unweighted GPA" if boosted else "GPA"
+        want = (kick, fmt(w if lead_w else u), (f"Unweighted {fmt(u)}" if lead_w else f"Weighted {fmt(w)}") if boosted else None)
+        R.check(f"v2 math #{case} ({scale}, {len(rows)} rows)", got, want)
+        # Insight: the best one-step raise, checked by brute force
+        steps = sorted({v for v in pts.values()})
+        best = None
+        for i, (l, lv, cr) in enumerate(rows):
+            up = [k for k, v in sorted(pts.items(), key=lambda kv: kv[1]) if v > pts[l] + 1e-9]
+            if not up:
+                continue
+            nl = up[0]
+            nr = rows[:i] + [(nl, lv, cr)] + rows[i + 1:]
+            nu = sum(pts[r[0]] * r[2] for r in nr) / C
+            nw = sum((pts[r[0]] + (HS_BOOST[r[1]] if pts[r[0]] > 0 else 0)) * r[2] for r in nr) / C
+            gain = (nw - w) if lead_w else (nu - u)
+            if best is None or gain > best + 1e-9:
+                best = gain
+        line = p.locator(".calc-insight-line")
+        if best is not None and best >= 0.005:
+            m = re.search(r"\(\+([\d.]+)\)", line.inner_text())
+            R.check(f"v2 insight #{case}: biggest gain", m.group(1) if m else None, fmt(best))
+        else:
+            R.check(f"v2 insight #{case}: hidden with nothing to raise", line.is_visible(), False)
+
+    # Insight tap goes to the course; GA4 events
+    v2_reset(p)
+    v2_fill(p, 0, "English 10", "A")
+    v2_fill(p, 1, "Chemistry", "C", 2)
+    ev = v2_events(p)
+    R.check("v2 events: result_shown once", ev.count("home_result_shown"), 1)
+    R.check("v2 insight: names the course", "Chemistry from C to C+" in p.locator(".calc-insight-line").inner_text(), True)
+    p.locator(".calc-insight-line").click()
+    p.wait_for_timeout(150)
+    R.check("v2 insight tap: focus on that course's grade", p.evaluate("document.activeElement.closest('.gpa-row').querySelector('.gpa-f-name input').value"), "Chemistry")
+    R.check("v2 events: insight_tap", "home_insight_tap" in v2_events(p), True)
+    p.evaluate("localStorage.setItem('gpac:home:v2.lastVisit', JSON.stringify(Date.now() - 2 * 864e5))")
+    p.reload(); p.wait_for_selector(".calc .calc-card")
+    rv = [e for e in p.evaluate("window.__events") if e[0] == "event" and e[1] == "home_return_visit"]
+    R.check("v2 events: return_visit with days and draft", (len(rv), rv[0][2].get("days") if rv else None, rv[0][2].get("draft") if rv else None), (1, 2, 1))
+    p.reload(); p.wait_for_selector(".calc .calc-card")
+    R.check("v2 events: no return_visit within 30 minutes", "home_return_visit" in v2_events(p), False)
+    R.check("v2 events: restored result counts as shown", "home_result_shown" in v2_events(p), True)
+
+    # Samples
+    v2_reset(p)
+    p.locator(".gpa-sample[data-sample='high_school']").click()
+    R.check("v2 sample: high school", (p.locator(".calc-score").inner_text(), p.locator(".calc-score2").inner_text().replace("\n", " ")), ("3.55", "Weighted 3.73"))
+    R.check("v2 sample: % grade shown", p.locator(".gpa-row").nth(1).locator(".gpa-grade-in").input_value(), "B+ · 88%")
+    p.locator(".calc-banner button", has_text="Clear").click()
+    p.locator(".gpa-sample[data-sample='college']").click()
+    R.check("v2 sample: college", (p.locator(".calc-score").inner_text(), p.locator(".calc-score2").is_visible()), ("3.34", False))
+
+    # The old homepage's high school draft comes in once, the old key unchanged
+    for _ in range(2):
+        p.evaluate("localStorage.clear()"); p.reload(); p.wait_for_selector(".calc .calc-card")
+    p.evaluate("d => { localStorage.clear(); localStorage.setItem('gpa_calc_draft_v1', JSON.stringify(d)); }", HS_DRAFT)
+    p.goto(p.url); p.wait_for_selector(".calc .calc-card")
+    u, w, _ = hs_expect([("A-", "ap", 1), ("B+", "reg", 1), ("A", "hon", 1)])
+    R.check("v2 legacy: old high school draft", (p.locator(".calc-score").inner_text(), p.locator(".calc-score2").inner_text().replace("\n", " ")), (u, f"Weighted {w}"))
+    R.check("v2 legacy: old key unchanged", json.loads(p.evaluate("localStorage.getItem('gpa_calc_draft_v1')")), HS_DRAFT)
+    if shots:
+        p.screenshot(path=str(SHOTS / "home-v2-1440x900.png"))
+    p.close(); c.close()
+
+    # Phone: letter grid with "Type a %"; the % shows in the row summary; nothing wider than the screen
+    for width in (390, 360):
+        c = ctx_for(s, width, 844, mobile=True)
+        p = open_page(s, c, "gpa-calculator-v2")
+        v2_reset(p)
+        R.check(f"v2 phone {width}: no sideways scroll", p.evaluate("document.documentElement.scrollWidth <= innerWidth && document.querySelector('.calc-toolbar').scrollWidth <= document.querySelector('.calc-toolbar').clientWidth"), True)
+        row = p.locator(".gpa-row").first
+        row.locator(".gpa-f-name input").fill("Honors Chemistry")
+        row.locator(".gpa-grade-btn").click()
+        R.check(f"v2 phone {width}: grid has Type a %", p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt").all_inner_texts()[-1], "Type a %")
+        p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt", has_text="Type a %").click()
+        g = row.locator(".gpa-grade-in")
+        R.check(f"v2 phone {width}: % box focused, number keypad", (p.evaluate("document.activeElement.classList.contains('gpa-grade-in')"), g.get_attribute("inputmode")), (True, "decimal"))
+        g.type("86"); g.press("Enter")
+        p.locator(".gpa-row").nth(1).locator(".gpa-f-name input").focus()
+        p.wait_for_timeout(100)
+        R.check(f"v2 phone {width}: summary shows the %", row.locator(".gpa-row-sum-m").inner_text(), "B · 86% · Hon +0.5 · 1 cr")
+        R.check(f"v2 phone {width}: weighted beside", (p.locator(".calc-score").inner_text(), p.locator(".calc-score2").inner_text().replace("\n", " ")), ("3.00", "Weighted 3.50"))
+        fits = p.evaluate("""[...document.querySelectorAll('.gpa-row:not(.is-collapsed)')].flatMap(r => [...r.querySelectorAll('.gpa-grade-btn, .gpa-cr-btn, .gpa-level-btn')]).every(b => b.scrollWidth <= b.clientWidth + 1)""")
+        R.check(f"v2 phone {width}: grade, credits and level text fits", fits, True)
+        if shots:
+            p.screenshot(path=str(SHOTS / f"home-v2-{width}x844.png"))
+        p.close(); c.close()
+
+
 if __name__ == "__main__":
     subprocess.run([sys.executable, str(REPO / "scripts/calc/build_preview.py"), str(OUT), "--modules"], check=True, capture_output=True)
     literals()
@@ -1097,5 +1288,6 @@ if __name__ == "__main__":
         recolor(s)
         a2hs(s, "--shots" in args)
         home(s, "--shots" in args)
+        home_v2(s, "--shots" in args)
         R.check("zero console errors", s.errors, [])
     sys.exit(0 if R.report() else 1)

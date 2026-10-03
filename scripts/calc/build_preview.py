@@ -180,6 +180,9 @@ def build(out, modules):
     hp = html.replace("College GPA Calculator", "GPA Calculator").replace(NEW_SUBTITLE, "College and high school GPA, weighted and unweighted.", 1)
     css, js = calc_tags("gpa/home-gpa.js", modules)
     pages["gpa-calculator.html"] = hp.replace("</head>", css + "\n</head>", 1).replace("</body>", js + "\n</body>", 1)
+    # Homepage v2 proposal: one calculator (profiles/home.js), no switch.
+    css, js = calc_tags("gpa/home-v2.js", modules)
+    pages["gpa-calculator-v2.html"] = hp.replace("</head>", css + "\n</head>", 1).replace("</body>", js + "\n</body>", 1)
 
     out.mkdir(parents=True, exist_ok=True)
     for name, body in pages.items():

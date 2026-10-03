@@ -7,8 +7,8 @@ import {
   h, setText, createStore, readHash, shareUrl, clearHash, copyText, downloadCSV, createTracker,
   createLivePill, createMenu, createActionToast, createSheet, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
   reducedMotion, watchErrors, createHomeScreenHint, createSuggest,
-} from '../core/calc-core.js?v=396d419a7d';
-import * as E from '../engines/gpa-engine.js?v=396d419a7d';
+} from '../core/calc-core.js?v=da1cb432a2';
+import * as E from '../engines/gpa-engine.js?v=da1cb432a2';
 
 let uid = 0;
 const newId = (p = 'r') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
@@ -17,7 +17,7 @@ const newId = (p = 'r') => `${p}${Date.now().toString(36)}${(uid++).toString(36)
 
 function blankRow(profile, i = 0) {
   const types = profile.courseTypes;
-  return { id: newId(), name: '', grade: '', credits: profile.defaultCredits || '', major: false, type: types ? types[0].name : undefined, level: profile.levels ? 'reg' : undefined, levelSet: false, _ph: i };
+  return { id: newId(), name: '', grade: '', credits: profile.defaultCredits || '', major: false, type: types ? types[0].name : undefined, level: profile.levels ? 'reg' : undefined, levelSet: false, pct: '', _ph: i };
 }
 
 function blankState(profile) {
@@ -51,7 +51,8 @@ function normalize(profile, s) {
   const row = (r, i) => ({
     id: newId(), name: str(r.name), grade: str(r.grade), credits: str(r.credits), major: !!r.major,
     type: typeNames.length ? (typeNames.includes(r.type) ? r.type : typeNames[0]) : undefined,
-    level: levelOf(r), levelSet: !!(profile.levels && r.levelSet), _ph: i,
+    level: levelOf(r), levelSet: !!(profile.levels && r.levelSet),
+    pct: profile.percentGrades && /^\d{1,3}(?:\.\d{1,2})?$/.test(String(r.pct || '')) ? String(r.pct) : '', _ph: i,
   });
   let terms = s.terms.slice(0, 24).map((t, i) => ({
     id: profile.fixedTerms ? (t.id || newId('t')) : newId('t'),
@@ -83,7 +84,7 @@ function pack(state) {
       id: t.id, name: t.name, planned: t.planned || undefined,
       rows: t.rows.filter((r) => r.name || r.grade).map((r) => ({
         name: r.name || undefined, grade: r.grade || undefined, credits: r.credits || undefined, major: r.major || undefined, type: r.type,
-        level: r.level && r.level !== 'reg' ? r.level : undefined, levelSet: r.levelSet || undefined,
+        level: r.level && r.level !== 'reg' ? r.level : undefined, levelSet: r.levelSet || undefined, pct: r.pct || undefined,
       })),
     })),
     target: state.target.gpa || state.target.credits ? state.target : undefined,
@@ -92,6 +93,30 @@ function pack(state) {
 
 function hasData(state) {
   return state.terms.some((t) => t.rows.some((r) => r.grade || r.name)) || !!(state.prior.gpa || state.prior.credits);
+}
+
+/* ---------- Typed grades: a letter or a percentage ---------- */
+
+/** "93" -> the letter for 93% on the profile's chart (percentGrades: [[min, letter], …], highest first). */
+export function letterForPercent(profile, pct) {
+  const row = (profile.percentGrades || []).find(([min]) => pct + 1e-9 >= min);
+  return row ? row[1] : null;
+}
+
+/** What a student typed in a grade box: "B+", "b-", "A−", "93", "93%", "88.5". Blank -> undefined, not a
+ * grade -> null. A percentage outside 0–100 is not a grade. */
+export function parseGradeText(profile, scale, raw) {
+  const t = String(raw == null ? '' : raw).trim().replace(/[−–]/g, '-').replace(/\s+/g, '');
+  if (!t) return undefined;
+  const n = /^(\d{1,3}(?:\.\d{1,2})?)%?$/.exec(t);
+  if (n && profile.percentGrades) {
+    const v = Number(n[1]);
+    if (v > 100) return null;
+    const g = letterForPercent(profile, v);
+    return g && Object.prototype.hasOwnProperty.call(scale.grades, g) ? { grade: g, pct: n[1] } : null;
+  }
+  const key = Object.keys(scale.grades).find((k) => k.toUpperCase() === t.toUpperCase());
+  return key ? { grade: key, pct: '' } : null;
 }
 
 /* ---------- Legacy saves (Bolt homepage/college bundles) ---------- */
@@ -161,7 +186,7 @@ export function mountGpa(root, profile, opts = {}) {
   const fmt = (n) => E.fmtGpa(n, D);
   const track = createTracker(P.prefix);
   const store = createStore(P.storeKey, { debounce: 500 });
-  const app = h('div', { class: `calc gpa gpa-${P.id}`, 'data-profile': P.id });
+  const app = h('div', { class: `calc gpa gpa-${P.id}${P.percentGrades ? ' gpa-typed' : ''}`, 'data-profile': P.id });
   root.append(app);
   const toast = createActionToast(app);
   trackCalculatorUsed(root);
@@ -181,8 +206,16 @@ export function mountGpa(root, profile, opts = {}) {
   const folderBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-tool', 'aria-label': 'My saves', title: 'My saves' }, svgIcon('folder'));
   const savesMenu = h('ul', { class: 'calc-menu', role: 'menu', 'aria-label': 'My saves' });
   const saveBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-tool', 'aria-label': 'Save', title: 'Save', onclick: () => saveNow() }, svgIcon('save'));
-  const hasOptions = P.scales.length > 1 || !!P.prior || !!P.major;
-  const toolbar = h('div', { class: 'calc-toolbar gpa-top' }, hasOptions ? optionsBtn : h('span'),
+  // scaleMenu: the grading scale sits in the card header (always visible), not inside Options.
+  const scaleUp = !!P.scaleMenu && P.scales.length > 1;
+  // With the scale in the header and no major GPA, there's nothing else for Options: "Add previous GPA"
+  // moves to the action row and the header stays one line on phones.
+  const priorLoose = scaleUp && !P.major && !!P.prior;
+  const hasOptions = (P.scales.length > 1 && !scaleUp) || (!!P.prior && !priorLoose) || !!P.major;
+  const scaleSel = h('select', { class: 'calc-select', id: `${P.id}-scale`, 'aria-label': 'Grading scale' });
+  for (const s of P.scales) scaleSel.append(h('option', { value: s.id }, scaleUp && s.short ? s.short : s.label));
+  const scaleTop = scaleUp ? h('label', { class: 'gpa-scale-top', for: scaleSel.id }, h('span', { class: 'gpa-scale-top-k' }, 'Scale'), scaleSel) : null;
+  const toolbar = h('div', { class: 'calc-toolbar gpa-top' }, h('div', { class: 'calc-toolbar-group gpa-top-left' }, scaleTop, hasOptions ? optionsBtn : null),
     h('div', { class: 'calc-toolbar-group' }, saveName, h('div', { class: 'calc-menu-wrap' }, folderBtn, savesMenu), saveBtn));
 
   const bannerText = h('span');
@@ -190,13 +223,11 @@ export function mountGpa(root, profile, opts = {}) {
   const banner = h('div', { class: 'calc-banner', role: 'status', hidden: true }, bannerText, bannerActions);
 
   /* ----- Options (closed by default): grading scale, previous GPA, major GPA ----- */
-  const scaleSel = h('select', { class: 'calc-select', id: `${P.id}-scale`, 'aria-label': 'Grading scale' });
-  for (const s of P.scales) scaleSel.append(h('option', { value: s.id }, s.label));
   const priorToggle = h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-prior-toggle', 'aria-expanded': 'false' }, 'Add previous GPA');
   const majorToggle = P.major ? h('input', { type: 'checkbox', id: `${P.id}-major-on` }) : null;
   const settings = h('div', { class: 'gpa-settings' },
-    P.scales.length > 1 ? h('div', { class: 'gpa-scale-field' }, scaleSel) : null,
-    P.prior ? priorToggle : null,
+    P.scales.length > 1 && !scaleUp ? h('div', { class: 'gpa-scale-field' }, scaleSel) : null,
+    P.prior && !priorLoose ? priorToggle : null,
     majorToggle ? h('label', { class: 'calc-check gpa-major-on', for: majorToggle.id }, majorToggle, h('span', null, 'Major GPA')) : null);
 
   const priorGpa = h('input', { class: 'calc-input is-num', id: `${P.id}-prior-gpa`, inputmode: 'decimal', autocomplete: 'off', placeholder: 'e.g. 3.20' });
@@ -208,21 +239,32 @@ export function mountGpa(root, profile, opts = {}) {
   const priorBox = h('div', { class: 'gpa-prior', hidden: true },
     h('div', { class: 'calc-field' }, h('label', { class: 'calc-label', for: priorGpa.id }, 'Current cumulative GPA'), priorGpa, priorGpaMsg),
     h('div', { class: 'calc-field' }, h('label', { class: 'calc-label', for: priorCr.id }, `${cap(P.creditWord)} completed`), priorCr, priorCrMsg));
-  const optionsPanel = h('div', { class: 'gpa-options', id: `${P.id}-options`, hidden: true }, settings, P.prior ? priorBox : null);
+  const optionsPanel = h('div', { class: 'gpa-options', id: `${P.id}-options`, hidden: true }, settings, P.prior && !priorLoose ? priorBox : null);
   let optionsOpen = false;
 
   /* ----- rows + action row ----- */
   const termsEl = h('div', { class: 'gpa-terms' });
   const addTermBtn = P.fixedTerms ? null : h('button', { type: 'button', class: 'calc-btn calc-btn-ghost gpa-add-term' }, `Add ${(P.termWord || 'semester').toLowerCase()}`);
   const resetBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-ghost gpa-reset', hidden: true }, 'Start over'); // shown once something is entered
-  const sampleBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-sample', onclick: () => showSample() }, 'Try a sample');
+  const samples = P.samples && P.samples.length ? P.samples : null; // several samples: one link each
+  const sampleBtn = samples
+    ? h('span', { class: 'gpa-samples' }, h('span', { class: 'gpa-samples-k' }, 'Try a sample:'),
+      ...samples.map((x) => h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-sample', 'data-sample': x.id, onclick: () => showSample(x) }, x.label)))
+    : h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-sample', onclick: () => showSample() }, 'Try a sample');
   const savedNote = h('span', { class: 'calc-saved-note', hidden: true }, 'Saved on this device');
-  const actions = h('div', { class: 'calc-actions gpa-actions' }, addTermBtn, resetBtn, sampleBtn, savedNote);
+  const actions = h('div', { class: 'calc-actions gpa-actions' }, addTermBtn, priorLoose ? priorToggle : null, resetBtn, sampleBtn, savedNote);
 
   /* ----- result panel ----- */
   const kicker = h('div', { class: 'calc-kicker' }, P.copy.resultKicker);
   const score = h('div', { class: 'calc-score', 'aria-hidden': 'true' });
+  // weightedBeside: the headline stays unweighted; the weighted GPA joins it once a course has a level boost.
+  const score2 = { k: h('span', { class: 'calc-score2-k' }), v: h('span', { class: 'calc-score2-v' }) };
+  score2.el = h('div', { class: 'calc-score2', 'aria-hidden': 'true', hidden: true }, score2.k, score2.v);
+  const scoreEl = P.weightedBeside ? h('div', { class: 'calc-score-row' }, score, score2.el) : score;
   const verdict = h('p', { class: 'calc-verdict' });
+  // insightLine: the one course change that raises the GPA most, on the result; a tap goes to that course.
+  const insightLine = P.insightLine ? h('button', { type: 'button', class: 'calc-insight-line', hidden: true }) : null;
+  let insightTo = null;
   const live = h('p', { class: 'calc-sr', 'aria-live': 'polite' });
   const badge = h('span', { class: 'calc-badge gpa-letter', 'aria-hidden': 'true' });
   const stat = (k) => {
@@ -244,7 +286,9 @@ export function mountGpa(root, profile, opts = {}) {
   const how = h('details', { class: 'calc-how' }, h('summary', null, 'Show how it’s calculated'), howBody);
   how.addEventListener('toggle', () => { if (how.open) renderHow(); });
   const BLOCKS = {
-    verdict: h('div', { class: 'calc-result-top' }, h('div', null, kicker, score, verdict), badge),
+    verdict: insightLine
+      ? h('div', { class: 'calc-result-head' }, h('div', { class: 'calc-result-top' }, h('div', null, kicker, scoreEl, verdict), badge), insightLine)
+      : h('div', { class: 'calc-result-top' }, h('div', null, kicker, scoreEl, verdict), badge),
     stats: h('div', { class: 'calc-stats' }, P.levels && P.levelList ? sAlt.el : null, sCredits.el, sPoints.el, sMajor.el, sProj.el),
     note,
     next: nextEl,
@@ -277,7 +321,7 @@ export function mountGpa(root, profile, opts = {}) {
     planOut, whatIf) : null;
 
   const insights = h('div', { class: 'calc-insights', 'aria-label': 'Insights' });
-  const card = h('div', { class: 'calc-card' }, toolbar, banner, hasOptions ? optionsPanel : null, termsEl, actions, result, goalsEl, planner, insights);
+  const card = h('div', { class: 'calc-card' }, toolbar, banner, hasOptions ? optionsPanel : null, priorLoose ? priorBox : null, termsEl, actions, result, goalsEl, planner, insights);
   const keep = h('div', { class: 'calc-keep', hidden: !(P.keepGoing && P.keepGoing.length) },
     h('h3', null, 'Keep going'), h('div', { class: 'calc-keep-grid' }));
   app.append(card, keep);
@@ -298,6 +342,25 @@ export function mountGpa(root, profile, opts = {}) {
   const colsClass = () => ['gpa-cols', types ? 'has-type' : '', levels ? 'has-level' : '', P.major && state.showMajor ? 'has-major' : ''].join(' ');
   const crAbbr = P.creditAbbr || (P.creditWord === 'credits' ? 'cr' : P.creditWord);
   const gradeLabel = (g) => g.replace('-', '−');
+  const typed = !!P.percentGrades;
+  const gradeShow = (r) => (r.grade ? `${gradeLabel(r.grade)}${r.pct ? ` · ${r.pct}%` : ''}` : '');
+
+  /** The grade list under a typed grade box: every grade (empty box), the letter for a percentage, or letters
+   * that start with what was typed. */
+  function gradeChoices(row, q) {
+    const sc = E.scaleOf(P, state);
+    const pts = (g) => (sc.grades[g] == null ? 'not counted' : E.fmtGpa(sc.grades[g], 2));
+    const item = (g, pct = '') => ({ label: pct ? `${gradeLabel(g)} · ${pct}%` : gradeLabel(g), hint: pts(g), grade: g, pct });
+    const t = String(q || '').trim().replace(/[−–]/g, '-');
+    if (/^\d/.test(t)) {
+      const p2 = parseGradeText(P, sc, t);
+      return p2 ? [item(p2.grade, p2.pct)] : [];
+    }
+    const list = gradesFor(row);
+    if (!t) return list.map((g) => item(g));
+    const up = t.toUpperCase();
+    return list.filter((g) => g.toUpperCase().startsWith(up)).map((g) => item(g));
+  }
 
   function gradesFor(row) {
     const t = types && types.find((x) => x.name === row.type);
@@ -309,6 +372,7 @@ export function mountGpa(root, profile, opts = {}) {
   const NOT_COUNTED_LABEL = 'Not counted in GPA';
 
   function gradeOptions(sel, row) {
+    if (typed) return; // a typed grade box keeps its text; its list is built when it opens
     const list = gradesFor(row);
     const want = [''].concat(list);
     const have = [...sel.options].map((o) => o.value);
@@ -336,14 +400,17 @@ export function mountGpa(root, profile, opts = {}) {
     const l = levels && levelOf(r.level);
     return l && boostOf(r.level) ? ` · ${l.short} ${boostText(boostOf(r.level))}` : '';
   };
-  const rowMeta = (r) => (notCounted(r.grade) ? `${gradeLabel(r.grade)} · not counted` : `${gradeLabel(r.grade)}${levelMeta(r)} · ${r.credits || '?'} ${crAbbr}`);
+  const rowMeta = (r) => (notCounted(r.grade) ? `${gradeLabel(r.grade)} · not counted` : `${gradeShow(r)}${levelMeta(r)} · ${r.credits || '?'} ${crAbbr}`);
   const creditChoices = P.creditChoices || ['1', '2', '3', '4', '5'];
 
   function rowView(term, row, i) {
     const id = row.id;
     const ph = (P.coursePlaceholders && P.coursePlaceholders[i % P.coursePlaceholders.length]) || P.courseHint || 'Course name';
     const name = h('input', { class: 'calc-input', id: `${id}-n`, value: row.name, autocomplete: 'off', enterkeyhint: 'next', placeholder: ph, 'aria-label': `Course ${i + 1} name (optional)` });
-    const grade = h('select', { class: 'calc-select', id: `${id}-g`, 'aria-label': `Course ${i + 1} grade` });
+    // percentGrades: a text box that takes a letter or a percentage ("93" -> A), with the scale's grades as a list.
+    const grade = typed
+      ? h('input', { class: 'calc-input gpa-grade-in', id: `${id}-g`, value: gradeShow(row), autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', enterkeyhint: 'next', placeholder: 'A or 93', 'aria-label': `Course ${i + 1} grade, a letter or a percentage` })
+      : h('select', { class: 'calc-select', id: `${id}-g`, 'aria-label': `Course ${i + 1} grade` });
     // Phones: the grade opens a letter grid in a bottom sheet; credits are quick buttons 1-5 + Other.
     const gradeBtn = h('button', { type: 'button', class: 'calc-select gpa-grade-btn', 'aria-haspopup': 'dialog', 'aria-label': `Course ${i + 1} grade` });
     const cr = h('input', { class: 'calc-input is-num', id: `${id}-c`, value: row.credits, inputmode: 'decimal', autocomplete: 'off', enterkeyhint: 'next', placeholder: cap(P.creditWord), 'aria-label': `Course ${i + 1} ${P.creditWord}` });
@@ -382,7 +449,7 @@ export function mountGpa(root, profile, opts = {}) {
       major, rm, msg);
     const v = { el, msg, cr, crBtn, grade, gradeBtn, name, typeSel, levelSel, sum, row, term, i };
     const syncBtns = () => {
-      setText(gradeBtn, row.grade ? gradeLabel(row.grade) : 'Grade');
+      setText(gradeBtn, row.grade ? gradeLabel(row.grade) : 'Grade'); // phones: the % shows in the row's one-line summary
       gradeBtn.classList.toggle('is-empty', !row.grade);
       setText(crBtn, row.credits ? `${row.credits} ${crAbbr}` : cap(P.creditWord));
       if (levelBtn) {
@@ -398,9 +465,12 @@ export function mountGpa(root, profile, opts = {}) {
     v.syncBtns = syncBtns;
     syncBtns();
     const edit = () => { lastTerm = term.id; changed(); };
-    const setGrade = (g) => {
+    const setGrade = (g, pct = '') => {
       row.grade = g;
-      grade.value = g;
+      row.pct = g ? pct : '';
+      v.bad = false;
+      if (!typed) grade.value = g;
+      else if (document.activeElement !== grade) grade.value = gradeShow(row);
       syncBtns();
       edit();
       autoAdd(term, row);
@@ -431,7 +501,34 @@ export function mountGpa(root, profile, opts = {}) {
         if (pickL != null) setLevel(pickL, true);
       });
     }
-    grade.addEventListener('change', () => setGrade(grade.value));
+    if (typed) {
+      // Letters count as they're typed; a percentage counts once the box is left (or Enter), so "93"
+      // never passes through 9% = F on the way.
+      const commit = () => {
+        const p2 = parseGradeText(P, E.scaleOf(P, state), grade.value);
+        if (p2 === null) { row.grade = ''; row.pct = ''; v.bad = true; syncBtns(); edit(); return; }
+        if (p2 === undefined) { if (row.grade || v.bad) setGrade(''); v.bad = false; return; }
+        if (p2.grade !== row.grade || p2.pct !== row.pct || v.bad) setGrade(p2.grade, p2.pct);
+      };
+      grade.addEventListener('input', () => {
+        const p2 = parseGradeText(P, E.scaleOf(P, state), grade.value);
+        if (p2 && !p2.pct && (p2.grade !== row.grade || row.pct)) setGrade(p2.grade, '');
+      });
+      grade.addEventListener('change', commit);
+      grade.addEventListener('focus', () => { grade.value = row.pct ? row.pct : row.grade ? gradeLabel(row.grade) : grade.value; grade.select(); });
+      grade.addEventListener('blur', () => {
+        commit();
+        if (v.bad) return;
+        grade.value = gradeShow(row);
+        el.classList.remove('is-grade-text'); // phones: back to the grade button (the % shows in the row summary)
+      });
+      createSuggest(grade, {
+        openOnFocus: true,
+        autoFirst: true,
+        source: (q) => gradeChoices(row, q),
+        onPick: (it) => { grade.value = it.pct || gradeLabel(it.grade); setGrade(it.grade, it.pct); },
+      });
+    } else grade.addEventListener('change', () => setGrade(grade.value));
     cr.addEventListener('input', () => { row.credits = cr.value; syncBtns(); edit(); });
     gradeBtn.addEventListener('click', async () => {
       activate(row.id);
@@ -439,7 +536,14 @@ export function mountGpa(root, profile, opts = {}) {
       const off = list.filter(notCounted);
       const options = list.filter((x) => !notCounted(x)).map((x) => ({ value: x, label: gradeLabel(x) }))
         .concat(off.length ? [{ heading: NOT_COUNTED_LABEL }, ...off.map((x) => ({ value: x, label: gradeLabel(x) }))] : []);
-      const g = await sheet.open({ title: `Grade${row.name.trim() ? ` for ${row.name.trim()}` : ''}`, options, value: row.grade, cols: 4 });
+      if (typed) options.push({ value: '%', label: 'Type a %', wide: true });
+      const g = await sheet.open({ title: `Grade${row.name.trim() ? ` for ${row.name.trim()}` : ''}`, options, value: row.pct ? '%' : row.grade, cols: 4 });
+      if (g === '%') {
+        el.classList.add('is-grade-text');
+        grade.setAttribute('inputmode', 'decimal');
+        grade.focus();
+        return;
+      }
       if (g != null) setGrade(g);
     });
     crBtn.addEventListener('click', async () => {
@@ -526,7 +630,7 @@ export function mountGpa(root, profile, opts = {}) {
   function termSummary(term) {
     const n = term.rows.filter(filled).length;
     const t = res && res.terms.find((x) => x.id === term.id);
-    const g = t && t.gpa != null ? (weightedOn() ? ` · Weighted ${fmt(t.wgpa)}` : ` · GPA ${fmt(t.gpa)}`) : '';
+    const g = t && t.gpa != null ? (weightedShown() ? ` · Weighted ${fmt(t.wgpa)}` : ` · GPA ${fmt(t.gpa)}`) : '';
     return `${term.name || P.termWord || 'Semester'} · ${n} class${n === 1 ? '' : 'es'}${g}`;
   }
 
@@ -649,16 +753,16 @@ export function mountGpa(root, profile, opts = {}) {
     for (const [id, v] of rowEls) {
       const r = res.rows[id];
       if (!r) continue;
-      const err = r.status === 'error' ? r.error : '';
+      const err = v.bad ? 'Type a letter (A, B+) or a percentage from 0 to 100.' : r.status === 'error' ? r.error : '';
       const info = r.status === 'excluded' || r.status === 'replaced' ? `Not counted: ${r.why}` : '';
       setText(v.msg, err || info);
       v.msg.className = `calc-hint calc-row-msg${err ? ' is-error' : ''}`;
       v.cr.setAttribute('aria-invalid', err && /credit|unit/i.test(err) ? 'true' : 'false');
-      v.grade.setAttribute('aria-invalid', err && !/credit|unit/i.test(err) ? 'true' : 'false');
+      v.grade.setAttribute('aria-invalid', v.bad || (err && !/credit|unit/i.test(err)) ? 'true' : 'false');
     }
     for (const t of res.terms) {
       const chip = termsEl.querySelector(`[data-term-gpa="${t.id}"]`);
-      if (chip) setText(chip, t.gpa == null ? '' : weightedOn() && !t.planned ? `Weighted ${fmt(t.wgpa)}` : `${t.planned ? 'Planned' : 'GPA'} ${fmt(t.gpa)}`);
+      if (chip) setText(chip, t.gpa == null ? '' : weightedShown() && !t.planned ? `Weighted ${fmt(t.wgpa)}` : `${t.planned ? 'Planned' : 'GPA'} ${fmt(t.gpa)}`);
     }
     for (const t of state.terms) {
       const sum = termsEl.querySelector(`[data-term-sum="${t.id}"]`);
@@ -677,20 +781,28 @@ export function mountGpa(root, profile, opts = {}) {
       const g = res.current.gpa;
       const v = verdictFor(g);
       // Levels: with any Honors / AP / IB course the headline is the weighted GPA, the unweighted one beside it.
+      // weightedBeside profiles keep the unweighted headline (weighted beside it) unless the scale leads with weighted.
       const weighted = weightedOn();
-      const shown = weighted ? res.current.wgpa : g;
+      const wLead = weighted && (!P.weightedBeside || weightedLead());
+      const shown = wLead ? res.current.wgpa : g;
       setText(score, fmt(shown));
       setText(badge, v.letter.replace('-', '−'));
       badge.className = `calc-badge gpa-letter is-band-${v.band}`;
-      verdict.replaceChildren(...(weighted ? weightedText(shown, g, v.letter) : verdictText(g, v.letter)));
+      verdict.replaceChildren(...(weighted ? weightedText(res.current.wgpa, g, v.letter, wLead) : verdictText(g, v.letter)));
       // "Semester GPA" until there are 2+ semesters or a previous GPA; then "Cumulative GPA".
       const doneTerms = res.terms.filter((t) => !t.planned && t.credits > 0).length;
       const base = P.copy.termResultKicker && doneTerms <= 1 && !res.prior.used ? P.copy.termResultKicker : P.copy.resultKicker;
-      const kick = !weighted ? base : base === 'GPA' ? 'Weighted GPA' : `Weighted ${base.charAt(0).toLowerCase()}${base.slice(1)}`;
+      const lower = (x) => `${x.charAt(0).toLowerCase()}${x.slice(1)}`;
+      const kick = !weighted ? base : base === 'GPA' ? (wLead ? 'Weighted GPA' : 'Unweighted GPA') : `${wLead ? 'Weighted' : 'Unweighted'} ${lower(base)}`;
       setText(kicker, kick);
-      setText(live, `${kick}: ${fmt(shown)}${weighted ? `, unweighted ${fmt(g)}` : ''}`);
-      sAlt.el.hidden = !levels;
-      if (levels) {
+      setText(live, `${kick}: ${fmt(shown)}${weighted ? `, ${wLead ? 'unweighted' : 'weighted'} ${fmt(wLead ? g : res.current.wgpa)}` : ''}`);
+      if (P.weightedBeside) {
+        score2.el.hidden = !weighted;
+        setText(score2.k, wLead ? 'Unweighted' : 'Weighted');
+        setText(score2.v, fmt(wLead ? g : res.current.wgpa));
+      }
+      sAlt.el.hidden = !levels || !!P.weightedBeside;
+      if (levels && !P.weightedBeside) {
         setText(sAlt.k, weighted ? 'Unweighted GPA' : 'Weighted GPA');
         setText(sAlt.v, weighted ? fmt(g) : fmt(res.current.wgpa));
       }
@@ -713,10 +825,17 @@ export function mountGpa(root, profile, opts = {}) {
       renderLinks(g);
       if (how.open) renderHow();
       renderInsights();
+      renderInsightLine();
       track('result', { gpa: E.roundHalf(g, 2) });
+      if (P.extraEvents) {
+        // Once per page view: the first time a result is on screen, and where it came from.
+        track('result_shown', { gpa: E.roundHalf(g, 2), weighted: weighted ? 1 : 0, scale: state.scale, courses: res.courses.counted,
+          from: mode === 'sample' ? 'sample' : mode === 'shared' ? 'link' : loading ? 'restore' : 'entry' });
+      }
       if (homeHint && mode === 'own' && !loading) homeHint.calculated(resultKey());
     } else {
       insights.textContent = '';
+      if (insightLine) insightLine.hidden = true;
     }
     if (planner && !planner.hidden) updatePlan();
     else renderGoals();
@@ -729,14 +848,31 @@ export function mountGpa(root, profile, opts = {}) {
     return !!(levels && res && res.ready && Object.values(res.rows).some((r) => r.status === 'counted' && !r.planned && boostOf(r.src.level) > 0));
   }
 
-  function weightedText(w, g, letter) {
+  /** The weighted GPA is the one the screen leads with (term chips, headline). */
+  function weightedShown() {
+    return weightedOn() && (!P.weightedBeside || weightedLead());
+  }
+
+  /** The scale leads with the weighted GPA (e.g. "5.0 weighted"). */
+  function weightedLead() {
+    return !!E.scaleOf(P, state).weightedLead;
+  }
+
+  function weightedText(w, g, letter, wLead = true) {
     const L = letter.replace('-', '−');
-    return [`You have a ${fmt(w)} weighted GPA and a ${fmt(g)} unweighted — ${g >= 3.7 ? 'an excellent' : g >= 3.0 ? 'a solid' : articleFor(letter)} ${L} average.`];
+    const adj = g >= 3.7 ? 'an excellent' : g >= 3.0 ? 'a solid' : articleFor(letter);
+    if (!wLead) return [`You have a ${fmt(g)} unweighted GPA and a ${fmt(w)} weighted — ${adj} ${L} average.`];
+    return [`You have a ${fmt(w)} weighted GPA and a ${fmt(g)} unweighted — ${adj} ${L} average.`];
   }
 
   function updatePill(g) {
     if (weightedOn()) {
-      pill.set({ label: 'Weighted', value: fmt(res.current.wgpa), label2: 'Unweighted', value2: fmt(g), aria: `Your weighted GPA ${fmt(res.current.wgpa)}, unweighted ${fmt(g)}, go to result` });
+      const W = fmt(res.current.wgpa);
+      if (P.weightedBeside && !weightedLead()) {
+        pill.set({ label: 'Unweighted', value: fmt(g), label2: 'Weighted', value2: W, aria: `Your unweighted GPA ${fmt(g)}, weighted ${W}, go to result` });
+        return;
+      }
+      pill.set({ label: 'Weighted', value: W, label2: 'Unweighted', value2: fmt(g), aria: `Your weighted GPA ${W}, unweighted ${fmt(g)}, go to result` });
       return;
     }
     const done = res.terms.filter((t) => !t.planned && t.credits > 0);
@@ -771,10 +907,52 @@ export function mountGpa(root, profile, opts = {}) {
     const g = res.current.gpa;
     const card2 = (k, text) => insights.append(h('div', { class: 'calc-insight' }, h('div', { class: 'calc-insight-k' }, k), h('div', { class: 'calc-insight-v' }, text)));
     card2('Is my GPA good?', goodText(g));
-    const lever = E.biggestLever(res);
+    const lever = P.insightLine ? null : E.biggestLever(res);
     if (lever && lever.gain >= 0.005) {
       card2('Biggest lever', `Raising ${lever.name || 'one course'} from ${lever.from.replace('-', '−')} to ${lever.to.replace('-', '−')} adds ${E.fmtNum(lever.gain, D)} to your GPA.`);
     }
+  }
+
+  /** The single course change that raises the headline GPA most: one grade step up on one course. */
+  function bestChange() {
+    const lever = E.biggestLever(res);
+    if (!lever) return null;
+    const terms = state.terms.map((t) => ({ ...t, rows: t.rows.map((r) => (r.id === lever.id ? { ...r, grade: lever.to } : r)) }));
+    const after = E.compute(P, { ...state, terms }).current;
+    const wLead = weightedOn() && (!P.weightedBeside || weightedLead());
+    const now = wLead ? res.current.wgpa : res.current.gpa;
+    const then = wLead ? after.wgpa : after.gpa;
+    return { ...lever, now, then, gain: then - now };
+  }
+
+  function renderInsightLine() {
+    if (!insightLine) return;
+    const c = bestChange();
+    insightTo = c && c.gain >= 0.005 ? c : null;
+    insightLine.hidden = !insightTo;
+    if (!insightTo) return;
+    const row = rowEls.get(c.id);
+    const name = c.name.trim() || (row ? `Course ${row.i + 1}` : 'one course');
+    insightLine.replaceChildren(h('span', { class: 'calc-insight-line-k' }, 'Biggest boost'),
+      h('span', { class: 'calc-insight-line-v' }, `Raise ${name} from ${gradeLabel(c.from)} to ${gradeLabel(c.to)}: ${fmt(c.then)} (+${E.fmtGpa(c.gain, D)})`));
+    insightLine.setAttribute('aria-label', `Biggest boost: raising ${name} from ${gradeLabel(c.from)} to ${gradeLabel(c.to)} makes your GPA ${fmt(c.then)}. Go to ${name}.`);
+  }
+
+  if (insightLine) {
+    insightLine.addEventListener('click', () => {
+      const c = insightTo;
+      const v = c && rowEls.get(c.id);
+      if (!v) return;
+      track('insight_tap', { gain: E.roundHalf(c.gain, 2), from: c.from, to: c.to }, true);
+      openTerms.add(v.term.id);
+      activate(c.id);
+      v.el.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'center' });
+      v.el.classList.remove('is-flash');
+      void v.el.offsetWidth; // restart the highlight
+      v.el.classList.add('is-flash');
+      setTimeout(() => v.el.classList.remove('is-flash'), 1800);
+      (phone.matches ? v.gradeBtn : v.grade).focus({ preventScroll: true });
+    });
   }
 
   /** "Is my GPA good?": what the number means for the things students use it for. */
@@ -792,7 +970,7 @@ export function mountGpa(root, profile, opts = {}) {
   }
 
   let kitP = null;
-  const loadKit = () => (kitP ||= import('../core/chart-kit.js?v=396d419a7d'));
+  const loadKit = () => (kitP ||= import('../core/chart-kit.js?v=da1cb432a2'));
 
   /** The saved goal is the planner's target GPA: one line under the result, tap to reopen the planner. */
   function goalStatus(value) {
@@ -970,13 +1148,13 @@ export function mountGpa(root, profile, opts = {}) {
   optionsBtn.addEventListener('click', () => {
     optionsOpen = !optionsOpen;
     syncOptions();
-    if (optionsOpen) (P.scales.length > 1 ? scaleSel : priorToggle).focus({ preventScroll: true });
+    if (optionsOpen) (P.scales.length > 1 && !scaleUp ? scaleSel : priorToggle).focus({ preventScroll: true });
     track('options', { open: optionsOpen ? 1 : 0 }, true);
   });
   function syncOptions() {
     optionsPanel.hidden = !optionsOpen;
     optionsBtn.setAttribute('aria-expanded', String(optionsOpen));
-    const on = [state.scale !== P.defaultScale, !!(state.prior.gpa || state.prior.credits), !!state.showMajor].filter(Boolean).length;
+    const on = [state.scale !== P.defaultScale && !scaleUp, !!(state.prior.gpa || state.prior.credits), !!state.showMajor].filter(Boolean).length;
     optionsBtn.replaceChildren('Options', on ? h('span', { class: 'gpa-options-n', 'aria-label': `${on} on` }, ` · ${on} on`) : '', h('span', { class: 'gpa-options-caret', 'aria-hidden': 'true' }, optionsOpen ? ' ▴' : ' ▾'));
   }
   function syncPrior() {
@@ -1040,14 +1218,14 @@ export function mountGpa(root, profile, opts = {}) {
     banner.hidden = false;
   }
 
-  function showSample() {
+  function showSample(which) {
     if (mode === 'own') ownBefore = { state: pack(state), save: currentSave, dirty };
     mode = 'sample';
-    load(P.sample);
+    load(which ? which.state : P.sample);
     setBanner('sample');
     store.markSeen();
     syncSampleLink();
-    track('sample');
+    track('sample', which ? { which: which.id } : null, !!which);
   }
 
   function leaveSpecial() {
@@ -1063,6 +1241,7 @@ export function mountGpa(root, profile, opts = {}) {
 
   function syncSampleLink() {
     sampleBtn.hidden = mode !== 'own';
+    if (samples) { setText(sampleBtn.firstChild, store.seen() ? 'Examples:' : 'Try a sample:'); return; }
     setText(sampleBtn, store.seen() ? 'Show an example' : 'Try a sample');
     sampleBtn.classList.toggle('is-small', store.seen());
   }
@@ -1235,6 +1414,16 @@ export function mountGpa(root, profile, opts = {}) {
   createMenu(folderBtn, savesMenu, renderSavesMenu);
 
   /* ----- start ----- */
+  if (P.extraEvents && store.available) {
+    // A return visit: this browser used the calculator before, at least 30 minutes ago.
+    const last = Number(store.flag('lastVisit')) || 0;
+    const now = Date.now();
+    const d = store.loadDraft();
+    if (last && now - last >= 30 * 60 * 1000) {
+      track('return_visit', { days: Math.floor((now - last) / 864e5), draft: d && d.state && hasData(normalize(P, d.state)) ? 1 : 0, saves: store.list().length });
+    }
+    store.flag('lastVisit', now);
+  }
   if (P.legacy) importLegacyOnce(store, 'imported', P.legacy.keys, P.legacy.convert);
   const shared = readHash(P.hashKey);
   const draft = store.loadDraft();

@@ -5,8 +5,8 @@
  *
  * The old university calculator's draft (top-uni-gpa-calculator-v3-<slug>) is copied once; the old
  * key is only read. */
-import { mountGpa } from './gpa-app.js?v=396d419a7d';
-import { fromGpcm, fromGpcmDraft } from '../profiles/from-gpcm.js?v=396d419a7d';
+import { mountGpa } from './gpa-app.js?v=da1cb432a2';
+import { fromGpcm, fromGpcmDraft } from '../profiles/from-gpcm.js?v=da1cb432a2';
 
 for (const host of document.querySelectorAll('[data-gpcm-profile-id][data-gpac-engine="v2"]')) {
   if (host.dataset.calcMounted) continue;

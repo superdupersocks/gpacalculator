@@ -5,9 +5,9 @@
  * Saves from the old College/homepage calculator (gpa_calc_draft_v1, gpa_calc_saved_v1) are copied
  * once into College's own storage. The old keys are only read, never changed, so the homepage
  * calculator keeps its saved data exactly as it is. */
-import { mountsFor } from '../core/calc-core.js?v=396d419a7d';
-import { mountGpa, fromBolt } from './gpa-app.js?v=396d419a7d';
-import college from '../profiles/college.js?v=396d419a7d';
+import { mountsFor } from '../core/calc-core.js?v=da1cb432a2';
+import { mountGpa, fromBolt } from './gpa-app.js?v=da1cb432a2';
+import college from '../profiles/college.js?v=da1cb432a2';
 
 const profile = {
   ...college,

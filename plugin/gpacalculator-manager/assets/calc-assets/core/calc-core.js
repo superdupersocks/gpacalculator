@@ -624,8 +624,10 @@ export function createSheet(host) {
  * Name suggestions under a text input (combobox + listbox). source(text) returns up to ~6 items
  * { label, hint }; onPick(item) runs when one is chosen (tap, or Arrow keys + Enter). The list closes on
  * Escape, blur and after a pick. Enter with no highlighted item is left to the page (next row).
+ * openOnFocus: the list also opens on focus / click with source('') (e.g. every grade on the scale).
+ * autoFirst: what the student typed highlights the first item, so Enter takes it (e.g. "93" -> A).
  */
-export function createSuggest(input, { source, onPick }) {
+export function createSuggest(input, { source, onPick, openOnFocus = false, autoFirst = false }) {
   const id = `${input.id || `calc-in-${Math.random().toString(36).slice(2, 8)}`}-sug`;
   const list = h('ul', { class: 'calc-suggest', id, role: 'listbox', hidden: true });
   input.after(list);
@@ -644,8 +646,11 @@ export function createSuggest(input, { source, onPick }) {
   };
   const mark = () => {
     [...list.children].forEach((li, i) => li.setAttribute('aria-selected', String(i === active)));
-    if (active >= 0) input.setAttribute('aria-activedescendant', `${id}-${active}`);
-    else input.removeAttribute('aria-activedescendant');
+    if (active >= 0) {
+      input.setAttribute('aria-activedescendant', `${id}-${active}`);
+      const li = list.children[active];
+      if (li && list.scrollHeight > list.clientHeight) li.scrollIntoView({ block: 'nearest' });
+    } else input.removeAttribute('aria-activedescendant');
   };
   const pick = (i) => {
     const it = items[i];
@@ -653,7 +658,8 @@ export function createSuggest(input, { source, onPick }) {
     if (it) onPick(it);
   };
   const open = () => {
-    items = input.value.trim() ? source(input.value) || [] : [];
+    const typed = !!input.value.trim();
+    items = typed || openOnFocus ? source(input.value.trim()) || [] : [];
     list.textContent = '';
     active = -1;
     if (!items.length) { close(); return; }
@@ -667,8 +673,13 @@ export function createSuggest(input, { source, onPick }) {
     });
     list.hidden = false;
     input.setAttribute('aria-expanded', 'true');
+    if (autoFirst && typed) { active = 0; mark(); }
   };
   input.addEventListener('input', open);
+  if (openOnFocus) {
+    input.addEventListener('focus', open);
+    input.addEventListener('click', () => { if (list.hidden) open(); });
+  }
   input.addEventListener('blur', () => setTimeout(close, 0));
   input.addEventListener('keydown', (e) => {
     if (list.hidden) return;

@@ -179,6 +179,30 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | Starter template | — | Yes | Yes | `core_qa.py` |
 | College list on the 31 `/gpa-scale/` pages (was `[CollegeDB gpa="…"]`) | other | Removed from the pages; `[CollegeDB]` placeholder still registered | No | To rebuild from Scorecard/CDS data |
 
+## Calculator unification (shared core + engines + profiles)
+
+Thread "Calculator unification", branch `claude/calculator-unification-0oc2fc` (built on the design branch,
+so it carries PR #1's plugin 0.6.0 + core 1.3.0 and the live design tokens). Digant approves each checkpoint.
+
+| Step | What | State |
+| --- | --- | --- |
+| 0 | Setup: skill in the repo, inventory of existing core / merge work | Done 2026-10-03, awaiting Digant's OK |
+| 1 | One-page design note: core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Not started |
+| 2 | Core + GPA engine; College GPA (generic profile) and UCLA (university profile); tests, QA, screenshots; College live behind the per-page switch | Not started |
+
+Starting point found in step 0 (2026-10-03):
+- The calculator skill now lives in the repo at `.claude/skills/calculator-skill/SKILL.md` (copied from Digant's
+  account skill; it was on no branch before).
+- `core/calc-core.js` 1.3.0 (PR #1) has parsing, grade scale, store (drafts + named saves), share/CSV, GA4 tracker,
+  live pill, menus, toast. Only the `_starter` template uses it; no live calculator does. `calc-core.css` still loads
+  Inter and carries 27 hex fallbacks, so it needs a Lexend / tokens-only pass.
+- The live theme tokens already define every `--gpa-calc-*` role token the skill names (plus `--gpa-band-*`,
+  `--gpa-table-*`, `--gpa-example-*`). `calc-theme.css` is an empty phase-5 placeholder from the design thread.
+- University engine: `assets/shared-calculator.js` (minified, one engine, rules per mount from the
+  `gpcm_university_profiles` option). This is the profile model to generalize.
+- Legacy save keys to migrate: homepage and College Bolt bundles share `gpa_calc_draft_v1` / `gpa_calc_saved_v1`;
+  High School v2.9 uses `gpaCalculatorSimple`; university engine `top-uni-gpa-calculator-v3`.
+
 ## Open issues
 
 - Live theme = repo theme minus the unreleased 1.2 edits. Ship 1.2 (or drop it) via `scripts/deploy_theme.sh` so

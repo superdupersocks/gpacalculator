@@ -1,4 +1,4 @@
-/* gpacalculator.net calculator core v1.3.0 (lives in the gpacalculator-manager plugin)
+/* gpacalculator.net calculator core v2.0.0 (lives in the gpacalculator-manager plugin)
  * Shared helpers for every calculator: DOM builder, input parsing, grade scale,
  * storage (drafts + named saves), share (URL hash, summary, CSV), GA4 events,
  * count-up, live pill and the standard layout template.
@@ -8,7 +8,7 @@
  * The theme enqueues calculator scripts as type="module", so nothing here touches window.
  */
 
-export const CORE_VERSION = '1.3.0';
+export const CORE_VERSION = '2.0.0';
 
 /* ---------- DOM ---------- */
 
@@ -20,7 +20,7 @@ export function h(tag, attrs, ...children) {
       if (v == null || v === false) continue;
       if (k === 'class') el.className = v;
       else if (k === 'dataset') Object.assign(el.dataset, v);
-      else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+      else if (k === 'style' && typeof v === 'object') for (const [p, x] of Object.entries(v)) el.style.setProperty(p.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`), x);
       else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2), v);
       else if (k === 'text') el.textContent = v;
       else if (k in el && k !== 'list' && typeof v !== 'string') el[k] = v;
@@ -256,6 +256,26 @@ export function createStore(key, { debounce = 400 } = {}) {
       const all = saves();
       delete all[name];
       return write(savesKey, all);
+    },
+    rename(from, to) {
+      const n = String(to || '').trim().slice(0, 60);
+      const all = saves();
+      if (!n || !all[from] || (n !== from && all[n])) return false;
+      all[n] = all[from];
+      if (n !== from) delete all[from];
+      return write(savesKey, all);
+    },
+    has(name) {
+      return Object.prototype.hasOwnProperty.call(saves(), name);
+    },
+    /** Small flags (e.g. "legacy saves imported"), stored as <key>.<flag>. */
+    flag(name, value) {
+      if (value === undefined) return read(`${key}.${name}`, null);
+      return write(`${key}.${name}`, value);
+    },
+    /** Read another calculator's raw key (legacy migration); never writes to it. */
+    readRaw(k) {
+      return read(k, null);
     },
     /** First-visit flag for onboarding vs "Show an example" link. */
     seen() {
@@ -725,4 +745,105 @@ export function wireSavesAndShare(L, opts) {
     shareItem('Download CSV', async () => downloadCSV(csvName, csv())),
   );
   createMenu(L.shareBtn, L.shareMenu);
+}
+
+/* ---------- v2: shared services for every calculator ---------- */
+
+/**
+ * Toast with an optional action button (Undo). show(msg, { action: 'Undo', onAction, ms })
+ * One toast at a time; a new message replaces the old one.
+ */
+export function createActionToast(host) {
+  const text = h('span');
+  const btn = h('button', { type: 'button', hidden: true });
+  const el = h('div', { class: 'calc-toast', role: 'status', 'aria-live': 'polite', hidden: true }, text, btn);
+  host.append(el);
+  let t = 0;
+  let fn = null;
+  const hide = () => { el.hidden = true; fn = null; };
+  btn.addEventListener('click', () => {
+    const f = fn;
+    hide();
+    if (f) f();
+  });
+  return {
+    show(msg, { action, onAction, ms = 2600 } = {}) {
+      text.textContent = msg;
+      btn.hidden = !action;
+      btn.textContent = action || '';
+      fn = onAction || null;
+      el.hidden = false;
+      clearTimeout(t);
+      t = setTimeout(hide, ms);
+    },
+    hide,
+    el,
+  };
+}
+
+/**
+ * GA4 `calculator_used`: once per page view, on the first edit. The theme already sends it for
+ * calculators inside #root, .gpa-calc-portal or #middle-school-gpa (functions.php), so only fire it
+ * here for calculators mounted anywhere else, and the event is never counted twice.
+ */
+export function trackCalculatorUsed(root) {
+  if (root.closest('#root, .gpa-calc-portal, #middle-school-gpa')) return;
+  let used = false;
+  const on = () => {
+    if (used) return;
+    used = true;
+    try {
+      if (typeof window.gtag === 'function') window.gtag('event', 'calculator_used');
+    } catch (e) {
+      /* analytics must never break the calculator */
+    }
+  };
+  root.addEventListener('change', on, true);
+  root.addEventListener('input', on, true);
+}
+
+/** Fire a legacy GA4 event name as is (e.g. 'gpa_export'), never throwing. */
+export function sendEvent(name, params) {
+  try {
+    if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+/**
+ * Copy saves from a legacy calculator once (flag kept in the store). The legacy keys are only read,
+ * never changed or deleted, so the old calculator and any other calculator sharing them keep working.
+ * convert(rawDraft, rawSaves) -> { draft?, saves?: [{ name, state }] }
+ */
+export function importLegacyOnce(store, flagName, keys, convert) {
+  if (!store.available || store.flag(flagName)) return { imported: 0 };
+  store.flag(flagName, Date.now());
+  let out;
+  try {
+    out = convert(...keys.map((k) => store.readRaw(k))) || {};
+  } catch (e) {
+    return { imported: 0 };
+  }
+  let n = 0;
+  for (const s of out.saves || []) {
+    let name = String(s.name || 'My calculation').trim().slice(0, 52) || 'My calculation';
+    let i = 2;
+    while (store.has(name)) name = `${s.name} (${i++})`.slice(0, 60);
+    if (store.save(name, s.state)) n += 1;
+  }
+  if (out.draft && !store.loadDraft()) {
+    store.saveDraft(out.draft);
+    store.flush();
+  }
+  return { imported: n, draft: !!out.draft };
+}
+
+/** Print / save as PDF. Print CSS in calc-core.css hides buttons and menus. */
+export function printPage() {
+  try {
+    window.print();
+  } catch (e) {
+    /* some in-app browsers block printing */
+  }
 }

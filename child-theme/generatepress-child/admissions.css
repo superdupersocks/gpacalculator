@@ -933,3 +933,6 @@ html body.single-colleges .entry-header p.gpa-college-where {
 /* v2's sentence about the college (type, place, undergraduates), moved from the hero to the end of the acceptance rate
    section (single-colleges.php). */
 #page .entry-content p.gpa-college-about { margin-top: 16px !important; }
+
+/* "See all colleges in {State} →" on its own, where a college has no similar colleges to list. */
+#page .entry-content p.gpa-college-similar__all--solo { margin-top: 32px !important; }

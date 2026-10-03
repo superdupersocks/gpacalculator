@@ -1086,7 +1086,7 @@ if ( ! function_exists( 'gpa_admission_filter_active' ) ) {
         if ( ! is_post_type_archive( 'colleges' ) ) {
             return false;
         }
-        $filter_params = array( 'search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort' );
+        $filter_params = array( 'search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort', 'state' );
         foreach ( $filter_params as $p ) {
             if ( isset( $_GET[ $p ] ) && '' !== $_GET[ $p ] ) {
                 return true;
@@ -2113,6 +2113,7 @@ function gpa_ajax_filter_colleges() {
     $acceptance_rate = isset($_POST['acceptance_rate']) ? sanitize_text_field( wp_unslash( $_POST['acceptance_rate'] ) ) : '';
     $gpa_filter      = isset($_POST['gpa']) ? sanitize_text_field( wp_unslash( $_POST['gpa'] ) ) : '';
     $sat_filter      = isset($_POST['sat']) ? sanitize_text_field( wp_unslash( $_POST['sat'] ) ) : '';
+    $state_filter    = isset($_POST['state']) ? strtoupper( sanitize_text_field( wp_unslash( $_POST['state'] ) ) ) : '';
     $sort            = isset($_POST['sort']) ? sanitize_text_field( wp_unslash( $_POST['sort'] ) ) : 'name_asc';
     $paged           = isset($_POST['page']) ? max( 1, absint($_POST['page']) ) : 1;
     $per_page        = isset($_POST['per_page']) ? max( 1, min( 100, absint($_POST['per_page']) ) ) : 30;
@@ -2165,6 +2166,11 @@ function gpa_ajax_filter_colleges() {
                 array( 'key' => 'adm_open_admission', 'value' => 'Yes' ), // open admission: no rate, admits everyone
             );
             break;
+    }
+
+    // ?state=MA: the colleges in one state (college pages' "See all colleges in {State}"; noindex like every filter)
+    if ( function_exists( 'gpa_college_state_names' ) && isset( gpa_college_state_names()[ $state_filter ] ) ) {
+        $meta_query[] = array( 'key' => 'college_state', 'value' => $state_filter );
     }
 
     // ?gpa=3.5: the GPA-band list's colleges (college-v2.php: a cited Common Data Set average in the list's window, tier

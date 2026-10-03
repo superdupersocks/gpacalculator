@@ -560,23 +560,49 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
 if ( ! function_exists( 'gpa_college_similar_section' ) ) {
     // "Similar colleges in {State}": one heading over 4–6 link cards (name, then difficulty and admit rate). Unnumbered
     // and out of the TOC (layout.css 10). "See all colleges in {State} →" joins it once the state hubs exist (the
-    // gpa_college_state_hub_url filter returns their URL); until then the block has no other links.
+    // gpa_college_state_hub_url filter returns their URL); until then it links the hub filtered to the state.
     function gpa_college_similar_section( array $v ) {
         $similar = gpa_college_similar( $v );
+        $st      = strtoupper( trim( (string) get_post_meta( $v['id'], 'college_state', true ) ) );
+        $names   = gpa_college_state_names();
+        $state   = isset( $names[ $st ] ) ? $names[ $st ] : gpa_college_state( $v['location'] );
+        // "See all colleges in {State} →" (Digant, 2026-10-03 08:09): the hub filtered to the state (/admissions/?state=MA,
+        // noindex like every filtered view) until the state hubs ship, then their URL through gpa_college_state_hub_url.
+        // Shown even when there are no similar colleges.
+        $hub = isset( $names[ $st ] ) ? add_query_arg( 'state', $st, get_post_type_archive_link( 'colleges' ) ) : '';
+        $hub = (string) apply_filters( 'gpa_college_state_hub_url', $hub, $state, $v );
+        $all = '' !== $hub ? '<p class="gpa-college-similar__all' . ( $similar ? '' : ' gpa-college-similar__all--solo' ) . '"><a href="' . esc_url( $hub ) . '">See all colleges in ' . esc_html( $state ) . ' →</a></p>' : '';
         if ( ! $similar ) {
-            return '';
+            return $all;
         }
-        $state = gpa_college_state( $v['location'] );
         $items = '';
         foreach ( $similar as $c ) {
             $items .= '<li><a class="gpa-college-similar__card" href="' . esc_url( get_permalink( $c['id'] ) ) . '"><span class="gpa-college-similar__name">' . esc_html( $c['title'] ) . '</span>'
                 . ( '' !== $c['note'] ? '<span class="gpa-college-similar__note">' . esc_html( $c['note'] ) . '</span>' : '' ) . '</a></li>';
         }
-        $hub = (string) apply_filters( 'gpa_college_state_hub_url', '', $state, $v );
         return '<h2 id="similar-colleges" class="gpa-no-number">Similar colleges in ' . esc_html( $state ) . '</h2>'
             . '<p class="gpa-college-similar__sub">' . ( $v['open'] ? 'Also open to anyone who applies.' : 'With a similar acceptance rate and size.' ) . '</p>'
-            . '<ul class="gpa-college-similar">' . $items . '</ul>'
-            . ( '' !== $hub ? '<p class="gpa-college-similar__all"><a href="' . esc_url( $hub ) . '">See all colleges in ' . esc_html( $state ) . ' →</a></p>' : '' );
+            . '<ul class="gpa-college-similar">' . $items . '</ul>' . $all;
+    }
+}
+
+if ( ! function_exists( 'gpa_college_state_names' ) ) {
+    // Postal code => state name, for college_state (IPEDS): the states, DC and the territories with colleges
+    function gpa_college_state_names() {
+        return array(
+            'AL' => 'Alabama', 'AK' => 'Alaska', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California', 'CO' => 'Colorado',
+            'CT' => 'Connecticut', 'DE' => 'Delaware', 'DC' => 'District of Columbia', 'FL' => 'Florida', 'GA' => 'Georgia',
+            'HI' => 'Hawaii', 'ID' => 'Idaho', 'IL' => 'Illinois', 'IN' => 'Indiana', 'IA' => 'Iowa', 'KS' => 'Kansas',
+            'KY' => 'Kentucky', 'LA' => 'Louisiana', 'ME' => 'Maine', 'MD' => 'Maryland', 'MA' => 'Massachusetts',
+            'MI' => 'Michigan', 'MN' => 'Minnesota', 'MS' => 'Mississippi', 'MO' => 'Missouri', 'MT' => 'Montana',
+            'NE' => 'Nebraska', 'NV' => 'Nevada', 'NH' => 'New Hampshire', 'NJ' => 'New Jersey', 'NM' => 'New Mexico',
+            'NY' => 'New York', 'NC' => 'North Carolina', 'ND' => 'North Dakota', 'OH' => 'Ohio', 'OK' => 'Oklahoma',
+            'OR' => 'Oregon', 'PA' => 'Pennsylvania', 'RI' => 'Rhode Island', 'SC' => 'South Carolina', 'SD' => 'South Dakota',
+            'TN' => 'Tennessee', 'TX' => 'Texas', 'UT' => 'Utah', 'VT' => 'Vermont', 'VA' => 'Virginia', 'WA' => 'Washington',
+            'WV' => 'West Virginia', 'WI' => 'Wisconsin', 'WY' => 'Wyoming', 'PR' => 'Puerto Rico', 'GU' => 'Guam',
+            'VI' => 'U.S. Virgin Islands', 'AS' => 'American Samoa', 'MP' => 'Northern Mariana Islands', 'FM' => 'Micronesia',
+            'MH' => 'Marshall Islands', 'PW' => 'Palau',
+        );
     }
 }
 

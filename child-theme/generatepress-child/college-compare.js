@@ -160,16 +160,19 @@
                 ' of first-year students who sent scores.' +
                 (state.test === 'SAT' ? ' The SAT range is the two section ranges added together, so it’s approximate.' : '') +
                 (tp === 0 && c.tests === 'optional' ? ' Scores are optional here, so you could apply without them.' : ''));
-            var span = lim[1] - lim[0];
-            var pct = function (v) { return Math.max(0, Math.min(100, (v - lim[0]) / span * 100)); };
+            // The bar's scale starts above the lowest possible score (ACT 12, SAT 800; Digant, 2026-10-03 08:09), so the
+            // middle 50% has grey on both sides and the "You" marker sits clearly; lower scores sit at the left edge
+            var bar = state.test === 'ACT' ? [12, 36] : [800, 1600];
+            var span = bar[1] - bar[0];
+            var pct = function (v) { return Math.max(0, Math.min(100, (v - bar[0]) / span * 100)); };
             var band = rangeEl.querySelector('.gpa-compare__band');
             band.style.left = pct(p[0]) + '%';
             band.style.width = (pct(p[2]) - pct(p[0])) + '%';
             rangeEl.querySelector('.gpa-compare__you').style.left = pct(s) + '%';
             var ends = rangeEl.querySelectorAll('.gpa-compare__scale span');
-            ends[0].textContent = lim[0];
+            ends[0].textContent = bar[0];
             ends[1].textContent = 'Middle 50% of enrolled students: ' + label;
-            ends[2].textContent = lim[1];
+            ends[2].textContent = bar[1];
             youEl.textContent = 'You: ' + s;
         }
 

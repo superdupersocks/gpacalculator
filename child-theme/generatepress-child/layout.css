@@ -156,12 +156,6 @@ body:not(.home) #primary #main .entry-content :is(h2, h2.rx-h2, p.rx-sub, p.rx-e
 /* Pills sit on the text column's left edge, like the heading under them */
 #primary #main .entry-content p.rx-eyebrow { margin-left: max(0px, calc((100% - var(--gpa-text-max)) / 2)) !important; margin-right: auto !important; }
 
-/* Pills removed site-wide (Digant 2026-10-03): hidden here, not deleted from page content.
-   The H2 under a hidden pill takes the header spacing the pill had, and none if the pill opened its block. */
-#primary #main .entry-content p.rx-eyebrow:not(#root *, .gpacalc-mount *) { display: none !important; }
-#primary #main .entry-content :is(p.rx-eyebrow + h2, p.rx-eyebrow + .wp-block-spacer + h2):not(#root *) { margin-top: var(--gpa-sec-gap) !important; }
-#primary #main .entry-content :is(p.rx-eyebrow:first-child + h2, p.rx-eyebrow:first-child + .wp-block-spacer + h2, .wp-block-spacer:first-child + p.rx-eyebrow + h2, #root:has(.min-h-screen) + p.rx-eyebrow + h2, #root:has(.min-h-screen) + .wp-block-spacer + p.rx-eyebrow + h2):not(#root *) { margin-top: 0 !important; }
-
 /* ---------- 5. Odds and ends moved from Simple CSS ---------- */
 .university-gpa-intro { margin-bottom: 40px; }
 @media (max-width: 768px) {
@@ -212,10 +206,16 @@ html :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-head
     position: relative;
     z-index: 1;
 }
-html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article h1.entry-title {
+/* .entry-header > beats the generic 24px title margin in content-styles.css */
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article .entry-header > h1.entry-title {
     color: var(--gpa-hero-title) !important;
     text-align: center !important;
-    margin: 0 auto 12px !important;
+    margin: 0 auto var(--gpa-hero-title-gap) !important;
+}
+@media (max-width: 768px) {
+    html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article .entry-header > h1.entry-title {
+        font-size: var(--gpa-hero-title-size-m) !important;
+    }
 }
 :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro {
     max-width: 640px;
@@ -397,14 +397,13 @@ html body .db-college-profile > .db-hero { padding-top: 36px !important; }
 }
 /* In the hero: centred, above the title */
 .entry-header .gpa-breadcrumb {
-    margin: 0 auto 16px;
+    margin: 0 auto var(--gpa-hero-crumb-gap);
 }
 .entry-header .gpa-breadcrumb__list {
     justify-content: center;
 }
 @media (max-width: 768px) {
     .gpa-breadcrumb { font-size: 13px; }
-    .entry-header .gpa-breadcrumb { margin-bottom: 12px; }
 }
 @media (max-width: 480px) {
     .gpa-breadcrumb__item:has(.gpa-breadcrumb__current) { display: none; }

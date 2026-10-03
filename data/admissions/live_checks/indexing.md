@@ -1,4 +1,4 @@
-# Indexing check, 2026-10-03 03:43 UTC
+# Indexing check, 2026-10-03 07:39 UTC
 
 Read-only GETs by scripts/admissions/indexing_check.py; addresses from `data/admissions/live_checks/indexing_urls.txt`.
 
@@ -19,7 +19,7 @@ Disallow: /feed/
 
 - /sitemap_index.xml: status 200, 4 sitemaps; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - post-sitemap.xml (index lastmod 2026-09-14T21:07:11+00:00): status 200, 28 addresses, 0 images, lastmod 2012-08-29 to 2026-09-14; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - page-sitemap.xml (index lastmod 2026-10-03T03:29:53+00:00): status 200, 352 addresses, 0 images, lastmod 2026-09-05 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - page-sitemap.xml (index lastmod 2026-10-03T04:37:13+00:00): status 200, 352 addresses, 0 images, lastmod 2026-09-05 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - colleges-sitemap1.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 945 addresses, 0 images, lastmod 2026-10-02 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - colleges-sitemap2.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 823 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
 
@@ -37,9 +37,9 @@ Addresses by first path segment:
 - /how-to-raise-gpa/: 2
 - /college-advice/: 1
 - /: 1
-- /middle-school-gpa-calculator/: 1
-- /grade-calculator/: 1
 - /high-school-gpa-calculator/: 1
+- /grade-calculator/: 1
+- /middle-school-gpa-calculator/: 1
 - /semester-grade-calculator/: 1
 - /weighted-grade-calculator/: 1
 - /final-grade-calculator/: 1
@@ -146,7 +146,7 @@ Addresses by first path segment:
 - /admissions/feed/: status 301 -> https://gpacalculator.net/admissions/
   - headers: content-type: application/rss+xml; charset=UTF-8, cache-control: no-cache, max-age=3600, cf-cache-status: DYNAMIC, x-redirect-by: Rank Math
 - /admissions/harvard/: status 200
-  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/harvard/
   - title: Harvard University Average GPA & Acceptance Rate (3.6%)
   - H1: Harvard University Average GPA &amp; Admissions
@@ -174,7 +174,7 @@ Addresses by first path segment:
   - H1: Calvin University Acceptance Rate &amp; Test Scores
   - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
 - /admissions/lone-star-college-system/: status 200
-  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, noindex; canonical: none
   - title: Lone Star College Admission Requirements & Open Admission
   - H1: Lone Star College Admission Requirements

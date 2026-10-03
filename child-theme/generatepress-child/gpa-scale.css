@@ -650,3 +650,11 @@ body.gpa-hero-band .entry-header .gpa-updated {
 
 /* Answer card (Digant 19:11): label and value centred in each tile, no line under the tiles */
 #page .entry-content .gpa-answer .gpa-quickconv__stat { text-align: center; }
+
+/* Answer card without the tinted outer container (Digant 20:23): just the three tiles at the text column */
+#page .entry-content .gpa-quickconv.gpa-answer {
+    padding: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}

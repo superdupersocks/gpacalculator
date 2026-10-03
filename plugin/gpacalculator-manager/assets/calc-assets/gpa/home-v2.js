@@ -4,9 +4,9 @@
  * The old homepage (Bolt) kept one draft and one save list for both levels (gpa_calc_draft_v1,
  * gpa_calc_saved_v1, with calculatorMode). They are copied once and only read, never changed, so the old
  * calculator (?calc=old) still has them. */
-import { mountsFor } from '../core/calc-core.js?v=da1cb432a2';
-import { mountGpa, fromBolt, fromBoltHS } from './gpa-app.js?v=da1cb432a2';
-import home from '../profiles/home.js?v=da1cb432a2';
+import { mountsFor } from '../core/calc-core.js?v=2625dc4f8b';
+import { mountGpa, fromBolt, fromBoltHS } from './gpa-app.js?v=2625dc4f8b';
+import home from '../profiles/home.js?v=2625dc4f8b';
 
 const conv = (o) => fromBoltHS(o) || fromBolt(o, 'college');
 

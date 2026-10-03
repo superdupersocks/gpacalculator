@@ -781,7 +781,7 @@ def recolor(s):
 
 NEW_FILES = ["core/calc-core.css", "core/calc-core.js", "core/chart-kit.js", "engines/gpa-engine.js", "gpa/gpa-app.js",
              "gpa/gpa-app.css", "gpa/college-gpa.js", "gpa/uni-gpa.js", "gpa/home-gpa.js", "profiles/college.js", "profiles/from-gpcm.js",
-             "profiles/high-school.js", "profiles/hs-courses.js", "profiles/home.js", "gpa/home-v2.js"]
+             "profiles/high-school.js", "profiles/hs-courses.js", "profiles/home.js", "gpa/home-v2.js", "gpa/home-v2.css"]
 NAMED = r"\b(white|black|red|green|blue|gray|grey|silver|navy|purple|orange|yellow|pink|teal)\b"
 
 

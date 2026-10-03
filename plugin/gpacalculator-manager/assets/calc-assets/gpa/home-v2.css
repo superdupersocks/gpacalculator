@@ -1,0 +1,77 @@
+/* Homepage GPA calculator v2 (gpa/home-v2.js, profiles/home.js): the opt-in pieces of the GPA screen that only
+ * the homepage uses (typed grades, scale menu in the header, several samples, weighted beside the headline,
+ * insight line). Loaded after core/calc-core.css and gpa/gpa-app.css, on the homepage only. Tokens only. */
+
+/* Typed grades (percentGrades): a text box that takes a letter or a percentage, with the grade list under it */
+:is(#root, .gpacalc-mount) .gpa-typed .gpa-cols.has-level { --calc-cols: minmax(0, 1fr) 136px 80px 176px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-grade-in,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-row .gpa-grade-in { padding: 0 40px 0 8px; text-align: center; font-variant-numeric: tabular-nums; }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-grade-in::placeholder { color: var(--calc-faint); }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade:hover .gpa-grade-in { border-color: var(--gpa-indigo-200, var(--calc-input-line)); }
+:is(#root, .gpacalc-mount) .gpa-f-grade .calc-suggest,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-f-grade .calc-suggest { right: auto; min-width: 100%; width: 168px; max-height: 296px; overflow-y: auto; }
+:is(#root, .gpacalc-mount) .gpa-f-grade .calc-suggest li,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-f-grade .calc-suggest li { min-height: 40px; padding: 6px 10px !important; }
+
+/* Scale menu in the card header (scaleMenu profiles): "Scale [4.0 ▾]" */
+:is(#root, .gpacalc-mount) .gpa-top-left { gap: 12px; }
+:is(#root, .gpacalc-mount) .gpa-scale-top { position: relative; display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; font-weight: 600; color: var(--calc-muted); }
+:is(#root, .gpacalc-mount) .gpa-scale-top .calc-select,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-scale-top .calc-select { width: auto; min-width: 0; min-height: 40px; height: 40px; padding: 0 30px 0 12px; -webkit-appearance: none; appearance: none; background-image: none; font-size: 15px; font-weight: 600; color: var(--calc-ink); }
+:is(#root, .gpacalc-mount) .gpa-scale-top::after {
+  content: ""; position: absolute; right: 10px; top: 50%; width: 16px; height: 16px; margin-top: -8px; pointer-events: none;
+  background: var(--gpa-indigo-700, var(--calc-brand));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+}
+
+/* "Add previous GPA" in the action row (scale menu profiles): the two fields open above the courses */
+:is(#root, .gpacalc-mount) .calc-card > .gpa-prior { margin: 0 0 20px; }
+
+/* Several samples: "Try a sample: High school · College" */
+:is(#root, .gpacalc-mount) .gpa-samples { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 4px; }
+:is(#root, .gpacalc-mount) .gpa-samples[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .gpa-samples-k { font-size: 14px; font-weight: 500; color: var(--calc-muted); }
+
+/* weightedBeside: "3.52  Weighted 3.80" — the weighted GPA beside the unweighted headline */
+:is(#root, .gpacalc-mount) .calc-score-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; }
+:is(#root, .gpacalc-mount) .calc-score2 { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--gpa-indigo-100, var(--calc-tint)); }
+:is(#root, .gpacalc-mount) .calc-score2[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .calc-score2-k { font-size: 13px; font-weight: 600; color: var(--gpa-indigo-700, var(--calc-brand)); }
+:is(#root, .gpacalc-mount) .calc-score2-v { font: 700 22px/1.2 var(--gpa-calc-font); color: var(--gpa-indigo-700, var(--calc-brand)); font-variant-numeric: tabular-nums; }
+
+/* Insight line on the result: the one course change that raises the GPA most; a tap goes to that course */
+:is(#root, .gpacalc-mount) .calc-insight-line,
+#page .entry-content :is(#root, .gpacalc-mount) .calc-insight-line {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; width: 100%; margin: 14px 0 0; padding: 10px 12px; min-height: 44px;
+  border: 1px solid var(--calc-line); border-radius: var(--calc-radius); background: var(--calc-surface); box-shadow: none;
+  text-align: left; font: 500 15px/1.4 var(--gpa-calc-font); color: var(--calc-ink); cursor: pointer;
+}
+:is(#root, .gpacalc-mount) .calc-insight-line[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .calc-insight-line:hover { border-color: var(--gpa-indigo-200, var(--calc-input-line)); background: var(--calc-surface); color: var(--calc-ink); }
+:is(#root, .gpacalc-mount) .calc-insight-line:focus-visible { outline: 2px solid var(--calc-focus); outline-offset: 2px; }
+:is(#root, .gpacalc-mount) .calc-insight-line-k { font-size: 13px; font-weight: 700; color: var(--gpa-link); }
+:is(#root, .gpacalc-mount) .gpa-row.is-flash { animation: gpa-flash 1.8s ease-out; border-radius: var(--calc-radius); }
+@keyframes gpa-flash { 0%, 40% { background: var(--gpa-indigo-100, var(--calc-tint)); } 100% { background: transparent; } }
+@media (prefers-reduced-motion: reduce) { :is(#root, .gpacalc-mount) .gpa-row.is-flash { animation: none; outline: 2px solid var(--calc-focus); } }
+
+@media (max-width: 640px) {
+  /* Typed grades: the letter grid's "Type a %" swaps the button for the text box (like credits' Other) */
+  :is(#root, .gpacalc-mount) .gpa-row:not(.is-grade-text) .gpa-f-grade .gpa-grade-in { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-row.is-grade-text .gpa-grade-btn,
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-row.is-grade-text .gpa-grade-btn { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-typed .gpa-row.has-level { grid-template-columns: minmax(0, 1.4fr) 88px minmax(0, 1fr) var(--calc-control-h); }
+
+  :is(#root, .gpacalc-mount) .gpa-scale-top { min-width: 0; }
+  :is(#root, .gpacalc-mount) .gpa-scale-top .calc-select,
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-scale-top .calc-select { min-width: 0; flex: 0 1 auto; }
+}
+/* Narrow phones (360px and under): typed-grade rows and the scale header still fit one line each */
+@media (max-width: 374px) {
+  :is(#root, .gpacalc-mount) .gpa-scale-top-k { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-typed .gpa-row.has-level { grid-template-columns: minmax(0, 1.4fr) 72px minmax(0, 1fr) var(--calc-control-h); }
+  :is(#root, .gpacalc-mount) .gpa-typed :is(.gpa-grade-btn, .gpa-cr-btn, .gpa-level-btn),
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-typed :is(.gpa-grade-btn, .gpa-cr-btn, .gpa-level-btn) { padding: 0 34px 0 6px; font-size: 15px; white-space: nowrap; }
+  :is(#root, .gpacalc-mount) .gpa-typed .gpa-row :is(.gpa-f-grade, .gpa-f-cr, .gpa-f-level)::before,
+  :is(#root, .gpacalc-mount) .gpa-typed .gpa-row :is(.gpa-f-grade, .gpa-f-cr, .gpa-f-level)::after { right: 5px; }
+}

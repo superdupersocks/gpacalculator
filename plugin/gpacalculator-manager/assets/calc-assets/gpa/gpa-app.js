@@ -7,8 +7,8 @@ import {
   h, setText, createStore, readHash, shareUrl, clearHash, copyText, downloadCSV, createTracker,
   createLivePill, createMenu, createActionToast, createSheet, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
   reducedMotion, watchErrors, createHomeScreenHint, createSuggest,
-} from '../core/calc-core.js?v=da1cb432a2';
-import * as E from '../engines/gpa-engine.js?v=da1cb432a2';
+} from '../core/calc-core.js?v=2625dc4f8b';
+import * as E from '../engines/gpa-engine.js?v=2625dc4f8b';
 
 let uid = 0;
 const newId = (p = 'r') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
@@ -106,7 +106,8 @@ export function letterForPercent(profile, pct) {
 /** What a student typed in a grade box: "B+", "b-", "A−", "93", "93%", "88.5". Blank -> undefined, not a
  * grade -> null. A percentage outside 0–100 is not a grade. */
 export function parseGradeText(profile, scale, raw) {
-  const t = String(raw == null ? '' : raw).trim().replace(/[−–]/g, '-').replace(/\s+/g, '');
+  // The box shows "B+ · 88%" once left; read that back as the percentage.
+  const t = String(raw == null ? '' : raw).trim().replace(/[−–]/g, '-').replace(/\s+/g, '').replace(/^[A-Z][+-]?·(?=\d)/i, '');
   if (!t) return undefined;
   const n = /^(\d{1,3}(?:\.\d{1,2})?)%?$/.exec(t);
   if (n && profile.percentGrades) {
@@ -970,7 +971,7 @@ export function mountGpa(root, profile, opts = {}) {
   }
 
   let kitP = null;
-  const loadKit = () => (kitP ||= import('../core/chart-kit.js?v=da1cb432a2'));
+  const loadKit = () => (kitP ||= import('../core/chart-kit.js?v=2625dc4f8b'));
 
   /** The saved goal is the planner's target GPA: one line under the result, tap to reopen the planner. */
   function goalStatus(value) {

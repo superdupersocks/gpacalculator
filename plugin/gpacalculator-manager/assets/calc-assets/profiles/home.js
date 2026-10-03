@@ -3,9 +3,9 @@
  * it is picked by hand. The headline is the unweighted GPA; the weighted one joins it once a course has a
  * level boost (the "5.0 weighted" scale leads with weighted). Grades can be typed as letters or percentages.
  * Everything here is data or copy; the math lives in engines/gpa-engine.js and the screen in gpa/gpa-app.js. */
-import { guessLevel, suggestCourses } from './hs-courses.js?v=da1cb432a2';
-import highSchool from './high-school.js?v=da1cb432a2';
-import college from './college.js?v=da1cb432a2';
+import { guessLevel, suggestCourses } from './hs-courses.js?v=2625dc4f8b';
+import highSchool from './high-school.js?v=2625dc4f8b';
+import college from './college.js?v=2625dc4f8b';
 
 const BASE = { 'A+': 4, A: 4, 'A-': 3.7, 'B+': 3.3, B: 3, 'B-': 2.7, 'C+': 2.3, C: 2, 'C-': 1.7, 'D+': 1.3, D: 1, 'D-': 0.7, F: 0 };
 const A433 = { 'A+': 4.33, A: 4, 'A-': 3.67, 'B+': 3.33, B: 3, 'B-': 2.67, 'C+': 2.33, C: 2, 'C-': 1.67, 'D+': 1.33, D: 1, 'D-': 0.67, F: 0 };

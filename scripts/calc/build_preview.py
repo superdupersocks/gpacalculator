@@ -134,9 +134,9 @@ def bundle(entry):
     return out.stdout
 
 
-def calc_tags(entry, modules):
+def calc_tags(entry, modules, extra_css=()):
     css = "".join(f"<style data-src='{CALC_URL}/{p}'>\n{(CALC / p).read_text()}\n</style>"
-                  for p in ("core/calc-core.css", "gpa/gpa-app.css"))
+                  for p in ("core/calc-core.css", "gpa/gpa-app.css", *extra_css))
     if modules:
         js = f"<script type='module' src='{CALC_URL}/{entry}'></script>"
     else:
@@ -181,7 +181,7 @@ def build(out, modules):
     css, js = calc_tags("gpa/home-gpa.js", modules)
     pages["gpa-calculator.html"] = hp.replace("</head>", css + "\n</head>", 1).replace("</body>", js + "\n</body>", 1)
     # Homepage v2 proposal: one calculator (profiles/home.js), no switch.
-    css, js = calc_tags("gpa/home-v2.js", modules)
+    css, js = calc_tags("gpa/home-v2.js", modules, ("gpa/home-v2.css",))
     pages["gpa-calculator-v2.html"] = hp.replace("</head>", css + "\n</head>", 1).replace("</body>", js + "\n</body>", 1)
 
     out.mkdir(parents=True, exist_ok=True)

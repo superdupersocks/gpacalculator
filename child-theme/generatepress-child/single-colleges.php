@@ -72,25 +72,23 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					// here as plain links to the numbered H2s with short labels, on pages with 4 or more of them. Markup and
 					// styles: the shared .gpa-jump component (components.css 12). college-v2.php keeps the theme's
 					// browser-built TOC (gpa_toc_builder) off college pages.
-					// Chip text (Design spec rev 25, "Chip labels and jump-link SEO"): the H2 itself when it is 3 words or
-					// fewer, else a 1–3 word label naming the topic. IDs and H2 text never change.
+					// Chip text (Design spec rev 29, "Chip labels and jump-link SEO"): 2–4 words that keep the section's key
+					// term. H2s that lead with the college's name get a label without it; the others (2–4 words) are the
+					// chip as they stand. No chip for the section directly below the row; the row shows on pages with 4 or
+					// more numbered sections. IDs and H2 text never change.
 					$chip_labels = array(
-						'compare'                => 'Compare your GPA',
-						'average-gpa'            => 'Average GPA',
-						'gpa-requirements'       => 'GPA requirements',
-						'acceptance-rate'        => 'Acceptance rate',
-						'sat-act-scores'         => 'SAT & ACT',
-						'credit'                 => 'Life experience credit',
+						'average-gpa'      => 'Average GPA',
+						'gpa-requirements' => 'GPA requirements',
+						'acceptance-rate'  => 'Acceptance rate',
 					);
 					$chips = '' !== $compare ? array( 'compare' => 'How does your GPA compare?' ) : array();
 					foreach ( $sections as $section ) {
-						$chips[ $section['id'] ] = $section['title'];
+						$chips[ $section['id'] ] = isset( $chip_labels[ $section['id'] ] ) ? $chip_labels[ $section['id'] ] : $section['title'];
 					}
-					foreach ( $chips as $chip_id => $h2 ) {
-						$chips[ $chip_id ] = str_word_count( $h2 ) <= 3 || ! isset( $chip_labels[ $chip_id ] ) ? $h2 : $chip_labels[ $chip_id ];
-					}
+					$show_chips = count( $chips ) >= 4;
+					array_shift( $chips );
 					?>
-					<?php if ( count( $chips ) >= 4 ) : ?>
+					<?php if ( $show_chips ) : ?>
 					<nav class="gpa-jump" aria-label="Jump to">
 						<span class="gpa-jump__label">Jump to</span>
 						<ul class="gpa-jump__list">

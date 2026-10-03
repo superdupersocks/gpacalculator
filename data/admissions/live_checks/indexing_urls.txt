@@ -1,6 +1,6 @@
 # Addresses scripts/admissions/indexing_check.py requests once each, without following redirects
 # (admissions-indexing.yml). Edit the "taken for" line to run the check again.
-# taken for: the Phase 4 audit (2026-10-02 23:00 UTC), after the Phase 3 templates (22:32), GPA spread and names
+# taken for: a check of the college pages and the sitemap dates after Phase 4 step 1 and the rail-fix deploy (2026-10-03 00:42 UTC)
 /admissions/
 /admissions/page/2/
 /admissions/page/103/

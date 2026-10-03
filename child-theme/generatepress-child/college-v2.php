@@ -750,3 +750,11 @@ if ( ! function_exists( 'gpa_college_v2_assets' ) ) {
     }
     add_action( 'wp_enqueue_scripts', 'gpa_college_v2_assets', 21 );
 }
+
+// College pages print their own "Jump to" chips (single-colleges.php, the shared .gpa-jump component), so the theme's
+// browser-built table of contents stays off them (Digant 2026-10-03 16:46: no JS-built contents).
+add_action( 'wp', function () {
+    if ( is_singular( 'colleges' ) ) {
+        remove_action( 'wp_footer', 'gpa_toc_builder', 31 );
+    }
+} );

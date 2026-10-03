@@ -947,14 +947,6 @@ body.gpa-college-v2.single-colleges #page #main .entry-content blockquote.gpa-co
     border-left: 3px solid var(--gpa-indigo-500) !important;
     border-radius: 0 12px 12px 0 !important;
 }
-body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block {
-    padding: 2px 0 2px 20px !important;
-    border: 0 !important;
-    border-left: 2px solid var(--gpa-border) !important;
-    border-radius: 0 !important;
-}
-body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block li { padding: 5px 0 !important; border-top: 0 !important; }
-body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block li::before { width: 24px; height: 24px; font-size: 12px; }
 body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table {
     border: 0 !important;
     border-radius: 0 !important;
@@ -1027,3 +1019,13 @@ body.single-colleges #page .entry-content .rank-math-block summary.rank-math-que
 body.single-colleges #page .entry-content .rank-math-block summary.rank-math-question:hover { color: var(--gpa-primary) !important; }
 body.single-colleges #page .entry-content .rank-math-block summary.rank-math-question:focus-visible { outline: 2px solid var(--gpa-indigo-500); outline-offset: -2px; border-radius: 8px; }
 body.single-colleges #page .entry-content .rank-math-block .gpa-faq-item[open] > .rank-math-question::after { transform: rotate(180deg); }
+
+
+/* "Jump to" chips (.gpa-jump, components.css 12) on the text edge like the other text blocks (layout.css 1 doesn't list
+   the component yet): 40px in on desktop and tablet; on phones the content area already carries the 20px. */
+@media (min-width: 641px) {
+    body.single-colleges #page .entry-content > nav.gpa-jump { max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important; }
+}
+@media (min-width: 641px) and (max-width: 880px) {
+    body.single-colleges #page .entry-content > nav.gpa-jump { max-width: 100% !important; }
+}

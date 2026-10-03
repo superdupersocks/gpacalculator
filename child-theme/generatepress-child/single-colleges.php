@@ -67,6 +67,38 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					</ul></blockquote>
 					<?php endif; ?>
 
+					<?php
+					// "Jump to" chips (Digant 2026-10-03 16:46, Design spec "In-page navigation"): always visible, rendered
+					// here as plain links to the numbered H2s with short labels, on pages with 4 or more of them. Markup and
+					// styles: the shared .gpa-jump component (components.css 12). college-v2.php keeps the theme's
+					// browser-built TOC (gpa_toc_builder) off college pages.
+					$chip_labels = array(
+						'compare'                => 'Compare your GPA',
+						'average-gpa'            => 'Average GPA',
+						'gpa-requirements'       => 'GPA requirements',
+						'acceptance-rate'        => 'Acceptance rate',
+						'sat-act-scores'         => 'SAT & ACT',
+						'admission-requirements' => 'Requirements',
+						'credit'                 => 'Credit policy',
+						'net-price'              => 'Net price',
+					);
+					$chips = '' !== $compare ? array( 'compare' ) : array();
+					foreach ( $sections as $section ) {
+						$chips[] = $section['id'];
+					}
+					$chips = array_values( array_unique( $chips ) );
+					?>
+					<?php if ( count( $chips ) >= 4 ) : ?>
+					<nav class="gpa-jump" aria-label="Jump to">
+						<span class="gpa-jump__label">Jump to</span>
+						<ul class="gpa-jump__list">
+							<?php foreach ( $chips as $chip ) : ?>
+							<li><a class="gpa-jump__chip" href="#<?php echo esc_attr( $chip ); ?>"><?php echo esc_html( isset( $chip_labels[ $chip ] ) ? $chip_labels[ $chip ] : ucfirst( str_replace( '-', ' ', $chip ) ) ); ?></a></li>
+							<?php endforeach; ?>
+						</ul>
+					</nav>
+					<?php endif; ?>
+
 					<?php if ( '' !== $compare ) : ?>
 					<h2 id="compare">How does your GPA compare?</h2>
 					<?php echo $compare; // built from escaped values in gpa_college_compare_box() ?>

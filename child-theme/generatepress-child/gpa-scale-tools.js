@@ -40,9 +40,62 @@
     });
   });
 
+  // Pages still on the Unweighted | Weighted toggle (every GPA page except those switched to v6 in gpa-shortcodes.php).
+  const legacyView = (view) => {
+    const gpa = parseFloat(view.dataset.gpa);
+    const title = document.querySelector('.entry-header h1, h1.entry-title');
+    const baseTitle = title ? title.textContent : '';
+    const table = document.querySelector('.gpa-scale-table');
+    const rows = table ? [...table.querySelectorAll('tbody tr[data-letter]')] : [];
+    const inputs = Object.fromEntries([...view.querySelectorAll('[data-in]')].map((i) => [i.dataset.in, i]));
+    const out = (name) => view.querySelector(`[data-out="${name}"]`);
+
+    const mark = (value, label) => {
+      const { letter, pct } = figures(value);
+      const want = letter.split('/');
+      if (Math.abs(value - 4) < 0.001) want.push('A+');
+      rows.forEach((tr) => {
+        const on = want.includes(tr.dataset.letter);
+        tr.classList.toggle('is-current-gpa', on);
+        if (on) tr.setAttribute('aria-current', 'true'); else tr.removeAttribute('aria-current');
+        const td = tr.querySelector('td');
+        if (on) td.dataset.mark = `${label} · ${pct}`; else delete td.dataset.mark;
+      });
+    };
+    const estimate = () => {
+      const n = (k) => Math.max(0, parseInt(inputs[k] && inputs[k].value, 10) || 0);
+      const total = n('total');
+      const boost = total ? (Math.min(n('ap'), total) * 1 + Math.min(n('honors'), total) * 0.5) / total : 0;
+      const uw = Math.min(4, Math.max(0, gpa - boost));
+      const f = figures(uw);
+      out('uw').textContent = uw.toFixed(2);
+      out('letter').textContent = f.letter;
+      out('pct').textContent = f.pct;
+      return uw;
+    };
+    const show = (which) => {
+      view.querySelectorAll('[data-view]').forEach((p) => { p.hidden = p.dataset.view !== which; });
+      view.querySelectorAll('[data-view-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.viewBtn === which)));
+      view.dataset.active = which;
+      if (title) title.textContent = which === 'weighted' ? baseTitle.replace(/(\d\.\d)\s*GPA/, '$1 Weighted GPA') : baseTitle;
+      if (which === 'weighted') { const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`); } else { mark(gpa, `Your ${gpa.toFixed(1)}`); }
+    };
+    view.querySelectorAll('[data-view-btn]').forEach((b) => b.addEventListener('click', () => show(b.dataset.viewBtn)));
+    Object.values(inputs).forEach((i) => i.addEventListener('input', () => {
+      if (view.dataset.active === 'weighted') { const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`); }
+    }));
+    if (gpa > 4) {
+      // Weighted-only page (4.1+): no toggle; the chart marks the estimated unweighted GPA.
+      const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`);
+    } else if (location.hash === '#weighted') {
+      show('weighted');
+    }
+  };
+
   // GPA page weighted estimator card ("Is your 3.7 weighted?", gpa_scale_weighted_card()): the sentence and the tiles
   // follow the class inputs. On 4.1+ pages the chart marks the estimate, so the mark follows it too.
   document.querySelectorAll('[data-gpa-view]').forEach((view) => {
+    if (view.dataset.active) { legacyView(view); return; }
     const gpa = parseFloat(view.dataset.gpa);
     const table = document.querySelector('.gpa-scale-table');
     const rows = table ? [...table.querySelectorAll('tbody tr[data-letter]')] : [];

@@ -3713,7 +3713,7 @@ function gpa_toc_details( $items ) {
 }
 
 // GPA pages: list the numbered H2s (not .gpa-no-number), give any without an id one, and put the toggle before the first.
-add_filter( 'the_content', 'gpa_scale_page_toc', 30 );
+// Off until Digant's go (2026-10-03 18:43: v6 ships without the toggle): add_filter( 'the_content', 'gpa_scale_page_toc', 30 );
 function gpa_scale_page_toc( $content ) {
 	if ( is_admin() || ! is_singular( 'page' ) || ! in_the_loop() || ! is_main_query() ) {
 		return $content;

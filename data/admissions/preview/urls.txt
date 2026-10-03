@@ -1,21 +1,10 @@
 # Live pages saved by admissions-snapshot.yml (scripts/design/snapshot.py) for Phase 3 previews. Edit to take a new snapshot.
-# taken for: checking Phase 3 live: the templates (52f5804, 22:32 UTC), the GPA spread (22:38) and the college names
-# (22:39); also the page chrome around the local template renders and the design system pages the templates follow
+# taken for: the design thread's phone padding fix (layout.css and calculator-page.css, PR #10, live 01:05 UTC on
+# 2026-10-03): the hub and college pages at 390 and 768 wide
 https://gpacalculator.net/admissions/
 https://gpacalculator.net/admissions/harvard/
-https://gpacalculator.net/admissions/miami-university/
+https://gpacalculator.net/admissions/ucla/
 https://gpacalculator.net/admissions/lone-star-college-system/
 https://gpacalculator.net/admissions/fairfax-university-of-america/
-https://gpacalculator.net/admissions/pitt/
-https://gpacalculator.net/admissions/caltech/
-https://gpacalculator.net/admissions/ucla/
-https://gpacalculator.net/admissions/duke/
-https://gpacalculator.net/admissions/adams-state-college/
-https://gpacalculator.net/admissions/hardin-simmons-university/
-https://gpacalculator.net/admissions/bacone-college/
-https://gpacalculator.net/gpa-scale/3-8-gpa/
-https://gpacalculator.net/college-gpa-calculator/
-https://gpacalculator.net/admissions/wilkes-university/
-https://gpacalculator.net/admissions/agnes-scott/
 https://gpacalculator.net/admissions/calvin/
-https://gpacalculator.net/admissions/uiuc/
+https://gpacalculator.net/admissions/miami-university/

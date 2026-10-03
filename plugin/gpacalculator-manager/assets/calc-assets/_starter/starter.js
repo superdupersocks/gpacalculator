@@ -9,7 +9,7 @@ import {
   h, setText, parseScore, parseNumber, fmtPct, round, gradeFor, nextGrade,
   createStore, createTracker, readHash, clearHash, mountLayout, createResultHero,
   createLivePill, createToast, enterToNext, wireSavesAndShare, mountsFor,
-} from '../core/calc-core.js';
+} from '../core/calc-core.js?v=396d419a7d';
 
 const PREFIX = 'stx';
 const STORE_KEY = 'gpacalc.starter';

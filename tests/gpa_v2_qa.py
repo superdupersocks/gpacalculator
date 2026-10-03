@@ -797,11 +797,23 @@ def literals():
         R.check(f"no color literals in {f}", hexes + rgbs + named, [])
 
 
+def import_tags():
+    """Every import between the modules carries the folder's current ?v= tag (scripts/calc/stamp_imports.py),
+    so a deploy never mixes a new file with an old cached one."""
+    sys.path.insert(0, str(REPO / "scripts/calc"))
+    import stamp_imports
+    tag, files = stamp_imports.stale()
+    R.check(f"imports carry the current ?v={tag}", [str(p.relative_to(CALC_ASSETS)) for p in files], [])
+    for f in ("gpa/college-gpa.js", "gpa/gpa-app.js", "gpa/home-gpa.js", "gpa/uni-gpa.js"):
+        bare = re.findall(r"from\s+'(\.{1,2}/[^'?]+\.js)'", (CALC_ASSETS / f).read_text())
+        R.check(f"no untagged import in {f}", bare, [])
+
+
 def sizes():
     exe = REPO / "node_modules/.bin/esbuild"
     out = {}
     def gz(entry, external=()):
-        cmd = [str(exe), str(CALC_ASSETS / entry), "--bundle", "--format=esm", "--minify"] + [f"--external:{x}" for x in external]
+        cmd = [str(exe), str(CALC_ASSETS / entry), "--bundle", "--format=esm", "--minify"] + [f"--external:{x}*" for x in external]  # imports carry ?v=<tag>
         return len(gzip.compress(subprocess.run(cmd, capture_output=True, check=True).stdout))
     out["core JS (calc-core.js)"] = gz("core/calc-core.js")
     out["core CSS"] = len(gzip.compress((CALC_ASSETS / "core/calc-core.css").read_bytes()))
@@ -1076,6 +1088,7 @@ def home(s, shots):
 if __name__ == "__main__":
     subprocess.run([sys.executable, str(REPO / "scripts/calc/build_preview.py"), str(OUT), "--modules"], check=True, capture_output=True)
     literals()
+    import_tags()
     sizes()
     with Session() as s:
         math(s)

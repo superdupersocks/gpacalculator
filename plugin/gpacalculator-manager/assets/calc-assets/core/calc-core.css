@@ -646,19 +646,21 @@ html.calc-has-pill { scroll-padding-bottom: 80px; }
 @media (min-width: 641px) { :is(#root, .gpacalc-mount) .calc-a2hs { display: none !important; } }
 
 /* ---------- Segmented switch (e.g. the homepage's School level: College | High School) ---------- */
-:is(#root, .gpacalc-mount) .gpa-home-switch { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 0 var(--calc-section-gap); }
+/* Card-top budget (Calculator Design Standard): the switch takes 12px above, 40px, 16px below. The page puts
+   40px (phone 16px) above the calculator, so the switch pulls up into it; the hero is unchanged. */
+:is(#root, .gpacalc-mount) .gpa-home-switch { display: flex; align-items: center; justify-content: center; gap: 12px; margin: -28px 0 16px; }
 :is(#root, .gpacalc-mount) .calc-seg-label { font-size: 14px; font-weight: 600; color: var(--calc-muted); }
 :is(#root, .gpacalc-mount) .calc-seg {
   display: inline-flex;
-  padding: 4px;
-  gap: 4px;
+  padding: 2px;
+  gap: 2px;
   background: var(--calc-surface-2);
   border: 1px solid var(--calc-line);
   border-radius: var(--calc-radius-pill);
 }
 :is(#root, .gpacalc-mount) .calc-seg-btn,
 #page .entry-content :is(#root, .gpacalc-mount) .calc-seg-btn {
-  min-height: 40px;
+  min-height: 34px;
   min-width: 120px;
   margin: 0;
   padding: 0 18px;
@@ -678,7 +680,7 @@ html.calc-has-pill { scroll-padding-bottom: 80px; }
 :is(#root, .gpacalc-mount) .calc-seg-btn:focus-visible { outline: 2px solid var(--calc-focus); outline-offset: 2px; }
 :is(#root, .gpacalc-mount) .gpa-home-pane[hidden] { display: none; }
 @media (max-width: 640px) {
-  :is(#root, .gpacalc-mount) .gpa-home-switch { justify-content: flex-start; }
+  :is(#root, .gpacalc-mount) .gpa-home-switch { justify-content: flex-start; margin-top: -4px; }
   :is(#root, .gpacalc-mount) .calc-seg-label { display: none; }
   :is(#root, .gpacalc-mount) .calc-seg { display: flex; width: 100%; }
   :is(#root, .gpacalc-mount) .calc-seg-btn,

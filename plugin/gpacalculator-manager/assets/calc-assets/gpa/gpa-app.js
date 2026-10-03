@@ -7,8 +7,8 @@ import {
   h, setText, createStore, readHash, shareUrl, clearHash, copyText, downloadCSV, createTracker,
   createLivePill, createMenu, createActionToast, createSheet, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
   reducedMotion, watchErrors, createHomeScreenHint, createSuggest,
-} from '../core/calc-core.js';
-import * as E from '../engines/gpa-engine.js';
+} from '../core/calc-core.js?v=396d419a7d';
+import * as E from '../engines/gpa-engine.js?v=396d419a7d';
 
 let uid = 0;
 const newId = (p = 'r') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
@@ -792,7 +792,7 @@ export function mountGpa(root, profile, opts = {}) {
   }
 
   let kitP = null;
-  const loadKit = () => (kitP ||= import('../core/chart-kit.js'));
+  const loadKit = () => (kitP ||= import('../core/chart-kit.js?v=396d419a7d'));
 
   /** The saved goal is the planner's target GPA: one line under the result, tap to reopen the planner. */
   function goalStatus(value) {

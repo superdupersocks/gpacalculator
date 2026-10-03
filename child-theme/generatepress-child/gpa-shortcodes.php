@@ -377,69 +377,114 @@ function gpa_scale_lookup_shortcode() {
  * Both views are in the HTML (crawlable); gpa-scale-tools.js switches them and moves the chart marker.
  * Attributes: home_anchor (the page's homepage link text).
  */
+/**
+ * Typical AP load behind a GPA (used by the top card on 4.1+ pages, the estimator's defaults and the chart mark):
+ * 24 classes with a quarter AP/IB (+1.0); above 4.0, enough extra AP to reach the GPA. Returns [ total, ap, uw ].
+ */
+function gpa_scale_typical_load( $g ) {
+	$total = 24;
+	$ap    = $g > 4.0 ? (int) min( $total, ceil( ( $g - 4.0 ) * $total ) + 6 ) : 6;
+	return array( $total, $ap, max( 0, min( 4.0, $g - $ap / $total ) ) );
+}
+
+/** "an" before a letter grade starting with A, "a" otherwise. */
+function gpa_scale_article( $letter ) {
+	return 0 === strpos( $letter, 'A' ) ? 'an' : 'a';
+}
+
+/**
+ * [gpa_scale_view]: the static answer card at the top of a GPA page (Digant 2026-10-03 16:17), in the hub
+ * converter's card style with no dropdown. Up to 4.0: Letter grade, Grade points, % range, and "A 3.7 GPA is an A−
+ * on the 4.0 scale." Above 4.0: the estimated unweighted GPA, letter and % at a typical AP load, and "A 4.2 weighted
+ * GPA is about a 3.74 unweighted, an A−." The weighted estimator is a separate card (gpa_scale_weighted_card()).
+ */
 function gpa_scale_view_shortcode( $atts ) {
-	$atts  = shortcode_atts( array( 'home_anchor' => 'GPA calculator' ), $atts, 'gpa_scale_view' );
 	$found = function_exists( 'gpa_scale_page_gpa' ) ? gpa_scale_page_gpa() : null;
 	if ( ! $found ) {
 		return '';
 	}
-	$g        = $found[0] / 10;
-	$gs       = number_format( $g, 1 );
-	$weighted = $g > 4.0;
-	gpa_scale_enqueue_tools();
+	$g  = $found[0] / 10;
+	$gs = number_format( $g, 1 );
+	$tile = function ( $label, $value, $big = false ) {
+		return '<div class="gpa-quickconv__stat' . ( $big ? ' is-headline' : '' ) . '"><span class="gpa-quickconv__label">' . esc_html( $label ) . '</span><strong>' . esc_html( $value ) . '</strong></div>';
+	};
+	if ( $g > 4.0 ) {
+		list( , , $uw ) = gpa_scale_typical_load( $g );
+		list( $letter, $pct ) = gpa_scale_figures( $uw );
+		$tiles = $tile( 'Est. unweighted GPA', number_format( $uw, 2 ), true ) . $tile( 'Letter grade', $letter ) . $tile( '% range', $pct );
+		$line  = 'A ' . $gs . ' weighted GPA is about a ' . number_format( $uw, 2 ) . ' unweighted, ' . gpa_scale_article( $letter ) . ' ' . $letter . '.';
+	} else {
+		list( $letter, $pct ) = gpa_scale_figures( $g );
+		$tiles = $tile( 'Letter grade', $letter ) . $tile( 'Grade points', $gs ) . $tile( '% range', $pct );
+		$line  = 'A ' . $gs . ' GPA is ' . gpa_scale_article( $letter ) . ' ' . $letter . ' on the 4.0 scale.';
+	}
+	return '<div class="gpa-quickconv gpa-answer"><div class="gpa-quickconv__out">' . $tiles . '</div>'
+		. '<p class="gpa-answer__line">' . esc_html( $line ) . '</p></div>';
+}
 
-	// Weighted tab: estimator. Example load: 24 classes, 6 AP/IB (+1.0), 0 Honors.
-	$ex_total = 24;
-	$ex_ap    = $weighted ? (int) min( 24, ceil( ( $g - 4.0 ) * 24 ) + 6 ) : 6;
-	$ex_g     = max( 0, min( 4.0, $g - $ex_ap / $ex_total ) );
-	list( $ex_letter, $ex_pct ) = gpa_scale_figures( $ex_g );
+/**
+ * The weighted estimator card, "Is your 3.7 weighted?" (Digant 2026-10-03 16:17): a <details> card after the
+ * "Is a 3.7 GPA good?" section (after the first section on pages without one), collapsed by default; open by default
+ * on 4.1+ pages. Inside: the sentence at the typical load, three result tiles and the class inputs, all live
+ * (gpa-scale-tools.js). $home_anchor: the page's one homepage link (anchors assigned by page ID).
+ */
+function gpa_scale_weighted_card( $g, $home_anchor ) {
+	$gs = number_format( $g, 1 );
+	list( $total, $ap, $uw ) = gpa_scale_typical_load( $g );
+	list( $letter, $pct ) = gpa_scale_figures( $uw );
+	gpa_scale_enqueue_tools();
 	$num = function ( $name, $label, $value ) {
 		return '<label class="gpa-view__field"><span class="gpa-view__label">' . $label . '</span>'
 			. '<input type="number" inputmode="numeric" min="0" max="80" step="1" value="' . (int) $value . '" data-in="' . $name . '"></label>';
 	};
-	$art = function ( $letter ) { return 0 === strpos( $letter, 'A' ) ? 'an' : 'a'; };
-	$about = function ( $pct ) { return str_replace( '≈', '', $pct ); };
-
-	// Weighted tab (Digant 15:58): a headline at the typical load first, then the tiles, then the inputs under
-	// "Customize for your classes" (open on desktop, collapsed on phone by gpa-scale-tools.js). Typical load:
-	// 24 classes with ¼ AP/IB (+1.0); 4.1+ pages need more AP to reach the GPA.
-	$weighted_tab = '<div class="gpa-view__panel" data-view="weighted"' . ( $weighted ? '' : ' hidden' ) . '>'
-		. '<p class="gpa-view__lead" aria-live="polite">A ' . esc_html( $gs ) . ' weighted GPA is about a <strong data-out="uw">' . esc_html( number_format( $ex_g, 2 ) ) . '</strong> unweighted, '
-		. '<span data-out="art">' . $art( $ex_letter ) . '</span> <strong data-out="letter">' . esc_html( $ex_letter ) . '</strong> (<span data-out="pct">' . esc_html( $ex_pct ) . '</span>).</p>'
+	$title = $g > 4.0 ? 'What is your ' . $gs . ' unweighted?' : 'Is your ' . $gs . ' weighted?';
+	return '<details class="gpa-view gpa-weighted" id="weighted" data-gpa-view data-gpa="' . esc_attr( $gs ) . '"' . ( $g > 4.0 ? ' open' : '' ) . '>'
+		. '<summary>' . esc_html( $title ) . '</summary>'
+		. '<p class="gpa-view__lead" aria-live="polite">A ' . esc_html( $gs ) . ' weighted GPA is about a <strong data-out="uw">' . esc_html( number_format( $uw, 2 ) ) . '</strong> unweighted, '
+		. '<span data-out="art">' . gpa_scale_article( $letter ) . '</span> <strong data-out="letter">' . esc_html( $letter ) . '</strong> (<span data-out="pct">' . esc_html( $pct ) . '</span>).</p>'
 		. '<dl class="gpa-view__tiles gpa-view__result">'
-		. '<div class="gpa-view__tile is-headline"><dt>Est. unweighted GPA</dt><dd data-out="uw">' . esc_html( number_format( $ex_g, 2 ) ) . '</dd></div>'
-		. '<div class="gpa-view__tile"><dt>Letter grade</dt><dd data-out="letter">' . esc_html( $ex_letter ) . '</dd></div>'
-		. '<div class="gpa-view__tile"><dt>Percentage</dt><dd data-out="pct">' . esc_html( $ex_pct ) . '</dd></div>'
+		. '<div class="gpa-view__tile is-headline"><dt>Est. unweighted GPA</dt><dd data-out="uw">' . esc_html( number_format( $uw, 2 ) ) . '</dd></div>'
+		. '<div class="gpa-view__tile"><dt>Letter grade</dt><dd data-out="letter">' . esc_html( $letter ) . '</dd></div>'
+		. '<div class="gpa-view__tile"><dt>Percentage</dt><dd data-out="pct">' . esc_html( $pct ) . '</dd></div>'
 		. '</dl>'
-		. '<details class="gpa-view__custom" open data-collapse-phone><summary>Customize for your classes</summary>'
-		. '<p class="gpa-view__note">Set to ' . ( $weighted ? '' : 'a typical load: ' ) . (int) $ex_total . ' classes, ' . (int) $ex_ap . ' of them AP/IB. Change them and the estimate above updates.</p>'
+		. '<p class="gpa-view__note">Set to ' . ( $g > 4.0 ? '' : 'a typical load: ' ) . (int) $total . ' classes, ' . (int) $ap . ' of them AP/IB. Change them and the estimate updates.</p>'
 		. '<div class="gpa-view__conv">'
-		. $num( 'total', 'Total classes', $ex_total ) . $num( 'ap', 'AP / IB classes (+1.0)', $ex_ap ) . $num( 'honors', 'Honors classes (+0.5)', 0 )
-		. '</div></details>'
+		. $num( 'total', 'Total classes', $total ) . $num( 'ap', 'AP / IB classes (+1.0)', $ap ) . $num( 'honors', 'Honors classes (+0.5)', 0 )
+		. '</div>'
 		. '<p class="gpa-view__note gpa-view__fine">Uses +1.0 for AP/IB and +0.5 for Honors, the most common boosts; your school may differ. '
-		. 'Our <a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( $atts['home_anchor'] ) . '</a> works from your own classes and grades, and the '
+		. 'Our <a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( $home_anchor ) . '</a> works from your own classes and grades, and the '
 		. '<a href="' . esc_url( home_url( '/weighted-gpa-calculator/' ) ) . '">Weighted GPA calculator</a> shows both numbers.</p>'
-		. '</div>';
+		. '<p class="gpa-view__note gpa-view__other">Look up any letter grade on the <a href="' . esc_url( home_url( '/gpa-scale/#gpa-scale-converter' ) ) . '">GPA scale</a>, or use <a href="' . esc_url( home_url( '/grade-conversion/' ) ) . '">Grade Conversion</a>.</p>'
+		. '</details>';
+}
 
-	// Unweighted tab: this GPA on the unweighted scale, as a sentence and two tiles (no calculator).
-	$unweighted_tab = '';
-	if ( ! $weighted ) {
-		list( $letter, $pct ) = gpa_scale_figures( $g );
-		$unweighted_tab = '<div class="gpa-view__panel" data-view="unweighted">'
-			. '<p class="gpa-view__lead">A ' . esc_html( $gs ) . ' unweighted GPA is ' . $art( $letter ) . ' <strong>' . esc_html( $letter ) . '</strong>, about <strong>' . esc_html( $about( $pct ) ) . '</strong>.</p>'
-			. '<dl class="gpa-view__tiles is-two">'
-			. '<div class="gpa-view__tile"><dt>Letter grade</dt><dd>' . esc_html( $letter ) . '</dd></div>'
-			. '<div class="gpa-view__tile"><dt>Percentage</dt><dd>' . esc_html( $pct ) . '</dd></div>'
-			. '</dl>'
-			. '</div>';
+/**
+ * Puts the weighted estimator card on a GPA page: before the H2 after "Is a X GPA good?", or before the second numbered
+ * H2 when a page has no such section. The homepage anchor comes from the [gpa_scale_view home_anchor] in the content.
+ */
+add_filter( 'the_content', 'gpa_scale_insert_weighted_card', 20 );
+function gpa_scale_insert_weighted_card( $content ) {
+	if ( is_admin() || ! in_the_loop() || ! is_main_query() || false !== strpos( $content, 'gpa-weighted' ) ) {
+		return $content;
 	}
-	$conv_link = '<p class="gpa-view__note gpa-view__other">Look up any letter grade on the <a href="' . esc_url( home_url( '/gpa-scale/#gpa-scale-converter' ) ) . '">GPA scale</a>, or use <a href="' . esc_url( home_url( '/grade-conversion/' ) ) . '">Grade Conversion</a>.</p>';
-
-	$toggle = $weighted ? '' : '<div class="gpa-view__toggle" role="group" aria-label="Read this GPA as">'
-		. '<button type="button" class="gpa-view__btn" aria-pressed="true" data-view-btn="unweighted">Unweighted</button>'
-		. '<button type="button" class="gpa-view__btn" aria-pressed="false" data-view-btn="weighted">Weighted</button>'
-		. '</div>';
-	return '<div class="gpa-view" data-gpa-view data-gpa="' . esc_attr( $gs ) . '" data-active="' . ( $weighted ? 'weighted' : 'unweighted' ) . '">'
-		. $toggle . $unweighted_tab . $weighted_tab . $conv_link . '</div>';
+	$found = function_exists( 'gpa_scale_page_gpa' ) ? gpa_scale_page_gpa() : null;
+	if ( ! $found ) {
+		return $content;
+	}
+	$raw    = (string) get_post_field( 'post_content', get_queried_object_id() );
+	$anchor = preg_match( '/\[gpa_scale_view home_anchor="([^"]+)"/', $raw, $am ) ? $am[1] : 'GPA calculator';
+	$card   = gpa_scale_weighted_card( $found[0] / 10, $anchor );
+	if ( ! preg_match_all( '#<h2\b[^>]*>(.*?)</h2>#s', $content, $h, PREG_OFFSET_CAPTURE ) || count( $h[0] ) < 2 ) {
+		return $content . $card;
+	}
+	$at = 1;
+	foreach ( $h[1] as $i => $text ) {
+		if ( preg_match( '/^Is an? \d\.\d GPA good\?$/', trim( wp_strip_all_tags( $text[0] ) ) ) && isset( $h[0][ $i + 1 ] ) ) {
+			$at = $i + 1;
+			break;
+		}
+	}
+	$pos = $h[0][ $at ][1];
+	return substr( $content, 0, $pos ) . $card . substr( $content, $pos );
 }
 add_action( 'init', function () { add_shortcode( 'gpa_scale_view', 'gpa_scale_view_shortcode' ); } );

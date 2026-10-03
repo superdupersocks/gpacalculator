@@ -3510,12 +3510,20 @@ function gpa_scale_table_mark_rows( $html, $block ) {
 	$slug  = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
 	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) && function_exists( 'gpa_scale_figures' ) ) {
 		$gs = $m[1] . '.' . $m[2];
-		list( $letter, $pct ) = gpa_scale_figures( $gs );
-		$marks = explode( '/', $letter );
-		if ( '4.0' === $gs ) {
-			$marks[] = 'A+';
+		if ( (float) $gs > 4.0 && function_exists( 'gpa_scale_typical_load' ) ) {
+			// Weighted-only page (4.1+): mark the estimated unweighted GPA at a typical AP load
+			list( , , $uw ) = gpa_scale_typical_load( (float) $gs );
+			list( $letter, $pct ) = gpa_scale_figures( $uw );
+			$marks = explode( '/', $letter );
+			$mark  = 'Est. ' . number_format( $uw, 2 ) . ' · ' . $pct;
+		} else {
+			list( $letter, $pct ) = gpa_scale_figures( $gs );
+			$marks = explode( '/', $letter );
+			if ( '4.0' === $gs ) {
+				$marks[] = 'A+';
+			}
+			$mark = 'Your ' . $gs . ' · ' . $pct;
 		}
-		$mark = 'Your ' . $gs . ' · ' . $pct;
 	}
 	return preg_replace_callback(
 		'#<tr>(.*?)</tr>#s',

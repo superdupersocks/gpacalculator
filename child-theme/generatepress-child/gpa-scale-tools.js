@@ -40,24 +40,18 @@
     });
   });
 
-  // GPA page view toggle + weighted mini converter.
+  // GPA page weighted estimator card ("Is your 3.7 weighted?", gpa_scale_weighted_card()): the sentence and the tiles
+  // follow the class inputs. On 4.1+ pages the chart marks the estimate, so the mark follows it too.
   document.querySelectorAll('[data-gpa-view]').forEach((view) => {
     const gpa = parseFloat(view.dataset.gpa);
-    const title = document.querySelector('.entry-header h1, h1.entry-title');
-    const baseTitle = title ? title.textContent : '';
     const table = document.querySelector('.gpa-scale-table');
     const rows = table ? [...table.querySelectorAll('tbody tr[data-letter]')] : [];
     const inputs = Object.fromEntries([...view.querySelectorAll('[data-in]')].map((i) => [i.dataset.in, i]));
-    // Every element showing an output: the weighted headline sentence and the tiles share the same names.
     const put = (name, text) => view.querySelectorAll(`[data-out="${name}"]`).forEach((el) => { el.textContent = text; });
-    // "Customize for your classes": open on desktop, collapsed on phone.
-    const custom = view.querySelector('details[data-collapse-phone]');
-    if (custom && window.matchMedia('(max-width: 640px)').matches) custom.open = false;
 
     const mark = (value, label) => {
       const { letter, pct } = figures(value);
       const want = letter.split('/');
-      if (Math.abs(value - 4) < 0.001) want.push('A+');
       rows.forEach((tr) => {
         const on = want.includes(tr.dataset.letter);
         tr.classList.toggle('is-current-gpa', on);
@@ -76,24 +70,10 @@
       put('letter', f.letter);
       put('art', f.letter.charAt(0) === 'A' ? 'an' : 'a');
       put('pct', f.pct);
-      return uw;
+      if (gpa > 4) mark(uw, `Est. ${uw.toFixed(2)}`);
     };
-    const show = (which) => {
-      view.querySelectorAll('[data-view]').forEach((p) => { p.hidden = p.dataset.view !== which; });
-      view.querySelectorAll('[data-view-btn]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.viewBtn === which)));
-      view.dataset.active = which;
-      if (title) title.textContent = which === 'weighted' ? baseTitle.replace(/(\d\.\d)\s*GPA/, '$1 Weighted GPA') : baseTitle;
-      if (which === 'weighted') { const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`); } else { mark(gpa, `Your ${gpa.toFixed(1)}`); }
-    };
-    view.querySelectorAll('[data-view-btn]').forEach((b) => b.addEventListener('click', () => show(b.dataset.viewBtn)));
-    Object.values(inputs).forEach((i) => i.addEventListener('input', () => {
-      if (view.dataset.active === 'weighted') { const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`); }
-    }));
-    if (gpa > 4) {
-      // Weighted-only page (4.1+): no toggle; the chart marks the estimated unweighted GPA.
-      const uw = estimate(); mark(uw, `Est. ${uw.toFixed(2)}`);
-    } else if (location.hash === '#weighted') {
-      show('weighted');
-    }
+    Object.values(inputs).forEach((i) => i.addEventListener('input', estimate));
+    // Old links to #weighted open the card.
+    if (location.hash === '#weighted' && view.tagName === 'DETAILS') view.open = true;
   });
 })();

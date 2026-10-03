@@ -80,7 +80,7 @@ def faqs(gs, g, letter, pct):
                   "Neither is automatically better. Colleges look at both the grades and how hard the classes were, and many recalculate GPAs their own way. A 4.0 in demanding courses is the strongest combination."))
         return q
     q.append((f"Is a {gs} weighted GPA the same as a {gs} unweighted GPA?",
-              f"No. A {gs} weighted GPA includes extra points for Honors, AP or IB classes, so the unweighted GPA behind it is lower: with a quarter of your classes AP at +1.0, it works out to about a {max(0, g - 0.25):.2f} unweighted. Switch this page to Weighted to estimate yours from your own classes."))
+              f"No. A {gs} weighted GPA includes extra points for Honors, AP or IB classes, so the unweighted GPA behind it is lower: with a quarter of your classes AP at +1.0, it works out to about a {max(0, g - 0.25):.2f} unweighted. Open “Is your {gs} weighted?” on this page to estimate yours from your own classes."))
     target = next((t for lim, t in MILESTONE if g < lim), 3.95)
     ts = f"{target:.2f}".rstrip("0") if target == 3.95 else f"{target:.1f}"
     if g >= 3.9:

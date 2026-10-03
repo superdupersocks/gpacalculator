@@ -421,6 +421,8 @@ def flow(s):
     R.ok("flow: planner sits after the result", p.evaluate("document.querySelector('.calc-result').compareDocumentPosition(document.querySelector('.calc-plan')) & 4") > 0)
     R.check("flow: default target", p.input_value("#college-t-gpa"), "3.50")
     R.check("flow: planner needed", text(p, ".calc-plan-big"), fmt((3.5 * 41 - 86.8) / 15))
+    # the slider's chart kit loads on demand, so wait for it rather than counting at once (CI raced here)
+    p.locator(".calc-whatif input[type=range]").first.wait_for(timeout=5000)
     R.check("flow: what-if slider", p.locator(".calc-whatif input[type=range]").count(), 1)
     p.locator(".calc-whatif input[type=range]").fill("4")
     R.check("flow: what-if readout", text(p, ".calc-whatif output"), f"A 4.0 average next term → {fmt((86.8 + 60) / 41)} cumulative")

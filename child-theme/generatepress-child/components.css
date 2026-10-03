@@ -1650,3 +1650,72 @@ body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { fon
     #page .entry-content .gpa-view__headline { grid-column: 1 / -1; }
     #page .entry-content .gpa-view__headline strong { font-size: 34px; }
 }
+
+/* GPA page view v3 (Digant 2026-10-03 07:45): one flowing page, not boxes. The view sits in the text column
+   with no panel; the summary and results are plain label/value rows; the scale chart uses the same full width. */
+#page .entry-content .gpa-view {
+    margin: 0 0 28px !important;
+    padding: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+#page #main .entry-content dl.gpa-view__summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+    margin: 4px 0 8px !important;
+    background: none;
+    border: 0;
+    border-radius: 0;
+}
+#page #main .entry-content dl.gpa-view__summary > div,
+#page #main .entry-content dl.gpa-view__summary > div:first-child {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border: 0;
+    border-bottom: 1px solid var(--gpa-border);
+}
+#page #main .entry-content dl.gpa-view__summary dt {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--gpa-text) !important;
+}
+#page #main .entry-content dl.gpa-view__summary dd {
+    margin: 0 !important;
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    text-align: right;
+}
+#page #main .entry-content dl.gpa-view__summary dd small { display: block; margin: 2px 0 0; font-size: 13px; font-weight: 400; white-space: nowrap; }
+#page .entry-content .gpa-view__result {
+    display: block;
+    margin: 8px 0 8px !important;
+    padding: 12px 0 0 !important;
+    background: none !important;
+    border-top: 1px solid var(--gpa-border) !important;
+    border-radius: 0 !important;
+}
+#page .entry-content .gpa-view__headline { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--gpa-border); }
+#page .entry-content .gpa-view__headline .gpa-view__label,
+#page .entry-content .gpa-view__sub .gpa-view__label { font-size: 16px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--gpa-text); }
+#page .entry-content .gpa-view__headline strong { margin: 0; font-size: 30px; }
+#page .entry-content .gpa-view__sub { display: flex; align-items: baseline; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--gpa-border); }
+#page .entry-content .gpa-view__sub strong { margin: 0; font-size: 17px; font-weight: 600; }
+#page .entry-content .gpa-view__toggle { margin-bottom: 8px; }
+/* The page's scale chart: same width as the text and the view */
+#page .entry-content figure.wp-block-table.gpa-scale-table {
+    max-width: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+@media (max-width: 640px) {
+    #page #main .entry-content dl.gpa-view__summary { grid-template-columns: 1fr; }
+    #page #main .entry-content dl.gpa-view__summary > div:nth-child(n) { border-left: 0; border-top: 0; }
+    #page .entry-content .gpa-view__headline strong { font-size: 26px; }
+}

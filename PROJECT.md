@@ -234,6 +234,8 @@ letters' range midpoints with "≈", chart values show their range. 14 of 31 pag
   Weighted tab keeps the estimator with results styled as results (tinted panel, estimated unweighted GPA as the
   headline); a line links the Grade Conversion page (/grade-conversion/) for any other GPA; 4.1+ pages open on
   the Weighted tab with no toggle. Previews `content/gpa-scale-previews/box-*`.
+- View v3 (07:45): one flowing page, no panels: the view sits in the content column with no box, the summary and
+  results are plain label/value rows with hairline dividers, and the page's scale chart uses the same full width.
 - Content script `scripts/wp/gpa_scale_view_pass.php` (built by `scripts/build_gpa_scale_view_pass.py`).
 - The converter is standalone JS until the shared core (calculator-unification thread) is live.
 - State: preview of the hub and 3.9 sent (`content/gpa-scale-previews/wv-*`), awaiting Digant's OK before the rest.

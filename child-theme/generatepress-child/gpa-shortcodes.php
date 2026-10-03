@@ -427,8 +427,8 @@ function gpa_scale_view_shortcode( $atts ) {
 			. '<dl class="gpa-view__summary">'
 			. '<div><dt>Letter grade</dt><dd>' . esc_html( $letter ) . '</dd></div>'
 			. '<div><dt>Percentage</dt><dd>' . esc_html( $pct ) . '<small>' . esc_html( implode( ' · ', $ranges ) ) . '</small></dd></div>'
-			. '<div><dt>On a 5.0 scale</dt><dd>' . esc_html( $five ) . '<small>' . esc_html( $gs ) . ' ÷ 4 × 5</small></dd></div>'
-			. '<div><dt>Typical weighted GPA</dt><dd>≈' . esc_html( $typical ) . '<small>with about a quarter of classes AP/IB</small></dd></div>'
+			. '<div><dt>On a 5.0 scale</dt><dd>' . esc_html( $five ) . '<small>' . esc_html( $gs ) . ' × 5 ÷ 4</small></dd></div>'
+			. '<div><dt>Typical weighted GPA</dt><dd>≈' . esc_html( $typical ) . '<small>with ¼ of classes AP/IB</small></dd></div>'
 			. '</dl>'
 			. '</div>';
 	}

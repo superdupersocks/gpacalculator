@@ -180,6 +180,9 @@ if ( ! function_exists( 'gpa_college_faqs' ) ) {
      */
     function gpa_college_faqs( $post_id ) {
         $college = get_the_title( $post_id );
+        if ( function_exists( 'gpa_college_v2' ) && gpa_college_v2( $post_id ) ) {
+            return gpa_college_faqs_v2( $post_id );
+        }
         $fresh   = gpa_college_fresh( $post_id );
         return $fresh ? gpa_college_faqs_fresh( $post_id, $college, $fresh ) : gpa_college_faqs_legacy( $post_id, $college );
     }
@@ -1159,4 +1162,9 @@ if ( ! function_exists( 'gpa_college_schema_site' ) ) {
         }
         return $data;
     }
+}
+
+// Template v2 (step 3): compare box, data-driven FAQs, similar colleges and the official admissions link, by tier.
+if ( is_readable( __DIR__ . '/college-v2.php' ) ) {
+    require_once __DIR__ . '/college-v2.php';
 }

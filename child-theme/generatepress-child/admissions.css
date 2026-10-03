@@ -735,3 +735,189 @@ body.post-type-archive-colleges .gpa-hub {
     .gpa-hub-row { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 0.6fr); }
     .gpa-hub-row__line { white-space: normal; }
 }
+
+/* ---------- 9. Template v2 (college-v2.php): location line, compare box, section spacing, similar colleges ----------
+   The compare box follows the step 3 mockup: a card as wide as the text (the acceptance meter's inset, 4), 2px indigo
+   border, 24px corners, an indigo shadow; inputs on white, the result on an indigo-50 panel. As wide as the text
+   (layout.css: the content area's own 20px padding on phones, 40px of inset from 641px up). Mockup colours the
+   palette lacks are named here, scoped to the box. */
+#page .entry-content .gpa-compare {
+    --gpa-cmp-accent: var(--gpa-indigo-600, #4F46E5);
+    --gpa-cmp-band: var(--gpa-indigo-400, #818CF8);
+    --gpa-cmp-line: var(--gpa-indigo-300, #A5B4FC);
+    --gpa-cmp-input: var(--gpa-slate-300, #CBD5E1);
+    --gpa-cmp-ink: var(--gpa-blue-950);
+    max-width: var(--gpa-text-max);
+    margin: 0 auto var(--gpa-p-gap);
+    background: var(--gpa-surface);
+    border: 2px solid var(--gpa-indigo-500);
+    border-radius: 24px;
+    box-shadow: 0 12px 32px color-mix(in srgb, var(--gpa-cmp-accent) 14%, transparent);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+@media (min-width: 641px) {
+    #page .entry-content .gpa-compare { max-width: min(var(--gpa-text-max), calc(100% - 80px)); }
+}
+#page .entry-content .gpa-compare__top { display: flex; flex-direction: column; gap: 16px; padding: 22px 22px 18px; }
+#page .entry-content .gpa-compare__inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+#page .entry-content .gpa-compare__field { display: flex; flex-direction: column; gap: 6px; }
+#page .entry-content .gpa-compare__field label { margin: 0; font-size: 14px; font-weight: 600; color: var(--gpa-cmp-ink); }
+#page .entry-content .gpa-compare__field label span { font-weight: 400; color: var(--gpa-gray-600); }
+#page .entry-content .gpa-compare__field input {
+    width: 100%;
+    height: 46px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--gpa-cmp-input);
+    border-radius: 12px;
+    background: var(--gpa-surface);
+    color: var(--gpa-text-strong);
+    font: inherit;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+    box-sizing: border-box;
+}
+#page .entry-content .gpa-compare__field input:focus { outline: 2px solid var(--gpa-focus-ring); outline-offset: 1px; border-color: var(--gpa-cmp-accent); }
+#page .entry-content .gpa-compare__toggle { display: flex; gap: 6px; }
+#page .entry-content .gpa-compare__toggle button {
+    min-height: 44px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--gpa-cmp-input);
+    border-radius: 10px;
+    background: var(--gpa-surface);
+    color: var(--gpa-slate-700);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+}
+#page .entry-content .gpa-compare__toggle button[aria-pressed="true"] {
+    background: var(--gpa-cmp-accent);
+    border-color: var(--gpa-cmp-accent);
+    color: var(--gpa-white);
+}
+#page .entry-content .gpa-compare__toggle button:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; }
+#page .entry-content .gpa-compare p.gpa-compare__help { max-width: none !important; margin: 0 !important; font-size: 14px; line-height: 1.5; color: var(--gpa-gray-600); }
+#page .entry-content .gpa-compare p.gpa-compare__help--open { margin-top: 12px !important; }
+#page .entry-content .gpa-compare__result {
+    padding: 22px;
+    background: var(--gpa-indigo-50);
+    border-top: 1px solid var(--gpa-indigo-200);
+}
+#page .entry-content .gpa-compare--open .gpa-compare__result { border-top: 0; }
+#page .entry-content .gpa-compare__result p { max-width: none !important; }
+#page .entry-content .gpa-compare p.gpa-compare__verdict { margin: 0 !important; }
+#page .entry-content .gpa-compare__label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--gpa-indigo-700);
+}
+#page .entry-content .gpa-compare__verdict strong { display: block; margin-top: 4px; font-size: 26px; font-weight: 800; line-height: 1.25; color: var(--gpa-cmp-ink); }
+#page .entry-content .gpa-compare p.gpa-compare__text { margin: 8px 0 0 !important; font-size: 15px; line-height: 1.6; color: var(--gpa-gray-800, #1E293B); }
+#page .entry-content .gpa-compare__range { margin-top: 18px; }
+#page .entry-content .gpa-compare__scale { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.4; color: var(--gpa-gray-600); }
+#page .entry-content .gpa-compare__mid { text-align: center; }
+#page .entry-content .gpa-compare__track {
+    position: relative;
+    height: 14px;
+    border-radius: var(--gpa-radius-pill);
+    background: var(--gpa-indigo-100);
+}
+#page .entry-content .gpa-compare__band {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background: var(--gpa-cmp-band);
+}
+#page .entry-content .gpa-compare__you {
+    position: absolute;
+    top: -6px;
+    width: 4px;
+    height: 26px;
+    margin-left: -2px;
+    border-radius: 2px;
+    background: var(--gpa-cmp-ink);
+}
+#page .entry-content .gpa-compare p.gpa-compare__you-label { margin: 8px 0 0 !important; font-size: 13px; font-weight: 600; color: var(--gpa-cmp-ink); }
+#page .entry-content .gpa-compare p.gpa-compare__note { margin: 14px 0 0 !important; font-size: 14px; line-height: 1.55; color: var(--gpa-gray-600); }
+#page .entry-content .gpa-compare__ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+#page .entry-content a.gpa-compare__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 0 18px;
+    border: 1px solid var(--gpa-cmp-line);
+    border-radius: 12px;
+    background: var(--gpa-surface);
+    color: var(--gpa-indigo-800);
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+#page .entry-content a.gpa-compare__cta--primary { background: var(--gpa-cmp-accent); border-color: var(--gpa-cmp-accent); color: var(--gpa-white); }
+#page .entry-content a.gpa-compare__cta:hover { border-color: var(--gpa-indigo-700); }
+#page .entry-content a.gpa-compare__cta--primary:hover { background: var(--gpa-indigo-700); }
+#page .entry-content .gpa-compare p.gpa-compare__fine { margin: 14px 0 0 !important; font-size: 12px; line-height: 1.5; color: var(--gpa-gray-600); }
+@media (max-width: 640px) {
+    #page .entry-content .gpa-compare__top { padding: 18px 16px 16px; }
+    #page .entry-content .gpa-compare__result { padding: 18px 16px; }
+    #page .entry-content .gpa-compare__toggle button { flex: 1; }
+    #page .entry-content a.gpa-compare__cta { flex: 1 1 100%; justify-content: center; }
+}
+
+/* Every section H2 on a v2 page sits the standard 64px below what's above it (48px on phones): --gpa-hdr-above,
+   over layout.css's --gpa-sec-gap (48/40); the extra classes outrank layout.css's rule (section 1, h2 spacing). */
+body.gpa-college-v2.single-colleges #primary #main .entry-content.entry-content h2:not(:first-child):not(#root *) { margin-top: var(--gpa-hdr-above) !important; }
+
+/* Similar colleges: link cards (name, then difficulty and admit rate), as wide as the text. */
+#page .entry-content p.gpa-college-similar__sub { margin-top: 0 !important; color: var(--gpa-gray-600); }
+/* The two ids outrank components.css 2's bullets and list indent. */
+#page #main .entry-content ul.gpa-college-similar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    padding: 0 !important;
+}
+#page #main .entry-content ul.gpa-college-similar > li { margin: 0 !important; padding: 0; }
+#page #main .entry-content ul.gpa-college-similar > li::before { content: none !important; display: none !important; }
+#page .entry-content ul.gpa-college-similar a {
+    display: block;
+    height: 100%;
+    padding: 16px;
+    border: 1px solid var(--gpa-border);
+    border-radius: var(--gpa-radius-lg);
+    background: var(--gpa-surface);
+    text-decoration: none;
+    box-sizing: border-box;
+}
+#page .entry-content ul.gpa-college-similar a:hover { border-color: var(--gpa-indigo-500); }
+#page .entry-content .gpa-college-similar__name { display: block; font-weight: 600; color: var(--gpa-cmp-ink, var(--gpa-blue-950)); }
+#page .entry-content .gpa-college-similar__note { display: block; margin-top: 4px; font-size: 14px; color: var(--gpa-gray-600); }
+
+/* "Before you apply" opens the block after the FAQ, so it takes a section's spacing too. */
+body.gpa-college-v2 #primary #main .entry-content .gpa-college-official { margin-top: var(--gpa-hdr-above) !important; }
+#page .entry-content .gpa-college-official a { font-weight: 600; }
+
+/* Similar colleges' "See all colleges in {State} →", once the state hubs exist. */
+#page .entry-content p.gpa-college-similar__all a { font-weight: 600; }
+
+/* The location line under the H1 ("Cambridge, MA · Private · 4-year"), above the hero sentence. */
+html body.single-colleges .entry-header p.gpa-college-where {
+    margin: -4px auto 12px !important;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: var(--gpa-hero-text) !important;
+}

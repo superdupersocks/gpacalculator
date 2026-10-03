@@ -13,8 +13,10 @@ leaves it out. .github/workflows/admissions-links.yml then requests each one fro
 pick: a page links to the college's admissions page when that address answered 200 (after redirects) on the
 college's own site, the site of its IPEDS website (harvard.edu for college.harvard.edu/admissions); else to its website
 on the same terms; else to nothing. A page never links to an address the check couldn't load or that ends on another
-site. Writes ipeds_unitid, college_admissions_url, college_admissions_url_kind (admissions or website), which
-scripts/admissions/step3_links_live.sh puts on the pages. Changes nothing on the site.
+site. Writes ipeds_unitid, college_admissions_url, college_admissions_url_kind (admissions or website), plus the
+college's street address and ZIP code from IPEDS (HD2024 ADDR and ZIP: college_street, college_zip) for template v2's
+CollegeOrUniversity schema (Digant, 2026-10-03 05:49), one row per page's college that has either. Then
+scripts/admissions/step3_links_live.sh puts them on the pages. Changes nothing on the site.
 """
 import csv
 import os
@@ -115,7 +117,7 @@ def pick():
     by_unit = {}
     for r in links:
         by_unit.setdefault(r["unitid"], {})[r["kind"]] = r
-    picked, why = [], Counter()
+    picked, why = {}, Counter()
     for unitid, kinds in sorted(by_unit.items(), key=lambda x: int(x[0])):
         choice = None
         for kind in ("admissions", "website"):
@@ -137,16 +139,28 @@ def pick():
                 # The address as the college lists it, unless it moved: then where it lands now
                 choice = (kind, s["final_url"] if s.get("hops", "0") != "0" else r["url"])
         if choice:
-            picked.append({"ipeds_unitid": unitid, "college_admissions_url": choice[1],
-                           "college_admissions_url_kind": choice[0]})
+            picked[unitid] = {"college_admissions_url": choice[1], "college_admissions_url_kind": choice[0]}
+    inst, addressed = institutions(), 0
+    rows = []
+    for unitid in sorted({u for _, _, u in pages()} | set(picked), key=int):
+        r = inst.get(unitid, {})
+        street = " ".join((r.get("address") or "").split())
+        zip_ = (r.get("zip") or "").strip()
+        if not re.match(r"^\d{5}(-\d{4})?$", zip_) or not street or len(street) > 200:
+            street, zip_ = "", ""
+        addressed += bool(street)
+        row = {"ipeds_unitid": unitid, "college_admissions_url": "", "college_admissions_url_kind": "",
+               "college_street": street, "college_zip": zip_, **picked.get(unitid, {})}
+        if row["college_admissions_url"] or street:
+            rows.append(row)
     with open(PICKED, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, ["ipeds_unitid", "college_admissions_url", "college_admissions_url_kind"],
-                           lineterminator="\n")
+        w = csv.DictWriter(f, ["ipeds_unitid", "college_admissions_url", "college_admissions_url_kind", "college_street",
+                               "college_zip"], lineterminator="\n")
         w.writeheader()
-        w.writerows(picked)
-    kinds = Counter(p["college_admissions_url_kind"] for p in picked)
+        w.writerows(rows)
+    kinds = Counter(p["college_admissions_url_kind"] for p in picked.values())
     print(f"{len(picked)} of {len(by_unit)} colleges get a link: {kinds['admissions']} admissions pages, "
-          f"{kinds['website']} websites; {len(by_unit) - len(picked)} none")
+          f"{kinds['website']} websites; {len(by_unit) - len(picked)} none. {addressed} get a street address.")
     for k, n in sorted(why.items()):
         print(f"  {k}: {n}")
 

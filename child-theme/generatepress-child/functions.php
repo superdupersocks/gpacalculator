@@ -853,6 +853,10 @@ function gpa_college_page_schema($data, $jsonld) {
         $address['addressCountry'] = 'US';
         $college_schema['address'] = $address;
     }
+    // Template v2 (college-v2.php): the full IPEDS address
+    if ( function_exists( 'gpa_college_v2' ) && gpa_college_v2( $post_id ) && ( $v2_address = gpa_college_schema_address( $post_id ) ) ) {
+        $college_schema['address'] = $v2_address;
+    }
 
     $loc_clean = trim( (string) $location );
     if ( $fresh && $loc_clean !== '' ) {

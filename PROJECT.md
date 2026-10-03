@@ -214,7 +214,13 @@ Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
    `admissions_tier` for step 3. Checked from GitHub (indexing check 47068a0): the colleges sitemaps list exactly the
    1,767 indexed pages and the hub. The same go ran step 1's 14-address follow-up (log
    `admissions-cleanup-20261003-034126-log.tsv`). Server steps: `docs/ADMISSIONS_TIERING_RUNBOOK.md`.
-3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. In progress.
+3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. Built, not live:
+   college template v2 (`college-v2.php`, `college-compare.js`; compare box with an open-admission version, data-driven
+   FAQs hidden below three, similar colleges + state link, official admissions link checked from GitHub for 2,701
+   colleges). Switch: option `gpa_admissions_v2_tiers` read against each page's `admissions_tier`
+   (`scripts/admissions/step3_switch.sh`); editors preview with `?gpa_v2=1`. Samples in
+   `/mnt/project-files/admissions/step3/` (Harvard, UCLA, Miami, Calvin, Lone Star). Waits on Digant's go for tier A.
+   Server steps: `docs/ADMISSIONS_STEP3_RUNBOOK.md`. Previews on a fresh container: `scripts/admissions/preview/setup_local.sh`.
 
 ## GPA scale work: weighted vs unweighted (roadmap checklist, 2026-10-03)
 

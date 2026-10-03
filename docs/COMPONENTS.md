@@ -29,3 +29,10 @@ Hero → calculator → TOC → sections (steps, example, formula, scale, …) �
   search engines and screen readers read them as data. Phones get a two-line layout from the same markup.
 - Grade badges use the grade-band tokens and do not follow the theme color.
 - Converting an old hand-built example: `scripts/wp/example_convert.php` (dry run by default; checks the numbers match).
+
+## Content rules (Digant, apply to every page)
+
+- **Internal links:** don't hand-insert them in body text; Internal Link Juicer adds them, so give every page its ILJ keyword set. The Related tools cards are the one deliberate exception (Digant 2026-10-03). Wherever manual links exist, link each target page at most once per page.
+- **Sources:** cite only factual claims, primary sources only (NAEP/NCES, College Board, a college's own admissions page or Common Data Set), 1–3 per page, not near the top, followed links.
+- **FAQ:** one Rank Math FAQ block per page (one FAQPage schema), built from highly searched questions.
+- **Top of page:** no data dump. Put quick facts in the quote callout and add a lead-in line before every table.

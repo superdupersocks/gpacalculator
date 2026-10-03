@@ -206,10 +206,16 @@ html :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-head
     position: relative;
     z-index: 1;
 }
-html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article h1.entry-title {
+/* .entry-header > beats the generic 24px title margin in content-styles.css */
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article .entry-header > h1.entry-title {
     color: var(--gpa-hero-title) !important;
     text-align: center !important;
-    margin: 0 auto 12px !important;
+    margin: 0 auto var(--gpa-hero-title-gap) !important;
+}
+@media (max-width: 768px) {
+    html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article .entry-header > h1.entry-title {
+        font-size: var(--gpa-hero-title-size-m) !important;
+    }
 }
 :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro {
     max-width: 640px;
@@ -391,14 +397,13 @@ html body .db-college-profile > .db-hero { padding-top: 36px !important; }
 }
 /* In the hero: centred, above the title */
 .entry-header .gpa-breadcrumb {
-    margin: 0 auto 16px;
+    margin: 0 auto var(--gpa-hero-crumb-gap);
 }
 .entry-header .gpa-breadcrumb__list {
     justify-content: center;
 }
 @media (max-width: 768px) {
     .gpa-breadcrumb { font-size: 13px; }
-    .entry-header .gpa-breadcrumb { margin-bottom: 12px; }
 }
 @media (max-width: 480px) {
     .gpa-breadcrumb__item:has(.gpa-breadcrumb__current) { display: none; }

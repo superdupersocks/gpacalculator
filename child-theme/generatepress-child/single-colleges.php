@@ -6,6 +6,10 @@
  * FAQ block; Sources. Styles: layout.css and components.css (shared), admissions.css (college data only), loaded by
  * gpa_college_profile_styles() in college-data.php, which also adds the content template's body classes.
  *
+ * Tiers switched on in college-v2.php (template v2) also get the compare box under the quick facts, data-driven FAQs,
+ * then, after the FAQ (unnumbered, like similar colleges), the college's official admissions link ("Before you apply"),
+ * Sources, and similar colleges in the state last (Digant, 2026-10-03 06:57). A location line ("City, ST · Public · 4-year") sits under the H1.
+ *
  * Everything shown comes from college-data.php: gpa_college_view() (figures, with their years), gpa_college_sections(),
  * gpa_college_faqs() (which also feeds the page's FAQPage JSON-LD) and gpa_college_sources(). Pages the federal import
  * hasn't reached show the name, place and type and say their figures aren't verified yet.
@@ -20,6 +24,10 @@ $facts    = gpa_college_quick_facts( $v );
 $sections = gpa_college_sections( $v );
 $faqs     = gpa_college_faqs( $post_id );
 $sources  = gpa_college_sources( $post_id );
+// Template v2 (college-v2.php), switched on by tier: compare box, similar colleges and the official admissions link
+$v2       = function_exists( 'gpa_college_v2' ) && gpa_college_v2( $post_id );
+$compare  = $v2 ? gpa_college_compare_box( $v ) : '';
+$official = $v2 ? gpa_college_official_link( $post_id ) : null;
 // The mid-article ad goes before the middle section, as on content pages (after the notice when there are none)
 $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : count( $sections );
 ?>
@@ -31,6 +39,9 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 				<header class="entry-header">
 					<?php gpa_render_breadcrumb(); ?>
 					<h1 class="entry-title"><?php echo esc_html( $v['name'] ); ?> <span class="gpa-college-h1-sub"><?php echo esc_html( gpa_college_h1_sub( $v ) ); ?></span></h1>
+					<?php if ( $v2 && '' !== ( $where = gpa_college_location_line( $post_id ) ) ) : ?>
+					<p class="gpa-college-where"><?php echo esc_html( $where ); ?></p>
+					<?php endif; ?>
 					<?php if ( '' !== $intro ) : ?>
 					<div class="rx-hero-intro"><p><?php echo esc_html( $intro ); ?></p></div>
 					<?php endif; ?>
@@ -43,6 +54,11 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 						<li><strong><?php echo esc_html( $fact[0] ); ?>:</strong> <?php echo $fact[1]; // escaped in gpa_college_quick_facts() ?></li>
 						<?php endforeach; ?>
 					</ul></blockquote>
+					<?php endif; ?>
+
+					<?php if ( '' !== $compare ) : ?>
+					<h2 id="compare">How does your GPA compare?</h2>
+					<?php echo $compare; // built from escaped values in gpa_college_compare_box() ?>
 					<?php endif; ?>
 
 					<?php if ( ! $v['fresh'] ) : ?>
@@ -72,7 +88,7 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					<?php endif; ?>
 
 					<?php if ( $faqs ) : ?>
-					<h2 id="faq">Frequently asked questions</h2>
+					<h2 id="faq"<?php echo $v2 ? ' class="gpa-no-number"' : ''; ?>>Frequently asked questions</h2>
 					<div id="rank-math-faq" class="rank-math-block">
 						<div class="rank-math-list">
 							<?php foreach ( $faqs as $i => $faq ) : ?>
@@ -85,6 +101,10 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					</div>
 					<?php endif; ?>
 
+					<?php if ( $official ) : ?>
+					<div class="gpa-callout gpa-callout--note gpa-college-official"><p><strong>Before you apply</strong>Requirements can differ by program and change from year to year. Confirm the details on <a href="<?php echo esc_url( $official[0] ); ?>" rel="noopener"><?php echo esc_html( $v['plain'] . '\'s ' . $official[1] ); ?></a>.</p></div>
+					<?php endif; ?>
+
 					<?php if ( $sources ) : ?>
 					<div class="gpa-sources">
 						<p class="gpa-sources__title">Sources</p>
@@ -94,6 +114,10 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 							<?php endforeach; ?>
 						</ol>
 					</div>
+					<?php endif; ?>
+
+					<?php if ( $v2 && $v['fresh'] ) : ?>
+					<?php echo gpa_college_similar_section( $v ); // built from escaped values ?>
 					<?php endif; ?>
 
 <!-- Tag ID: gpacalculator-net_incontent_bottom -->

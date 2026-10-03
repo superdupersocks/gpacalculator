@@ -196,7 +196,8 @@ profile template, Phase 4 step 1 (modified dates). Runbooks: `docs/ADMISSIONS_PH
 waits on Digant's deploy; the noindex for the 53 pages under review is held for tiering).
 
 Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
-1. **Cleanup QA**: checkpoint ready (`data/admissions/cleanup_qa/report.md`). All 516 removed pages answer as planned;
+1. **Cleanup QA**: checkpoint sent 2026-10-03 01:45 UTC, waits on Digant's `go cleanup` (`data/admissions/cleanup_qa/report.md`;
+   the admissions doc's "Step 1: cleanup QA" tab). All 516 removed pages answer as planned;
    proposed: 330 old addresses fixed (chains, dead ends, 404s, 410s with clicks), 42 leftover WordPress pages under
    /admissions/ unpublished, 302 renamed colleges moved to addresses with their current name. Server steps:
    `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`.

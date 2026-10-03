@@ -19,12 +19,20 @@ MILESTONE = [(1.95, 2.0), (2.45, 2.5), (2.95, 3.0), (3.45, 3.5), (3.65, 3.7), (3
 
 
 def figures():
+    """Each page's letter and percentage from the site-wide rule (scripts/lib/gpa_rule.py)."""
+    sys.path.insert(0, str(REPO / "scripts" / "lib"))
+    from gpa_rule import figures as rule
     out = {}
     for line in (REPO / "content" / "gpa-scale-intros.md").read_text().splitlines():
-        m = re.match(r"\| /gpa-scale/([0-9])-([0-9])-gpa/[^|]*\| ([^|]+) \| ([^|]+) \|", line)
+        m = re.match(r"\| /gpa-scale/([0-9])-([0-9])-gpa/", line)
         if m:
-            out[f"{m.group(1)}-{m.group(2)}-gpa"] = (m.group(3).strip().replace("-", "−"), m.group(4).strip().replace("-", "–"))
+            out[f"{m.group(1)}-{m.group(2)}-gpa"] = rule(f"{m.group(1)}.{m.group(2)}")
     return out
+
+
+def pct_words(pct):
+    """'≈93%' -> 'about 93%'; a chart range stays as it is."""
+    return "about " + pct[1:] if pct.startswith("≈") else pct
 
 
 def band(g):
@@ -52,7 +60,7 @@ def faqs(gs, g, letter, pct):
     }[b]
     q.append((f"Is a {gs} GPA good?", good))
     q.append((f"What letter grade and percentage is a {gs} GPA?",
-              f"A {gs} GPA is {an(letter)} {letter} average on the standard unweighted 4.0 scale, which is about {pct}. "
+              f"A {gs} GPA is {an(letter)} {letter} average on the standard unweighted 4.0 scale, which is {pct_words(pct)}. "
               "Schools set their own cutoffs, so check how your school converts percentages to grade points."))
     college = {
         "top": f"Yes. A {gs} makes you competitive at most colleges, including many selective ones. At the most selective schools a high GPA is expected, so course rigor, essays, recommendations and activities decide between strong applicants.",
@@ -72,7 +80,7 @@ def faqs(gs, g, letter, pct):
                   "Neither is automatically better. Colleges look at both the grades and how hard the classes were, and many recalculate GPAs their own way. A 4.0 in demanding courses is the strongest combination."))
         return q
     q.append((f"Is a {gs} weighted GPA the same as a {gs} unweighted GPA?",
-              f"No. An unweighted GPA uses the 4.0 scale, where an A is 4.0. A weighted GPA adds extra points for Honors, AP or IB classes, so a {gs} weighted GPA usually stands for a lower unweighted average than a {gs} unweighted. Colleges often recalculate GPAs, so they see both."))
+              f"No. A {gs} weighted GPA includes extra points for Honors, AP or IB classes, so the unweighted GPA behind it is lower: with a quarter of your classes AP at +1.0, it works out to about a {max(0, g - 0.25):.2f} unweighted. Switch this page to Weighted to estimate yours from your own classes."))
     target = next((t for lim, t in MILESTONE if g < lim), 3.95)
     ts = f"{target:.2f}".rstrip("0") if target == 3.95 else f"{target:.1f}"
     if g >= 3.9:

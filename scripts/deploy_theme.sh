@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Deploy the child theme from a repo commit to the live site, with a backup and a one-command revert.
 #
-#   bash scripts/deploy_theme.sh <commit> [--dry-run] [--only a.php,b.js]
+#   bash scripts/deploy_theme.sh <commit> [--dry-run] [--only a.php,b.js] [--allow-dropped-hooks]
 #                                                        deploy child-theme/generatepress-child at <commit>; --only
 #                                                        limits it to those theme files (paths inside the theme),
 #                                                        e.g. to ship a fix without the unreleased theme 1.2 CSS
@@ -11,6 +11,14 @@
 # Each deploy first saves the live theme to ~/backups/theme-<timestamp>-<commit>.tar.gz on the server (outside
 # the web root), rsyncs the commit's theme over it (zips excluded, nothing deleted), runs php -l on every PHP
 # file, purges the Breeze cache and prints the URLs to check. Add the deploy to docs/LIVE_CHANGELOG.md.
+#
+# Guards (theme files on the server drift from every branch, so a deploy can silently drop live code):
+#  - before shipping functions.php: every add_filter/add_action hook and every require/include in the LIVE functions.php
+#    must also be in the commit's functions.php (e.g. rank_math/schema/nested_blocks, which keeps the collapsed "On this page" in Rank
+#    Math's schema). If any is missing the deploy stops and lists them: merge the live code into the branch first.
+#    --allow-dropped-hooks skips this, only when removing a hook on purpose.
+#  - after every deploy: scripts/qa/check_toc_schema.py checks the pages in scripts/qa/toc-pages.txt (TOC links =
+#    H2s = Rank Math SiteNavigationElement names) and prints FAIL if one breaks.
 set -euo pipefail
 
 HOST="master_rfzfmbbwze@67.205.161.226"
@@ -35,10 +43,11 @@ case "${1:-}" in
 esac
 
 COMMIT="$(git -C "$REPO" rev-parse --short "$1")"; shift
-DRY=""; ONLY=""
+DRY=""; ONLY=""; ALLOW_DROP=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --dry-run) DRY="--dry-run" ;;
+    --allow-dropped-hooks) ALLOW_DROP=1 ;;
     --only) ONLY="${2:?comma-separated theme files, e.g. functions.php,single-colleges.php}"; shift ;;
     *) echo "unknown option: $1"; exit 1 ;;
   esac
@@ -57,6 +66,20 @@ if [[ -n "$ONLY" ]]; then
   FROM="--files-from=$WORK/only.txt"
 fi
 
+if [[ -z "$ONLY" || ",$ONLY," == *",functions.php,"* ]] && [[ -z "$ALLOW_DROP" ]]; then
+  hooks() { grep -oE "add_(filter|action)\([[:space:]]*['\"][^'\"]+['\"]([[:space:]]*,[[:space:]]*['\"][A-Za-z0-9_]+['\"])?|(require|include)(_once)?[^;]*['\"][^'\"]+\.php['\"]" | tr -d " \t\"'" | sort -u; }
+  "${SSH[@]}" "cat $APP/$THEME/functions.php" | hooks > "$WORK/live-hooks.txt"
+  hooks < "${SRC}functions.php" > "$WORK/new-hooks.txt"
+  MISSING="$(comm -23 "$WORK/live-hooks.txt" "$WORK/new-hooks.txt")"
+  if [[ -n "$MISSING" ]]; then
+    echo "STOP: $COMMIT's functions.php drops hooks that are live now (merge the live functions.php first):"
+    sed 's/^/   /' <<< "$MISSING"
+    echo "(only if dropping them is intended: add --allow-dropped-hooks)"
+    exit 1
+  fi
+  echo "functions.php: every live hook is kept ($(wc -l < "$WORK/live-hooks.txt") checked)"
+fi
+
 echo "Changes that $COMMIT would make on the live theme${ONLY:+ (only $ONLY)}:"
 rsync -rlcn --itemize-changes $FROM --exclude='*.zip' --exclude='README.md' -e "ssh -i $KEY -o IdentitiesOnly=yes" "$SRC" "$HOST:$APP/$THEME/"
 [[ -n "$DRY" ]] && { echo "(dry run: nothing changed)"; exit 0; }
@@ -69,3 +92,4 @@ fi
 "${SSH[@]}" "cd $APP && wp breeze purge --cache=all"
 echo "Deployed $COMMIT. Revert with: bash scripts/deploy_theme.sh --revert $NAME"
 echo "Now check: https://gpacalculator.net/ , a /gpa-scale/ page, a calculator page (loads, calculator works, ads show)."
+python3 "$REPO/scripts/qa/check_toc_schema.py" || echo "TOC/schema check FAILED (above): fix it, or revert with the line above."

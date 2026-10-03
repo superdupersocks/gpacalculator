@@ -155,8 +155,8 @@
             signals.push([0.1, 0.5, 0.75, 1][tp]);
             var label = state.test === 'ACT' ? p[0] + '–' + p[2] : 'about ' + p[0] + '–' + p[2];
             parts.push('Your ' + state.test + ' of ' + s + ' is ' +
-                [hi('below') + ' the middle 50% (' + hi(label) + ')', hi('in the lower half') + ' of the middle 50% (' + hi(label) + ')',
-                    hi('in the upper half') + ' of the middle 50% (' + hi(label) + ')', hi('above') + ' the middle 50% (' + hi(label) + ')'][tp] +
+                [hi('below') + ' the middle 50% (' + label + ')', hi('in the lower half') + ' of the middle 50% (' + label + ')',
+                    hi('in the upper half') + ' of the middle 50% (' + label + ')', hi('above') + ' the middle 50% (' + label + ')'][tp] +
                 ' of first-year students who sent scores.' +
                 (state.test === 'SAT' ? ' The SAT range is the two section ranges added together, so it’s approximate.' : '') +
                 (tp === 0 && c.tests === 'optional' ? ' Scores are optional here, so you could apply without them.' : ''));

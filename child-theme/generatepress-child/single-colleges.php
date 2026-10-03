@@ -67,6 +67,27 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					</ul></blockquote>
 					<?php endif; ?>
 
+					<?php
+					// "On this page" (Design spec rev 32, "In-page navigation", Digant 2026-10-03 18:29): a <details> row,
+					// collapsed on every screen size, under the key-facts box and above the first numbered section. Each
+					// link's text is its H2's text word for word; the links are in the HTML while collapsed. Lists the
+					// numbered H2s only (no FAQ, Similar colleges, Keep planning or Sources), on pages with 3 or more (spec rev 33).
+					// Markup = Design's shared component (Core Details block around the Rank Math TOC block; layout.css 11b,
+					// design f183e95). The list comes from gpa_college_toc() (college-v2.php), which also names it in the
+					// schema; college-v2.php keeps the theme's browser-built TOC (gpa_toc_builder) off college pages.
+					$toc = function_exists( 'gpa_college_toc' ) ? gpa_college_toc( $post_id, $v, $sections, $compare ) : array();
+					?>
+					<?php if ( $toc ) : ?>
+					<details class="wp-block-details gpa-toc">
+						<summary>On this page <span class="gpa-toc__count">· <?php echo (int) count( $toc ); ?> sections</span></summary>
+						<div class="wp-block-rank-math-toc-block"><nav aria-label="On this page"><ul>
+							<?php foreach ( $toc as $toc_id => $toc_h2 ) : ?>
+							<li><a href="#<?php echo esc_attr( $toc_id ); ?>"><?php echo esc_html( $toc_h2 ); ?></a></li>
+							<?php endforeach; ?>
+						</ul></nav></div>
+					</details>
+					<?php endif; ?>
+
 					<?php if ( '' !== $compare ) : ?>
 					<h2 id="compare">How does your GPA compare?</h2>
 					<?php echo $compare; // built from escaped values in gpa_college_compare_box() ?>
@@ -100,13 +121,18 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 
 					<?php if ( $faqs ) : ?>
 					<h2 id="faq"<?php echo $v2 ? ' class="gpa-no-number"' : ''; ?>>Frequently asked questions</h2>
-					<div id="rank-math-faq" class="rank-math-block">
+					<?php
+					// Each question is a <details> with its answer in the HTML, the first one open (Digant 2026-10-03 16:40),
+					// so nothing is added on open and the FAQPage JSON-LD (same gpa_college_faqs() text) matches the page.
+					// The items aren't .rank-math-list-item, so the theme's JS accordion (gpa_faq_accordion) leaves them alone.
+					?>
+					<div id="rank-math-faq" class="rank-math-block gpa-faq--details">
 						<div class="rank-math-list">
 							<?php foreach ( $faqs as $i => $faq ) : ?>
-							<div id="faq-<?php echo (int) $i + 1; ?>" class="rank-math-list-item">
-								<h3 class="rank-math-question"><?php echo esc_html( $faq['question'] ); ?></h3>
+							<details id="faq-<?php echo (int) $i + 1; ?>" class="gpa-faq-item"<?php echo 0 === $i ? ' open' : ''; ?>>
+								<summary class="rank-math-question"><?php echo esc_html( $faq['question'] ); ?></summary>
 								<div class="rank-math-answer"><p><?php echo wp_kses_post( $faq['answer'] ); ?></p></div>
-							</div>
+							</details>
 							<?php endforeach; ?>
 						</div>
 					</div>

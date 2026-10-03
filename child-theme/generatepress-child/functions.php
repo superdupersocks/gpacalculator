@@ -293,6 +293,28 @@ function gpa_content_styles() {
     }
 }
 
+// GPA scale styles (gpa-scale.css): the /gpa-scale/ hub, its GPA pages and any page that uses the scale chart
+// or a [gpa_scale_*] shortcode. Prints after components.css and content-styles.css.
+add_action('wp_enqueue_scripts', 'gpa_scale_styles', 20);
+function gpa_scale_styles() {
+    if ( ! is_singular() ) {
+        return;
+    }
+    $post   = get_post();
+    $parent = $post && $post->post_parent ? get_post( $post->post_parent ) : null;
+    $on     = $post && ( 'gpa-scale' === $post->post_name || ( $parent && 'gpa-scale' === $parent->post_name )
+        || false !== strpos( $post->post_content, 'gpa-scale-table' ) || false !== strpos( $post->post_content, '[gpa_scale_' ) );
+    if ( ! $on ) {
+        return;
+    }
+    wp_enqueue_style(
+        'gpa-scale',
+        get_stylesheet_directory_uri() . '/gpa-scale.css',
+        wp_style_is( 'gpa-content', 'enqueued' ) ? array( 'gpa-components', 'gpa-content' ) : array( 'gpa-components' ),
+        gpa_asset_ver( 'gpa-scale.css' )
+    );
+}
+
 add_action('wp_enqueue_scripts', 'gpa_database_page_styles');
 function gpa_database_page_styles() {
     if ( gpa_is_database_page() ) {
@@ -935,7 +957,7 @@ function gpa_college_page_schema($data, $jsonld) {
         'about'         => array( '@id' => $page_url . '#college' ),
         'breadcrumb'    => array( '@id' => $page_url . '#breadcrumb' ),
         'datePublished' => get_post_time( 'c', true, $post_id ),
-        'dateModified'  => get_post_modified_time( 'c', true, $post_id ),
+        'dateModified'  => gpa_college_data_refreshed( $post_id ),
         'inLanguage'    => get_bloginfo( 'language' ),
     );
     if ( $faq_items ) {
@@ -1194,267 +1216,291 @@ if ( ! function_exists( 'gpa_college_range_txt' ) ) {
     }
 }
 
+if ( ! function_exists( 'gpa_college_short_name' ) ) {
+    // The name titles and descriptions use: the short_name field (IPEDS alias, tier A hand-checked; written by
+    // scripts/admissions/meta/short_names_live.sh), else the full name without a leading "The" or a trailing
+    // "Main Campus". The H1 and the page body keep the full name.
+    function gpa_college_short_name( $post_id ) {
+        $short = trim( (string) get_post_meta( $post_id, 'short_name', true ) );
+        if ( '' !== $short ) {
+            return $short;
+        }
+        $name = html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, 'UTF-8' );
+        $name = preg_replace( '/\bA\s*&\s*([MT])\b/', 'A&$1', $name );
+        $name = preg_replace( '/^The\s+/', '', $name );
+        return preg_replace( '/[\s-]+Main( Campus)?$/', '', $name );
+    }
+}
+if ( ! function_exists( 'gpa_college_seo_rate' ) ) {
+    // Acceptance rate for titles and descriptions: one decimal under 10% ("3.6%", from admits / applicants when the
+    // stored rate is rounded), whole numbers otherwise ("19%"); '' when missing, 0 or 100%.
+    function gpa_college_seo_rate( $post_id ) {
+        $f   = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+        $raw = trim( (string) get_field( 'acceptance_rate', $post_id ) );
+        $acc = (float) preg_replace( '/[^0-9.]/', '', $raw );
+        if ( $acc > 0 && $acc <= 1 && false === strpos( $raw, '%' ) ) {
+            $acc *= 100;
+        }
+        if ( ! ( $acc > 0 && $acc < 100 ) ) {
+            return array( '', 0 );
+        }
+        if ( round( $acc, 1 ) < 10 ) {
+            if ( false === strpos( $raw, '.' ) && $f && $f['admits'] > 0 && $f['applicants'] > 0 ) {
+                $exact = 100 * $f['admits'] / $f['applicants'];
+                $acc   = abs( $exact - $acc ) < 1 ? $exact : $acc;
+            }
+            if ( round( $acc, 1 ) < 10 ) {
+                return array( number_format( $acc, 1 ) . '%', $acc );
+            }
+        }
+        return array( round( $acc ) . '%', $acc );
+    }
+}
+if ( ! function_exists( 'gpa_college_seo_facts' ) ) {
+    // What a college's title and description can say, and which template that picks (Digant 2026-10-03):
+    // gpa_rate, gpa (no rate), rate_scores, rate, open, none. No years anywhere: they stay in the page body.
+    function gpa_college_seo_facts( $post_id ) {
+        $f     = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+        $cds   = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
+        list( $rate, $acc ) = gpa_college_seo_rate( $post_id );
+        $sat   = array();
+        $act   = '';
+        if ( $f ) {
+            $erw  = isset( $f['sat']['Reading and Writing'] ) ? gpa_college_range( $f['sat']['Reading and Writing'] ) : '';
+            $math = isset( $f['sat']['Math'] ) ? gpa_college_range( $f['sat']['Math'] ) : '';
+            if ( '' !== $erw && '' !== $math ) {
+                // fullest wording first
+                $sat = array( $erw . ' reading and writing, ' . $math . ' math', $erw . ' reading, ' . $math . ' math' );
+            }
+            $act = isset( $f['act']['Composite'] ) ? gpa_college_range( $f['act']['Composite'] ) : '';
+        }
+        $loc = trim( (string) get_field( 'location', $post_id ) );
+        $out = array(
+            'short'    => gpa_college_short_name( $post_id ),
+            'gpa'      => $cds ? rtrim( rtrim( (string) $cds['value'], '0' ), '.' ) : '',
+            'weighted' => $cds && 'weighted' === $cds['basis'],
+            'rate'     => $rate,
+            'just'     => $acc > 0 && round( $acc, 1 ) < 10,
+            'sat'      => $sat,
+            'act'      => $act,
+            'open'     => $f && $f['open'],
+            'requires' => $f && $f['requirements'],
+            'credits'  => $f && ( in_array( $f['ap'], array( 'Yes', 'No' ), true ) || in_array( $f['life'], array( 'Yes', 'No' ), true ) ),
+            'price'    => $f && $f['net_price'] && '' !== $f['net_price_year'],
+            'type'     => function_exists( 'gpa_college_type_phrase' ) ? gpa_college_type_phrase( $post_id ) : 'college',
+            'loc'      => ( '' !== $loc && 'n/a' !== strtolower( $loc ) ) ? $loc : '',
+            'enrollment' => $f && $f['enrollment'] > 0 ? (int) $f['enrollment'] : 0,
+        );
+        if ( '' !== $out['gpa'] ) {
+            $out['template'] = '' !== $rate ? 'gpa_rate' : 'gpa';
+        } elseif ( '' !== $rate ) {
+            $out['template'] = ( $sat || '' !== $act ) ? 'rate_scores' : 'rate';
+        } elseif ( $out['open'] ) {
+            $out['template'] = 'open';
+        } else {
+            $out['template'] = 'none';
+        }
+        return $out;
+    }
+}
 if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
-    // Builds a title from the college's own data, trying formats from longest to shortest and
-    // using the first that fits in ~60 characters (what Google shows before cutting titles off).
+    // The first wording that fits in 60 characters (what Google shows before cutting titles off), longest first.
     function gpa_college_seo_build_title( $post_id = null ) {
         $post_id = $post_id ?: get_the_ID();
-        $name    = get_the_title( $post_id );
-        $gpa     = gpa_college_gpa_txt( $post_id );
-        $acc     = gpa_college_acc_pct( $post_id );
-        $cds     = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
-        $fresh   = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
-        $tests   = $fresh ? implode( '/', array_keys( array_filter( array( 'SAT' => $fresh['sat'], 'ACT' => $fresh['act'] ) ) ) ) : '';
-
-        if ( $cds ) {
-            // The college's own Common Data Set GPA: the page gives it with its year and source; the title names it only
-            $options = '' !== $acc ? array(
-                $name . ' Average GPA & Acceptance Rate (' . $acc . ')',
-                $name . ': Average GPA & ' . $acc . ' Acceptance Rate',
-                $name . ': Average GPA & ' . $acc . ' Acceptance',
-            ) : array(
-                $name . ' Average GPA' . ( '' !== $tests ? ' & ' . $tests . ' Scores' : ' & Admissions' ),
-                $name . ' Average GPA & Admissions',
-            );
-        } elseif ( '' !== $gpa && '' !== $acc ) {
-            $options = array(
-                $name . ' GPA Requirements (' . $gpa . ' Avg) & ' . $acc . ' Acceptance Rate',
-                $name . ' GPA Requirements: ' . $gpa . ' Avg, ' . $acc . ' Acceptance',
-                $name . ': ' . $gpa . ' Avg GPA, ' . $acc . ' Acceptance Rate',
-                $name . ': ' . $gpa . ' GPA, ' . $acc . ' Acceptance',
-            );
-        } elseif ( '' !== $gpa ) {
-            $options = array(
-                $name . ' GPA Requirements: ' . $gpa . ' Average GPA',
-                $name . ' GPA Requirements (' . $gpa . ' Avg)',
-                $name . ': ' . $gpa . ' Average GPA',
-            );
-        } elseif ( '' !== $acc ) {
-            $options = array(
-                $name . ' Acceptance Rate (' . $acc . ') & Admissions',
-                $name . ' Acceptance Rate: ' . $acc,
-            );
-            if ( '' !== $tests ) {
-                array_unshift( $options, $name . ' Acceptance Rate (' . $acc . ') & ' . $tests . ' Scores' );
-            }
-        } elseif ( $fresh && $fresh['open'] ) {
-            $options = array(
-                $name . ' Admission Requirements & Open Admission',
-                $name . ' Admission Requirements',
-            );
-        } elseif ( $fresh && $fresh['requirements'] ) {
-            // Admission factors but no acceptance rate (colleges that admit few or no first-year students)
-            $options = array( $name . ' Admission Requirements' );
-        } else {
-            // No admissions figures on the page: the title promises nothing it doesn't have
-            $options = array( $name . ' Admissions' );
+        $x       = gpa_college_seo_facts( $post_id );
+        $s       = $x['short'];
+        $g       = $x['gpa'];
+        $r       = $x['rate'];
+        $tests   = implode( '/', array_keys( array_filter( array( 'SAT' => (bool) $x['sat'], 'ACT' => '' !== $x['act'] ) ) ) );
+        switch ( $x['template'] ) {
+            case 'gpa_rate':
+                $options = array(
+                    $s . ' Average GPA (' . $g . ') & Acceptance Rate (' . $r . ')',
+                    $s . ' GPA (' . $g . ') & Acceptance Rate (' . $r . ')',
+                    $s . ' GPA (' . $g . ') & Acceptance Rate',
+                    $s . ' GPA (' . $g . ')',
+                );
+                break;
+            case 'gpa':
+                $options = array(
+                    $s . ' Average GPA (' . $g . ') & Admission Requirements',
+                    $s . ' Average GPA (' . $g . ')',
+                    $s . ' GPA (' . $g . ')',
+                );
+                break;
+            case 'rate_scores':
+                $options = array(
+                    $s . ' Acceptance Rate (' . $r . ') & ' . $tests . ' Scores',
+                    $s . ' Acceptance Rate (' . $r . ')',
+                );
+                break;
+            case 'rate':
+                $options = array(
+                    $s . ' Acceptance Rate (' . $r . ') & Admission Requirements',
+                    $s . ' Acceptance Rate (' . $r . ')',
+                );
+                break;
+            case 'open':
+                $options = array( $s . ' Admission Requirements: Open Admission', $s . ': Open Admission' );
+                break;
+            default:
+                $options = array( $s . ( $x['requires'] ? ' Admission Requirements' : ' Admissions' ) );
         }
-		        // Very long college names: fall back to shorter formats so the title still fits
-        if ( '' !== $gpa ) { $options[] = $name . ': ' . $gpa . ' GPA'; }
-        if ( $cds ) { $options[] = $name . ' Average GPA'; }
-        if ( '' !== $acc ) { $options[] = $name . ': ' . $acc . ' Acceptance'; }
-        $options[] = $name . ' Admissions';
-        $len = function_exists( 'mb_strlen' ) ? 'mb_strlen' : 'strlen';
         foreach ( $options as $title ) {
-            if ( $len( $title ) <= 60 ) {
+            if ( mb_strlen( $title ) <= 60 ) {
                 return $title;
             }
         }
-        return end( $options );
+        return end( $options ); // flagged in the export
+    }
+}
+if ( ! function_exists( 'gpa_college_seo_list' ) ) {
+    // ["a", "b", "c"] -> "a, b and c"
+    function gpa_college_seo_list( array $items ) {
+        return count( $items ) > 1 ? implode( ', ', array_slice( $items, 0, -1 ) ) . ' and ' . end( $items ) : implode( '', $items );
     }
 }
 if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
+    // 140–158 characters. The template's sentences, fullest wording first: test scores are dropped before anything
+    // else when it runs long, the closing list shrinks next, and a sentence on the kind of school and where it is
+    // fills a short one.
     function gpa_college_seo_build_description( $post_id = null ) {
         $post_id = $post_id ?: get_the_ID();
-        $name    = get_the_title( $post_id );
-        // "University of Georgia" reads better as "The University of Georgia" in a sentence
-        $needs_the = (bool) preg_match( '/^(University|College) of /', $name );
-        $subject   = $needs_the ? 'The ' . $name : $name; // start of a sentence
-        $object    = $needs_the ? 'the ' . $name : $name; // middle of a sentence
-        $gpa     = gpa_college_gpa_txt( $post_id );
-        $acc_txt = gpa_college_acc_pct( $post_id ); // e.g. "43%" or "3.6%", or '' when missing / 100%
-        $acc     = (float) $acc_txt;
-        $fresh   = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
-        $cds     = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
-        $sat     = gpa_college_range_txt( get_field( 'sat_range', $post_id ) );
-        $act     = gpa_college_range_txt( get_field( 'act_range', $post_id ) );
-        $test    = '' !== $sat ? $sat . ' on the SAT' : ( '' !== $act ? $act . ' on the ACT' : '' );
-        $tests   = array(); // pages with the federal import: what the middle 50% of entrants scored, most-used test first
-        if ( $fresh && '' !== $fresh['fall'] ) {
-            $erw  = isset( $fresh['sat']['Reading and Writing'] ) ? gpa_college_range( $fresh['sat']['Reading and Writing'] ) : '';
-            $math = isset( $fresh['sat']['Math'] ) ? gpa_college_range( $fresh['sat']['Math'] ) : '';
-            $comp = isset( $fresh['act']['Composite'] ) ? gpa_college_range( $fresh['act']['Composite'] ) : '';
-            if ( '' !== $erw && '' !== $math ) {
-                $tests['sat'] = 'Middle 50% SAT: ' . $erw . ' reading and writing, ' . $math . ' math.';
-            }
-            if ( '' !== $comp ) {
-                $tests['act'] = 'The middle 50% of first-year students scored ' . $comp . ' on the ACT.';
-            }
-            if ( (float) $fresh['act_submit'] > (float) $fresh['sat_submit'] ) {
-                $tests = array_reverse( $tests );
-            }
-            $test = $tests ? 'x' : ''; // counts as admissions data below
-        }
-
-        // School facts
-        $type    = function_exists( 'gpa_college_type_phrase' ) ? gpa_college_type_phrase( $post_id ) : 'college';
-        $article = in_array( $type[0], array( 'a', 'e', 'i', 'o', 'u' ), true ) ? 'an' : 'a';
-        $loc     = trim( (string) get_field( 'location', $post_id ) );
-        $loc     = ( '' !== $loc && 'n/a' !== strtolower( $loc ) ) ? $loc : '';
-        $enr     = (int) preg_replace( '/[^0-9]/', '', (string) get_field( 'enrollment', $post_id ) );
-        $price   = (int) preg_replace( '/[^0-9]/', '', (string) get_field( 'net_price', $post_id ) );
-
-        // Every description ends with a call to action. Reserve room for the shortest one, and
-        // trim the least important detail first if the sentences would otherwise leave no room.
-        // Pages with a college-published GPA always keep the GPA call to action: most searches are about GPA.
-        $len            = function_exists( 'mb_strlen' ) ? 'mb_strlen' : 'strlen'; // ranges use en dashes
-        $has_admissions = ( $acc > 0 || '' !== $gpa || '' !== $test );
-        $short_cta      = $cds ? 'See its average GPA.' : ( $has_admissions ? 'See the requirements.' : 'See admission requirements.' );
-        $thin_ctas      = array();
-        if ( ! $cds && ! $has_admissions ) {
-            // Pages without admissions figures name only what they have: admission factors, credit policies, net
-            // price (all of it when it fits); pages still under review have none of those, and say so
-            $what = array();
-            if ( $fresh && $fresh['requirements'] ) {
-                $what[] = 'admission requirements';
-            }
-            if ( $fresh && ( in_array( $fresh['ap'], array( 'Yes', 'No' ), true ) || in_array( $fresh['life'], array( 'Yes', 'No' ), true ) ) ) {
-                $what[] = 'credit policies';
-            }
-            if ( $fresh && $fresh['net_price'] && '' !== $fresh['net_price_year'] ) {
-                $what[] = 'average net price';
-            }
-            if ( count( $what ) > 1 ) {
-                $thin_ctas[] = 'See its ' . implode( ', ', array_slice( $what, 0, -1 ) ) . ' and ' . end( $what ) . '.';
-                $thin_ctas[] = 'See its ' . $what[0] . ' and more.';
-            } elseif ( $what ) {
-                $thin_ctas[] = 'See its ' . $what[0] . '.';
-            } else {
-                $thin_ctas[] = $fresh ? 'See its admissions details.' : 'Its admissions figures are under review.';
-            }
-            $short_cta = end( $thin_ctas );
-        }
-        $limit          = 160 - $len( $short_cta ) - 1;
-
-        $sentences = array();
-
-        // How selective the school is
-        if ( $acc > 0 && $fresh && '' !== $fresh['fall'] ) {
-            $for = ' for ' . $fresh['fall'];
-            if ( $acc < 10 ) {
-                $sentences[] = $subject . ' admitted just ' . $acc_txt . ' of applicants' . $for . '.';
-            } elseif ( $acc < 25 ) {
-                $sentences[] = $subject . ' is highly selective: it admitted ' . $acc_txt . ' of applicants' . $for . '.';
-            } elseif ( $acc < 50 ) {
-                $sentences[] = $subject . ' admitted ' . $acc_txt . ' of applicants' . $for . '.';
-            } elseif ( $acc < 75 ) {
-                $sentences[] = $subject . ' admitted more than half of applicants' . $for . ' (' . $acc_txt . ').';
-            } else {
-                $sentences[] = $subject . ' admitted most applicants' . $for . ' (' . $acc_txt . ').';
-            }
-        } elseif ( $acc > 0 ) {
-            if ( $acc < 10 ) {
-                $sentences[] = $subject . ' admits just ' . $acc_txt . ' of applicants.';
-            } elseif ( $acc < 25 ) {
-                $sentences[] = $subject . ' is highly selective, admitting ' . $acc_txt . ' of applicants.';
-            } elseif ( $acc < 50 ) {
-                $sentences[] = $subject . ' accepts ' . $acc_txt . ' of applicants.';
-            } elseif ( $acc < 75 ) {
-                $sentences[] = $subject . ' accepts more than half of applicants (' . $acc_txt . ').';
-            } else {
-                $sentences[] = $subject . ' accepts most applicants (' . $acc_txt . ').';
-            }
-        } elseif ( $fresh && $fresh['open'] ) {
-            $sentences[] = $subject . ' has an open admission policy.';
-        }
-
-        // What admitted students look like (drop the test-score clause if space is tight)
-        $who    = $acc > 0 ? 'Admitted students' : 'Admitted students at ' . $object;
-        $s2     = array();
-        if ( $tests ) {
-            $s2 = array_values( $tests );
-        } elseif ( '' !== $gpa ) {
-            if ( '' !== $test ) {
-                $s2[] = $who . ' average a ' . $gpa . ' GPA and typically score ' . $test . '.';
-            }
-            $s2[] = $who . ' average a ' . $gpa . ' GPA.';
-        } elseif ( '' !== $test ) {
-            $s2[] = $who . ' typically score ' . $test . '.';
-        }
-        if ( $s2 ) {
-            $head = implode( ' ', $sentences );
-            $pick = $tests ? '' : end( $s2 ); // the imported test sentences are left out when none fits
-            foreach ( $s2 as $candidate ) {
-                if ( $len( trim( $head . ' ' . $candidate ) ) <= $limit ) {
-                    $pick = $candidate;
-                    break;
+        $x       = gpa_college_seo_facts( $post_id );
+        $s       = $x['short'];
+        $poss    = preg_match( '/s$/', $s ) ? $s . "'" : $s . "'s";
+        $admits  = $s . ' admits ' . ( $x['just'] ? 'just ' : '' ) . $x['rate'] . ' of applicants.';
+        $gpa     = $poss . ' average high school GPA is ' . $x['gpa'] . ( $x['weighted'] ? ' (weighted)' : '' );
+        $scores  = array();
+        if ( in_array( $x['template'], array( 'gpa_rate', 'gpa', 'rate_scores' ), true ) ) {
+            foreach ( $x['sat'] as $sat ) {
+                if ( '' !== $x['act'] && 'rate_scores' === $x['template'] ) {
+                    $scores[] = 'Middle 50% SAT: ' . $sat . '; ACT: ' . $x['act'] . '.';
                 }
+                $scores[] = 'Middle 50% SAT: ' . $sat . '.';
             }
-            if ( '' !== $pick ) {
-                $sentences[] = $pick;
-            }
-        }
-
-        // Fill in with school facts when admissions data is thin. Try the fullest wording first and
-        // drop the least important detail (net price, enrollment, location) until it fits.
-        if ( count( $sentences ) < 2 ) {
-            $students   = $fresh ? ' undergraduates' : ' students'; // the federal import counts undergraduates
-            $where      = $loc ? ' in ' . $loc : '';
-            $candidates = array();
-            if ( $sentences ) {
-                if ( $enr > 0 ) {
-                    $candidates[] = "It's " . $article . ' ' . $type . $where . ( $loc ? ', with ' : ' with ' ) . number_format( $enr ) . $students . '.';
-                }
-                $candidates[] = "It's " . $article . ' ' . $type . $where . '.';
-                $candidates[] = "It's " . $article . ' ' . $type . '.';
-            } else {
-                $base = $subject . ' is ' . $article . ' ' . $type . $where;
-                if ( $enr > 0 && $price > 0 ) {
-                    $candidates[] = $base . ', with ' . number_format( $enr ) . $students . ' and an average net price of $' . number_format( $price ) . '.';
-                }
-                if ( $enr > 0 ) {
-                    $candidates[] = $base . ', with ' . number_format( $enr ) . $students . '.';
-                } elseif ( $price > 0 ) {
-                    $candidates[] = $base . ', with an average net price of $' . number_format( $price ) . '.';
-                }
-                $candidates[] = $base . '.';
-                if ( $where ) {
-                    $candidates[] = $subject . ' is ' . $article . ' ' . $type . '.';
-                }
-            }
-            $head = implode( ' ', $sentences );
-            $pick = ( $fresh && $sentences ) ? '' : end( $candidates ); // a second sentence only when it fits
-            foreach ( $candidates as $candidate ) {
-                if ( $len( trim( $head . ' ' . $candidate ) ) <= $limit ) {
-                    $pick = $candidate;
-                    break;
-                }
-            }
-            if ( '' !== $pick ) {
-                $sentences[] = $pick;
+            if ( '' !== $x['act'] && ( 'rate_scores' === $x['template'] || ! $x['sat'] ) ) {
+                $scores[] = 'Middle 50% ACT: ' . $x['act'] . '.';
             }
         }
-
-        // Call to action: rotate the wording across pages, using the first version that fits (pages without
-        // admissions figures: the fullest list of what they have that fits)
-        $ctas = $has_admissions
-            ? array( 'See what it takes to get in.', 'See the full admission requirements.', "Here's what it takes to get in." )
-            : $thin_ctas;
-        if ( $cds ) {
-            $ctas = array( 'See its average GPA and what it takes to get in.', 'See its average GPA and full requirements.' );
-        }
-        $body  = implode( ' ', $sentences );
-        $cta   = $short_cta;
-        $n     = count( $ctas );
-        $start = $thin_ctas ? 0 : $post_id;
-        for ( $i = 0; $i < $n; $i++ ) {
-            $option = $ctas[ ( $start + $i ) % $n ];
-            if ( $len( $body . ' ' . $option ) <= 160 ) {
-                $cta = $option;
+        $requires = $x['requires'] ? array( 'what it requires' ) : array();
+        $price    = $x['price'] ? array( 'its average net price' ) : array();
+        switch ( $x['template'] ) {
+            case 'gpa_rate':
+                $lead = $gpa . ', and it admits ' . ( $x['just'] ? 'just ' : '' ) . $x['rate'] . ' of applicants.';
+                $ctas = array( 'Enter your GPA to see where you stand.' );
                 break;
+            case 'gpa':
+                $lead = $gpa . '.';
+                $ctas = array( 'Enter your GPA to see where you stand.' );
+                break;
+            case 'rate_scores':
+                $lead = $admits;
+                $ctas = array( 'Enter your GPA and test score to see where you stand.', 'Enter your GPA to see where you stand.' );
+                break;
+            case 'rate':
+                $lead = $admits;
+                $ctas = array_unique( array(
+                    'See ' . gpa_college_seo_list( array_merge( $requires, $price, array( 'how your GPA compares' ) ) ) . '.',
+                    'See ' . gpa_college_seo_list( array_merge( $requires, array( 'how your GPA compares' ) ) ) . '.',
+                    'See how your GPA compares.',
+                ) );
+                break;
+            case 'open':
+                $lead  = array(
+                    $s . ' has open admission, so most applicants with a high school diploma or equivalent are accepted.',
+                    $s . ' has open admission, so most high school graduates are accepted.',
+                );
+                $its   = array_merge( $x['credits'] ? array( 'credit policies' ) : array(), $x['price'] ? array( 'average net price' ) : array() );
+                $ctas  = array();
+                $ctas[] = 'See ' . gpa_college_seo_list( array_merge( $requires, $its ? array( 'its ' . gpa_college_seo_list( $its ) ) : array() ) ) . '.';
+                if ( $requires && $x['price'] ) {
+                    $ctas[] = 'See what it requires and its average net price.';
+                }
+                if ( $its ) {
+                    $ctas[] = 'See its ' . gpa_college_seo_list( $its ) . '.';
+                }
+                if ( $x['price'] ) {
+                    $ctas[] = 'See its average net price.';
+                }
+                if ( $requires ) {
+                    $ctas[] = 'See what it requires.';
+                }
+                $ctas = array_values( array_unique( array_filter( $ctas, function ( $c ) { return 'See .' !== $c; } ) ) );
+                if ( ! $ctas ) {
+                    $ctas = array( 'See how your GPA compares.' );
+                }
+                break;
+            default:
+                $lead = '';
+                $what = array_merge( $x['requires'] ? array( 'admission requirements' ) : array(), $x['credits'] ? array( 'credit policies' ) : array(), $x['price'] ? array( 'average net price' ) : array() );
+                $ctas = array();
+                for ( $n = count( $what ); $n > 0; $n-- ) {
+                    $ctas[] = 'See its ' . gpa_college_seo_list( array_slice( $what, 0, $n ) ) . '.';
+                }
+                if ( ! $ctas ) {
+                    $ctas = array( 'Its admissions figures are under review.' );
+                }
+        }
+        // the sentence on the kind of school and where it is, fullest first (pages without admissions figures start
+        // with it; elsewhere it is used only to reach 140)
+        $kind = gpa_college_seo_article( $x['type'] ) . ' ' . $x['type'];
+        $who  = '' === $lead ? $s . ' is ' : "It's ";
+        $pads = '' === $lead ? array() : array( '' );
+        if ( '' !== $x['loc'] ) {
+            if ( $x['enrollment'] > 0 ) {
+                $pads[] = $who . $kind . ' in ' . $x['loc'] . ', with ' . number_format( $x['enrollment'] ) . ' undergraduates.';
+            }
+            $pads[] = $who . $kind . ' in ' . $x['loc'] . '.';
+        }
+        if ( $x['enrollment'] > 0 ) {
+            $pads[] = $who . $kind . ' with ' . number_format( $x['enrollment'] ) . ' undergraduates.';
+        }
+        $pads[] = $who . $kind . '.';
+        if ( '' !== $x['loc'] && '' !== $lead ) {
+            $pads[] = "It's in " . $x['loc'] . '.';
+            if ( false !== strpos( $x['loc'], ', ' ) ) {
+                $pads[] = "It's in " . substr( strrchr( $x['loc'], ',' ), 2 ) . '.'; // the state
             }
         }
-        return $body . ' ' . $cta;
+        $scores[] = '';
+        $leads    = (array) $lead;
+        $fallback = '';
+        $shortest = '';
+        foreach ( $leads as $first ) {               // Digant's wording first
+            foreach ( $scores as $score ) {          // test scores kept when they fit
+                foreach ( $ctas as $cta ) {          // the fullest closing line that fits
+                    foreach ( $pads as $pad ) {      // no filler unless the description is short
+                        $text = trim( preg_replace( '/\s+/', ' ', implode( ' ', array( $first, $pad, $score, $cta ) ) ) );
+                        $len  = mb_strlen( $text );
+                        if ( $len >= 140 && $len <= 158 ) {
+                            return $text;
+                        }
+                        if ( $len <= 158 && $len > mb_strlen( $fallback ) ) {
+                            $fallback = $text;
+                        }
+                        if ( '' === $shortest || $len < mb_strlen( $shortest ) ) {
+                            $shortest = $text;
+                        }
+                    }
+                }
+            }
+        }
+        // nothing lands in 140–158: the longest under 158, else the shortest version (both flagged in the export)
+        return '' !== $fallback ? $fallback : $shortest;
+    }
+}
+if ( ! function_exists( 'gpa_college_data_refreshed' ) ) {
+    // dateModified for a college page: the latest admissions data refresh (option gpa_admissions_data_refreshed,
+    // a date set when a refresh goes live), not the last time the post happened to be saved.
+    function gpa_college_data_refreshed( $post_id ) {
+        $refresh = (string) get_option( 'gpa_admissions_data_refreshed', '2026-10-02' );
+        return preg_match( '/^\d{4}-\d{2}-\d{2}/', $refresh ) ? $refresh : get_post_modified_time( 'c', true, $post_id );
+    }
+}
+if ( ! function_exists( 'gpa_college_seo_article' ) ) {
+    function gpa_college_seo_article( $word ) {
+        return in_array( strtolower( $word[0] ), array( 'a', 'e', 'i', 'o', 'u' ), true ) ? 'an' : 'a';
     }
 }
 
@@ -2175,6 +2221,7 @@ function gpa_ajax_filter_colleges() {
 
     // ?gpa=3.5: the GPA-band list's colleges (college-v2.php: a cited Common Data Set average in the list's window, tier
     // A or B). Any other value, including the old 3.5_plus style links, lists every college instead of none.
+    $band_query = null;
     if ( function_exists( 'gpa_college_band_meta_query' ) && ( $band_query = gpa_college_band_meta_query( $gpa_filter ) ) ) {
         $meta_query[] = $band_query;
     }
@@ -2245,6 +2292,25 @@ function gpa_ajax_filter_colleges() {
     $sort_cfg = isset( $sort_map[ $sort ] ) ? $sort_map[ $sort ] : $sort_map['name_asc'];
     foreach ( $sort_cfg as $k => $v ) {
         $args[ $k ] = $v;
+    }
+
+    // ?gpa=3.5 in its default order: as on the GPA-band lists (gpa_bands.py; Digant, 2026-10-03 06:57), tier A first,
+    // then larger undergraduate enrollment, then name. A band holds a few dozen colleges, so they're ordered here.
+    if ( ! empty( $band_query ) && 'name_asc' === $sort ) {
+        add_filter( 'posts_search', 'gpa_college_hub_search_sql', 10, 2 );
+        $ids = get_posts( array_merge( $args, array( 'posts_per_page' => -1, 'paged' => 1, 'fields' => 'ids', 'no_found_rows' => true, 'suppress_filters' => false ) ) );
+        remove_filter( 'posts_search', 'gpa_college_hub_search_sql', 10 );
+        update_meta_cache( 'post', $ids );
+        $key = function ( $id ) {
+            $n = str_replace( ',', '', (string) get_post_meta( $id, 'enrollment', true ) );
+            return array( 'A' === get_post_meta( $id, 'admissions_tier', true ) ? 0 : 1, -( is_numeric( $n ) ? (float) $n : 0 ), get_the_title( $id ) );
+        };
+        usort( $ids, function ( $a, $b ) use ( $key ) {
+            return $key( $a ) <=> $key( $b );
+        } );
+        $args['post__in'] = $ids ? $ids : array( 0 );
+        $args['orderby']  = 'post__in';
+        unset( $args['order'] );
     }
 
     add_filter( 'posts_search', 'gpa_college_hub_search_sql', 10, 2 );
@@ -3480,26 +3546,38 @@ function gpa_scale_table_mark_rows( $html, $block ) {
 	if ( 'core/table' !== $block['blockName'] || false === strpos( $html, 'gpa-scale-table' ) ) {
 		return $html;
 	}
-	$current = '';
-	$slug    = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
-	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) ) {
-		$current = $m[1] . '.' . $m[2];
+	// The page's own GPA is marked beside the chart on its nearest letter's row (both rows on a tie, both 4.0
+	// rows for a 4.0), using the site-wide rule gpa_scale_figures(); rows carry data-letter so the weighted
+	// view (gpa-scale-tools.js) can move the mark.
+	$marks = array();
+	$mark  = '';
+	$slug  = is_singular() ? (string) get_post_field( 'post_name', get_queried_object_id() ) : '';
+	if ( preg_match( '#^([0-4])-([0-9])-gpa$#', $slug, $m ) && function_exists( 'gpa_scale_figures' ) ) {
+		$gs = $m[1] . '.' . $m[2];
+		list( $letter, $pct ) = gpa_scale_figures( $gs );
+		$marks = explode( '/', $letter );
+		if ( '4.0' === $gs ) {
+			$marks[] = 'A+';
+		}
+		$mark = 'Your ' . $gs . ' · ' . $pct;
 	}
 	return preg_replace_callback(
 		'#<tr>(.*?)</tr>#s',
-		function ( $row ) use ( $current ) {
+		function ( $row ) use ( $marks, $mark ) {
 			if ( ! preg_match_all( '#<td\b[^>]*>(.*?)</td>#s', $row[1], $cells ) || count( $cells[1] ) < 3 ) {
 				return $row[0]; // header row or unexpected shape
 			}
-			$gpa    = trim( wp_strip_all_tags( $cells[1][0] ) );
-			$letter = strtolower( substr( trim( wp_strip_all_tags( end( $cells[1] ) ) ), 0, 1 ) );
-			$class  = in_array( $letter, array( 'a', 'b', 'c', 'd', 'f' ), true ) ? 'is-band-' . $letter : '';
-			$attrs  = '';
-			if ( '' !== $current && $gpa === $current ) {
+			$letter_full = trim( wp_strip_all_tags( end( $cells[1] ) ) );
+			$letter      = strtolower( substr( $letter_full, 0, 1 ) );
+			$class       = in_array( $letter, array( 'a', 'b', 'c', 'd', 'f' ), true ) ? 'is-band-' . $letter : '';
+			$attrs       = ' data-letter="' . esc_attr( $letter_full ) . '"';
+			$inner       = $row[1];
+			if ( $marks && in_array( $letter_full, $marks, true ) ) {
 				$class .= ' is-current-gpa';
-				$attrs  = ' aria-current="true"';
+				$attrs .= ' aria-current="true"';
+				$inner  = preg_replace( '#<td\b#', '<td data-mark="' . esc_attr( $mark ) . '"', $inner, 1 );
 			}
-			return '' === trim( $class ) ? $row[0] : '<tr class="' . esc_attr( trim( $class ) ) . '"' . $attrs . '>' . $row[1] . '</tr>';
+			return '<tr class="' . esc_attr( trim( $class ) ) . '"' . $attrs . '>' . $inner . '</tr>';
 		},
 		$html
 	);

@@ -40,7 +40,7 @@ body {
 }
 
 /* Text blocks: 800px, centred inside the column (ad slots are not text, so they keep the full width) */
-:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources, .gpa-jump):not(#root *, .gpacalc-mount *, .gpa-jump *) {
     max-width: var(--gpa-text-max) !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -48,7 +48,7 @@ body {
 
 /* Text inset: 40px of white either side of the text from 641px up, 20px on phones */
 @media (min-width: 641px) {
-    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources, .gpa-jump):not(#root *, .gpacalc-mount *, .gpa-jump *) {
         max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
     }
 }
@@ -73,7 +73,7 @@ body {
         padding-left: 40px !important;
         padding-right: 40px !important;
     }
-    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources, .gpa-jump):not(#root *, .gpacalc-mount *, .gpa-jump *) {
         max-width: 100% !important;
     }
     :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content figure.wp-block-table {

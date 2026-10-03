@@ -241,6 +241,41 @@ Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
    - Live pieces (hub `?gpa=` filter, the college-page button) are built next and wait on Digant's go.
 5. **State hubs** (`/admissions/<state>/`, the "See all colleges in [State]" target): outline and one sample next.
 
+## GPA scale work: weighted vs unweighted (roadmap checklist, 2026-10-03)
+
+Branch `claude/gpa-scale-hub-weighted` (from the admissions branch, so it carries the live theme). Chart site-wide:
+A+ 97–100 and A 93–96 (both 4.0). Rule for a GPA's letter and % (`gpa_scale_figures()` in `gpa-shortcodes.php`,
+`scripts/lib/gpa_rule.py`, `gpa-scale-tools.js`): nearest chart letter (both on a tie), % interpolated between the
+letters' range midpoints with "≈", chart values show their range. 14 of 31 pages change figures (e.g. 3.9 94%→≈93%,
+2.8 B→B−, 4.0 93–95%→93–100%).
+- Hub: `[gpa_scale_converter]` above the letter-grade table; "Look up a GPA" one 2.0–4.5 grid (`[gpa_scale_lookup]`,
+  "Weighted" tag above 4.0) plus one line on weighted vs unweighted.
+- GPA pages: `[gpa_scale_view]` replaces the quick facts: Unweighted | Weighted toggle (title, summary and chart mark
+  follow it), weighted mini converter (AP/IB +1.0, Honors +0.5 → estimated unweighted GPA, letter, %), the page's one
+  homepage link (anchor by page ID) and the Weighted GPA calculator. The page's row inserted in the chart is removed;
+  the theme marks the GPA beside its nearest letter's row. FAQ letter and weighted answers follow the rule / toggle.
+- View v2 (Digant 2026-10-03 07:26): Unweighted tab is a static summary (letter, % with the letter's range, on a
+  5.0 scale = GPA ÷ 4 × 5, typical weighted ≈ GPA + 0.25 with about a quarter of classes AP/IB), no calculator;
+  Weighted tab keeps the estimator with results styled as results (tinted panel, estimated unweighted GPA as the
+  headline); a line links the Grade Conversion page (/grade-conversion/) for any other GPA; 4.1+ pages open on
+  the Weighted tab with no toggle. Previews `content/gpa-scale-previews/box-*`.
+- View v3 (07:45): one flowing page, no panels: the view sits in the content column with no box, the summary and
+  results are plain label/value rows with hairline dividers, and the page's scale chart uses the same full width.
+  (Superseded by v4: Digant meant body text width, not full width.)
+- View v4 (07:59): the card, the "Here is where…" lead-in and the chart all use body text width
+  (`min(var(--gpa-text-max), calc(100% - 80px))`, auto margins, the paragraphs' left edge). One tinted card (1px
+  border, 16px radius, 24px padding, 16px on phone) holds the toggle and figures; the chart stays outside it.
+  Desktop: tiles in one row (label small on top, value below). Weighted = 3 inputs, then 3 result tiles with the
+  estimated unweighted GPA largest; Unweighted = letter, percentage, typical weighted (5.0-scale row dropped).
+  Phone: label/value rows. Chart "your GPA" row keeps its band colour + 3px blue left bar + bold + badge.
+  Hub: one 2.0–4.5 grid with Weighted tags; the old Custom HTML "GPA Converter" is removed (new converter only).
+  Previews `content/gpa-scale-previews/v4-*`.
+- Content script `scripts/wp/gpa_scale_view_pass.php` (built by `scripts/build_gpa_scale_view_pass.py`).
+- The converter is standalone JS until the shared core (calculator-unification thread) is live.
+- State: v4 previews of 3.9 (both tabs, 1366 + 390) sent, awaiting Digant's go before anything goes live.
+- Still to do on rollout: the other 29 GPA pages, Rank Math titles/descriptions with the new figures, chart images
+  without the inserted row, the college GPA page chart (has A 93–100%, no A+ row), 4.1–4.5 pages, prev/next across 4.0→4.1.
+
 ## Open issues
 
 - Live theme = repo theme minus the unreleased 1.2 edits. Ship 1.2 (or drop it) via `scripts/deploy_theme.sh` so

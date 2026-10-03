@@ -750,3 +750,59 @@ if ( ! function_exists( 'gpa_college_v2_assets' ) ) {
     }
     add_action( 'wp_enqueue_scripts', 'gpa_college_v2_assets', 21 );
 }
+
+// College pages print their own "On this page" list (single-colleges.php, Design's details.gpa-toc component), so the
+// theme's browser-built table of contents stays off them (Digant 2026-10-03 16:46: no JS-built contents).
+add_action( 'wp', function () {
+    if ( is_singular( 'colleges' ) ) {
+        remove_action( 'wp_footer', 'gpa_toc_builder', 31 );
+    }
+} );
+
+if ( ! function_exists( 'gpa_college_toc' ) ) {
+    /**
+     * The "On this page" list for a college page: section id => H2 text, word for word, in page order (the compare box,
+     * then the numbered sections). Empty under 3 sections (spec rev 33: 3+ numbered sections, site-wide).
+     * single-colleges.php prints it and gpa_college_toc_schema() names
+     * the same entries in the schema, so the links, the H2s and the schema names stay identical (Digant 2026-10-03 18:29).
+     */
+    function gpa_college_toc( $post_id, $v = null, $sections = null, $compare = null ) {
+        $v        = null === $v ? gpa_college_view( $post_id ) : $v;
+        $sections = null === $sections ? gpa_college_sections( $v ) : $sections;
+        if ( null === $compare ) {
+            $compare = gpa_college_v2( $post_id ) ? gpa_college_compare_box( $v ) : '';
+        }
+        $toc = '' !== $compare ? array( 'compare' => 'How does your GPA compare?' ) : array();
+        foreach ( $sections as $section ) {
+            $toc[ $section['id'] ] = $section['title'];
+        }
+        return count( $toc ) >= 3 ? $toc : array();
+    }
+}
+
+if ( ! function_exists( 'gpa_college_toc_schema' ) ) {
+    // The same list as SiteNavigationElement entries, in the shape Rank Math gives its TOC block on other pages (a nested
+    // array in @graph sharing the @id #rank-math-toc), so scripts/qa/check_toc_schema.py can hold college pages to it.
+    function gpa_college_toc_schema( $data ) {
+        if ( ! is_singular( 'colleges' ) || ! function_exists( 'gpa_college_view' ) ) {
+            return $data;
+        }
+        $post_id = get_queried_object_id();
+        $url     = get_permalink( $post_id );
+        $nav     = array();
+        foreach ( gpa_college_toc( $post_id ) as $id => $h2 ) {
+            $nav[] = array(
+                '@context' => 'https://schema.org',
+                '@type'    => 'SiteNavigationElement',
+                '@id'      => $url . '#rank-math-toc',
+                'name'     => $h2,
+                'url'      => $url . '#' . $id,
+            );
+        }
+        if ( $nav ) {
+            $data['gpaCollegeToc'] = $nav;
+        }
+        return $data;
+    }
+    add_filter( 'rank_math/json_ld', 'gpa_college_toc_schema', 120, 1 );
+}

@@ -1,0 +1,7 @@
+# Pages whose "On this page" list, H2s and Rank Math SiteNavigationElement schema must agree.
+# check_toc_schema.py finds every published page whose saved content contains "gpa-toc" live on the server
+# (WP-CLI over SSH), so pages saved with the collapsed list need no entry here. This file is the extras list
+# (pages whose list comes from a template, e.g. college pages) and the fallback when the server can't be reached.
+# Single source: other branches take this file and the script from claude/design-system-overhaul-xkzbf0.
+https://gpacalculator.net/college-gpa-calculator/
+https://gpacalculator.net/gpa-scale/3-7-gpa/

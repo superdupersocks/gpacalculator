@@ -1041,3 +1041,18 @@ body.gpa-college-v2.single-colleges #page #main .entry-content ul.gpa-college-si
 body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-college-similar__name { position: static; padding-right: 0; }
 body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-college-similar__name::after { right: 4px; top: 50%; margin-top: -0.7em; }
 body.gpa-college-v2.single-colleges #page #main .entry-content .gpa-college-similar__note { margin-top: 0; }
+
+/* ---------- FAQ as <details> (Digant, 2026-10-03 16:40) ----------
+   single-colleges.php prints each question as a <details> (answer in the HTML, first one open). These rules give it
+   the look of the shared accordion (components.css 8): a divider between items and the chevron turning when open. */
+body.single-colleges #page .entry-content .rank-math-block .gpa-faq-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-top: 1px solid var(--gpa-divider);
+}
+body.single-colleges #page .entry-content .rank-math-block .gpa-faq-item:first-child { border-top: 0; }
+body.single-colleges #page .entry-content .rank-math-block summary.rank-math-question { cursor: pointer; list-style: none; }
+body.single-colleges #page .entry-content .rank-math-block summary.rank-math-question::-webkit-details-marker { display: none; }
+body.single-colleges #page .entry-content .rank-math-block summary.rank-math-question:hover { color: var(--gpa-primary) !important; }
+body.single-colleges #page .entry-content .rank-math-block summary.rank-math-question:focus-visible { outline: 2px solid var(--gpa-indigo-500); outline-offset: -2px; border-radius: 8px; }
+body.single-colleges #page .entry-content .rank-math-block .gpa-faq-item[open] > .rank-math-question::after { transform: rotate(180deg); }

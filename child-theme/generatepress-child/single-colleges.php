@@ -120,13 +120,18 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 
 					<?php if ( $faqs ) : ?>
 					<h2 id="faq"<?php echo $v2 ? ' class="gpa-no-number"' : ''; ?>>Frequently asked questions</h2>
-					<div id="rank-math-faq" class="rank-math-block">
+					<?php
+					// Each question is a <details> with its answer in the HTML, the first one open (Digant 2026-10-03 16:40),
+					// so nothing is added on open and the FAQPage JSON-LD (same gpa_college_faqs() text) matches the page.
+					// The items aren't .rank-math-list-item, so the theme's JS accordion (gpa_faq_accordion) leaves them alone.
+					?>
+					<div id="rank-math-faq" class="rank-math-block gpa-faq--details">
 						<div class="rank-math-list">
 							<?php foreach ( $faqs as $i => $faq ) : ?>
-							<div id="faq-<?php echo (int) $i + 1; ?>" class="rank-math-list-item">
-								<h3 class="rank-math-question"><?php echo esc_html( $faq['question'] ); ?></h3>
+							<details id="faq-<?php echo (int) $i + 1; ?>" class="gpa-faq-item"<?php echo 0 === $i ? ' open' : ''; ?>>
+								<summary class="rank-math-question"><?php echo esc_html( $faq['question'] ); ?></summary>
 								<div class="rank-math-answer"><p><?php echo wp_kses_post( $faq['answer'] ); ?></p></div>
-							</div>
+							</details>
 							<?php endforeach; ?>
 						</div>
 					</div>

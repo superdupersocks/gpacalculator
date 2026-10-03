@@ -216,6 +216,19 @@ Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
    `admissions-cleanup-20261003-034126-log.tsv`). Server steps: `docs/ADMISSIONS_TIERING_RUNBOOK.md`.
 3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. In progress.
 
+## GPA scale work (Digant's plan of 2026-10-03)
+
+Branch `claude/gpa-scale-hub-weighted` (from the admissions branch, so it carries the live theme). Each step waits
+for Digant's go on before/after screenshots (`content/gpa-scale-previews/step*.png`) before anything goes live.
+1. Hub /gpa-scale/: `[gpa_scale_converter]` above the letter-grade table, "Look up a GPA" cards (`[gpa_scale_lookup]`,
+   crawlable links to every GPA page from 2.0 up; the weighted group appears once 4.1–4.5 exist). Shortcodes in
+   `gpa-shortcodes.php`, styles in `components.css` section 12, script `gpa-scale-tools.js`. Drafted, awaiting go.
+2. 3.0–4.0 pages: "What if it's weighted?" section with the page's one homepage link (anchor by page ID) and the
+   Weighted GPA calculator; replaces the older weighted notes. `scripts/wp/gpa_scale_hub_weighted.php`. Drafted, awaiting go.
+3. 4.1–4.5 weighted pages: outline + a 4.2 sample after the go on 1–2.
+4. College lists on 3.0–4.5 pages: from the admissions work's GPA-band lists when they're ready (no own data).
+5. Prev/next across 4.0 → 4.1.
+
 ## Open issues
 
 - Live theme = repo theme minus the unreleased 1.2 edits. Ship 1.2 (or drop it) via `scripts/deploy_theme.sh` so

@@ -242,3 +242,118 @@ add_action( 'init', function () { add_shortcode( 'gpa_example', 'gpa_example_sho
 function gpa_render_worked_example( $example = 'college' ) {
     return gpa_example_shortcode( array( 'type' => 'gpa', 'example' => $example ) );
 }
+
+/* ==========================================================================
+   /gpa-scale/ hub: quick converter and "Look up a GPA" cards
+   [gpa_scale_converter]  letter grade -> grade points + % range + link to that GPA's page
+   [gpa_scale_lookup]     every published /gpa-scale/<x-y>-gpa/ page from 2.0 up, as crawlable <a> cards
+                          in two groups (unweighted 4.0 scale; weighted above 4.0). Groups with no pages are left out.
+   Data: the same scale as the hub's letter-grade table; each GPA page's letter and % from its own text.
+   ========================================================================== */
+
+/** The hub table's scale: letter => [grade points, percentage range]. */
+function gpa_scale_letter_rows() {
+	return array(
+		'A+' => array( '4.0', '97–100%' ), 'A' => array( '4.0', '93–96%' ), 'A−' => array( '3.7', '90–92%' ),
+		'B+' => array( '3.3', '87–89%' ), 'B' => array( '3.0', '83–86%' ), 'B−' => array( '2.7', '80–82%' ),
+		'C+' => array( '2.3', '77–79%' ), 'C' => array( '2.0', '73–76%' ), 'C−' => array( '1.7', '70–72%' ),
+		'D+' => array( '1.3', '67–69%' ), 'D' => array( '1.0', '65–66%' ), 'D−' => array( '0.7', '60–64%' ),
+		'F'  => array( '0.0', 'Below 60%' ),
+	);
+}
+
+/** Each unweighted GPA page's own letter and percentage (content/gpa-scale-intros.md). */
+function gpa_scale_page_figures() {
+	return array(
+		'4.0' => 'A, 93–95%', '3.9' => 'A, 94%', '3.8' => 'A−, 90–92%', '3.7' => 'A−, 92%', '3.6' => 'A−, 90–92%',
+		'3.5' => 'B+/A−, 89–90%', '3.4' => 'B+, 89%', '3.3' => 'B+, 87–89%', '3.2' => 'B+, 87%', '3.1' => 'B, 86%',
+		'3.0' => 'B, 83–86%', '2.9' => 'B, 84%', '2.8' => 'B, 83%', '2.7' => 'B−, 80–82%', '2.6' => 'B−, 81%',
+		'2.5' => 'B−, 80%', '2.4' => 'C+, 79%', '2.3' => 'C+, 77–79%', '2.2' => 'C+, 77%', '2.1' => 'C, 76%',
+		'2.0' => 'C, 73–76%',
+	);
+}
+
+/** Published GPA pages under the hub: [ '3.8' => permalink, ... ], highest first. Filterable for previews. */
+function gpa_scale_gpa_pages() {
+	static $pages = null;
+	if ( null !== $pages ) {
+		return $pages;
+	}
+	$pages = array();
+	$hub   = get_page_by_path( 'gpa-scale' );
+	if ( $hub ) {
+		foreach ( get_pages( array( 'parent' => $hub->ID, 'post_status' => 'publish' ) ) as $p ) {
+			if ( preg_match( '#^([0-9])-([0-9])-gpa$#', $p->post_name, $m ) ) {
+				$pages[ $m[1] . '.' . $m[2] ] = get_permalink( $p );
+			}
+		}
+	}
+	$pages = apply_filters( 'gpa_scale_gpa_pages', $pages );
+	uksort( $pages, function ( $a, $b ) { return (float) $b <=> (float) $a; } );
+	return $pages;
+}
+
+function gpa_scale_enqueue_tools() {
+	wp_enqueue_script( 'gpa-scale-tools', get_stylesheet_directory_uri() . '/gpa-scale-tools.js', array(), gpa_asset_ver( 'gpa-scale-tools.js' ), array( 'in_footer' => true, 'strategy' => 'defer' ) );
+}
+
+add_action( 'init', function () {
+	add_shortcode( 'gpa_scale_converter', 'gpa_scale_converter_shortcode' );
+	add_shortcode( 'gpa_scale_lookup', 'gpa_scale_lookup_shortcode' );
+} );
+
+function gpa_scale_converter_shortcode() {
+	$pages   = gpa_scale_gpa_pages();
+	$default = 'A';
+	$opts    = '';
+	foreach ( gpa_scale_letter_rows() as $letter => $row ) {
+		$url   = isset( $pages[ $row[0] ] ) ? $pages[ $row[0] ] : '';
+		$opts .= sprintf(
+			'<option value="%1$s" data-points="%2$s" data-range="%3$s" data-url="%4$s"%5$s>%1$s</option>',
+			esc_attr( $letter ), esc_attr( $row[0] ), esc_attr( $row[1] ), esc_url( $url ), selected( $letter, $default, false )
+		);
+	}
+	list( $pts, $range ) = gpa_scale_letter_rows()[ $default ];
+	$url = isset( $pages[ $pts ] ) ? $pages[ $pts ] : '';
+	gpa_scale_enqueue_tools();
+	return '<div class="gpa-quickconv" data-gpa-quickconv>'
+		. '<label class="gpa-quickconv__field"><span class="gpa-quickconv__label">Letter grade</span>'
+		. '<select class="gpa-quickconv__select" aria-describedby="gpa-quickconv-out">' . $opts . '</select></label>'
+		. '<div class="gpa-quickconv__out" id="gpa-quickconv-out" aria-live="polite">'
+		. '<div class="gpa-quickconv__stat"><span class="gpa-quickconv__label">Grade points</span><strong data-out="points">' . esc_html( $pts ) . '</strong></div>'
+		. '<div class="gpa-quickconv__stat"><span class="gpa-quickconv__label">Percentage range</span><strong data-out="range">' . esc_html( $range ) . '</strong></div>'
+		. '<a class="gpa-quickconv__link" data-out="link" href="' . esc_url( $url ) . '"' . ( $url ? '' : ' hidden' ) . '>What a <span data-out="gpa">' . esc_html( $pts ) . '</span> GPA means <span aria-hidden="true">&rarr;</span></a>'
+		. '</div></div>';
+}
+
+function gpa_scale_lookup_shortcode() {
+	$pages   = gpa_scale_gpa_pages();
+	$figs    = gpa_scale_page_figures();
+	$popular = array( '3.0', '3.5', '4.0' );
+	$groups  = array(
+		'unweighted' => array( 'Unweighted (4.0 scale)', array() ),
+		'weighted'   => array( 'Weighted (above 4.0)', array() ),
+	);
+	foreach ( $pages as $gpa => $url ) {
+		$g = (float) $gpa;
+		if ( $g < 2.0 ) {
+			continue;
+		}
+		$key = $g > 4.0 ? 'weighted' : 'unweighted';
+		$sub = 'weighted' === $key ? 'Weighted, AP/Honors' : ( isset( $figs[ $gpa ] ) ? $figs[ $gpa ] : '' );
+		$pop = in_array( $gpa, $popular, true );
+		$groups[ $key ][1][] = sprintf(
+			'<li><a class="gpa-lookup__card%1$s" href="%2$s"><span class="gpa-lookup__num">%3$s</span><span class="gpa-lookup__sub">%4$s</span>%5$s</a></li>',
+			$pop ? ' is-popular' : '', esc_url( $url ), esc_html( $gpa ), esc_html( $sub ),
+			$pop ? '<span class="gpa-lookup__tag">Popular</span>' : ''
+		);
+	}
+	$out = '<div class="gpa-lookup">';
+	foreach ( $groups as $key => list( $label, $cards ) ) {
+		if ( ! $cards ) {
+			continue;
+		}
+		$out .= '<h3 class="gpa-lookup__group">' . esc_html( $label ) . '</h3><ul class="gpa-lookup__grid">' . implode( '', $cards ) . '</ul>';
+	}
+	return $out . '</div>';
+}

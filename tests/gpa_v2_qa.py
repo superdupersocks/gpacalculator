@@ -196,6 +196,7 @@ def fill_college(p, case):
 def check_college(p, case, label):
     e = college_expect(case)
     R.check(f"{label} cumulative", text(p, ".calc-score"), fmt(e["gpa"]))
+    R.check(f"{label} result label", text(p, ".calc-result .calc-kicker"), "Cumulative GPA" if len(case["terms"]) > 1 or case["prior"] else "Semester GPA")
     for i, g in enumerate(e["terms"] if len(e["terms"]) > 1 else []):  # one semester: no semester header
         R.check(f"{label} term {i + 1}", text(p, f".gpa-term:nth-child({i + 1}) .gpa-term-gpa"), f"GPA {fmt(g)}")
     R.check(f"{label} credits", p.locator(".calc-stat").nth(0).locator(".calc-stat-v").inner_text(), fmt_num(e["credits"]))
@@ -319,10 +320,33 @@ def math(s):
     row.locator(".gpa-f-grade select").select_option("D")
     row.locator(".gpa-f-cr input").fill("3")
     R.check("edge below 2.0 verdict", "below the 2.0" in (text(p, ".calc-verdict") or ""), True)
-    R.check("edge below 2.0 planner label", text(p, ".calc-next .calc-btn-primary"), "Open planner: get back above 2.0")
+    R.check("edge below 2.0 planner label", text(p, ".calc-next .calc-btn-primary"), "Plan getting back above 2.0")
     p.locator(".calc-next .calc-btn-primary").click()
     R.check("edge rescue target defaults to 2.0", p.input_value("#college-t-gpa"), "2.00")
     R.check("edge rescue needed", text(p, ".calc-plan-big"), fmt((2.0 * 18 - 3) / 15))
+    # P, NP and W: on the grade list as "Not counted in GPA", left out of the math
+    fresh(p)
+    groups = p.evaluate("[...document.querySelector('.gpa-row .gpa-f-grade select').querySelectorAll('optgroup')].map((g) => [g.label, [...g.children].map((o) => o.value)])")
+    R.check("edge P/NP/W: grade list group", groups, [["Not counted in GPA", ["P", "NP", "W"]]])
+    rows = p.locator(".gpa-row")
+    rows.nth(0).locator(".gpa-f-grade select").select_option("B")
+    rows.nth(0).locator(".gpa-f-cr input").fill("4")
+    names = {"P": "P (pass)", "NP": "NP (no pass)", "W": "W (withdrawn)"}
+    for i, g in enumerate(("P", "NP", "W")):
+        r = rows.nth(i + 1)
+        r.locator(".gpa-f-grade select").select_option(g)
+        if g == "W":
+            r.locator(".gpa-f-cr input").fill("")  # a withdrawal needs no credits
+        R.check(f"edge {g}: note under the row", r.locator(".calc-row-msg").inner_text(), f"Not counted: {names[g]} isn’t counted in GPA.")
+        R.check(f"edge {g}: no error", r.locator(".calc-row-msg.is-error").count(), 0)
+        R.check(f"edge {g}: GPA unchanged", text(p, ".calc-score"), "3.00")
+        R.check(f"edge {g}: credits unchanged", text(p, ".calc-stat:nth-child(1) .calc-stat-v"), "4")
+    R.check("edge P/NP/W: result note", text(p, ".calc-result-note"), "3 courses not counted (see the note under each).")
+    R.check("edge P/NP/W: auto-added a blank row after W", rows.count(), 5)
+    opts(p)
+    p.select_option("#college-scale", "no-plus-minus")
+    R.check("edge P/NP/W: kept on the no plus/minus scale", text(p, ".calc-score"), "3.00")
+    R.check("edge P/NP/W: notes kept on the no plus/minus scale", p.locator(".calc-row-msg:not(.is-error)").filter(has_text="Not counted").count(), 3)
     p.close()
     c.close()
 
@@ -356,8 +380,16 @@ def flow(s):
     R.check("flow: first visit offers a sample in the action row", text(p, ".calc-actions .gpa-sample"), "Try a sample")
     R.check("flow: no banner on a first visit", p.locator(".calc-banner").is_visible(), False)
     R.check("flow: no result before input", p.locator(".calc-result").is_visible(), False)
+    R.check("flow: Start over hidden until something is entered", p.locator(".gpa-reset").is_visible(), False)
+    p.locator(".gpa-row .gpa-f-name input").first.fill("ENG 101")
+    R.check("flow: Start over shows once something is entered", p.locator(".gpa-reset").is_visible(), True)
+    p.locator(".gpa-row .gpa-f-name input").first.fill("")
+    R.check("flow: Start over hides again when it is all cleared", p.locator(".gpa-reset").is_visible(), False)
     p.click(".gpa-sample")
     R.check("flow: sample result", text(p, ".calc-score"), "3.34")
+    R.check("flow: 2 semesters read Cumulative GPA", text(p, ".calc-result .calc-kicker"), "Cumulative GPA")
+    R.check("flow: Is my GPA good?", p.locator(".calc-insight").first.inner_text().split("\n"),
+            ["Is my GPA good?", "3.34 is above 3.0, the usual minimum for grad school and many scholarships."])
     R.check("flow: sample banner", (text(p, ".calc-banner") or "").startswith("Viewing a sample"), True)
     R.check("flow: sample link hidden while viewing it", p.locator(".gpa-sample").is_visible(), False)
     p.click(".calc-how > summary")
@@ -369,18 +401,20 @@ def flow(s):
     R.check("flow: planner closed until its button", p.locator(".calc-plan").is_visible(), False)
     R.check("flow: Options closed by default", p.locator(".gpa-options").is_visible(), False)
     R.check("flow: Options shows what's on (Major GPA in the sample)", p.locator(".gpa-options-btn").inner_text().replace("\n", " ").split(" ▾")[0], "Options · 1 on")
-    # goals: Magna cum laude (3.70) at 15 upcoming credits
-    DIALOG["text"] = None
-    p.click(".calc-goal-add")
-    p.click(".gpa-goals-wrap .calc-menu >> text=Magna cum laude")
-    need = (3.7 * 41 - 86.8) / 15
-    R.check("flow: goal status (out of reach)", text(p, ".gpa-goal"),
-            f"Magna cum laude (3.70) — highest possible next semester is {fmt((86.8 + 60) / 41)}; reachable in {-(-int(-(-(3.7 * 26 - 86.8) // (4 - 3.7))) // 15)} semesters at 4.0" if need > 4 else
-            f"Magna cum laude (3.70) — you need a {fmt(need)} over your next 15 credits")
-    p.click(".calc-goal-add")
-    p.click(".gpa-goals-wrap .calc-menu >> text=Good standing")
-    R.check("flow: goal met", p.locator(".gpa-goal").nth(1).text_content(), f"Good standing — you're {fmt(86.8 / 26 - 2)} above it")
-    p.locator(".gpa-goal-rm").nth(1).click()
+    R.check("flow: no goal menu (the planner target is the goal)", p.locator(".calc-goal-add").count() + p.locator("text=Add a goal").count(), 0)
+    R.check("flow: no goal line before a target", p.locator(".gpa-goal").is_visible(), False)
+    R.check("flow: planner button text", text(p, ".calc-next .calc-btn-primary"), "Plan next semester’s grades")
+    # semester Remove sits in a ⋯ menu, with Undo
+    R.check("flow: no bare semester Remove button", p.locator(".gpa-term-head > .gpa-del-term").count(), 0)
+    p.locator(".gpa-term-more").first.click()
+    R.check("flow: ⋯ menu item", text(p, ".gpa-term-menu .calc-menu:not([hidden]) .gpa-del-term"), "Remove Fall")
+    p.click(".gpa-term-menu .calc-menu:not([hidden]) .gpa-del-term")
+    R.check("flow: semester removed", p.locator(".gpa-term").count(), 1)
+    R.check("flow: one semester left reads Semester GPA", text(p, ".calc-result .calc-kicker"), "Semester GPA")
+    R.check("flow: remove offers Undo", text(p, ".calc-toast button"), "Undo")
+    p.click(".calc-toast button")
+    R.check("flow: Undo brings the semester back", p.locator(".gpa-term").count(), 2)
+    R.check("flow: Undo restores the GPA", text(p, ".calc-score"), "3.34")
     p.locator(".calc-next .calc-btn-primary").click()
     R.check("flow: planner open", p.locator(".calc-plan").is_visible(), True)
     R.ok("flow: planner sits after the result", p.evaluate("document.querySelector('.calc-result').compareDocumentPosition(document.querySelector('.calc-plan')) & 4") > 0)
@@ -404,14 +438,18 @@ def flow(s):
     row.nth(1).locator(".gpa-f-grade select").select_option("B-")
     want = fmt((16 + 2.7 * 3) / 7)
     R.check("flow: own result", text(p, ".calc-score"), want)
+    R.check("flow: one semester reads Semester GPA", text(p, ".calc-result .calc-kicker"), "Semester GPA")
     R.check("flow: saved-on-device note", text(p, ".calc-saved-note"), "Saved on this device")
     DIALOG["text"] = "Fall test"
     p.click("[aria-label='Save']")
     R.check("flow: saved name shown", text(p, ".calc-save-name"), "Fall test")
     row.nth(2).locator(".gpa-f-grade select").select_option("C")
     R.check("flow: unsaved changes flagged", text(p, ".calc-save-name"), "Fall test · unsaved changes")
-    p.wait_for_timeout(500)  # autosave debounce
     want2 = fmt((16 + 2.7 * 3 + 2 * 3) / 10)
+    # the planner's target becomes the saved goal
+    p.locator(".calc-next .calc-btn-primary").click()
+    p.fill("#college-t-gpa", "3.50")
+    p.wait_for_timeout(500)  # autosave debounce
 
     seen = events(p)
     p.reload()
@@ -420,6 +458,10 @@ def flow(s):
     R.check("flow: returning visitor sees 'Show an example'", text(p, ".gpa-sample"), "Show an example")
     R.check("flow: restored result", text(p, ".calc-score"), want2)
     R.check("flow: restored save name", text(p, ".calc-save-name"), "Fall test · unsaved changes")
+    R.check("flow: saved goal line from the planner target", text(p, ".gpa-goal"), f"Your goal: 3.50. You need a {fmt((3.5 * 25 - 30.1) / 15)} over your next 15 credits.")
+    p.click(".gpa-goal")
+    R.check("flow: goal line opens the planner", p.locator(".calc-plan").is_visible(), True)
+    R.check("flow: planner keeps the goal", p.input_value("#college-t-gpa"), "3.50")
     p.click("[aria-label='My saves']")
     R.check("flow: save listed", p.locator(".calc-menu li", has_text="Fall test").count() >= 1, True)
     p.keyboard.press("Escape")
@@ -462,7 +504,7 @@ def flow(s):
     R.check("flow: undo restores save name", text(p, ".calc-save-name"), "Fall test")
 
     ev = seen + events(p)
-    for name in ("col_sample", "col_result", "col_step_2", "col_plan", "col_how", "col_save", "col_share", "col_reset", "col_goal_add", "gpa_export"):
+    for name in ("col_sample", "col_result", "col_step_2", "col_plan", "col_how", "col_save", "col_share", "col_reset", "gpa_export"):
         R.check(f"flow: GA4 {name}", name in ev, True)
     R.check("flow: calculator_used left to the theme inside #root", "calculator_used" in ev, False)
     p.close()
@@ -560,7 +602,7 @@ def layout(s, shots):
                 if mobile:
                     rows.nth(i + 1).locator(".gpa-f-name input").focus() if i + 1 < rows.count() else None
             if mobile and name.startswith("college"):
-                R.check(f"rows {name} {w}: finished rows collapse to one line", p.locator(".gpa-row.is-collapsed .gpa-row-sum-t").first.inner_text(), "Course 1 · A · 4 cr")
+                R.check(f"rows {name} {w}: finished rows collapse to one line", [p.locator(".gpa-row.is-collapsed .gpa-row-sum-t").first.inner_text(), p.locator(".gpa-row.is-collapsed .gpa-row-sum-m").first.inner_text()], ["Course 1", "A · 4 cr"])
                 p.locator(".gpa-row.is-collapsed .gpa-row-sum").first.click()
                 R.check(f"rows {name} {w}: tap opens it again", p.locator(".gpa-row").first.locator(".gpa-f-name input").is_visible(), True)
                 rows.last.locator(".gpa-f-name input").focus()
@@ -657,7 +699,8 @@ def layout(s, shots):
     row = p.locator(".gpa-row").first
     row.locator(".gpa-grade-btn").click()
     R.check("phone: grade sheet letters", p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt").all_inner_texts(),
-            ["A+", "A", "A\u2212", "B+", "B", "B\u2212", "C+", "C", "C\u2212", "D+", "D", "D\u2212", "F"])
+            ["A+", "A", "A\u2212", "B+", "B", "B\u2212", "C+", "C", "C\u2212", "D+", "D", "D\u2212", "F", "P", "NP", "W"])
+    R.check("phone: grade sheet 'Not counted in GPA' group before P, NP, W", p.evaluate("(() => { const g = document.querySelector('.calc-sheet-wrap:not([hidden]) .calc-sheet-group'); return g && [g.textContent, g.nextElementSibling.textContent]; })()"), ["Not counted in GPA", "P"])
     p.keyboard.press("Escape")
     R.check("phone: Escape closes the sheet", p.locator(".calc-sheet-wrap").is_visible(), False)
     row.locator(".gpa-cr-btn").click()
@@ -668,6 +711,26 @@ def layout(s, shots):
     pick_grade(p, row, "B+")
     R.check("phone: grade picked from the sheet counts", text(p, ".calc-score"), "3.30")
     R.check("phone: next row added", p.locator(".gpa-row").count(), 2)
+    # A long course name truncates in the collapsed line; grade and credits always show at the right
+    row.locator(".gpa-f-name input").fill("Introduction to Organic Chemistry Laboratory")
+    p.locator(".gpa-row").nth(1).locator(".gpa-f-name input").focus()
+    sm = p.evaluate("""(() => { const s = document.querySelector('.gpa-row.is-collapsed .gpa-row-sum'); const t = s.querySelector('.gpa-row-sum-t'), m = s.querySelector('.gpa-row-sum-m'), e = s.querySelector('.gpa-row-sum-e');
+        const sb = s.getBoundingClientRect(), mb = m.getBoundingClientRect(), eb = e.getBoundingClientRect();
+        return { cut: t.scrollWidth > t.clientWidth, meta: m.textContent, whole: m.scrollWidth <= m.clientWidth + 0.5, right: sb.right - eb.right < 1 && eb.left - mb.right < 16, one: sb.height < 60 }; })()""")
+    R.check("phone: collapsed long name truncates, grade/credits whole at the right", sm, {"cut": True, "meta": "B+ · 3.5 cr", "whole": True, "right": True, "one": True})
+    pick_grade(p, p.locator(".gpa-row").nth(1), "P")
+    p.locator(".gpa-row").nth(2).locator(".gpa-f-name input").focus()
+    R.check("phone: P row collapses as not counted", p.locator(".gpa-row.is-collapsed .gpa-row-sum-m").nth(1).inner_text(), "P · not counted")
+    R.check("phone: P leaves the GPA alone", text(p, ".calc-score"), "3.30")
+    p.close()
+    c.close()
+
+    # 375px phones: the planner button stays on one line
+    c = ctx_for(s, 375, 667, mobile=True)
+    p = open_page(s, c, "college-gpa-calculator")
+    p.click(".gpa-sample")
+    lines = p.evaluate("(() => { const b = document.querySelector('.calc-next .calc-btn-primary'); const r = document.createRange(); r.selectNodeContents(b); return new Set([...r.getClientRects()].map((x) => Math.round(x.top))).size; })()")
+    R.check("phone 375: planner button on one line", lines, 1)
     p.close()
     c.close()
 

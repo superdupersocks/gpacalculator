@@ -36,6 +36,24 @@ test('basic college GPA: A 3cr, B+ 4cr, A- 3cr, C+ 2cr', () => {
   assert.ok(r.ready);
 });
 
+test('P, NP and W are not counted in GPA (and need no credits)', () => {
+  const r = compute(college, st([row('a', 'B', 4), row('p', 'P', 3), row('n', 'NP', 3), row('w', 'W', '')]));
+  assert.equal(fmtGpa(r.current.gpa), '3.00');
+  assert.equal(r.current.credits, 4);
+  for (const id of ['p', 'n', 'w']) assert.equal(r.rows[id].status, 'excluded');
+  assert.equal(r.rows.p.why, 'P (pass) isn’t counted in GPA.');
+  assert.equal(r.rows.w.why, 'W (withdrawn) isn’t counted in GPA.');
+  assert.equal(r.errors, 0);
+  const lever = biggestLever(r);
+  assert.equal(lever.id, 'a');
+  for (const scale of ['a-plus-433', 'no-plus-minus']) {
+    const r2 = compute(college, st([row('a', 'B', 4), row('p', 'P', 3)], { scale }));
+    assert.equal(r2.rows.p.status, 'excluded');
+    assert.equal(fmtGpa(r2.current.gpa), '3.00');
+  }
+  assert.equal(letterAtLeast(3.9, college.scales[0]), 'A');
+});
+
 test('scales: A+ = 4.33 and no plus/minus', () => {
   const rows = [row('a', 'A+', 3), row('b', 'B', 3)];
   near(compute(college, st(rows)).current.gpa, (12 + 9) / 6);

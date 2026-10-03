@@ -89,6 +89,8 @@ export function compute(profile, state) {
         return;
       }
       if (!grade) { r.status = 'pending'; return; }
+      // P, NP, W …: on the transcript but not in the GPA, so they need no credits.
+      if (scale.grades[grade] === null && !(profile.courseTypes || []).length) { r.status = 'excluded'; r.why = (scale.notes && scale.notes[grade]) || `${grade} doesn't count in your GPA.`; return; }
       if (cr === undefined) {
         r.status = 'error';
         r.error = `Enter ${profile.creditWord || 'credits'} for this course.`;

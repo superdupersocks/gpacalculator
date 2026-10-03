@@ -1,4 +1,4 @@
-/* GPA calculator screen v1.2.0 (gpa/gpa-app.js). Only what is specific to GPA calculators: the course-row
+/* GPA calculator screen v1.3.0 (gpa/gpa-app.js). Only what is specific to GPA calculators: the course-row
  * columns, semester headers, Options, phone entry (collapsed rows, grade/credit buttons) and goals.
  * Everything else is calc-core.css.
  * Spacing follows the Calculator Design Standard; tokens only, no colors of its own. */
@@ -39,7 +39,8 @@
 #page .entry-content :is(#root, .gpacalc-mount) .gpa-term-title { margin: 0 !important; font: 600 17px/1.3 var(--gpa-calc-font); color: var(--calc-ink); }
 :is(#root, .gpacalc-mount) .gpa-term-title em { font-style: normal; font-weight: 500; color: var(--calc-muted); }
 :is(#root, .gpacalc-mount) .gpa-term-gpa { font-size: 15px; font-weight: 600; color: var(--gpa-calc-result-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
-:is(#root, .gpacalc-mount) .gpa-del-term { margin-left: auto; }
+:is(#root, .gpacalc-mount) .gpa-term-menu { margin-left: auto; }
+:is(#root, .gpacalc-mount) .gpa-term-more { font-size: 20px; line-height: 1; color: var(--calc-muted); }
 
 /* Rows: one line on desktop (course · grade · credits · [type] · [major] · remove) */
 :is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) var(--calc-control-h); }
@@ -93,7 +94,6 @@
 :is(#root, .gpacalc-mount) .gpa-goal.is-met { color: var(--gpa-success); }
 :is(#root, .gpacalc-mount) .gpa-goal.is-warn { color: var(--gpa-warning); }
 :is(#root, .gpacalc-mount) .gpa-goal.is-danger { color: var(--gpa-danger); }
-:is(#root, .gpacalc-mount) .calc-goal-add[hidden] { display: none; }
 
 @media (max-width: 640px) {
   /* Stacked rows: course name + remove on line 1; grade (~110px) and credits (~80px) side by side on
@@ -127,7 +127,8 @@
   :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-cr-btn,
   #page .entry-content :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-cr-btn { display: block; width: 100%; text-align: center; cursor: pointer; }
 
-  /* A finished row the student isn't editing: one line, "MATH 121 · B+ · 4 cr", tap to edit */
+  /* A finished row the student isn't editing: one line, "MATH 121" … "B+ · 4 cr  Edit", tap to edit.
+     Only the course name truncates; grade and credits always show at the right. */
   :is(#root, .gpacalc-mount) .gpa-row.is-collapsed { display: block; padding: 0; }
   :is(#root, .gpacalc-mount) .gpa-row.is-collapsed > :not(.gpa-row-sum),
   #page .entry-content :is(#root, .gpacalc-mount) .gpa-row.is-collapsed > :not(.gpa-row-sum) { display: none !important; }
@@ -137,6 +138,7 @@
     text-align: left; font: 500 16px/1.4 var(--gpa-calc-font); color: var(--calc-ink); cursor: pointer;
   }
   :is(#root, .gpacalc-mount) .gpa-row-sum-t { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  :is(#root, .gpacalc-mount) .gpa-row-sum-m { flex: none; white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums; }
   :is(#root, .gpacalc-mount) .gpa-row-sum-e { flex: none; font-size: 14px; font-weight: 600; color: var(--gpa-link); }
 
   /* An earlier semester: "Fall · 4 classes · GPA 3.41", tap to open */

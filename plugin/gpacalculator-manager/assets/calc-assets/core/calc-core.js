@@ -577,6 +577,8 @@ export function createSheet(host) {
       let first = null;
       let current = null;
       for (const o of options) {
+        // { heading } starts a labelled group (e.g. "Not counted in GPA") on its own full-width line.
+        if (o.heading) { grid.append(h('p', { class: 'calc-sheet-group', role: 'presentation' }, o.heading)); continue; }
         const b = h('button', { type: 'button', class: `calc-sheet-opt${o.value === value ? ' is-on' : ''}${o.wide ? ' is-wide' : ''}`, 'aria-pressed': String(o.value === value), onclick: () => close(o.value) }, o.label);
         grid.append(b);
         if (!first) first = b;

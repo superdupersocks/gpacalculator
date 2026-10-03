@@ -29,6 +29,8 @@ CALC_URL = "/plugin/gpacalculator-manager/assets/calc-assets"
 # (column tiers, phone spacing, component library) plus e3b337a, 5ca342b and 499c3f4 (hero), not yet deployed: library styles inside calculators,
 # the standard's calculator tokens and 14px phone spacing for shortcode calculators.
 THEME_REF = "499c3f4"
+OLD_SUBTITLE = "Calculate semester and cumulative GPA on a 4.0 scale, weighted by credit hours."
+NEW_SUBTITLE = "Semester and cumulative GPA on a 4.0 scale."
 HOST = "https://gpacalculator.net"
 DROP_INLINE = re.compile(r"freestar|pubfig|googletag|gtag\(|dataLayer|speculationrules", re.I)
 
@@ -148,6 +150,8 @@ def build(out, modules):
     html = inline_styles(html)
     html = clean_scripts(html)
     html = html.replace("<head>", "<head>\n" + GTAG_STUB, 1)
+    # The approved one-line hero subtitle (page 22 gets it at go-live; the snapshot still has the old one).
+    html = html.replace(OLD_SUBTITLE, NEW_SUBTITLE, 1)
     a = html.index('<div id="root">')
     html = html[:a] + '<div id="root"></div>' + html[balanced_div(html, a):]
 

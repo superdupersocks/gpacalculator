@@ -516,6 +516,8 @@ html.calc-has-pill { scroll-padding-bottom: 80px; }
   cursor: pointer;
 }
 :is(#root, .gpacalc-mount) .calc-sheet-opt.is-wide { grid-column: span 2; font-size: 15px; }
+:is(#root, .gpacalc-mount) .calc-sheet-group,
+#page .entry-content :is(#root, .gpacalc-mount) .calc-sheet-group { grid-column: 1 / -1; margin: 6px 0 0 !important; font-size: 13px; font-weight: 600; color: var(--calc-muted); }
 :is(#root, .gpacalc-mount) .calc-sheet-opt.is-on,
 #page .entry-content :is(#root, .gpacalc-mount) .calc-sheet-opt.is-on { border-color: var(--calc-focus); background: var(--calc-tint); color: var(--calc-accent); }
 :is(#root, .gpacalc-mount) .calc-sheet-opt:focus-visible { outline: 2px solid var(--calc-focus); outline-offset: 2px; }

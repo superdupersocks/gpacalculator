@@ -1,6 +1,6 @@
-/* gpacalculator.net GPA calculator screen v1.2.0 (gpacalculator-manager plugin)
+/* gpacalculator.net GPA calculator screen v1.3.0 (gpacalculator-manager plugin)
  * One screen for every GPA-engine calculator; each page passes its profile (profiles/*.js).
- * Layout, spacing, result pill, saves, sample, options, phone entry and goals follow the Calculator Design
+ * Layout, spacing, result pill, saves, sample, options, phone entry and the goal line follow the Calculator Design
  * Standard (docs/calculator-design-standard.md). Look: core/calc-core.css + gpa/gpa-app.css (tokens only).
  * Math: engines/gpa-engine.js. Services from core/calc-core.js: storage, share, GA4, menus, toast, pill. */
 import {
@@ -12,7 +12,6 @@ import * as E from '../engines/gpa-engine.js';
 
 let uid = 0;
 const newId = (p = 'r') => `${p}${Date.now().toString(36)}${(uid++).toString(36)}`;
-const MAX_GOALS = 3;
 
 /* ---------- State ---------- */
 
@@ -25,7 +24,7 @@ function blankState(profile) {
   const terms = profile.fixedTerms
     ? profile.fixedTerms.map((t) => ({ id: t.id, name: t.name, planned: !!t.planned, rows: t.planned ? [] : rowsOf(profile, 1) }))
     : [{ id: newId('t'), name: termName(profile, 0), rows: rowsOf(profile, 1) }];
-  return { v: 1, scale: profile.defaultScale, prior: { gpa: '', credits: '' }, priorOpen: false, showMajor: false, terms, target: { gpa: '', credits: '' }, goals: [] };
+  return { v: 1, scale: profile.defaultScale, prior: { gpa: '', credits: '' }, priorOpen: false, showMajor: false, terms, target: { gpa: '', credits: '' } };
 }
 
 function rowsOf(profile, n) {
@@ -60,12 +59,6 @@ function normalize(profile, s) {
     });
   }
   if (!terms.length) return base;
-  const presets = profile.goals || [];
-  const goals = (Array.isArray(s.goals) ? s.goals : []).slice(0, MAX_GOALS).map((g) => {
-    const p = presets.find((x) => x.id === g.id) || presets.find((x) => x.id === 'custom');
-    const value = E.parseNum(g.value);
-    return p && value != null ? { id: p.id, label: str(g.label) || p.label, kind: p.kind, value } : null;
-  }).filter(Boolean);
   return {
     v: 1, scale,
     prior: { gpa: str(s.prior && s.prior.gpa), credits: str(s.prior && s.prior.credits) },
@@ -73,7 +66,6 @@ function normalize(profile, s) {
     showMajor: !!(profile.major && (s.showMajor || terms.some((t) => t.rows.some((r) => r.major)))),
     terms,
     target: { gpa: str(s.target && s.target.gpa), credits: str(s.target && s.target.credits) },
-    goals,
   };
 }
 
@@ -88,7 +80,6 @@ function pack(state) {
       })),
     })),
     target: state.target.gpa || state.target.credits ? state.target : undefined,
-    goals: state.goals && state.goals.length ? state.goals : undefined,
   };
 }
 
@@ -196,7 +187,7 @@ export function mountGpa(root, profile, opts = {}) {
   /* ----- rows + action row ----- */
   const termsEl = h('div', { class: 'gpa-terms' });
   const addTermBtn = P.fixedTerms ? null : h('button', { type: 'button', class: 'calc-btn calc-btn-ghost gpa-add-term' }, `Add ${(P.termWord || 'semester').toLowerCase()}`);
-  const resetBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-ghost gpa-reset' }, 'Start over');
+  const resetBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-ghost gpa-reset', hidden: true }, 'Start over'); // shown once something is entered
   const sampleBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-sample', onclick: () => showSample() }, 'Try a sample');
   const savedNote = h('span', { class: 'calc-saved-note', hidden: true }, 'Saved on this device');
   const actions = h('div', { class: 'calc-actions gpa-actions' }, addTermBtn, resetBtn, sampleBtn, savedNote);
@@ -234,11 +225,9 @@ export function mountGpa(root, profile, opts = {}) {
   const result = h('section', { class: 'calc-result', hidden: true, tabindex: '-1', 'aria-label': 'Your result' }, live,
     (P.blocks || ['verdict', 'stats', 'next', 'how']).flatMap((b) => (b === 'stats' ? [BLOCKS.stats, BLOCKS.note] : [BLOCKS[b]])).filter(Boolean));
 
-  /* ----- goals (under the result, above the planner; no history chart) ----- */
+  /* ----- goal: the planner's target, saved, shown as one status line under the result ----- */
   const goalList = h('ul', { class: 'gpa-goals' });
-  const goalAddBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-text calc-goal-add' }, '+ Add a goal');
-  const goalMenu = h('ul', { class: 'calc-menu', role: 'menu', 'aria-label': 'Add a goal' });
-  const goalsEl = P.goals ? h('div', { class: 'gpa-goals-wrap', hidden: true }, goalList, h('div', { class: 'calc-menu-wrap is-left' }, goalAddBtn, goalMenu)) : null;
+  const goalsEl = P.planner && P.goalFromTarget ? h('div', { class: 'gpa-goals-wrap', hidden: true }, goalList) : null;
 
   /* ----- planner: only after the result, opened by its button ----- */
   const tGpa = h('input', { class: 'calc-input is-num', id: `${P.id}-t-gpa`, inputmode: 'decimal', autocomplete: 'off', placeholder: 'e.g. 3.50' });
@@ -278,6 +267,10 @@ export function mountGpa(root, profile, opts = {}) {
     return t && t.allowed ? t.allowed : E.gradeList(E.scaleOf(P, state));
   }
 
+  /** Grades with no points (P, NP, W) go last, under "Not counted in GPA". */
+  const notCounted = (g) => E.scaleOf(P, state).grades[g] === null;
+  const NOT_COUNTED_LABEL = 'Not counted in GPA';
+
   function gradeOptions(sel, row) {
     const list = gradesFor(row);
     const want = [''].concat(list);
@@ -285,7 +278,9 @@ export function mountGpa(root, profile, opts = {}) {
     if (want.join('|') !== have.join('|')) {
       sel.textContent = '';
       sel.append(h('option', { value: '' }, 'Grade'));
-      for (const g of list) sel.append(h('option', { value: g }, gradeLabel(g)));
+      const off = list.filter(notCounted);
+      for (const g of list.filter((x) => !notCounted(x))) sel.append(h('option', { value: g }, gradeLabel(g)));
+      if (off.length) sel.append(h('optgroup', { label: NOT_COUNTED_LABEL }, ...off.map((g) => h('option', { value: g }, gradeLabel(g)))));
     }
     sel.value = list.includes(row.grade) ? row.grade : '';
     if (row.grade && !list.includes(row.grade)) {
@@ -299,7 +294,8 @@ export function mountGpa(root, profile, opts = {}) {
   const openTerms = new Set(); // earlier semesters a phone user expanded
 
   const filled = (r) => !!r.grade;
-  const rowSummary = (r, i) => `${r.name.trim() || `Course ${i + 1}`} · ${gradeLabel(r.grade)} · ${r.credits || '?'} ${crAbbr}`;
+  const rowName = (r, i) => r.name.trim() || `Course ${i + 1}`;
+  const rowMeta = (r) => (notCounted(r.grade) ? `${gradeLabel(r.grade)} · not counted` : `${gradeLabel(r.grade)} · ${r.credits || '?'} ${crAbbr}`);
 
   function rowView(term, row, i) {
     const id = row.id;
@@ -338,7 +334,10 @@ export function mountGpa(root, profile, opts = {}) {
       setText(gradeBtn, row.grade ? gradeLabel(row.grade) : 'Grade');
       gradeBtn.classList.toggle('is-empty', !row.grade);
       setText(crBtn, row.credits ? `${row.credits} ${crAbbr}` : cap(P.creditWord));
-      sum.replaceChildren(h('span', { class: 'gpa-row-sum-t' }, row.grade ? rowSummary(row, i) : ''), h('span', { class: 'gpa-row-sum-e', 'aria-hidden': 'true' }, 'Edit'));
+      // The course name truncates; grade and credits never do (they sit at the right, then Edit).
+      sum.replaceChildren(h('span', { class: 'gpa-row-sum-t' }, row.grade ? rowName(row, i) : ''), h('span', { class: 'gpa-row-sum-m' }, row.grade ? rowMeta(row) : ''),
+        h('span', { class: 'gpa-row-sum-e', 'aria-hidden': 'true' }, 'Edit'));
+      sum.setAttribute('aria-label', row.grade ? `Edit ${rowName(row, i)}, ${gradeLabel(row.grade)}${notCounted(row.grade) ? ', not counted in GPA' : `, ${row.credits || 'no'} ${P.creditWord}`}` : `Edit course ${i + 1}`);
     };
     v.syncBtns = syncBtns;
     syncBtns();
@@ -356,7 +355,10 @@ export function mountGpa(root, profile, opts = {}) {
     gradeBtn.addEventListener('click', async () => {
       activate(row.id);
       const list = gradesFor(row);
-      const g = await sheet.open({ title: `Grade${row.name.trim() ? ` for ${row.name.trim()}` : ''}`, options: list.map((x) => ({ value: x, label: gradeLabel(x) })), value: row.grade, cols: 4 });
+      const off = list.filter(notCounted);
+      const options = list.filter((x) => !notCounted(x)).map((x) => ({ value: x, label: gradeLabel(x) }))
+        .concat(off.length ? [{ heading: NOT_COUNTED_LABEL }, ...off.map((x) => ({ value: x, label: gradeLabel(x) }))] : []);
+      const g = await sheet.open({ title: `Grade${row.name.trim() ? ` for ${row.name.trim()}` : ''}`, options, value: row.grade, cols: 4 });
       if (g != null) setGrade(g);
     });
     crBtn.addEventListener('click', async () => {
@@ -465,15 +467,22 @@ export function mountGpa(root, profile, opts = {}) {
       title = h('input', { class: 'calc-input gpa-term-name', value: term.name, enterkeyhint: 'done', 'aria-label': `${P.termWord || 'Semester'} ${ti + 1} name` });
       title.addEventListener('input', () => { term.name = title.value; changed(false); });
     }
-    const del = !fixed && state.terms.length > 1 ? h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-del-term' }, 'Remove') : null;
-    if (del) {
-      del.addEventListener('click', () => {
-        const before = JSON.stringify(pack(state));
-        state.terms.splice(state.terms.indexOf(term), 1);
-        renderTerms();
-        changed();
-        toast.show(`Removed ${term.name || 'semester'}`, { action: 'Undo', ms: 6000, onAction: () => { load(JSON.parse(before), { keepMode: true }); changed(); } });
-      });
+    // Removing a semester sits in a ⋯ menu (never a bare button beside the name) and can be undone.
+    let del = null;
+    if (!fixed && state.terms.length > 1) {
+      const label = term.name || (P.termWord || 'semester').toLowerCase();
+      const more = h('button', { type: 'button', class: 'calc-btn calc-btn-icon gpa-term-more', 'aria-haspopup': 'menu', 'aria-expanded': 'false', 'aria-label': `More for ${label}` }, '⋯');
+      const menu = h('ul', { class: 'calc-menu', role: 'menu', hidden: true, 'aria-label': `${label} options` },
+        h('li', { role: 'none' }, h('button', { type: 'button', role: 'menuitem', class: 'gpa-del-term', onclick: () => {
+          menu.hidden = true;
+          const before = JSON.stringify(pack(state));
+          state.terms.splice(state.terms.indexOf(term), 1);
+          renderTerms();
+          changed();
+          toast.show(`Removed ${label}`, { action: 'Undo', ms: 8000, onAction: () => { load(JSON.parse(before), { keepMode: true }); changed(); } });
+        } }, `Remove ${label}`)));
+      createMenu(more, menu);
+      del = h('div', { class: 'calc-menu-wrap gpa-term-menu' }, more, menu);
     }
     const sum = h('button', { type: 'button', class: 'gpa-term-sum', 'data-term-sum': term.id, 'aria-label': `Show ${term.name || 'semester'}` }, termSummary(term));
     sum.addEventListener('click', () => { openTerms.add(term.id); syncCollapse(); });
@@ -512,6 +521,7 @@ export function mountGpa(root, profile, opts = {}) {
 
   function changed(recompute = true) {
     syncOptions();
+    resetBtn.hidden = !hasData(state);
     if (mode === 'own') {
       dirty = !!currentSave;
       store.saveDraft({ state: pack(state), save: currentSave, dirty });
@@ -572,7 +582,11 @@ export function mountGpa(root, profile, opts = {}) {
       setText(badge, v.letter.replace('-', '−'));
       badge.className = `calc-badge gpa-letter is-band-${v.band}`;
       verdict.replaceChildren(...verdictText(g, v.letter));
-      setText(live, `${P.copy.resultKicker}: ${fmt(g)}`);
+      // "Semester GPA" until there are 2+ semesters or a previous GPA; then "Cumulative GPA".
+      const doneTerms = res.terms.filter((t) => !t.planned && t.credits > 0).length;
+      const kick = P.copy.termResultKicker && doneTerms <= 1 && !res.prior.used ? P.copy.termResultKicker : P.copy.resultKicker;
+      setText(kicker, kick);
+      setText(live, `${kick}: ${fmt(g)}`);
       updatePill(g);
       setText(sCredits.v, E.fmtNum(res.current.credits));
       setText(sPoints.v, E.fmtNum(res.current.points, 2));
@@ -634,83 +648,58 @@ export function mountGpa(root, profile, opts = {}) {
     insights.textContent = '';
     const g = res.current.gpa;
     const card2 = (k, text) => insights.append(h('div', { class: 'calc-insight' }, h('div', { class: 'calc-insight-k' }, k), h('div', { class: 'calc-insight-v' }, text)));
-    let good;
-    if (g >= 3.7) good = `${fmt(g)} is in the A range, the top grade band.`;
-    else if (g >= 3.0) good = `${fmt(g)} is a B average or better.`;
-    else if (g >= 2.0) good = `${fmt(g)} is above 2.0, the usual line for good academic standing.`;
-    else good = `${fmt(g)} is below 2.0, the usual line for good academic standing. The planner shows the way back.`;
-    card2('Is my GPA good?', good);
+    card2('Is my GPA good?', goodText(g));
     const lever = E.biggestLever(res);
     if (lever && lever.gain >= 0.005) {
       card2('Biggest lever', `Raising ${lever.name || 'one course'} from ${lever.from.replace('-', '−')} to ${lever.to.replace('-', '−')} adds ${E.fmtNum(lever.gain, D)} to your GPA.`);
     }
   }
 
-  /* ----- goal tracker ----- */
+  /** "Is my GPA good?": what the number means for the things students use it for. */
+  function goodText(g) {
+    const x = fmt(g);
+    const max = res ? res.max : 4;
+    if (max > 4.5) return `${x} out of ${E.fmtNum(max)}. Compare it with the cutoffs your school publishes.`;
+    if (g >= 3.7) return `${x} is in the A range: high enough for Latin honors at many colleges and for competitive grad programs.`;
+    if (g >= 3.5) return `${x} is where Dean’s List and cum laude usually start, and above the 3.0 most grad schools ask for.`;
+    if (g >= 3.0) return `${x} is above 3.0, the usual minimum for grad school and many scholarships.`;
+    if (g >= 2.5) return `${x} is above good standing but under the 3.0 many grad schools and scholarships ask for.`;
+    if (g >= 2.0) return `${x} keeps you in good standing (2.0), but many scholarships and grad programs want 3.0.`;
+    return `${x} is below 2.0, the usual line for good academic standing. The planner shows the way back.`;
+  }
+
   let kitP = null;
   const loadKit = () => (kitP ||= import('../core/chart-kit.js'));
 
-  function shortGoal(g) {
-    return g.label.replace(/ cum laude$/, '').replace(/ minimum$/, '');
-  }
-
-  function goalStatus(g) {
+  /** The saved goal is the planner's target GPA: one line under the result, tap to reopen the planner. */
+  function goalStatus(value) {
     const U = E.parseNum(state.target.credits) || P.upcomingDefault || 15;
     const cw = P.creditWord;
-    const T = E.fmtGpa(g.value, 2);
+    const T = E.fmtGpa(value, 2);
     const sc = E.scaleOf(P, state);
     const term = (P.termWord || 'term').toLowerCase();
-    if (g.kind === 'term') {
-      const done = res.terms.filter((t) => !t.planned && t.credits > 0);
-      const t = done.find((x) => x.id === lastTerm) || done[done.length - 1];
-      if (t && t.gpa + 1e-9 >= g.value) return { cls: 'is-met', text: `${g.label} — your ${t.name || 'last term'} GPA is ${E.fmtGpa(t.gpa - g.value, 2)} above it` };
-      return { cls: 'is-need', text: `${g.label} (${T}) — you need a ${T} or higher next ${term}${t ? `; ${t.name || 'your last term'} was ${fmt(t.gpa)}` : ''}` };
-    }
     const cur = res.current.gpa;
-    if (cur + 1e-9 >= g.value) return { cls: 'is-met', text: `${g.label} — you're ${E.fmtGpa(cur - g.value, 2)} above it` };
-    const p = E.plan({ credits: res.current.credits, points: res.current.points }, g.value, U, sc);
-    const rescue = P.standingLine && g.value <= P.standingLine;
+    if (cur + 1e-9 >= value) return { cls: 'is-met', text: `Your goal: ${T}. You’re there, ${E.fmtGpa(cur - value, 2)} above it.` };
+    const p = E.plan({ credits: res.current.credits, points: res.current.points }, value, U, sc);
+    const rescue = P.standingLine && value <= P.standingLine;
     if (p.status === 'reachable') {
-      return { cls: rescue ? 'is-danger' : 'is-need', text: `${g.label} (${T}) — you need a ${E.fmtGpa(p.needed, 2)} over your next ${E.fmtNum(U)} ${cw}${rescue ? ' to get back to good standing' : ''}` };
+      return { cls: rescue ? 'is-danger' : 'is-need', text: `Your goal: ${T}. You need a ${E.fmtGpa(p.needed, 2)} over your next ${E.fmtNum(U)} ${cw}.` };
     }
     const terms = p.creditsForTarget ? Math.ceil(p.creditsForTarget / U) : null;
-    return { cls: rescue ? 'is-danger' : 'is-warn', text: `${g.label} (${T}) — highest possible next ${term} is ${E.fmtGpa(p.highest, 2)}${terms ? `; reachable in ${terms} ${term}s at ${E.fmtGpa(res.max, 1)}` : ''}` };
+    return { cls: rescue ? 'is-danger' : 'is-warn', text: `Your goal: ${T}. The highest possible next ${term} is ${E.fmtGpa(p.highest, 2)}${terms ? `; ${terms} ${term}s of straight ${topLetter(sc)}s would get you there` : ''}.` };
   }
 
   function renderGoals() {
     if (!goalsEl) return;
-    goalsEl.hidden = !(res && res.ready);
+    const value = E.parseNum(state.target.gpa);
+    const show = !!(res && res.ready && value != null && value > 0 && value <= res.max && planner.hidden);
+    goalsEl.hidden = !show;
     goalList.textContent = '';
-    for (const g of state.goals || []) {
-      const st = goalStatus(g);
-      const open = h('button', { type: 'button', class: `gpa-goal ${st.cls}`, onclick: () => { if (g.kind !== 'term') { state.target.gpa = g.value.toFixed(2); tGpa.value = state.target.gpa; } openPlanner(); } }, st.text);
-      const rm = h('button', { type: 'button', class: 'calc-btn calc-btn-icon gpa-goal-rm', 'aria-label': `Remove goal ${g.label}`, onclick: () => { state.goals.splice(state.goals.indexOf(g), 1); changed(); } }, '×');
-      goalList.append(h('li', null, open, rm));
-    }
-    goalAddBtn.hidden = (state.goals || []).length >= MAX_GOALS;
-  }
-
-  if (goalsEl) {
-    createMenu(goalAddBtn, goalMenu, () => {
-      goalMenu.textContent = '';
-      for (const preset of P.goals) {
-        if (state.goals.some((g) => g.id === preset.id && preset.id !== 'custom')) continue;
-        goalMenu.append(h('li', { role: 'none' }, h('button', { type: 'button', role: 'menuitem', onclick: () => { goalMenu.hidden = true; addGoal(preset); } },
-          preset.label, preset.value != null ? h('span', { class: 'calc-menu-k' }, ` ${E.fmtGpa(preset.value, 2)}${preset.kind === 'term' ? ' this term' : ''}`) : null)));
-      }
-    });
-  }
-
-  function addGoal(preset) {
-    const max = res ? res.max : 4;
-    const def = preset.value != null ? preset.value.toFixed(2) : '';
-    const ask = window.prompt(`${preset.label}: GPA at your school (schools differ)`, def);
-    if (ask == null) return;
-    const v = E.parseNum(ask);
-    if (v == null || v <= 0 || v > max) { toast.show(`Enter a GPA from 0 to ${E.fmtNum(max)}.`); return; }
-    state.goals.push({ id: preset.id, label: preset.label, kind: preset.kind, value: v });
-    track('goal_add', { goal: preset.id }, true);
-    changed();
+    if (!show) return;
+    const st = goalStatus(value);
+    const open = h('button', { type: 'button', class: `gpa-goal ${st.cls}`, onclick: () => openPlanner() }, st.text);
+    const rm = h('button', { type: 'button', class: 'calc-btn calc-btn-icon gpa-goal-rm', 'aria-label': 'Clear your goal', onclick: () => { state.target.gpa = ''; tGpa.value = ''; changed(); } }, '×');
+    goalList.append(h('li', null, open, rm));
   }
 
   /* ----- "Show how it's calculated": the component library's worked-example table ----- */

@@ -2,6 +2,9 @@
  * Everything here is data or copy; the math lives in engines/gpa-engine.js and the screen in gpa/gpa-app.js. */
 
 const STANDARD = { 'A+': 4, A: 4, 'A-': 3.7, 'B+': 3.3, B: 3, 'B-': 2.7, 'C+': 2.3, C: 2, 'C-': 1.7, 'D+': 1.3, D: 1, 'D-': 0.7, F: 0 };
+// Grades that appear on a transcript but are not counted in GPA (no points; the row is left out of the math).
+const NOT_COUNTED = { P: null, NP: null, W: null };
+const NOTES = { P: 'P (pass) isn’t counted in GPA.', NP: 'NP (no pass) isn’t counted in GPA.', W: 'W (withdrawn) isn’t counted in GPA.' };
 
 export default {
   id: 'college',
@@ -24,9 +27,9 @@ export default {
   planner: true,
   whatIf: true,
   scales: [
-    { id: 'standard', label: '4.0 scale, A+ = 4.0', grades: STANDARD, max: 4 },
-    { id: 'a-plus-433', label: '4.0 scale, A+ = 4.33', grades: { ...STANDARD, 'A+': 4.33 }, max: 4.33 },
-    { id: 'no-plus-minus', label: 'No plus or minus (A, B, C, D, F)', grades: { A: 4, B: 3, C: 2, D: 1, F: 0 }, max: 4 },
+    { id: 'standard', label: '4.0 scale, A+ = 4.0', grades: { ...STANDARD, ...NOT_COUNTED }, notes: NOTES, max: 4 },
+    { id: 'a-plus-433', label: '4.0 scale, A+ = 4.33', grades: { ...STANDARD, 'A+': 4.33, ...NOT_COUNTED }, notes: NOTES, max: 4.33 },
+    { id: 'no-plus-minus', label: 'No plus or minus (A, B, C, D, F)', grades: { A: 4, B: 3, C: 2, D: 1, F: 0, ...NOT_COUNTED }, notes: NOTES, max: 4 },
   ],
   defaultScale: 'standard',
   courseHint: 'e.g. BIO 110',
@@ -34,12 +37,12 @@ export default {
   standingLine: 2,
 
   // Result blocks, in order. A profile can drop, reorder or add its own (gpa-app.js BLOCKS).
-  blocks: ['verdict', 'stats', 'next', 'how', 'trend'],
+  blocks: ['verdict', 'stats', 'next', 'how'],
 
   // Step 2 and the links under the result (the user's GPA is passed forward as ?gpa=).
   next: {
-    planLabel: 'Open planner: grades I need next semester',
-    rescueLabel: 'Open planner: get back above 2.0',
+    planLabel: 'Plan next semester’s grades',
+    rescueLabel: 'Plan getting back above 2.0',
     links: [
       { label: 'Convert my GPA to a percentage', href: '/gpa-scale/', withGpa: true },
       { label: 'How to raise your GPA', href: '/how-to-raise-gpa/' },
@@ -51,16 +54,8 @@ export default {
     { title: 'Semester grade', sub: 'Work out a course grade from your scores.', href: '/semester-grade-calculator/', icon: 'calc' },
   ],
 
-  // Goal tracker presets (Calculator Design Standard); every value is editable when added, since schools differ.
-  goals: [
-    { id: 'deans-list', label: 'Dean’s List', kind: 'term', value: 3.5 },
-    { id: 'cum-laude', label: 'Cum laude', kind: 'cumulative', value: 3.5 },
-    { id: 'magna', label: 'Magna cum laude', kind: 'cumulative', value: 3.7 },
-    { id: 'summa', label: 'Summa cum laude', kind: 'cumulative', value: 3.9 },
-    { id: 'scholarship', label: 'Scholarship minimum', kind: 'cumulative', value: null },
-    { id: 'standing', label: 'Good standing', kind: 'cumulative', value: 2.0 },
-    { id: 'custom', label: 'Custom target', kind: 'cumulative', value: null },
-  ],
+  // The planner's target is the saved goal (no separate goal list): it shows as one status line under the result.
+  goalFromTarget: true,
   upcomingDefault: 15,
 
   sample: {
@@ -86,6 +81,7 @@ export default {
   copy: {
     onboard: 'Pick a grade and credits for each class. Your GPA updates as you go.',
     resultKicker: 'Cumulative GPA',
+    termResultKicker: 'Semester GPA', // one semester and no previous GPA
     termKicker: 'This semester',
     pill: 'GPA',
     summaryUrl: 'gpacalculator.net/college-gpa-calculator/',

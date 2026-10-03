@@ -35,6 +35,8 @@ $GPA = array(
 	array( 'Middle School GPA Calculator', 'page:middle-school-gpa-calculator' ),
 	array( 'CGPA Calculator', 'page:cumulative-cgpa-calculator' ),
 	array( 'Raise GPA Calculator', 'page:how-to-raise-gpa' ),
+	array( 'SGPA to CGPA', 'page:sgpa-to-cgpa-conversion-calculator' ),
+	array( 'CGPA to Percentage', 'page:cgpa-to-percentage-calculator' ),
 );
 $GRADE = array(
 	array( 'Grade Calculator', 'page:grade-calculator' ),
@@ -42,18 +44,20 @@ $GRADE = array(
 	array( 'Weighted Grade Calculator', 'page:weighted-grade-calculator' ),
 	array( 'Semester Grade Calculator', 'page:semester-grade-calculator' ),
 	array( 'EZ Grader', 'page:ez-grader' ),
+	array( 'Semester Planner', 'page:semester-planner' ),
 );
 
-/* Top 6 tier A college pages by Search Console impressions, 2025-10-02 … 2026-10-01, both address forms
-   and pre-rename slugs combined (data/nav/colleges-top6.csv). Short names from the admissions meta work. */
+/* Top 6 tier A/B college pages by Search Console clicks, 2025-10-02 … 2026-10-01 (impressions break ties), both
+   address forms and pre-rename slugs combined (data/admissions/tiering/tiers.csv, clicks_12m). Tier C pages are
+   noindexed and skipped. Digant 2026-10-03 19:49: "most high traffic colleges". */
 $COLLEGES = array(
 	array( 'Browse all colleges', 'url:/admissions/' ),
 	array( 'University of South Carolina', 'college:university-of-south-carolina-columbia' ),
-	array( 'University of Arkansas', 'college:university-of-arkansas' ),
+	array( 'Western New England', 'college:western-new-england-university' ),
+	array( 'Auburn', 'college:auburn' ),
+	array( 'Kennesaw State', 'college:kennesaw-state-university' ),
 	array( 'Chico State', 'college:california-state-university-chico' ),
-	array( 'George Mason', 'college:george-mason-university' ),
-	array( 'UMKC', 'college:university-of-missouri-kansas-city' ),
-	array( 'Kennesaw State University', 'college:kennesaw-state-university' ),
+	array( 'Stony Brook', 'college:stony-brook' ),
 );
 
 $MENUS = array(
@@ -95,8 +99,7 @@ $MENUS = array(
 			array( 'China', 'page:grade-conversion/china' ),
 			array( 'France', 'page:grade-conversion/france' ),
 			array( 'Germany', 'page:grade-conversion/germany' ),
-			array( 'SGPA to CGPA', 'page:sgpa-to-cgpa-conversion-calculator' ),
-			array( 'CGPA to Percentage', 'page:cgpa-to-percentage-calculator' ),
+			array( 'All countries →', 'page:grade-conversion' ),
 		),
 	),
 	'legal' => array(

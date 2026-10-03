@@ -955,6 +955,35 @@ body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-ma
 }
 body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block li { padding: 5px 0 !important; border-top: 0 !important; }
 body.gpa-college-v2.single-colleges #page #main .entry-content .wp-block-rank-math-toc-block li::before { width: 24px; height: 24px; font-size: 12px; }
+/* "On this page" as a collapsed toggle (Digant, 2026-10-03 16:16): a <details> whose <summary> is the title row with
+   a chevron; the list is in the HTML and opens on tap. Same look as the title it replaces (layout.css 11). */
+body.single-colleges #page #main .entry-content details.gpa-toc--toggle > summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 !important;
+    padding: 4px 0 !important;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 600;
+    color: var(--gpa-heading);
+    cursor: pointer;
+    list-style: none;
+}
+body.single-colleges #page #main .entry-content details.gpa-toc--toggle > summary::-webkit-details-marker { display: none; }
+body.single-colleges #page #main .entry-content details.gpa-toc--toggle > summary::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    margin-left: 2px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform .15s ease;
+}
+body.single-colleges #page #main .entry-content details.gpa-toc--toggle[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+body.single-colleges #page #main .entry-content details.gpa-toc--toggle > summary:focus-visible { outline: 2px solid var(--gpa-indigo-500); outline-offset: 2px; border-radius: 4px; }
+body.single-colleges #page #main .entry-content details.gpa-toc--toggle[open] > nav { margin-top: 6px; }
 body.gpa-college-v2.single-colleges #page #main .entry-content figure.gpa-college-table {
     border: 0 !important;
     border-radius: 0 !important;

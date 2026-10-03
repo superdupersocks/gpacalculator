@@ -246,6 +246,12 @@ Starting point found in step 0 (2026-10-03):
 
 ## Changelog
 
+### 2026-10-03: College GPA H2 + "On this page" pilot, live 18:56 UTC (page 22); supersedes the 18:05 entry below
+- **Change date for the 28-day Search Console comparison: 2026-10-03 (18:56 UTC). Review on or after 2026-10-31.** No other calculator page gets H2 or contents-list changes until Digant has reviewed it; then one page at a time, each logged here with its date.
+- H2s (IDs unchanged), approved by Digant 18:55 from the Search Console table: "Real college semester GPA example" (#a-real-college-semester-example), "GPA formula: the math behind your GPA" (#the-math-behind-your-gpa), "College GPA scale: letter grades to grade points" (#college-letter-grades-to-grade-points). Kept: What is a college GPA?, How to Calculate College GPA, Why your college GPA matters, What is a good college GPA?, Not every class affects your GPA.
+- "On this page": collapsed core Details block around the Rank Math TOC (class gpa-toc, layout.css 11b, theme 92ecba9); link text = H2 text word for word (the 18:05 short labels are gone). Revision 39914; details and revert in docs/LIVE_CHANGELOG.md (design branch).
+- Pending: Rank Math SiteNavigationElement schema needs fea2d26 (functions.php filter so Rank Math reads blocks inside Details).
+
 ### 2026-10-03: College GPA jump-link SEO pilot, live 18:05 UTC (page 22)
 - Go-live date for the 28-day Search Console comparison: **2026-10-03**. Review on or after **2026-10-31**; no other calculator page gets chip/H2 changes before Digant reviews it.
 - H2 rewrites (IDs unchanged): "About College GPA" → "What is a college GPA?", "More than just a number" → "Why your college GPA matters", "Understanding your GPA range" → "What is a good college GPA?".

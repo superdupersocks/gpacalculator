@@ -28,6 +28,10 @@
     var youEl = box.querySelector('.gpa-compare__you-label');
     var noteEl = box.querySelector('.gpa-compare__note');
     var fitsEl = box.querySelector('.gpa-compare__fits');
+    var fitsBtn = box.querySelector('.gpa-compare__cta--fits');
+    var planBtn = box.querySelector('.gpa-compare__cta--plan');
+    var bands = fitsBtn ? (fitsBtn.getAttribute('data-bands') || '').split(',') : [];
+    var hub = fitsBtn ? fitsBtn.getAttribute('href') : '';
     var staticText = textEl.textContent;
     var state = { scale: 'unweighted', test: c.act ? 'ACT' : 'SAT' };
 
@@ -82,9 +86,17 @@
         var parts = [];
         var signals = [];
 
-        // The "Colleges where a 3.4 fits" button (when the band pages exist) names the GPA as typed
-        if (fitsEl) {
-            fitsEl.textContent = gOk ? 'a ' + String(gpaIn.value).trim().replace(',', '.') : 'your GPA';
+        // "Colleges where a 3.5 fits": the hub's list for the GPA typed, rounded to a tenth (/admissions/?gpa=3.5), shown
+        // only when that GPA has a list; an unweighted GPA can't be above 4.0
+        if (fitsBtn) {
+            var key = gOk ? (Math.round(g * 10) / 10).toFixed(1) : '';
+            var show = key !== '' && bands.indexOf(key) !== -1 && !(state.scale === 'unweighted' && g > 4);
+            fitsBtn.hidden = !show;
+            if (show) {
+                fitsEl.textContent = 'a ' + key;
+                fitsBtn.setAttribute('href', hub + (hub.indexOf('?') === -1 ? '?' : '&') + 'gpa=' + key);
+            }
+            planBtn.classList.toggle('gpa-compare__cta--primary', !show);
         }
         noteEl.hidden = !(gOk && state.scale === 'weighted' && g > 4 && c.basis !== 'weighted');
 

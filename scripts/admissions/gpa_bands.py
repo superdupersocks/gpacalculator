@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """GPA-band lists: "Colleges where a 3.5 GPA is typical" (Digant's admissions plan step 2, approved 2026-10-03 06:57).
 
-    python3 scripts/admissions/gpa_bands.py      writes data/admissions/gpa-bands.json
+    python3 scripts/admissions/gpa_bands.py      writes data/admissions/gpa-bands.json and the theme's gpa-bands.json
 
 One shared source for every page that lists colleges by GPA: the /gpa-scale/ pages, the college pages' "Colleges where
 a [GPA] fits" button and the /admissions/?gpa= hub filter. Changes nothing on the site.
@@ -30,6 +30,9 @@ import os
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 DATA = os.path.join(ROOT, "data", "admissions")
 OUT = os.path.join(DATA, "gpa-bands.json")
+# The theme's copy: each list's window only, which the hub's ?gpa= filter and the college pages' "Colleges where a
+# [GPA] fits" button read (college-v2.php, gpa_college_band_lists()); deployed with the theme.
+THEME_OUT = os.path.join(ROOT, "child-theme", "generatepress-child", "gpa-bands.json")
 SHOWN, MIN_SHOWN, WIDEN_UNDER, TOP = 15, 3, 10, 5
 PAGES = [round(3.0 + i / 10, 1) for i in range(11)] + [4.1, 4.2, 4.3, 4.4, 4.5]
 TOP_PAGES = {4.4, 4.5}
@@ -112,6 +115,12 @@ def main():
     }
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=1)
+        f.write("\n")
+    windows = {k: {"window": v["window"], "weighted": float(k) > 4.0, "total": v["total"]}
+               for k, v in lists.items() if v["mode"] == "typical"}
+    with open(THEME_OUT, "w", encoding="utf-8") as f:
+        json.dump({"about": "Windows of the GPA-band lists; built by scripts/admissions/gpa_bands.py, don't edit.",
+                   "bands": windows}, f, indent=1)
         f.write("\n")
     print(f"{len(pool)} colleges; lists: " + ", ".join(
         f"{k} {len(v['colleges'])}" + (f"/{v['total']}" if v["mode"] == "typical" else " (highest)")

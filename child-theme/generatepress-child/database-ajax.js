@@ -381,6 +381,8 @@
         state.sat = '';
         state.sort = 'name_asc';
         state.page = 1;
+        var band = document.getElementById('db-gpa-band');
+        if (band) band.hidden = true;
 
         // Reset DOM elements
         if (searchInput) searchInput.value = '';

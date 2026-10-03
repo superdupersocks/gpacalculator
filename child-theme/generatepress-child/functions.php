@@ -2167,8 +2167,11 @@ function gpa_ajax_filter_colleges() {
             break;
     }
 
-    // GPA filters are off while no GPA is published (a GPA shows only with a college-published source); old
-    // links with ?gpa= or ?filter=top_rated list every college instead of none.
+    // ?gpa=3.5: the GPA-band list's colleges (college-v2.php: a cited Common Data Set average in the list's window, tier
+    // A or B). Any other value, including the old 3.5_plus style links, lists every college instead of none.
+    if ( function_exists( 'gpa_college_band_meta_query' ) && ( $band_query = gpa_college_band_meta_query( $gpa_filter ) ) ) {
+        $meta_query[] = $band_query;
+    }
     $gpa_filter = '';
     switch ( $gpa_filter ) {
         case '3.5_plus':

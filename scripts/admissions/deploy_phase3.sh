@@ -14,7 +14,7 @@
 set -euo pipefail
 
 COMMIT="ac770c4"
-FILES="admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js,college-v2.php,college-compare.js"
+FILES="admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js,college-v2.php,college-compare.js,gpa-bands.json"
 HOST="master_rfzfmbbwze@67.205.161.226"
 KEY="$HOME/.ssh/gpacalculator_cloudways"
 THEME="applications/xwnzegvpyy/public_html/wp-content/themes/generatepress-child"

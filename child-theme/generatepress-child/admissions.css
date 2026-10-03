@@ -865,6 +865,7 @@ body.post-type-archive-colleges .gpa-hub {
     text-decoration: none;
     box-sizing: border-box;
 }
+#page .entry-content a.gpa-compare__cta[hidden] { display: none; }
 #page .entry-content a.gpa-compare__cta--primary { background: var(--gpa-cmp-accent); border-color: var(--gpa-cmp-accent); color: var(--gpa-white); }
 #page .entry-content a.gpa-compare__cta:hover { border-color: var(--gpa-indigo-700); }
 #page .entry-content a.gpa-compare__cta--primary:hover { background: var(--gpa-indigo-700); }

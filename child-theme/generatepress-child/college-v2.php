@@ -213,12 +213,12 @@ if ( ! function_exists( 'gpa_college_compare_box' ) ) {
         }
         $name  = esc_html( $v['name'] );
         $calc  = '<p class="gpa-compare__help">Don\'t know your GPA? <a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( gpa_college_calc_anchor( $v ) ) . '</a></p>';
-        // "Colleges where a {GPA} fits" waits for the GPA-band list pages (Digant, 2026-10-03 05:49): until a filter
-        // returns their URL, the box shows only "Plan the grades I need".
+        // "Colleges where a {GPA} fits" links the GPA-band list on the hub (/admissions/?gpa=3.5) for the GPA typed, and
+        // shows only while that GPA has a list (college-compare.js); then it leads and "Plan the grades I need" follows.
         $fits  = (string) apply_filters( 'gpa_college_fits_url', '', $v );
         $ctas  = '<div class="gpa-compare__ctas">'
-            . ( '' !== $fits ? '<a class="gpa-compare__cta gpa-compare__cta--primary" href="' . esc_url( $fits ) . '"><span>Colleges where <span class="gpa-compare__fits">your GPA</span> fits</span></a>' : '' )
-            . '<a class="gpa-compare__cta' . ( '' === $fits ? ' gpa-compare__cta--primary' : '' ) . '" href="' . esc_url( home_url( '/how-to-raise-gpa/' ) ) . '">Plan the grades I need</a>'
+            . ( '' !== $fits && ! $d['open'] ? '<a class="gpa-compare__cta gpa-compare__cta--primary gpa-compare__cta--fits" href="' . esc_url( $fits ) . '" data-bands="' . esc_attr( implode( ',', array_keys( gpa_college_band_lists() ) ) ) . '" hidden><span>Colleges where <span class="gpa-compare__fits">your GPA</span> fits</span></a>' : '' )
+            . '<a class="gpa-compare__cta gpa-compare__cta--primary gpa-compare__cta--plan" href="' . esc_url( home_url( '/how-to-raise-gpa/' ) ) . '">Plan the grades I need</a>'
             . '</div>';
         $fine  = '<p class="gpa-compare__fine">A guide based on reported data, not a prediction. ' . $name . ' reviews each application.</p>';
         if ( $d['open'] ) {
@@ -579,6 +579,57 @@ if ( ! function_exists( 'gpa_college_schema_address' ) ) {
             'addressCountry'  => 'US',
         ), 'strlen' );
     }
+}
+
+if ( ! function_exists( 'gpa_college_band_lists' ) ) {
+    // The GPA-band lists' windows (gpa-bands.json, from scripts/admissions/gpa_bands.py): "3.5" => [window, weighted,
+    // total]. Only the "typical" lists (3.0 to 4.3); 4.4 and 4.5 list the highest averages and have no hub view.
+    function gpa_college_band_lists() {
+        static $bands = null;
+        if ( null === $bands ) {
+            $file  = get_stylesheet_directory() . '/gpa-bands.json';
+            $json  = is_readable( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : null;
+            $bands = is_array( $json ) && isset( $json['bands'] ) && is_array( $json['bands'] ) ? $json['bands'] : array();
+        }
+        return $bands;
+    }
+
+    // The hub's ?gpa=3.5 view ("See all colleges where a 3.5 GPA is typical"): [low, high] of the reported average,
+    // or null for a value that isn't a list. Same rule as the lists: averages of 4.0 or below for 3.0 to 4.0, weighted
+    // averages above 4.0 for 4.1 and up.
+    function gpa_college_band_range( $key ) {
+        $bands = gpa_college_band_lists();
+        $key   = is_string( $key ) && preg_match( '/^\d\.\d$/', $key ) ? $key : '';
+        if ( '' === $key || ! isset( $bands[ $key ] ) ) {
+            return null;
+        }
+        $w  = (float) $bands[ $key ]['window'];
+        $lo = (float) $key - $w;
+        $hi = (float) $key + $w;
+        return ! empty( $bands[ $key ]['weighted'] )
+            ? array( max( $lo, 4.01 ), $hi )
+            : array( $lo, min( $hi, 4.0 ) );
+    }
+
+    // The meta query for that view: a cited average in the range, on a tier A or B page (both indexed).
+    function gpa_college_band_meta_query( $key ) {
+        $range = gpa_college_band_range( $key );
+        if ( ! $range ) {
+            return null;
+        }
+        return array(
+            'relation' => 'AND',
+            array( 'key' => 'cds_gpa', 'value' => array( sprintf( '%.2f', $range[0] ), sprintf( '%.2f', $range[1] ) ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(4,2)' ),
+            array( 'key' => 'cds_gpa_source_url', 'value' => '', 'compare' => '!=' ),
+            array( 'key' => 'admissions_tier', 'value' => array( 'A', 'B' ), 'compare' => 'IN' ),
+        );
+    }
+
+    // "Colleges where a [GPA] fits" on the compare box: the hub, which college-compare.js points at the typed GPA's
+    // list (?gpa=3.5) when there is one.
+    add_filter( 'gpa_college_fits_url', function ( $url ) {
+        return gpa_college_band_lists() ? (string) get_post_type_archive_link( 'colleges' ) : $url;
+    } );
 }
 
 if ( ! function_exists( 'gpa_college_official_link' ) ) {

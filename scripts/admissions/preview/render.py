@@ -2,7 +2,7 @@
 """Before/after screenshots of /admissions/ pages, without touching the live site.
 
     python3 scripts/admissions/preview/render.py OUTDIR [--pages harvard,miami-university] [--sizes 390x844,1440x900]
-        [--before] [--after] [--local http://localhost:8890] [--setup JS] [--eval JS] [--fragment]
+        [--before] [--after] [--local http://localhost:8890] [--setup JS] [--eval JS] [--fragment] [--query gpa=3.5]
 
 "Before" is the live page as saved by the snapshot workflow (data/admissions/preview/snapshot, from
 .github/workflows/admissions-snapshot.yml). "After" is the same saved page with its content area (and its title,
@@ -141,6 +141,7 @@ def main():
                                     "such as a search typed into the hub")
     ap.add_argument("--eval", help="JavaScript expression to evaluate on each page; its result is printed")
     ap.add_argument("--viewport", action="store_true", help="first screen only instead of the full page")
+    ap.add_argument("--query", default="", help="query string for the after page, such as gpa=3.5 on the hub")
     a = ap.parse_args()
     kinds = [k for k in ("before", "after") if getattr(a, k)] or ["before", "after"]
     os.makedirs(a.out, exist_ok=True)
@@ -188,7 +189,7 @@ def main():
             for kind in kinds:
                 if kind == "after" and not path.startswith("/admissions/"):
                     continue
-                html = saved if kind == "before" else after_page(saved, path, a.local)
+                html = saved if kind == "before" else after_page(saved, path + ("?" + a.query if a.query else ""), a.local)
                 for size in a.sizes.split(","):
                     w, h = map(int, size.split("x"))
                     ctx = browser.new_context(viewport={"width": w, "height": h}, ignore_https_errors=True,
@@ -202,7 +203,8 @@ def main():
                             print("route error", route.request.url[:90], e, file=sys.stderr)
                             route.abort()
                     page.route("**/*", safe)
-                    page.goto(SITE + path, wait_until="domcontentloaded", timeout=60000)
+                    page.goto(SITE + path + ("?" + a.query if a.query and kind == "after" else ""), wait_until="domcontentloaded",
+                              timeout=60000)
                     try:
                         page.wait_for_load_state("load", timeout=15000)
                     except Exception:  # noqa: BLE001
@@ -211,7 +213,8 @@ def main():
                     if a.setup:
                         page.evaluate(a.setup)
                         page.wait_for_timeout(600)
-                    shot = os.path.join(a.out, f"{name}-{kind}-{size}.png")
+                    tag = "-" + re.sub(r"[^a-z0-9.]+", "-", a.query.lower()) if a.query and kind == "after" else ""
+                    shot = os.path.join(a.out, f"{name}{tag}-{kind}-{size}.png")
                     page.screenshot(path=shot, full_page=not a.viewport)
                     hscroll = page.evaluate("document.documentElement.scrollWidth > document.documentElement.clientWidth")
                     print(f"{shot}{'  HORIZONTAL SCROLL' if hscroll else ''}")

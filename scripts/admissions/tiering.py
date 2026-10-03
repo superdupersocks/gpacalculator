@@ -192,8 +192,10 @@ def main():
             "tier": t, "why": why, "open_admission": row.get("adm_open_admission", ""),
             "cited_gpa": f"{gpa['cds_gpa']} ({gpa['cds_gpa_year']})" if gpa else "",
             "acceptance_rate": row.get("acceptance_rate", ""),
-            "sat": score_range(row, "sat_composite_25", "sat_composite_75") or (
-                "math " + score_range(row, "sat_math_25", "sat_math_75") if score_range(row, "sat_math_25", "sat_math_75") else ""),
+            "sat": score_range(row, "sat_composite_25", "sat_composite_75") or ", ".join(
+                f"{name} {score_range(row, f'sat_{part}_25', f'sat_{part}_75')}"
+                for name, part in (("math", "math"), ("reading", "reading"))
+                if score_range(row, f"sat_{part}_25", f"sat_{part}_75")),
             "act": score_range(row, "act_composite_25", "act_composite_75"),
             "clicks_12m": clicks, "impressions_12m": impressions, "addresses_counted": len(addresses & set(gsc)),
             "recommendation": rec, "reason": reason, "old_slug": old if old != slug else "",

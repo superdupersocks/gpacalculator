@@ -191,18 +191,25 @@ college-published CDS citation, labeled "as reported by the college" with its ye
 never estimate.
 
 Done: Phase 1 data, Phase 2 audit and pruning (516 pages removed: 368 answer 410, 148 a 301), Phase 3 hub and
-profile template, Phase 4 step 1 (modified dates). Runbooks: `docs/ADMISSIONS_PHASE2_RUNBOOK.md`,
-`docs/ADMISSIONS_PHASE3_RUNBOOK.md`, `docs/ADMISSIONS_PHASE4_RUNBOOK.md` (step 2, the hub pages and structured data,
-waits on Digant's deploy; the noindex for the 53 pages under review is held for tiering).
+profile template, Phase 4 steps 1 and 2 (modified dates; hub pages and structured data, deployed by Digant
+2026-10-03 02:34 UTC). Runbooks: `docs/ADMISSIONS_PHASE2_RUNBOOK.md`, `docs/ADMISSIONS_PHASE3_RUNBOOK.md`,
+`docs/ADMISSIONS_PHASE4_RUNBOOK.md` (left: Digant resubmits the sitemap in Search Console; follow-up checks Oct 19,
+Nov 2, 16 and 30; the noindex for the 53 pages under review is left to the tiering).
 
 Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
-1. **Cleanup QA**: checkpoint sent 2026-10-03 01:45 UTC, waits on Digant's `go cleanup` (`data/admissions/cleanup_qa/report.md`;
-   the admissions doc's "Step 1: cleanup QA" tab). All 516 removed pages answer as planned;
-   proposed: 330 old addresses fixed (chains, dead ends, 404s, 410s with clicks), 42 leftover WordPress pages under
-   /admissions/ unpublished, 302 renamed colleges moved to addresses with their current name. Server steps:
-   `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`.
-2. **Tiering**: A complete data, B partial, C open admission or no GPA, with 12 months of Search Console clicks and
-   impressions; index or noindex per page, traffic overrides. Not started.
+1. **Cleanup QA**: done 2026-10-03 02:26 UTC on Digant's go (`data/admissions/cleanup_qa/report.md`; the admissions
+   doc's "Step 1: cleanup QA" tab; log `admissions-cleanup-20261003-022611-log.tsv`). All 516 removed pages answered
+   as planned; 330 old addresses fixed (86 rules changed, 98 added), 42 leftover WordPress pages under /admissions/
+   set to draft, 302 renamed colleges moved to addresses with their current name. 10 rows were skipped because their
+   rule also covers other addresses; `cleanup_fix_live.php` now splits such rules, and that runs with step 2's go.
+   Server steps: `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`. Live re-check: `cleanup_qa.py after` / `verify`
+   (`data/admissions/cleanup_qa/after/`).
+2. **Tiering**: checkpoint ready 2026-10-03 (`data/admissions/tiering/summary.md`, every page in `tiers.csv`; the
+   admissions doc's "Step 2: tiering" tab), waits on Digant's `go tiers`. A 253 (cited GPA, acceptance rate, SAT/ACT
+   or test blind), B 1,355 (one or two of those), C 1,477 (open admission or none); A and B stay in search, C comes
+   out unless it had a click in 12 months or shows a cited GPA: 1,318 pages to noindex (Rank Math's per-page No
+   Index, which also drops them from the sitemap), each page's tier stored as `admissions_tier` for step 3. Server
+   steps: `docs/ADMISSIONS_TIERING_RUNBOOK.md`.
 3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. Not started.
 
 ## Open issues

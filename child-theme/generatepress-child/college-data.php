@@ -1028,8 +1028,8 @@ if ( ! function_exists( 'gpa_college_hub_title' ) ) {
 
 /* ------------------------------------------------------------------------------------------------------------------
  * Admissions Phase 4: what search engines get. The hub's own pages list the colleges in order, 30 a page, each with
- * a link to the next, so every college page is a link away from the hub; the pages whose figures are under review
- * stay out of search and the sitemap until their figures are verified; the structured data's site nodes.
+ * a link to the next, so every college page is a link away from the hub; the structured data's site nodes. Keeping
+ * the pages under review out of search and the sitemap is built but held for the tiering step.
  * ---------------------------------------------------------------------------------------------------------------- */
 
 if ( ! function_exists( 'gpa_college_hub_per_page' ) ) {
@@ -1085,7 +1085,15 @@ if ( ! function_exists( 'gpa_college_under_review' ) ) {
         return 'colleges' === get_post_type( $post_id ) && null === gpa_college_fresh( $post_id );
     }
 
-    // Kept out of search until its figures are verified; its links still count.
+    /*
+     * Held (2026-10-03): Digant's tiering step decides index or noindex for each page with its Search Console traffic,
+     * so the two filters below aren't hooked. Hooking them keeps every page under review out of search and out of the
+     * colleges sitemap:
+     *   add_filter( 'rank_math/frontend/robots', 'gpa_college_under_review_robots', 20 );
+     *   add_filter( 'rank_math/sitemap/entry', 'gpa_college_under_review_sitemap', 20, 3 );
+     */
+
+    // Out of search until its figures are verified; its links still count.
     function gpa_college_under_review_robots( $robots ) {
         if ( is_singular( 'colleges' ) && gpa_college_under_review( get_queried_object_id() ) ) {
             $robots['index']  = 'noindex';
@@ -1093,7 +1101,6 @@ if ( ! function_exists( 'gpa_college_under_review' ) ) {
         }
         return $robots;
     }
-    add_filter( 'rank_math/frontend/robots', 'gpa_college_under_review_robots', 20 );
 
     // ...and out of the colleges sitemap.
     function gpa_college_under_review_sitemap( $url, $type, $post ) {
@@ -1102,7 +1109,6 @@ if ( ! function_exists( 'gpa_college_under_review' ) ) {
         }
         return $url;
     }
-    add_filter( 'rank_math/sitemap/entry', 'gpa_college_under_review_sitemap', 20, 3 );
 }
 
 if ( ! function_exists( 'gpa_college_schema_site' ) ) {

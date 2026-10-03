@@ -67,6 +67,14 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					</ul></blockquote>
 					<?php endif; ?>
 
+					<?php
+					// "On this page" toggle (gpa_toc_details() in functions.php): the numbered sections, in the HTML
+					if ( $v2 && function_exists( 'gpa_toc_details' ) ) {
+						$toc_items = '' !== $compare ? array( array( 'compare', 'How does your GPA compare?' ) ) : array();
+						foreach ( $sections as $section ) { $toc_items[] = array( $section['id'], $section['title'] ); }
+						echo gpa_toc_details( $toc_items );
+					}
+					?>
 					<?php if ( '' !== $compare ) : ?>
 					<h2 id="compare">How does your GPA compare?</h2>
 					<?php echo $compare; // built from escaped values in gpa_college_compare_box() ?>

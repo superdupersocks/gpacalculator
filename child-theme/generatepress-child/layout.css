@@ -716,3 +716,32 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
     text-decoration: none !important;
 }
 #page .entry-content .wp-block-rank-math-toc-block li a:hover { color: var(--gpa-primary) !important; }
+/* Server-rendered toggle version (details.gpa-toc--details, gpa_toc_details() in functions.php): GPA pages and the
+   college template. Collapsed by default; the summary is the "On this page" title with a chevron. */
+#page .entry-content details.gpa-toc--details > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 !important;
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
+    color: var(--gpa-heading) !important;
+    list-style: none;
+    cursor: pointer;
+}
+#page .entry-content details.gpa-toc--details > summary::-webkit-details-marker { display: none; }
+#page .entry-content details.gpa-toc--details > summary::after {
+    content: "";
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--gpa-tint-indigo) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234338ca' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat center;
+    transition: transform .15s;
+}
+#page .entry-content details.gpa-toc--details[open] > summary { margin-bottom: 6px !important; }
+#page .entry-content details.gpa-toc--details[open] > summary::after { transform: rotate(180deg); }
+#page .entry-content details.gpa-toc--details > summary:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 4px; border-radius: 6px; }
+#page .entry-content details.gpa-toc--details { padding-top: 14px !important; padding-bottom: 14px !important; }

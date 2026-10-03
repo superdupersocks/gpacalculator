@@ -736,6 +736,12 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 @media (min-width: 641px) and (max-width: 880px) {
     #page .entry-content > details.wp-block-details.gpa-toc { max-width: 100% !important; }
 }
+/* 24px between the closed row's bottom line and the first section (Digant 2026-10-03, every page). A first section
+   that opens with a padded card (rx-card, 24px top padding) already gets its 24px from the card. */
+#page #primary #main .entry-content details.wp-block-details.gpa-toc { margin-bottom: 0 !important; }
+#page #primary #main .entry-content details.wp-block-details.gpa-toc + :not(#gpa-x) { margin-top: 24px !important; }
+#page #primary #main .entry-content details.wp-block-details.gpa-toc + :not(#gpa-x) > :is(h2, .wp-block-heading):first-child:not(#gpa-x) { margin-top: 0 !important; }
+#page #primary #main .entry-content details.wp-block-details.gpa-toc + .rx-sec:has(> .rx-card:first-child):not(#gpa-x) { margin-top: 0 !important; }
 #page .entry-content details.gpa-toc > summary {
     display: flex;
     align-items: center;

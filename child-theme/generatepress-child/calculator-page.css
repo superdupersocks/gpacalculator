@@ -316,7 +316,7 @@
 /* ---------- 5. Tables ---------- */
 
 .page-template-template-calculator .entry-content .rx-table {
-  border: 1px solid var(--rx-line);
+  border: 1px solid var(--gpa-table-border);
   border-radius: var(--rx-radius);
   /* 2026-08-30: was `overflow: hidden`, which clipped the 5-column sample
      table (474px wide) inside its 292px container on phones — the Grade Points
@@ -342,8 +342,8 @@
   box-shadow: none !important;
 }
 .page-template-template-calculator .entry-content .rx-table thead th {
-  background: var(--rx-surface-2) !important;
-    color: var(--gpa-text-muted) !important;
+  background: var(--gpa-table-head-bg) !important;
+    color: var(--gpa-table-head-text) !important;
     font-size: 14px !important;
     font-weight: 700 !important;
   line-height: var(--rx-lh-tight) !important;
@@ -359,7 +359,7 @@
 .page-template-template-calculator .entry-content .rx-table td {
   padding: 13px var(--rx-gap-3) !important;
   border: none !important;
-  border-top: 1px solid var(--rx-surface-3) !important;
+  border-top: 1px solid var(--gpa-table-row-line) !important;
   color: var(--rx-body) !important;
   font-size: var(--rx-fs-body) !important;
   line-height: var(--rx-lh-tight) !important;
@@ -371,7 +371,7 @@
   color: var(--rx-ink) !important;
 }
 .page-template-template-calculator .entry-content .rx-table tbody tr:last-child td {
-  background: var(--rx-surface-2) !important;
+  background: var(--gpa-table-total-bg) !important;
   font-weight: 700 !important;
   color: var(--rx-ink) !important;
 }
@@ -393,9 +393,9 @@
 /* ---------- 6. Formula block & result ---------- */
 
 .page-template-template-calculator .entry-content .rx-formula {
-  border: 1px solid var(--rx-line);
+  border: 1px solid var(--gpa-example-result-line);
   border-radius: var(--rx-radius);
-  background: linear-gradient(135deg, var(--rx-surface), var(--rx-surface-2));
+  background: var(--gpa-example-result-bg);
   padding: 32px !important;
   text-align: center;
   box-shadow: var(--rx-shadow);
@@ -405,14 +405,15 @@
 .page-template-template-calculator .entry-content .rx-pill {
   display: table !important;
   margin: var(--rx-gap-3) auto var(--rx-gap-4) !important;
-  background: var(--gpa-bg-dark, var(--gpa-gray-900));
-  color: var(--gpa-white) !important;
+  background: var(--gpa-surface);
+  color: var(--gpa-example-result-value) !important;
+  border: 1px solid var(--gpa-example-result-line);
   border-radius: var(--rx-radius-sm);
   padding: var(--rx-gap-3) var(--rx-gap-4);
   font-size: var(--rx-fs-lg) !important;
   font-weight: 700 !important;
   line-height: var(--rx-lh-tight) !important;
-  box-shadow: 0 10px 15px -3px color-mix(in srgb, var(--gpa-black) 12%, transparent);
+  box-shadow: none;
 }
 
 .page-template-template-calculator .entry-content .rx-defs { gap: var(--rx-gap-2) !important; }
@@ -442,25 +443,26 @@
 .page-template-template-calculator .entry-content .rx-result {
   display: table !important;
   margin: 20px auto 0 !important;
-  background: linear-gradient(90deg, var(--rx-accent-2), var(--rx-accent));
-  color: var(--gpa-white) !important;
+  background: var(--gpa-example-result-bg);
+  color: var(--gpa-example-result-label) !important;
+  border: 1px solid var(--gpa-example-result-line);
   border-radius: var(--rx-radius-sm);
   padding: 14px 22px;
   text-align: center;
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--gpa-indigo-500) 30%, transparent);
+  box-shadow: none;
   font-size: var(--rx-fs-label) !important;
   font-weight: 500 !important;
   text-transform: uppercase;
   letter-spacing: .03em;
   line-height: 1.5 !important;
-  opacity: .95;
+  opacity: 1;
 }
 .page-template-template-calculator .entry-content .rx-result strong {
   display: block;
   font-size: var(--rx-fs-xl) !important;
   font-weight: 700 !important;
   line-height: var(--rx-lh-head) !important;
-  color: var(--gpa-white) !important;
+  color: var(--gpa-example-result-value) !important;
   text-transform: none;
   letter-spacing: normal;
   opacity: 1;

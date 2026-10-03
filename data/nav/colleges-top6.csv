@@ -1,9 +1,11 @@
-rank,slug,short_name,tier,impressions_12m,clicks_12m
-1,university-of-south-carolina-columbia,University of South Carolina,A,9051,78
-2,university-of-arkansas,University of Arkansas,A,4819,4
-3,california-state-university-chico,Chico State,A,4602,9
-4,george-mason-university,George Mason,A,3336,1
-5,university-of-missouri-kansas-city,UMKC,A,3259,4
-6,kennesaw-state-university,Kennesaw State University,A,3210,11
-# Search Console via Windsor.ai, 2025-10-02 to 2026-10-01, /admission/ and /admissions/ plus pre-rename slugs combined.
-# Next: UNM 2658, Oklahoma State 2428, Montclair State University 2257, University of Houston 2230.
+rank,slug,short_name,tier,ga4_views_12m
+1,san-diego,University of San Diego,A,575
+2,university-of-redlands,University of Redlands,B,558
+3,university-of-idaho,University of Idaho,B,485
+4,soka-university-of-america,Soka University of America,B,438
+5,alfred-university,Alfred University,B,407
+6,princeton,Princeton,A,373
+# GA4 screen_page_views via Windsor.ai, 2025-10-02 to 2026-10-02, /admission/ and /admissions/ paths, renamed slugs mapped
+# through data/admissions/redirects (old_admission_urls_check.tsv, legacy_redirect_map.csv) and tiers.csv old_slug.
+# Indexed pages only. Next: Belmont 366, Florida State 364, UT Dallas 363, NYU 362, UPenn 362.
+# Was (16:3x, Search Console impressions, tier A): South Carolina, Arkansas, Chico State, George Mason, UMKC, Kennesaw State.

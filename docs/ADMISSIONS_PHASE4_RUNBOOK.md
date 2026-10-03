@@ -1,0 +1,108 @@
+# Admissions Phase 4: server runbook
+
+Server steps for what search engines get from /admissions/, run from the repo clone on Digant's Mac
+(`~/Documents/Claude/gpacalculator`, branch `claude/admissions-data-phase1-bsjda7`). Run `git pull` before each step.
+Each step runs only after Digant types its go in the admissions thread. Log every live change in
+`docs/LIVE_CHANGELOG.md` with its undo, push, and report in the thread. `SSH` and `WP` are as in
+`docs/ADMISSIONS_PHASE2_RUNBOOK.md`.
+
+Digant's go to start Phase 4: "let's kick off phase 4" (2026-10-02 22:47 UTC). The audit (read-only) is in
+`data/admissions/live_checks/indexing.md` (scripts/admissions/indexing_check.py, run on GitHub by
+admissions-indexing.yml) and the Phase 4 tab of the admissions doc. What it found:
+
+- The colleges sitemaps list each of the 3,085 published colleges once, plus the hub, and none of the retired or
+  redirected addresses; robots.txt points to the sitemap index. But 2,996 addresses still give lastmod 19 April 2026:
+  the Phase 2 and 3 imports changed fields without touching the posts' dates. Google last read the index at 00:46 UTC
+  on 2 October, before all of that day's changes.
+- /admissions/page/2/ to /admissions/page/309/ answer 200, indexable, each its own canonical, all showing the same
+  first 30 colleges (the hub's head links to page 2).
+- College pages: the CollegeOrUniversity's url is our page, an "Admissions" EducationalOccupationalProgram carries the
+  net price, and there's no WebPage, WebSite or Organization node. The hub has two CollectionPage nodes.
+- The 53 pages under review (checkpoint H) are indexable and in the sitemap with no figures.
+
+The steps are numbered as in the doc: 1 runs right after the go, 2 after the design thread's ad-rail fixes are live,
+3 is Digant's, and 5 (each college's own website) has its own go.
+
+## 1. Modified dates and the sitemap cache
+
+Done 2026-10-03 00:33 UTC (2,668 dates moved; changelog). The GitHub check at 00:39 read lastmod 2026-10-02 for all
+3,086 colleges-sitemap addresses.
+
+`scripts/admissions/phase4_dates_live.sh` moves each published college post's modified date to 22:32 UTC on
+2 October 2026 (the Phase 3 template deploy, which changed every page) unless it is later already, logging the old
+dates, then clears Rank Math's sitemap cache. Only post_modified and post_modified_gmt change.
+
+1. Database backup: `SSH 'cd WP && wp db export - | gzip > ~/backups/gpacalculator-<UTC date-time>-pre-dates.sql.gz'`,
+   then `gunzip -t`, the dump ends with "-- Dump completed", copy it to `~/gpacalculator-backups/`, SHA-256 matches.
+2. `bash scripts/admissions/phase4_dates_live.sh plan`: 2,668 posts would move if the 417 renamed at 22:39 already
+   carry that date, 3,085 if they don't (then the stale lastmod wasn't the cache); it also prints how Rank Math stores
+   its sitemap cache.
+3. `bash scripts/admissions/phase4_dates_live.sh apply` (note the log name it prints).
+4. Run the indexing check again: the colleges sitemaps' lastmod should read 2026-10-02 for every address. If they still
+   say 19 April, the cache wasn't cleared: Rank Math > Sitemap Settings > Save Changes, then check again.
+5. Changelog row with the undo `bash scripts/admissions/phase4_dates_live.sh revert <log>`.
+
+## 2. Code: the hub's pages, structured data, pages under review
+
+Code: `college-data.php`, `functions.php`, `template-parts/college-db-archive.php`, `database-ajax.js` and
+`admissions.css`, all among the seven files `scripts/admissions/deploy_phase3.sh` ships. Before the deploy command goes
+to Digant, merge the design branch head into this branch (the design thread's rails fix changes
+`gpa_freestar_siderails` in functions.php) and set `COMMIT` in deploy_phase3.sh to the merge, so the deploy keeps
+everything the design shipped. The command stays the same:
+`cd ~/Documents/Claude/gpacalculator && git pull && bash scripts/admissions/deploy_phase3.sh`.
+After the deploy it runs `bash scripts/admissions/phase4_dates_live.sh clear`, since Rank Math serves the sitemaps
+from a cache that a theme deploy doesn't clear.
+
+What changes:
+- The hub's own pages: /admissions/page/N/ lists colleges 30(N-1)+1 to 30N by name (page 103 has the last 25), its
+  title ends "– Page N", and "Show more colleges" is a link to the next page that the script still loads in place;
+  pages after 103 are 404s. A search or filter from page N goes back to /admissions/?search=....
+- College pages: one page node (WebPage, and FAQPage when the page has questions, as on the calculator pages) about
+  the college, with its breadcrumb and dates; the CollegeOrUniversity without our page as its url (its url is the
+  college's own website once section 5 has run), with the former name as alternateName (Calvin College); the site's
+  WebSite and Organization (logo) nodes; no EducationalOccupationalProgram.
+- The hub: Rank Math's CollectionPage alone, with the description and the page's ItemList (numberOfItems 3,085).
+- Pages under review: unchanged for now. Keeping them out of search and the sitemap is built
+  (`gpa_college_under_review_robots`, `gpa_college_under_review_sitemap` in college-data.php) but not hooked: Digant's
+  tiering step (2026-10-03) decides index or noindex for each page with its Search Console traffic.
+
+Checks after "deployed" (the GitHub indexing check, `data/admissions/live_checks/indexing_urls.txt`, plus a look on
+desktop and phone):
+- /admissions/: as before; "Show more colleges" adds 30 cards and the address stays /admissions/.
+- /admissions/page/2/: Allan Hancock College first, title "... – Page 2", canonical itself; /admissions/page/103/: 25
+  colleges, no "Show more"; /admissions/page/104/: 404.
+- /admissions/harvard/: JSON-LD has CollegeOrUniversity (its url http://www.harvard.edu/ once section 5 has run, never
+  our page), WebPage + FAQPage with six questions, Organization,
+  WebSite, BreadcrumbList, and nothing else; /admissions/calvin/: alternateName "Calvin College".
+- /admissions/fairfax-university-of-america/: robots still "follow, index" (the noindex is held).
+- The colleges sitemaps: 3,086 addresses (3,085 colleges and the hub), each once, all dated 2026-10-02.
+- Changelog row; undo `bash scripts/deploy_theme.sh --revert <backup>`, then
+  `bash scripts/admissions/phase4_dates_live.sh clear`.
+
+## 3. Search Console (Digant, in the browser)
+
+1. Search Console > Sitemaps: submit `sitemap_index.xml` again (it was last submitted on 20 September).
+2. URL Inspection: `https://gpacalculator.net/admissions/`, then Request indexing.
+
+## 4. Follow-up
+
+Search Console checks against the September baseline (`search-console-findings-2026-10` in project memory), 2, 4, 6
+and 8 weeks after the refresh, are scheduled for 19 October, 2, 16 and 30 November 2026 and report in the admissions
+thread: clicks, impressions, position and CTR for /admissions/ and the old /admission/ addresses together, and the
+pages that dropped.
+
+## 5. Each college's own website (its own go)
+
+`scripts/admissions/phase4_websites_live.sh` puts the college's own website, as IPEDS lists it (HD2024 WEBADDR;
+`data/admissions/audit/phase4_websites.csv` from `scripts/admissions/phase4_websites.py`), on each published college
+page with an IPEDS ID as `college_website`. The code from section 2 gives it as the CollegeOrUniversity's url
+(Harvard: http://www.harvard.edu/), so the node names the college's site and our page is the WebPage about it. Only
+that field changes; no page's text, title or modified date does. It can run before or after section 2.
+
+1. Database backup as in section 1, named `...-pre-websites.sql.gz`.
+2. `bash scripts/admissions/phase4_websites_live.sh plan`: about 3,031 pages to write (on the local copy: 3,085
+   published, 53 with no IPEDS ID, 1 whose IPEDS entry isn't a web address).
+3. `bash scripts/admissions/phase4_websites_live.sh apply` (note the log name it prints).
+4. Once section 2 is live: /admissions/harvard/'s CollegeOrUniversity has url http://www.harvard.edu/; Fairfax's has
+   none.
+5. Changelog row with the undo `bash scripts/admissions/phase4_websites_live.sh revert <log>`.

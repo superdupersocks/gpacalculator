@@ -1,0 +1,40 @@
+name: Admissions old addresses
+# Maps the old /admission/<slug>/ addresses that no longer reach their college (scripts/admissions/legacy_redirects.py)
+# with the IPEDS directories back to 2002, and commits data/admissions/redirects/legacy_*.csv back to the branch.
+# Touches nothing on the live site; scripts/admissions/legacy_redirects_live.sh applies the map after a review.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/admissions/legacy_redirects.py'
+      - 'data/admissions/redirects/old_admission_urls_check.tsv'
+      - 'data/admissions/audit/phase2_cd_actions.csv'
+      - '.github/workflows/admissions-legacy.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-legacy-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install openpyxl pypdf cryptography
+      - run: python scripts/admissions/legacy_redirects.py --history
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions/redirects/legacy_*.csv
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/.
+          git commit -m "Map the old /admission/ addresses [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

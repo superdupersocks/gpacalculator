@@ -1,0 +1,17 @@
+{
+ "vars": {
+  "NPIST2": {
+   "title": "Average net price-students awarded grant or scholarship aid, 2023-24",
+   "type": "N"
+  },
+  "NPGRN2": {
+   "title": "Average net price-students awarded grant or scholarship aid, 2023-24",
+   "type": "N"
+  },
+  "NPIS412": {
+   "title": "Average net price (income 0-30,000)-students awarded Title IV federal financial aid, 2023-24",
+   "type": "N"
+  }
+ },
+ "codes": {}
+}

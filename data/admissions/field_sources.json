@@ -1,0 +1,584 @@
+{
+  "unitid": {
+    "source": "IPEDS / College Scorecard",
+    "variable": "UNITID",
+    "year": null,
+    "meaning": "Federal institution ID; join key"
+  },
+  "opeid": {
+    "source": "IPEDS HD2024",
+    "variable": "OPEID",
+    "year": 2024,
+    "meaning": "Federal Student Aid ID"
+  },
+  "name": {
+    "source": "IPEDS HD2024",
+    "variable": "INSTNM",
+    "year": 2024,
+    "meaning": "Official name"
+  },
+  "alias": {
+    "source": "IPEDS HD2024",
+    "variable": "IALIAS",
+    "year": 2024,
+    "meaning": "Other names the college uses"
+  },
+  "website": {
+    "source": "IPEDS HD2024",
+    "variable": "WEBADDR",
+    "year": 2024,
+    "meaning": ""
+  },
+  "city": {
+    "source": "IPEDS HD2024",
+    "variable": "CITY",
+    "year": 2024,
+    "meaning": ""
+  },
+  "state": {
+    "source": "IPEDS HD2024",
+    "variable": "STABBR",
+    "year": 2024,
+    "meaning": ""
+  },
+  "zip": {
+    "source": "IPEDS HD2024",
+    "variable": "ZIP",
+    "year": 2024,
+    "meaning": ""
+  },
+  "lat": {
+    "source": "IPEDS HD2024",
+    "variable": "LATITUDE",
+    "year": 2024,
+    "meaning": ""
+  },
+  "lon": {
+    "source": "IPEDS HD2024",
+    "variable": "LONGITUD",
+    "year": 2024,
+    "meaning": ""
+  },
+  "control": {
+    "source": "IPEDS HD2024",
+    "variable": "CONTROL",
+    "year": 2024,
+    "meaning": "Public / private nonprofit / private for-profit"
+  },
+  "level": {
+    "source": "IPEDS HD2024",
+    "variable": "ICLEVEL",
+    "year": 2024,
+    "meaning": "Four or more years / two-year / less than two-year"
+  },
+  "locale": {
+    "source": "IPEDS HD2024",
+    "variable": "LOCALE",
+    "year": 2024,
+    "meaning": "City, suburb, town or rural"
+  },
+  "carnegie": {
+    "source": "IPEDS HD2024",
+    "variable": "C??BASIC (newest)",
+    "year": 2024,
+    "meaning": "Carnegie basic classification"
+  },
+  "religious_affiliation": {
+    "source": "IPEDS IC2024",
+    "variable": "RELAFFIL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "hbcu": {
+    "source": "IPEDS HD2024",
+    "variable": "HBCU",
+    "year": 2024,
+    "meaning": "Historically Black college or university"
+  },
+  "predominant_degree": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "PREDDEG",
+    "year": null,
+    "meaning": ""
+  },
+  "highest_degree": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "HIGHDEG",
+    "year": null,
+    "meaning": ""
+  },
+  "accreditor": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "ACCREDAGENCY",
+    "year": null,
+    "meaning": ""
+  },
+  "main_campus": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "MAIN",
+    "year": null,
+    "meaning": ""
+  },
+  "operating": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "CURROPER",
+    "year": null,
+    "meaning": "Currently operating"
+  },
+  "active": {
+    "source": "IPEDS HD2024",
+    "variable": "CYACTIVE",
+    "year": 2024,
+    "meaning": "Active in the current IPEDS year"
+  },
+  "closed_date": {
+    "source": "IPEDS HD2024",
+    "variable": "CLOSEDAT",
+    "year": 2024,
+    "meaning": ""
+  },
+  "merged_into": {
+    "source": "IPEDS HD2024",
+    "variable": "NEWID",
+    "year": 2024,
+    "meaning": "UNITID of the institution it merged into"
+  },
+  "address": {
+    "source": "IPEDS HD2024",
+    "variable": "ADDR",
+    "year": 2024,
+    "meaning": ""
+  },
+  "sector": {
+    "source": "IPEDS HD2024",
+    "variable": "SECTOR",
+    "year": 2024,
+    "meaning": ""
+  },
+  "highest_offering": {
+    "source": "IPEDS HD2024",
+    "variable": "HLOFFER",
+    "year": 2024,
+    "meaning": ""
+  },
+  "size_category": {
+    "source": "IPEDS HD2024",
+    "variable": "INSTSIZE",
+    "year": 2024,
+    "meaning": ""
+  },
+  "admissions_url": {
+    "source": "IPEDS HD2024",
+    "variable": "ADMINURL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "application_url": {
+    "source": "IPEDS HD2024",
+    "variable": "APPLURL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "net_price_calculator_url": {
+    "source": "IPEDS HD2024",
+    "variable": "NPRICURL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "financial_aid_url": {
+    "source": "IPEDS HD2024",
+    "variable": "FAIDURL",
+    "year": 2024,
+    "meaning": ""
+  },
+  "admissions_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS ADM when the college filed it, else College Scorecard"
+  },
+  "admissions_year": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "Fall of the entering class the admissions figures describe"
+  },
+  "open_admission": {
+    "source": "IPEDS IC2024",
+    "variable": "OPENADMP",
+    "year": 2024,
+    "meaning": "Open admission policy"
+  },
+  "applicants": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "APPLCN",
+    "year": 2024,
+    "meaning": "First-time, degree-seeking applicants"
+  },
+  "admits": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMSSN",
+    "year": 2024,
+    "meaning": ""
+  },
+  "enrolled": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ENRLT",
+    "year": 2024,
+    "meaning": ""
+  },
+  "admit_rate": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard ADM_RATE)",
+    "variable": "ADMSSN / APPLCN",
+    "year": 2024,
+    "meaning": "0-1"
+  },
+  "yield_rate": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ENRLT / ADMSSN",
+    "year": 2024,
+    "meaning": "0-1"
+  },
+  "sat_submit_pct": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "SATPCT",
+    "year": 2024,
+    "meaning": "% of enrollees who submitted SAT"
+  },
+  "act_submit_pct": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ACTPCT",
+    "year": 2024,
+    "meaning": "% of enrollees who submitted ACT"
+  },
+  "sat_erw_p25": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "SATVR25",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "sat_erw_p50": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "SATVR50",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "sat_erw_p75": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "SATVR75",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "sat_math_p25": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "SATMT25",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "sat_math_p50": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "SATMT50",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "sat_math_p75": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "SATMT75",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_comp_p25": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTCM25",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_comp_p50": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTCM50",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_comp_p75": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTCM75",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_english_p25": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTEN25",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_english_p50": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTEN50",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_english_p75": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTEN75",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_math_p25": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTMT25",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_math_p50": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTMT50",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "act_math_p75": {
+    "source": "IPEDS ADM2024 provisional release (else Scorecard)",
+    "variable": "ACTMT75",
+    "year": 2024,
+    "meaning": "50th percentile reported from 2022-23 on"
+  },
+  "sat_avg": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "SAT_AVG",
+    "year": null,
+    "meaning": "Scorecard's SAT-equivalent average of admitted students (derived)"
+  },
+  "req_gpa": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON1",
+    "year": 2024,
+    "meaning": "Secondary school GPA"
+  },
+  "req_class_rank": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON2",
+    "year": 2024,
+    "meaning": "Secondary school rank"
+  },
+  "req_hs_record": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON3",
+    "year": 2024,
+    "meaning": "Secondary school record"
+  },
+  "req_prep_program": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON4",
+    "year": 2024,
+    "meaning": "Completion of college-preparatory program"
+  },
+  "req_recommendations": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON5",
+    "year": 2024,
+    "meaning": "Recommendations"
+  },
+  "req_competencies": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON6",
+    "year": 2024,
+    "meaning": "Formal demonstration of competencies"
+  },
+  "req_other_test": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON9",
+    "year": 2024,
+    "meaning": "Other Test (Wonderlic, WISC-III, etc.)  "
+  },
+  "req_test_scores": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON7",
+    "year": 2024,
+    "meaning": "Admission test scores"
+  },
+  "req_work_experience": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON10",
+    "year": 2024,
+    "meaning": "Work experience"
+  },
+  "req_essay": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON11",
+    "year": 2024,
+    "meaning": "Personal statement or essay"
+  },
+  "req_legacy": {
+    "source": "IPEDS ADM2024 provisional release",
+    "variable": "ADMCON12",
+    "year": 2024,
+    "meaning": "Legacy status"
+  },
+  "life_experience_credit": {
+    "source": "IPEDS IC2024",
+    "variable": "CREDITS2",
+    "year": 2024,
+    "meaning": "Credit for life experiences"
+  },
+  "ap_credit": {
+    "source": "IPEDS IC2024",
+    "variable": "CREDITS3",
+    "year": 2024,
+    "meaning": "Advanced placement (AP) credits"
+  },
+  "undergrad_enrollment": {
+    "source": "IPEDS DRVEF 2024 provisional release (else Scorecard)",
+    "variable": "EFUG",
+    "year": 2024,
+    "meaning": "Undergraduate enrollment"
+  },
+  "tuition_in_state": {
+    "source": "IPEDS IC_AY 2023 (else Scorecard)",
+    "variable": "CHG2AY3",
+    "year": 2023,
+    "meaning": "Published in-state tuition and fees 2023-24"
+  },
+  "tuition_out_of_state": {
+    "source": "IPEDS IC_AY 2023 (else Scorecard)",
+    "variable": "CHG3AY3",
+    "year": 2023,
+    "meaning": "Published out-of-state tuition and fees 2023-24"
+  },
+  "net_price": {
+    "source": "IPEDS SFA 2023 (else Scorecard)",
+    "variable": "NPGRN2 / NPIST2",
+    "year": 2023,
+    "meaning": "Average net price-students awarded grant or scholarship aid, 2022-23"
+  },
+  "grad_rate": {
+    "source": "IPEDS DRVGR 2024 provisional release (else Scorecard)",
+    "variable": "GRRTTOT",
+    "year": 2024,
+    "meaning": "Graduation rate, total cohort "
+  },
+  "retention_rate": {
+    "source": "IPEDS EFD 2024 provisional release (else Scorecard)",
+    "variable": "RET_PCF",
+    "year": 2024,
+    "meaning": "Full-time retention rate, 2024"
+  },
+  "median_earnings_10yr": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "MD_EARN_WNE_P10",
+    "year": null,
+    "meaning": "Median earnings 10 years after entry, USD"
+  },
+  "median_debt": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "GRAD_DEBT_MDN",
+    "year": null,
+    "meaning": "Median federal loan debt of completers, USD"
+  },
+  "pell_share": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "PCTPELL",
+    "year": null,
+    "meaning": "Share of undergraduates with a Pell grant, 0-1"
+  },
+  "federal_loan_share": {
+    "source": "College Scorecard, Most Recent Institution-Level Data",
+    "variable": "PCTFLOAN",
+    "year": null,
+    "meaning": "Share of undergraduates with a federal loan, 0-1"
+  },
+  "tuition_in_district": {
+    "source": "IPEDS IC_AY 2023",
+    "variable": "CHG1AY3",
+    "year": 2023,
+    "meaning": "Published in-district tuition and fees 2023-24"
+  },
+  "room_board_on_campus": {
+    "source": "IPEDS IC_AY 2023",
+    "variable": "CHG5AY3",
+    "year": 2023,
+    "meaning": "On campus, food and housing 2023-24"
+  },
+  "books_supplies": {
+    "source": "IPEDS IC_AY 2023",
+    "variable": "CHG4AY3",
+    "year": 2023,
+    "meaning": "Books and supplies 2023-24"
+  },
+  "cost_in_state_on_campus": {
+    "source": "IPEDS DRVIC 2023",
+    "variable": "CINSON",
+    "year": 2023,
+    "meaning": "Total price for in-state students living on campus 2023-24"
+  },
+  "cost_out_of_state_on_campus": {
+    "source": "IPEDS DRVIC 2023",
+    "variable": "COTSON",
+    "year": 2023,
+    "meaning": "Total price for out-of-state students living on campus 2023-24"
+  },
+  "net_price_0_30k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS412 / NPT412",
+    "year": 2023,
+    "meaning": "Average net price (income 0-30,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_30_48k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS422 / NPT422",
+    "year": 2023,
+    "meaning": "Average net price (income 30,001-48,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_48_75k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS432 / NPT432",
+    "year": 2023,
+    "meaning": "Average net price (income 48,001-75,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_75_110k": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS442 / NPT442",
+    "year": 2023,
+    "meaning": "Average net price (income 75,001-110,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "net_price_110k_plus": {
+    "source": "IPEDS SFA 2023",
+    "variable": "NPIS452 / NPT452",
+    "year": 2023,
+    "meaning": "Average net price (income over 110,000)-students awarded Title IV federal financial aid, 2022-23"
+  },
+  "undergrad_enrollment_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's undergrad_enrollment"
+  },
+  "tuition_in_state_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's tuition_in_state"
+  },
+  "tuition_out_of_state_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's tuition_out_of_state"
+  },
+  "net_price_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's net_price"
+  },
+  "grad_rate_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's grad_rate"
+  },
+  "retention_rate_source": {
+    "source": "",
+    "variable": "",
+    "year": null,
+    "meaning": "IPEDS or College Scorecard: which one supplied this row's retention_rate"
+  }
+}

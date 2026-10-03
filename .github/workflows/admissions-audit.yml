@@ -1,0 +1,39 @@
+name: Admissions audit
+# Lists the /admissions/ posts for colleges that closed or merged, the posts without a confident IPEDS match and
+# the posts sharing one college (scripts/admissions/audit.py), using Phase 1's match and the IPEDS directories
+# back to 2002, and commits data/admissions/audit/ back to the branch. Touches nothing on the live site.
+on:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/admissions/audit.py'
+      - 'data/admissions/match.csv'
+      - '.github/workflows/admissions-audit.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-audit-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install openpyxl pypdf cryptography
+      - run: python tests/admissions_qa.py
+      - run: python scripts/admissions/audit.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions/audit
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/; the admissions tests ran above.
+          git commit -m "Refresh the admissions audit lists [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

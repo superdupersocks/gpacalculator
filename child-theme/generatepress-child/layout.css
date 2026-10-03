@@ -1,0 +1,718 @@
+/* ============================================================
+   layout.css — page frame for every template (design system overhaul)
+   Loads on every page, right after gpa-design-tokens.css.
+   Holds: page background, content column, hero, nav, footer, section
+   header spacing (moved from Simple CSS), breadcrumb, table of contents.
+   Colors and sizes come only from var(--gpa-*) tokens.
+   Phase 1 (2026-10-02): file created and enqueued; rules arrive in phases 3–4.
+   ============================================================ */
+
+/* Templates that use the article column: calculator pages, content pages
+   (registered template, the older unregistered one, and the body class the
+   theme adds) and blog posts. */
+
+/* ---------- 1. Page background and the white content column ---------- */
+body {
+    background-color: var(--gpa-page-bg) !important;
+}
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.site-content, .site-main, .inside-article) {
+    background-color: transparent !important;
+}
+/* On calculator pages the card rises --rx-card-overlap into the hero, so the
+   column's white starts where the hero ends. */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content {
+    max-width: var(--gpa-content-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    background: linear-gradient(to bottom, transparent var(--rx-card-overlap, 0px), var(--gpa-surface) var(--rx-card-overlap, 0px)) !important;
+    border-radius: 0 0 var(--gpa-column-radius) var(--gpa-column-radius);
+    padding-bottom: var(--gpa-hdr-above);
+}
+@media (max-width: 940px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content {
+        border-radius: 0;
+    }
+}
+
+/* Calculator, tables, media, charts: full column width */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(#root, table, .wp-block-table, figure, .wp-block-image, iframe, canvas, svg):not(#root *, .gpacalc-mount *) {
+    max-width: 100%;
+}
+
+/* Text blocks: 800px, centred inside the column (ad slots are not text, so they keep the full width) */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+    max-width: var(--gpa-text-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Text inset: 40px of white either side of the text from 641px up, 20px on phones */
+@media (min-width: 641px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+        max-width: min(var(--gpa-text-max), calc(100% - 80px)) !important;
+    }
+}
+@media (max-width: 640px) {
+    /* Phones: the column is the screen and has no padding of its own (GPA_COLUMN_TIERS in style.css), so the content area
+       carries the 20px side padding. Text, tables, columns and boxes all sit 20px in; calculators pull out to 14px
+       (calculator-page.css). Not the homepage: its bands are full-bleed by design. */
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content {
+        box-sizing: border-box !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content figure.wp-block-table {
+        overflow-x: auto;
+    }
+}
+/* Tablets (641-880px): the 800px column reaches the screen edges, so the content area carries the 40px inset itself
+   (tables, columns and boxes included) and text fills it; calculators pull back out to the column edges (calculator-page.css). */
+@media (min-width: 641px) and (max-width: 880px) {
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content {
+        box-sizing: border-box !important;
+        padding-left: 40px !important;
+        padding-right: 40px !important;
+    }
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) :is(.entry-content, .entry-content .rx-sec, .entry-content .rx-about) > :is(p, ul, ol, blockquote, h2, h3, h4, h5, h6, div.wp-block-heading, .gpa-callout, .gpa-takeaways, .rx-faqwrap, .rank-math-block, .wp-block-rank-math-toc-block, .gpa-sources):not(#root *, .gpacalc-mount *) {
+        max-width: 100% !important;
+    }
+    :is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post):not(.home) .entry-content figure.wp-block-table {
+        overflow-x: auto;
+    }
+}
+
+/* ---------- 2. Article text ---------- */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content :is(p, li):not(#root *, .gpacalc-mount *) {
+    font-size: var(--gpa-body-size) !important;
+    line-height: var(--gpa-body-line) !important;
+}
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content p:not(#root *, .gpacalc-mount *) {
+    margin-top: 0 !important;
+    margin-bottom: var(--gpa-p-gap) !important;
+}
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content li:not(#root *, .gpacalc-mount *) {
+    margin-bottom: var(--gpa-li-gap) !important;
+}
+#primary #main .entry-content h3:not(#root *, .gpacalc-mount *) {
+    margin-top: var(--gpa-h3-above) !important;
+    margin-bottom: var(--gpa-h3-below) !important;
+}
+#primary #main .entry-content h4:not(#root *, .gpacalc-mount *) {
+    margin-top: var(--gpa-h4-above) !important;
+    margin-bottom: var(--gpa-h4-below) !important;
+}
+#primary #main .entry-content :is(.rx-card, .rx-relcard, .rank-math-list-item, .wp-block-column) > :is(h3, h4):first-child {
+    margin-top: 0 !important;
+}
+
+/* ---------- 3. Section rhythm ---------- */
+:is(body.page-template-template-calculator, body.page-template-template-content, body.page-template-gpa-content-page, body.gpa-template-content, body.single-post) .entry-content > :is(.rx-sec, .wp-block-group):not(:last-child) {
+    margin-bottom: var(--gpa-block-gap) !important;
+}
+
+/* ---------- 4. Section headers ----------
+   Moved from the Simple CSS box (2026-10-02), same system, values from tokens.
+   Header = [pill] + H2 [+ subtitle]. The pill is optional and goes away in phase 6.
+   Spacer blocks touching a header are ignored, so the editor can't break the rhythm. */
+
+/* Space ABOVE the header: on the pill if there is one, otherwise on the H2 */
+#primary #main .entry-content :is(p.rx-eyebrow, h2:not(p.rx-eyebrow + h2, p.rx-eyebrow + .wp-block-spacer + h2)):not(:first-child):not(#root *) { margin-top: var(--gpa-sec-gap) !important; }
+/* ...a header that only has a spacer above it still starts its block */
+#primary #main .entry-content .wp-block-spacer:first-child + :is(p.rx-eyebrow, h2) { margin-top: 0 !important; }
+/* ...old React calculators carry their own bottom padding */
+#primary #main .entry-content #root:has(.min-h-screen) + :is(p.rx-eyebrow, h2),
+#primary #main .entry-content #root:has(.min-h-screen) + .wp-block-spacer + :is(p.rx-eyebrow, h2) { margin-top: 0 !important; }
+
+/* Tight pill → H2 */
+#primary #main .entry-content p.rx-eyebrow { margin-bottom: 0 !important; }
+#primary #main .entry-content p.rx-eyebrow + h2:not(#root *),
+#primary #main .entry-content p.rx-eyebrow + .wp-block-spacer + h2:not(#root *) { margin-top: 8px !important; }
+
+/* H2 → subtitle, and header → content */
+#primary #main .entry-content h2:not(#root *) { margin-bottom: 0 !important; }
+#primary #main .entry-content p.rx-sub { margin-bottom: 0 !important; }
+#primary #main .entry-content h2:not(#root *) + p.rx-sub,
+#primary #main .entry-content h2:not(#root *) + .wp-block-spacer + p.rx-sub { margin-top: var(--gpa-hdr-sub-gap) !important; }
+#primary #main .entry-content h2:not(#root *) + :not(p.rx-sub):not(.wp-block-spacer),
+#primary #main .entry-content h2:not(#root *) + .wp-block-spacer + :not(p.rx-sub),
+#primary #main .entry-content p.rx-sub + :not(.wp-block-spacer),
+#primary #main .entry-content p.rx-sub + .wp-block-spacer + * { margin-top: var(--gpa-hdr-below) !important; }
+
+/* Spacer blocks right before or after a header part do nothing */
+#primary #main .entry-content .wp-block-spacer:has(+ :is(p.rx-eyebrow, h2, p.rx-sub)),
+#primary #main .entry-content :is(p.rx-eyebrow, h2, p.rx-sub) + .wp-block-spacer { height: 0 !important; margin: 0 !important; }
+
+/* A header that is the first thing in its card/section gets no top margin */
+#primary #main .entry-content :is(.rx-sec, .rx-card) > :is(p.rx-eyebrow, h2):first-child { margin-top: 0 !important; }
+/* The section right after the calculator sits the standard header distance below it */
+#primary #main .entry-content > #root + .rx-sec { margin-top: var(--gpa-sec-gap) !important; }
+#primary #main .entry-content > #root + .rx-sec > .rx-card:first-child { padding-top: 0 !important; }
+
+/* Headers are left-aligned on content templates (the hero stays centred).
+   Overrides the block editor's has-text-align-center class; no content edits. */
+body:not(.home) #primary #main .entry-content :is(h2, h2.rx-h2, p.rx-sub, p.rx-eyebrow):not(#root *, .gpacalc-mount *) {
+    text-align: left !important;
+}
+/* Pills sit on the text column's left edge, like the heading under them */
+#primary #main .entry-content p.rx-eyebrow { margin-left: max(0px, calc((100% - var(--gpa-text-max)) / 2)) !important; margin-right: auto !important; }
+
+/* ---------- 5. Odds and ends moved from Simple CSS ---------- */
+.university-gpa-intro { margin-bottom: 40px; }
+@media (max-width: 768px) {
+    .university-gpa-intro { margin-bottom: 28px; }
+}
+/* ---------- 6. Hero (calculator and content templates) ----------
+   One design: light glossy blue band, flat bottom, breadcrumb, navy title,
+   one subtitle line. The band is .entry-header::after, full viewport width,
+   running --rx-hero-tail past the header. On calculator pages the card rises
+   --rx-card-overlap into that tail. */
+body.page-template-template-calculator.page-template-template-calculator {
+    --rx-hero-tail: var(--gpa-hero-tail);
+    --rx-card-overlap: var(--gpa-hero-overlap);
+}
+body.gpa-hero-band.gpa-hero-band {
+    --rx-hero-tail: var(--gpa-hero-tail-plain);
+    --rx-card-overlap: 0px;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) {
+    overflow-x: clip;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) :is(.inside-article, .site-main) {
+    position: relative;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+/* html: beats calculator bundles' page-id header padding (high-school-gpa-calc.css) */
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header {
+    position: relative;
+    z-index: 0;
+    padding: var(--gpa-hero-pad-top) 20px 0 !important;
+    margin-bottom: 0;
+    text-align: center;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: calc(100% + var(--rx-hero-tail));
+    z-index: 0;
+    pointer-events: none;
+    background: var(--gpa-hero-bg);
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header > * {
+    position: relative;
+    z-index: 1;
+}
+/* .entry-header > beats the generic 24px title margin in content-styles.css */
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article .entry-header > h1.entry-title {
+    color: var(--gpa-hero-title) !important;
+    text-align: center !important;
+    margin: 0 auto var(--gpa-hero-title-gap) !important;
+}
+@media (max-width: 768px) {
+    html :is(body.page-template-template-calculator, body.gpa-hero-band) .inside-article .entry-header > h1.entry-title {
+        font-size: var(--gpa-hero-title-size-m) !important;
+    }
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+}
+html :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro p {
+    margin: 0 !important;
+    color: var(--gpa-hero-text) !important;
+    font-size: var(--gpa-hero-sub-size) !important;
+    line-height: 1.5 !important;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro a {
+    color: var(--gpa-link) !important;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) .entry-header .rx-hero-intro strong {
+    color: var(--gpa-hero-title) !important;
+}
+/* Homepage: the hero is a block group (.gpa-hero) holding the title, the
+   subtitle and the calculator. Same band; below the card's top + overlap a
+   page-colored layer covers it, so the card rises into the band the same way. */
+html body .gpa-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    background: var(--gpa-hero-bg) !important;
+    padding: var(--gpa-hero-pad-top) 20px var(--gpa-hdr-above) !important;
+}
+html body .gpa-hero > #root { position: relative; }
+html body .gpa-hero > #root::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: var(--gpa-hero-overlap);
+    bottom: calc(-1 * var(--gpa-hdr-above));
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: var(--gpa-page-bg);
+    pointer-events: none;
+}
+html body .gpa-hero .gpa-hero-title {
+    font-size: var(--gpa-h1-size) !important;
+    line-height: var(--gpa-h1-line) !important;
+    color: var(--gpa-hero-title) !important;
+    margin: 0 auto 12px !important;
+}
+html body .gpa-hero .gpa-hero-sub {
+    max-width: 640px;
+    margin: 0 auto calc(var(--gpa-hero-tail) - var(--gpa-hero-overlap)) !important;
+    font-size: var(--gpa-hero-sub-size) !important;
+    line-height: 1.5 !important;
+    color: var(--gpa-hero-text) !important;
+}
+html body .gpa-hero .gpa-hero-trust { color: var(--gpa-hero-text) !important; }
+@media (max-width: 767px) {
+    html body .gpa-hero :is(.gpa-hero-title, .gpa-hero-sub) { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+/* College pages keep their own hero layout (admissions templates) but use
+   the same band and title colors. "html body" beats database-page.css,
+   which loads later; the hero's inline background (college photo or
+   gradient) is replaced too. */
+html body :is(.db-hero, .db-archive-hero) {
+    background: var(--gpa-hero-bg) !important;
+}
+html body .db-hero {
+    border: 1px solid var(--gpa-border) !important;
+    box-shadow: none !important;
+}
+html body :is(.db-hero__overlay, .db-hero-overlay, .db-archive-hero__overlay, .db-archive-hero__bg, .db-hero-bg) {
+    display: none !important;
+}
+html body :is(.db-hero__title, .db-hero-title, .db-archive-hero__title) {
+    color: var(--gpa-hero-title) !important;
+}
+html body :is(.db-hero__location, .db-hero-location, .db-archive-hero__subtitle) {
+    color: var(--gpa-hero-text) !important;
+}
+html body .db-archive-hero__stat { color: var(--gpa-hero-title) !important; }
+html body .db-archive-hero__stat-divider { background: var(--gpa-border-strong) !important; }
+
+/* Calculator card rises into the hero: the column starts --rx-card-overlap
+   above the band's end, and its white begins exactly there (section 2). */
+body.page-template-template-calculator.page-template-template-calculator .entry-content {
+    margin-top: calc(var(--rx-hero-tail) - var(--rx-card-overlap)) !important;
+}
+body.page-template-template-calculator.page-template-template-calculator #root {
+    position: relative;
+    z-index: 2;
+    margin-top: 0 !important;
+}
+/* Content pages, and calculator pages without a #root card (older plugin
+   calculators), start where the band ends, with room above the first block */
+body.page-template-template-calculator.page-template-template-calculator:not(:has(#root)) {
+    --rx-hero-tail: var(--gpa-hero-tail-plain);
+    --rx-card-overlap: 0px;
+}
+body.page-template-template-calculator.page-template-template-calculator:not(:has(#root)) .entry-content,
+body.gpa-hero-band.gpa-hero-band .entry-content {
+    margin-top: var(--rx-hero-tail) !important;
+    padding-top: var(--gpa-hero-tail-plain);
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band) #primary #main .entry-content > :is(h2, p.rx-eyebrow):first-child {
+    margin-top: 0 !important;
+}
+
+/* ---------- 7. Breadcrumb ----------
+   Printed once per page, above the H1 in the hero (functions.php
+   gpa_hero_breadcrumb; college pages print their own). */
+.gpa-breadcrumb {
+    font-size: 14px;
+    line-height: 1.4;
+}
+.gpa-breadcrumb__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.gpa-breadcrumb__item {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    margin: 0 !important;
+}
+.gpa-breadcrumb__item + .gpa-breadcrumb__item::before {
+    content: "/";
+    margin: 0 8px;
+    color: var(--gpa-breadcrumb-sep);
+    flex: none;
+}
+html .gpa-breadcrumb a.gpa-breadcrumb__link {
+    color: var(--gpa-link) !important;
+    text-decoration: none !important;
+    font-weight: 400;
+}
+html .gpa-breadcrumb a.gpa-breadcrumb__link:hover {
+    color: var(--gpa-primary) !important;
+}
+.gpa-breadcrumb__current {
+    color: var(--gpa-breadcrumb-current);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60vw;
+}
+/* College pages print it above their own hero, on the page width */
+.gpa-breadcrumb:not(.entry-header *) {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 16px 16px 0;
+}
+/* College pages: lay it over the top of their hero, like the other pages
+   (centred on the /admissions/ hub, left-aligned in a college's hero card) */
+html body .db-archive-page,
+html body .db-college-profile { position: relative; }
+html body .db-archive-page > .gpa-breadcrumb,
+html body .db-college-profile > .gpa-breadcrumb {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+html body .db-archive-page > .gpa-breadcrumb { top: 0; padding: 22px 24px 0; }
+html body .db-archive-page > .gpa-breadcrumb .gpa-breadcrumb__list { justify-content: center; }
+html body .db-archive-page > .db-archive-hero { padding-top: 100px !important; }
+html body .db-college-profile > .gpa-breadcrumb { top: 0; padding: 22px 33px 0; }
+html body .db-college-profile > .db-hero { padding-top: 36px !important; }
+@media (max-width: 768px) {
+    html body .db-archive-page > .gpa-breadcrumb { padding: 18px 16px 0; }
+    html body .db-archive-page > .db-archive-hero { padding-top: 72px !important; }
+    html body .db-college-profile > .gpa-breadcrumb { padding: 18px 25px 0; }
+    html body .db-college-profile > .db-hero { padding-top: 32px !important; }
+}
+/* In the hero: centred, above the title */
+.entry-header .gpa-breadcrumb {
+    margin: 0 auto var(--gpa-hero-crumb-gap);
+}
+.entry-header .gpa-breadcrumb__list {
+    justify-content: center;
+}
+@media (max-width: 768px) {
+    .gpa-breadcrumb { font-size: 13px; }
+}
+@media (max-width: 480px) {
+    .gpa-breadcrumb__item:has(.gpa-breadcrumb__current) { display: none; }
+}
+
+/* Blog posts: author line under the title, quiet like the subtitle */
+body.single-post.gpa-hero-band .entry-header .entry-meta {
+    margin-top: 0;
+    color: var(--gpa-hero-text);
+    font-size: var(--gpa-small-size);
+}
+
+/* ---------- 8. Header, logo and nav ----------
+   White bar with a 1px line; 72px tall (60px on phones). Logo = "4.0" badge
+   (inline SVG, functions.php gpa_logo_badge) + live wordmark. */
+.site-header {
+    background: var(--gpa-surface) !important;
+    border-bottom: 1px solid var(--gpa-border) !important;
+    box-shadow: none !important;
+}
+.site-header .inside-header {
+    min-height: 72px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    align-items: center;
+}
+.site-header .site-logo { line-height: 0; margin-right: 0 !important; }
+.site-header .site-logo a { display: inline-flex; }
+.gpa-logo-badge {
+    display: block;
+    width: 36px;
+    height: 36px;
+}
+.gpa-logo-badge .gpa-logo-badge__from { stop-color: var(--gpa-blue-600); }
+.gpa-logo-badge .gpa-logo-badge__to { stop-color: var(--gpa-indigo-700); }
+.gpa-logo-badge text {
+    fill: var(--gpa-white);
+    font-family: var(--gpa-font);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+.site-header .site-branding-container { align-items: center; }
+.site-header .site-logo + .site-branding { margin-left: 10px; }
+.site-header .main-title {
+    margin: 0;
+    font-family: var(--gpa-font) !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.01em;
+}
+.site-header .main-title a,
+.site-header .main-title a:hover {
+    color: var(--gpa-text-strong) !important;
+    text-decoration: none !important;
+}
+.site-header .main-title .gpa-wordmark-accent { color: var(--gpa-primary); }
+
+.main-navigation a,
+.main-navigation .main-nav a {
+    font-family: var(--gpa-font) !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: var(--gpa-text) !important;
+    text-decoration: none !important;
+    transition: color .15s ease, background-color .15s ease;
+}
+.main-navigation .main-nav ul li a { padding: 0 !important; }
+.main-navigation .main-nav ul li.menu-item-has-children > a { padding-left: 0 !important; }
+.menu-item-has-children .dropdown-menu-toggle { padding-right: 0 !important; }
+#menu-top-nav { gap: 25px; }
+.main-navigation .main-nav ul li:hover > a,
+.main-navigation .main-nav ul li.sfHover > a,
+.main-navigation .main-nav ul li > a:focus-visible,
+.main-navigation .main-nav ul li[class*="current-menu-"] > a {
+    color: var(--gpa-primary) !important;
+}
+.main-navigation .sub-menu {
+    background: var(--gpa-surface) !important;
+    border: 1px solid var(--gpa-border) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--gpa-black) 10%, transparent) !important;
+    min-width: 260px !important;
+}
+.main-navigation #menu-top-nav .sub-menu li a {
+    display: block !important;
+    padding: 0.625rem !important;
+    font-size: 14px !important;
+    line-height: 1.25rem !important;
+    color: var(--gpa-text) !important;
+}
+@media (min-width: 769px) {
+    .main-navigation .main-nav > ul { column-gap: 4px !important; margin-right: -12px !important; }
+    .main-navigation .main-nav > ul > li > a,
+    .main-navigation .main-nav > ul > li.menu-item-has-children > a {
+        line-height: 40px !important;
+        margin: 16px 0 !important;
+        padding: 0 12px !important;
+        border-radius: 10px !important;
+    }
+    .main-navigation .sub-menu { padding: 6px !important; }
+    .main-navigation .main-nav .sub-menu li a {
+        padding: 9px 12px !important;
+        border-radius: 8px !important;
+        background: transparent !important;
+    }
+    .main-navigation .main-nav .sub-menu li a:hover,
+    .main-navigation .main-nav .sub-menu li a:focus-visible {
+        background-color: var(--gpa-tint-blue) !important;
+        color: var(--gpa-primary) !important;
+    }
+}
+@media (max-width: 768px) {
+    .site-header .inside-header {
+        min-height: 60px;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+    .gpa-logo-badge { width: 30px; height: 30px; }
+    .site-header .site-logo + .site-branding { margin-left: 8px; }
+    .site-header .main-title { font-size: 17px !important; }
+    .mobile-menu-control-wrapper .menu-toggle,
+    .mobile-menu-control-wrapper .menu-toggle:hover,
+    .mobile-menu-control-wrapper .menu-toggle:focus {
+        background: transparent !important;
+        color: var(--gpa-text-strong) !important;
+    }
+    .has-inline-mobile-toggle #site-navigation.toggled {
+        background: var(--gpa-surface) !important;
+        border-top: 1px solid var(--gpa-divider);
+    }
+}
+
+/* ---------- 9. Footer ----------
+   One block for every template (was copied in style.css, gpa-homepage.css
+   and database-page.css). Deep navy; widget content stays as it is. */
+.site-footer,
+.site-footer .footer-widgets,
+.site-footer .site-info {
+    background: var(--gpa-footer-bg) !important;
+    color: var(--gpa-footer-link) !important;
+    font-family: var(--gpa-font) !important;
+}
+.site-footer .footer-widgets { padding: 3rem 0 !important; }
+.site-footer .footer-widgets .widget { color: var(--gpa-footer-link) !important; }
+.site-footer .footer-widgets .widget-title,
+.site-footer .footer-widgets h2 {
+    font-family: var(--gpa-font) !important;
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    color: var(--gpa-footer-text) !important;
+    margin: 0 0 16px !important;
+}
+.site-footer .footer-widgets a {
+    color: var(--gpa-footer-link) !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    text-decoration: none !important;
+    transition: color .15s ease;
+}
+.site-footer .footer-widgets a:hover { color: var(--gpa-footer-text) !important; }
+.site-footer .footer-widgets ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.site-footer .footer-widgets li {
+    margin: 0 0 8px !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+}
+.site-footer .site-info {
+    border-top: 1px solid var(--gpa-footer-line) !important;
+    padding: 24px 0 !important;
+    text-align: center !important;
+    color: var(--gpa-footer-accent) !important;
+    font-size: 14px !important;
+}
+.site-footer .site-info :is(a, .copyright-bar) {
+    color: var(--gpa-footer-accent) !important;
+    text-decoration: none !important;
+}
+/* College templates zero every .grid-container's padding; the footer keeps the site width */
+html body .site-footer .grid-container {
+    max-width: 1280px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+}
+/* Freestar's privacy-manager link prints after the footer: same band */
+.gpa-cmp-link {
+    background: var(--gpa-footer-bg);
+    color: var(--gpa-footer-accent);
+}
+#pmLink:hover { color: var(--gpa-footer-accent) !important; }
+@media (max-width: 768px) {
+    .site-footer .footer-widgets { padding: 40px 0 !important; }
+    html body .site-footer .grid-container {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+}
+
+/* ---------- 10. Section numbers ----------
+   Every content H2 is numbered 01, 02, 03 with a CSS counter (FAQ and
+   related tools included); the number is not part of the heading text.
+   Not numbered: the hero H1, widget H2s, anything inside a calculator,
+   and an H2 given the class gpa-no-number. The TOC (section 11) lists the
+   same headings, so its numbers always match. Blog posts are numbered
+   only when they have a TOC. */
+:is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content,
+body.single-post .entry-content:has(.wp-block-rank-math-toc-block) {
+    counter-reset: gpa-sec;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content h2:not(#root *, .gpacalc-mount *, .wp-block-rank-math-toc-block *, .widget *, .gpa-no-number),
+body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa-no-number) {
+    counter-increment: gpa-sec;
+}
+:is(body.page-template-template-calculator, body.gpa-hero-band:not(.single-post)) .entry-content h2:not(#root *, .gpacalc-mount *, .wp-block-rank-math-toc-block *, .widget *, .gpa-no-number)::before,
+body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa-no-number)::before {
+    content: counter(gpa-sec, decimal-leading-zero);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: -4px;
+    width: 40px;
+    height: 40px;
+    margin-right: 14px;
+    border-radius: 10px;
+    background: var(--gpa-tint-indigo);
+    color: var(--gpa-accent);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+    vertical-align: middle;
+}
+@media (max-width: 768px) {
+    :is(body.page-template-template-calculator, body.gpa-hero-band) .entry-content h2::before { width: 32px; height: 32px; margin-right: 12px; border-radius: 8px; font-size: 15px; top: -3px; }
+}
+/* A heading block made flex by older rules would split the number from the text */
+:is(body.page-template-template-calculator, body.gpa-hero-band) #primary #main .entry-content h2.rx-h2 { display: block !important; }
+
+/* ---------- 11. Table of contents (Rank Math TOC block) ----------
+   Outline box, "On this page" title, numbered items matching the section
+   numbers. */
+#page .entry-content .wp-block-rank-math-toc-block {
+    max-width: var(--gpa-text-max);
+    margin: var(--gpa-hdr-below) auto 0 !important;
+    padding: 18px 24px !important;
+    background: none !important;
+    border: 1px solid var(--gpa-border) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+}
+#page .entry-content .wp-block-rank-math-toc-block > :is(h2, h3, h4, p, div):first-child {
+    margin: 0 0 6px !important;
+    padding: 0 !important;
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    color: var(--gpa-heading) !important;
+    text-align: left !important;
+}
+#page .entry-content .wp-block-rank-math-toc-block :is(ul, ol) {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    counter-reset: gpa-toc;
+}
+#page .entry-content .wp-block-rank-math-toc-block :is(ul, ol) :is(ul, ol) { display: none; }
+#page .entry-content .wp-block-rank-math-toc-block li {
+    counter-increment: gpa-toc;
+    display: flex;
+    gap: 14px;
+    margin: 0 !important;
+    padding: 9px 0 !important;
+    border-top: 1px solid var(--gpa-divider);
+    font-size: 16px !important;
+    line-height: 1.45 !important;
+}
+#page .entry-content .wp-block-rank-math-toc-block li:first-child { border-top: 0; }
+#page .entry-content .wp-block-rank-math-toc-block li::before {
+    content: counter(gpa-toc, decimal-leading-zero);
+    position: static;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--gpa-tint-indigo);
+    color: var(--gpa-accent);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+#page .entry-content .wp-block-rank-math-toc-block li { align-items: center; }
+#page .entry-content .wp-block-rank-math-toc-block li a {
+    color: var(--gpa-text) !important;
+    font-weight: 400 !important;
+    text-decoration: none !important;
+}
+#page .entry-content .wp-block-rank-math-toc-block li a:hover { color: var(--gpa-primary) !important; }

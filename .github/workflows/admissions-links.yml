@@ -1,0 +1,62 @@
+name: Admissions links check
+# Requests each college's admissions page and website as IPEDS lists them (data/admissions/step3/links.tsv, from
+# scripts/admissions/step3_links.py build) with scripts/admissions/step3_links_check.py, and commits where each one
+# leads to data/admissions/step3/links_status.tsv; step3_links.py pick then gives each college page its official
+# admissions link. Runs on GitHub because the cloud sessions can't reach the colleges' sites. Read-only GETs; changes
+# nothing on gpacalculator.net or anywhere else.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/admissions/step3_links_check.py'
+      - 'data/admissions/step3/links.tsv'
+      - '.github/workflows/admissions-links.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-links-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - run: python scripts/admissions/step3_links_check.py data/admissions/step3/links.tsv ${{ matrix.shard }} 8 status-${{ matrix.shard }}.tsv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ matrix.shard }}
+          path: status-${{ matrix.shard }}.tsv
+  commit:
+    needs: [check]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: results
+          merge-multiple: true
+      - name: Merge the shards
+        run: |
+          out=data/admissions/step3/links_status.tsv
+          head -n 1 results/status-0.tsv > $out
+          for f in results/status-*.tsv; do tail -n +2 "$f"; done | sort >> $out
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions/step3/links_status.tsv
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/.
+          git commit -m "Record where each college's admissions page and website lead [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

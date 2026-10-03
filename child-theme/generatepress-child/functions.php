@@ -213,6 +213,9 @@ function gpa_asset_ver( $relative_path ) {
     return $mtime ? (string) $mtime : wp_get_theme()->get( 'Version' );
 }
 
+// Load order (design system overhaul): tokens → layout → components → template file
+// (homepage / calculator / content / database) → calculator bundle → calc-theme.css.
+// Template files depend on 'gpa-components' so they always print after it.
 add_action('wp_enqueue_scripts', 'gpa_design_tokens', 5);
 function gpa_design_tokens() {
     wp_enqueue_style(
@@ -221,6 +224,37 @@ function gpa_design_tokens() {
         array('gpa-google-fonts'),
         gpa_asset_ver( 'gpa-design-tokens.css' )
     );
+    wp_enqueue_style(
+        'gpa-layout',
+        get_stylesheet_directory_uri() . '/layout.css',
+        array('gpa-design-tokens'),
+        gpa_asset_ver( 'layout.css' )
+    );
+    wp_enqueue_style(
+        'gpa-components',
+        get_stylesheet_directory_uri() . '/components.css',
+        array('gpa-layout'),
+        gpa_asset_ver( 'components.css' )
+    );
+}
+
+// Calculator bundles (calc-assets/*.css) are enqueued while the content renders, so they print in the
+// footer; calc-theme.css joins that late queue after them.
+add_action('wp_footer', 'gpa_calc_theme_styles', 1);
+function gpa_calc_theme_styles() {
+    $styles = wp_styles();
+    foreach ( $styles->queue as $handle ) {
+        $src = isset( $styles->registered[ $handle ] ) ? (string) $styles->registered[ $handle ]->src : '';
+        if ( false !== strpos( $src, '/calc-assets/' ) ) {
+            wp_enqueue_style(
+                'gpa-calc-theme',
+                get_stylesheet_directory_uri() . '/calc-theme.css',
+                array( $handle ),
+                gpa_asset_ver( 'calc-theme.css' )
+            );
+            return;
+        }
+    }
 }
 
 add_action('wp_enqueue_scripts', 'gpa_homepage_styles');
@@ -229,7 +263,7 @@ function gpa_homepage_styles() {
         wp_enqueue_style(
             'gpa-homepage',
             get_stylesheet_directory_uri() . '/gpa-homepage.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'gpa-homepage.css' )
         );
     }
@@ -241,7 +275,7 @@ function calc_page_styles() {
         wp_enqueue_style(
             'calc-page',
             get_stylesheet_directory_uri() . '/calculator-page.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'calculator-page.css' )
         );
     }
@@ -253,7 +287,7 @@ function gpa_content_styles() {
         wp_enqueue_style(
             'gpa-content',
             get_stylesheet_directory_uri() . '/content-styles.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'content-styles.css' )
         );
     }
@@ -265,7 +299,7 @@ function gpa_database_page_styles() {
         wp_enqueue_style(
             'database-page',
             get_stylesheet_directory_uri() . '/database-page.css',
-            array('gpa-design-tokens'),
+            array('gpa-components'),
             gpa_asset_ver( 'database-page.css' )
         );
     }
@@ -550,17 +584,35 @@ function gpa_calc_page_schema($data, $jsonld) {
         }
     }
 
+    // A Rank Math FAQ block's FAQPage can arrive nested under subjectOf: lift it to a top-level node (one per page)
+    // rather than dropping it, so pages with a Rank Math FAQ block keep their FAQ rich result.
+    $gpa_faq_top = false;
+    foreach ($data as $gpa_node) {
+        if (is_array($gpa_node) && isset($gpa_node['@type']) && $gpa_node['@type'] === 'FAQPage') {
+            $gpa_faq_top = true;
+            break;
+        }
+    }
     foreach ($data as $key => &$value) {
         if (is_array($value) && isset($value['subjectOf'])) {
             if (is_array($value['subjectOf'])) {
                 $subjects = $value['subjectOf'];
                 if (isset($subjects['@type'])) {
                     if ($subjects['@type'] === 'FAQPage') {
+                        if (!$gpa_faq_top && !empty($subjects['mainEntity'])) {
+                            $data['FAQPage'] = $subjects;
+                            $gpa_faq_top     = true;
+                        }
                         unset($value['subjectOf']);
                     }
                 } else {
-                    $filtered = array_filter($subjects, function($s) {
-                        return !(is_array($s) && isset($s['@type']) && $s['@type'] === 'FAQPage');
+                    $filtered = array_filter($subjects, function($s) use (&$data, &$gpa_faq_top) {
+                        $is_faq = is_array($s) && isset($s['@type']) && $s['@type'] === 'FAQPage';
+                        if ($is_faq && !$gpa_faq_top && !empty($s['mainEntity'])) {
+                            $data['FAQPage'] = $s;
+                            $gpa_faq_top     = true;
+                        }
+                        return !$is_faq;
                     });
                     if (empty($filtered)) {
                         unset($value['subjectOf']);
@@ -636,6 +688,51 @@ function gpa_calc_page_schema($data, $jsonld) {
     return $data;
 }
 
+// Content pages (GPA scale, guides): Rank Math nests a FAQ block's FAQPage under Article.subjectOf.
+// Lift it to one top-level FAQPage like the calculator pages (a nested copy is dropped when one is already top-level). College pages remove theirs at priority 99, so they have none left here.
+add_filter( 'rank_math/json_ld', 'gpa_lift_nested_faqpage', 115, 2 );
+function gpa_lift_nested_faqpage( $data, $jsonld ) {
+    if ( ! is_array( $data ) || is_front_page() || ! is_singular() ) {
+        return $data;
+    }
+    $has_top = false;
+    foreach ( $data as $node ) {
+        if ( is_array( $node ) && isset( $node['@type'] ) && 'FAQPage' === $node['@type'] ) {
+            $has_top = true;
+            break;
+        }
+    }
+    $faq = null;
+    foreach ( $data as $key => $node ) {
+        if ( ! is_array( $node ) || empty( $node['subjectOf'] ) || ! is_array( $node['subjectOf'] ) ) {
+            continue;
+        }
+        $subjects = isset( $node['subjectOf']['@type'] ) ? array( $node['subjectOf'] ) : $node['subjectOf'];
+        $keep     = array();
+        foreach ( $subjects as $s ) {
+            if ( is_array( $s ) && isset( $s['@type'] ) && 'FAQPage' === $s['@type'] ) {
+                if ( null === $faq && ! empty( $s['mainEntity'] ) ) {
+                    $faq = $s;
+                }
+                continue;
+            }
+            $keep[] = $s;
+        }
+        if ( count( $keep ) === count( $subjects ) ) {
+            continue;
+        }
+        if ( $keep ) {
+            $data[ $key ]['subjectOf'] = $keep;
+        } else {
+            unset( $data[ $key ]['subjectOf'] );
+        }
+    }
+    if ( ! $has_top && null !== $faq ) {
+        $data['FAQPage'] = $faq;
+    }
+    return $data;
+}
+
 add_filter('rank_math/opengraph/type', 'gpa_calc_og_type');
 function gpa_calc_og_type($type) {
     if (gpa_is_calculator_page()) {
@@ -652,6 +749,12 @@ function gpa_calc_remove_article_meta() {
     }
 }
 
+// College profile data from the federal import (Admissions Phase 2, checkpoint E) and the shared FAQ. Loaded only
+// when present, and every caller below checks for its functions, so deploying functions.php alone can't break the site.
+if ( is_readable( get_stylesheet_directory() . '/college-data.php' ) ) {
+    require_once get_stylesheet_directory() . '/college-data.php';
+}
+
 add_filter('rank_math/json_ld', 'gpa_college_page_schema', 99, 2);
 function gpa_college_page_schema($data, $jsonld) {
     if ( ! is_singular('colleges') ) {
@@ -664,10 +767,14 @@ function gpa_college_page_schema($data, $jsonld) {
     $location   = get_field('location', $post_id);
     $avg_gpa    = get_field('average_gpa', $post_id);
     $avg_sat    = get_field('average_sat_score', $post_id);
-    $net_price  = get_field('net_price', $post_id);
     $sat_range  = get_field('sat_range', $post_id);
     $act_range  = get_field('act_range', $post_id);
     $acceptance = get_field('acceptance_rate', $post_id);
+    // Pages with the federal import describe themselves from it; no unsourced GPA or estimated SAT average
+    $fresh      = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+    if ( $fresh ) {
+        $avg_gpa = $avg_sat = '';
+    }
 
     foreach ($data as $key => $value) {
         if ( is_array($value) && isset($value['@type']) ) {
@@ -705,9 +812,13 @@ function gpa_college_page_schema($data, $jsonld) {
     }
     unset($entity);
 
+    // Admissions Phase 4: the page (a WebPage, and the FAQPage when it has questions) is about the college; the site's
+    // WebSite and Organization as on every other page. No "Admissions" EducationalOccupationalProgram (that type is a
+    // course of study), and the college's url isn't this page's.
     foreach ($data as $key => $value) {
         if ( is_array($value) && isset($value['@type']) ) {
-            if ( in_array($value['@type'], array('CollegeOrUniversity', 'EducationalOccupationalProgram'), true) ) {
+            $types = (array) $value['@type'];
+            if ( array_intersect( $types, array( 'CollegeOrUniversity', 'EducationalOccupationalProgram', 'WebPage', 'FAQPage' ) ) ) {
                 unset($data[$key]);
             }
         }
@@ -717,8 +828,18 @@ function gpa_college_page_schema($data, $jsonld) {
         '@type' => 'CollegeOrUniversity',
         '@id'   => $page_url . '#college',
         'name'  => $college,
-        'url'   => $page_url,
     );
+    // The name the page gives as "formerly ..." (Phase 3 names)
+    $former = trim( (string) get_post_meta( $post_id, 'former_name', true ) );
+    if ( '' !== $former && $former !== $college ) {
+        $college_schema['alternateName'] = $former;
+    }
+    // The college's own website from IPEDS (Phase 4); our page is the WebPage node about it
+    $website = function_exists( 'gpa_college_website' ) ? gpa_college_website( $post_id ) : '';
+    if ( '' !== $website ) {
+        $college_schema['url'] = $website;
+    }
+    $college_schema['mainEntityOfPage'] = array( '@id' => $page_url . '#webpage' );
 
     if ( $location ) {
         $parts = array_map('trim', explode(',', $location));
@@ -732,9 +853,22 @@ function gpa_college_page_schema($data, $jsonld) {
         $address['addressCountry'] = 'US';
         $college_schema['address'] = $address;
     }
+    // Template v2 (college-v2.php): the full IPEDS address
+    if ( function_exists( 'gpa_college_v2' ) && gpa_college_v2( $post_id ) && ( $v2_address = gpa_college_schema_address( $post_id ) ) ) {
+        $college_schema['address'] = $v2_address;
+    }
 
     $loc_clean = trim( (string) $location );
-    if ( $loc_clean !== '' && strcasecmp($loc_clean, 'N/A') !== 0 ) {
+    if ( $fresh && $loc_clean !== '' ) {
+        $type        = gpa_college_type_phrase( $post_id );
+        $description = $college . ' is ' . ( preg_match( '/^[aeiou]/i', $type ) ? 'an ' : 'a ' ) . $type . ' in ' . $loc_clean . '.';
+        if ( null !== $fresh['rate'] && '' !== $fresh['fall'] ) {
+            $description .= ' Its acceptance rate for ' . $fresh['fall'] . ' was ' . gpa_college_pct_txt( $fresh['rate'] ) . '.';
+        } elseif ( $fresh['open'] ) {
+            $description .= ' It has an open admission policy.';
+        }
+        $college_schema['description'] = $description;
+    } elseif ( $loc_clean !== '' && strcasecmp($loc_clean, 'N/A') !== 0 ) {
         $description = $college . ' is located in ' . $loc_clean . '.';
 
         $acc_clean = trim( (string) $acceptance );
@@ -760,14 +894,14 @@ function gpa_college_page_schema($data, $jsonld) {
 
     if ( has_post_thumbnail($post_id) ) {
         $college_schema['image'] = get_the_post_thumbnail_url($post_id, 'full');
-    } else {
+    } elseif ( ! $fresh ) {
         $img_url = get_field('img_url', $post_id);
         if ( ! empty($img_url) ) {
             $college_schema['image'] = $img_url;
         }
     }
 
-    $enrollment = get_field('enrollment', $post_id);
+    $enrollment = $fresh ? '' : get_field('enrollment', $post_id); // the import holds undergraduates only, not every student
     if ( $enrollment ) {
         $enrollment_clean = (int) preg_replace('/[^0-9]/', '', (string) $enrollment);
         if ( $enrollment_clean > 0 ) {
@@ -777,106 +911,39 @@ function gpa_college_page_schema($data, $jsonld) {
 
     $data['CollegeOrUniversity'] = $college_schema;
 
-    $program_schema = array(
-        '@type' => 'EducationalOccupationalProgram',
-        '@id'   => $page_url . '#program',
-        'name'  => $college . ' Admissions',
-        'provider' => array(
-            '@type' => 'CollegeOrUniversity',
-            '@id'   => $page_url . '#college',
-        ),
-    );
-
-    $prerequisites = array();
-    if ( $avg_gpa ) {
-        $prerequisites[] = 'Average GPA: ' . $avg_gpa;
-    }
-    if ( $avg_sat ) {
-        $prerequisites[] = 'Average SAT Score: ' . $avg_sat;
-    }
-    if ( ! empty($prerequisites) ) {
-        $program_schema['programPrerequisites'] = implode('; ', $prerequisites);
-    }
-
-    if ( $net_price ) {
-        $price_clean = preg_replace('/[^0-9.]/', '', $net_price);
-        if ( $price_clean !== '' ) {
-            $program_schema['estimatedCost'] = array(
-                '@type'    => 'MonetaryAmount',
-                'currency' => 'USD',
-                'value'    => $price_clean,
-            );
-        }
-    }
-
-    $data['EducationalOccupationalProgram'] = $program_schema;
-
+    // The same questions and answers as the page's FAQ section (college-data.php), as plain text
     $faq_items = array();
-
-    if ( $avg_gpa ) {
+    foreach ( ( function_exists( 'gpa_college_faqs' ) ? gpa_college_faqs( $post_id ) : array() ) as $faq ) {
         $faq_items[] = array(
             '@type' => 'Question',
-            'name'  => 'What GPA do you need to get into ' . $college . '?',
+            'name'  => $faq['question'],
             'acceptedAnswer' => array(
                 '@type' => 'Answer',
-                'text'  => 'The average GPA of admitted students at ' . $college . ' is ' . $avg_gpa . '.',
+                'text'  => gpa_college_faq_text( $faq['answer'] ),
             ),
         );
     }
 
-    if ( $acceptance ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'What is the acceptance rate at ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The acceptance rate at ' . $college . ' is ' . $acceptance . '.',
-            ),
-        );
+    // The page: its description comes from the meta description (gpa_schema_final_walk())
+    $site      = untrailingslashit( home_url() );
+    $page_node = array(
+        '@type'         => $faq_items ? array( 'WebPage', 'FAQPage' ) : 'WebPage',
+        '@id'           => $page_url . '#webpage',
+        'url'           => $page_url,
+        'name'          => function_exists( 'gpa_college_seo_build_title' ) ? gpa_college_seo_build_title( $post_id ) : $college,
+        'isPartOf'      => array( '@id' => $site . '/#website' ),
+        'about'         => array( '@id' => $page_url . '#college' ),
+        'breadcrumb'    => array( '@id' => $page_url . '#breadcrumb' ),
+        'datePublished' => get_post_time( 'c', true, $post_id ),
+        'dateModified'  => get_post_modified_time( 'c', true, $post_id ),
+        'inLanguage'    => get_bloginfo( 'language' ),
+    );
+    if ( $faq_items ) {
+        $page_node['mainEntity'] = $faq_items;
     }
+    $data['WebPage'] = $page_node;
 
-       if ( $sat_range && ! in_array( strtolower( trim( $sat_range ) ), array( '-', '–', 'n/a', 'not reported' ), true ) ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'What SAT score do you need for ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The SAT range for admitted students at ' . $college . ' is ' . $sat_range . '.',
-            ),
-        );
-    }
-
-        if ( $act_range && ! in_array( strtolower( trim( $act_range ) ), array( '-', '–', 'n/a', 'not reported' ), true ) ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'What ACT score do you need for ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The ACT range for admitted students at ' . $college . ' is ' . $act_range . '.',
-            ),
-        );
-    }
-
-    if ( $net_price ) {
-        $faq_items[] = array(
-            '@type' => 'Question',
-            'name'  => 'How much does it cost to attend ' . $college . '?',
-            'acceptedAnswer' => array(
-                '@type' => 'Answer',
-                'text'  => 'The average net price at ' . $college . ' is ' . $net_price . ' per year.',
-            ),
-        );
-    }
-
-    if ( ! empty($faq_items) ) {
-        $data['FAQPage'] = array(
-            '@type'      => 'FAQPage',
-            '@id'        => $page_url . '#faq',
-            'mainEntity' => $faq_items,
-        );
-    }
-
-    return $data;
+    return function_exists( 'gpa_college_schema_site' ) ? gpa_college_schema_site( $data ) : $data;
 }
 
 add_filter('rank_math/json_ld', 'gpa_college_archive_schema', 99, 2);
@@ -934,7 +1001,7 @@ function gpa_college_archive_schema($data, $jsonld) {
     if ( ! $archive_url ) {
         $archive_url = home_url( '/admissions/' );
     }
-    $per_page    = 30;
+    $per_page    = function_exists( 'gpa_college_hub_per_page' ) ? gpa_college_hub_per_page() : 30;
     $paged       = max(1, (int) get_query_var('paged'));
     $page_url    = $paged > 1 ? trailingslashit($archive_url) . 'page/' . $paged . '/' : $archive_url;
 
@@ -943,9 +1010,8 @@ function gpa_college_archive_schema($data, $jsonld) {
         'posts_per_page' => $per_page,
         'paged'          => $paged,
         'post_status'    => 'publish',
-        'meta_key'       => 'average_gpa',
-        'orderby'        => 'meta_value_num',
-        'order'          => 'DESC',
+        'orderby'        => 'title',
+        'order'          => 'ASC',
         'no_found_rows'  => true,
         'fields'         => 'ids',
     ));
@@ -962,26 +1028,41 @@ function gpa_college_archive_schema($data, $jsonld) {
         $position++;
     }
 
+    // Admissions Phase 4: one page node, Rank Math's CollectionPage (#webpage), with the description and this page's
+    // colleges as its main entity; numberOfItems counts the whole list, of which this page shows its 30.
+    $page_key = null;
+    foreach ( $data as $key => $value ) {
+        if ( is_array( $value ) && isset( $value['@type'] ) && array_intersect( (array) $value['@type'], array( 'CollectionPage', 'WebPage' ) ) ) {
+            $page_key = $key;
+            break;
+        }
+    }
+    if ( null === $page_key ) {
+        $page_key          = 'CollectionPage';
+        $data[ $page_key ] = array(
+            '@type'      => 'CollectionPage',
+            '@id'        => $page_url . '#webpage',
+            'url'        => $page_url,
+            'name'       => function_exists( 'gpa_college_hub_title' ) ? gpa_college_hub_title() : 'US College Admissions Database',
+            'isPartOf'   => array( '@id' => untrailingslashit( home_url() ) . '/#website' ),
+            'inLanguage' => get_bloginfo( 'language' ),
+        );
+    }
+    $data[ $page_key ]['description'] = function_exists( 'gpa_college_hub_description' ) ? gpa_college_hub_description() : 'Browse admission requirements, acceptance rates and SAT and ACT score ranges for US colleges and universities.';
+    $data[ $page_key ]['breadcrumb']  = array( '@id' => $archive_url . '#breadcrumb' );
+
     if ( ! empty( $item_list_elements ) ) {
         $data['ItemList'] = array(
             '@type'           => 'ItemList',
             '@id'             => $page_url . '#itemlist',
             'url'             => $page_url,
-            'numberOfItems'   => count( $item_list_elements ),
+            'numberOfItems'   => (int) wp_count_posts( 'colleges' )->publish,
             'itemListElement' => $item_list_elements,
         );
-
-        $data['CollectionPage'] = array(
-            '@type'       => 'CollectionPage',
-            '@id'         => $page_url . '#collectionpage',
-            'url'         => $page_url,
-            'name'        => 'US College Admissions Database',
-            'description' => 'Browse admission requirements, GPA scores, and acceptance rates for 3,700+ US colleges and universities.',
-            'mainEntity'  => array( '@id' => $page_url . '#itemlist' ),
-        );
+        $data[ $page_key ]['mainEntity'] = array( '@id' => $page_url . '#itemlist' );
     }
 
-    return $data;
+    return function_exists( 'gpa_college_schema_site' ) ? gpa_college_schema_site( $data ) : $data;
 }
 
 add_filter('rank_math/opengraph/type', 'gpa_college_og_type');
@@ -1005,7 +1086,7 @@ if ( ! function_exists( 'gpa_admission_filter_active' ) ) {
         if ( ! is_post_type_archive( 'colleges' ) ) {
             return false;
         }
-        $filter_params = array( 'search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort' );
+        $filter_params = array( 'search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort', 'state' );
         foreach ( $filter_params as $p ) {
             if ( isset( $_GET[ $p ] ) && '' !== $_GET[ $p ] ) {
                 return true;
@@ -1047,14 +1128,18 @@ function gpa_admission_filter_force_canonical() {
 }
 
 if ( ! function_exists( 'gpa_college_acc_pct' ) ) {
-    // Acceptance rate as a whole-number string ("5%"), or '' when missing, 0 or 100% (open admission / not reported).
+    // Acceptance rate as text ("43%", "3.6%": one decimal under 10%), or '' when missing, 0 or 100% (open admission /
+    // not reported).
     function gpa_college_acc_pct( $post_id ) {
         $raw = trim( (string) get_field( 'acceptance_rate', $post_id ) );
         $acc = (float) preg_replace( '/[^0-9.]/', '', $raw );
         if ( $acc > 0 && $acc <= 1 && false === strpos( $raw, '%' ) ) {
             $acc *= 100; // stored as a fraction, e.g. 0.81
         }
-        return ( $acc > 0 && $acc < 100 ) ? round( $acc ) . '%' : '';
+        if ( ! ( $acc > 0 && $acc < 100 ) ) {
+            return '';
+        }
+        return function_exists( 'gpa_college_pct_txt' ) ? gpa_college_pct_txt( $acc ) : round( $acc ) . '%';
     }
 }
 if ( ! function_exists( 'gpa_college_gpa_txt' ) ) {
@@ -1066,6 +1151,38 @@ if ( ! function_exists( 'gpa_college_gpa_txt' ) ) {
         }
         $s = number_format( $num, 2 );
         return ( '0' === substr( $s, -1 ) ) ? substr( $s, 0, -1 ) : $s;    }
+}
+if ( ! function_exists( 'gpa_college_cds_gpa' ) ) {
+    // The average high school GPA the college reported on its own Common Data Set (C12), imported by
+    // scripts/admissions/phase2_b2_live.sh, or null without a value, its year and its source. Pages show a GPA
+    // only from these fields, always labeled as reported by the college with its year (and basis when known).
+    function gpa_college_cds_gpa( $post_id ) {
+        $value = trim( (string) get_post_meta( $post_id, 'cds_gpa', true ) );
+        $year  = trim( (string) get_post_meta( $post_id, 'cds_gpa_year', true ) );
+        $url   = trim( (string) get_post_meta( $post_id, 'cds_gpa_source_url', true ) );
+        if ( ! is_numeric( $value ) || (float) $value <= 0 || '' === $year || '' === $url ) {
+            return null;
+        }
+        $pct   = trim( (string) get_post_meta( $post_id, 'cds_gpa_submit_pct', true ) );
+        $basis = trim( (string) get_post_meta( $post_id, 'cds_gpa_basis', true ) );
+        return array(
+            'value'  => $value,
+            'year'   => str_replace( '-', '–', $year ),
+            'submit' => ( is_numeric( $pct ) && (float) $pct > 0 ) ? round( (float) $pct ) . '%' : '',
+            'basis'  => in_array( $basis, array( 'weighted', 'unweighted' ), true ) ? $basis : '',
+            'url'    => $url,
+        );
+    }
+}
+if ( ! function_exists( 'gpa_college_cds_gpa_answer' ) ) {
+    // The sentence that states a reported GPA: who reported it, where, for whom, and why it isn't a target.
+    function gpa_college_cds_gpa_answer( $college, array $g ) {
+        $basis = 'weighted' === $g['basis'] ? ' This is a weighted average (it is above 4.0).' : ( 'unweighted' === $g['basis'] ? ' This is an unweighted average.' : '' );
+        return 'The average high school GPA of ' . $college . '\'s first-year students who submitted one'
+            . ( '' !== $g['submit'] ? ' (' . $g['submit'] . ' did)' : '' )
+            . ' is ' . $g['value'] . ', as reported by the college in its ' . $g['year'] . ' Common Data Set.' . $basis
+            . ' Colleges calculate GPA in different ways, so this average can\'t be compared directly with your own GPA.';
+    }
 }
 if ( ! function_exists( 'gpa_college_range_txt' ) ) {
     function gpa_college_range_txt( $value ) {
@@ -1085,8 +1202,21 @@ if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
         $name    = get_the_title( $post_id );
         $gpa     = gpa_college_gpa_txt( $post_id );
         $acc     = gpa_college_acc_pct( $post_id );
+        $cds     = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
+        $fresh   = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+        $tests   = $fresh ? implode( '/', array_keys( array_filter( array( 'SAT' => $fresh['sat'], 'ACT' => $fresh['act'] ) ) ) ) : '';
 
-        if ( '' !== $gpa && '' !== $acc ) {
+        if ( $cds ) {
+            // The college's own Common Data Set GPA: the page gives it with its year and source; the title names it only
+            $options = '' !== $acc ? array(
+                $name . ' Average GPA & Acceptance Rate (' . $acc . ')',
+                $name . ': Average GPA & ' . $acc . ' Acceptance Rate',
+                $name . ': Average GPA & ' . $acc . ' Acceptance',
+            ) : array(
+                $name . ' Average GPA' . ( '' !== $tests ? ' & ' . $tests . ' Scores' : ' & Admissions' ),
+                $name . ' Average GPA & Admissions',
+            );
+        } elseif ( '' !== $gpa && '' !== $acc ) {
             $options = array(
                 $name . ' GPA Requirements (' . $gpa . ' Avg) & ' . $acc . ' Acceptance Rate',
                 $name . ' GPA Requirements: ' . $gpa . ' Avg, ' . $acc . ' Acceptance',
@@ -1101,19 +1231,27 @@ if ( ! function_exists( 'gpa_college_seo_build_title' ) ) {
             );
         } elseif ( '' !== $acc ) {
             $options = array(
-                $name . ' Acceptance Rate (' . $acc . ') & GPA Requirements',
                 $name . ' Acceptance Rate (' . $acc . ') & Admissions',
                 $name . ' Acceptance Rate: ' . $acc,
             );
-        } else {
+            if ( '' !== $tests ) {
+                array_unshift( $options, $name . ' Acceptance Rate (' . $acc . ') & ' . $tests . ' Scores' );
+            }
+        } elseif ( $fresh && $fresh['open'] ) {
             $options = array(
-                $name . ' Admission Requirements & Acceptance Rate',
+                $name . ' Admission Requirements & Open Admission',
                 $name . ' Admission Requirements',
-                $name . ' Admissions',
             );
+        } elseif ( $fresh && $fresh['requirements'] ) {
+            // Admission factors but no acceptance rate (colleges that admit few or no first-year students)
+            $options = array( $name . ' Admission Requirements' );
+        } else {
+            // No admissions figures on the page: the title promises nothing it doesn't have
+            $options = array( $name . ' Admissions' );
         }
 		        // Very long college names: fall back to shorter formats so the title still fits
         if ( '' !== $gpa ) { $options[] = $name . ': ' . $gpa . ' GPA'; }
+        if ( $cds ) { $options[] = $name . ' Average GPA'; }
         if ( '' !== $acc ) { $options[] = $name . ': ' . $acc . ' Acceptance'; }
         $options[] = $name . ' Admissions';
         $len = function_exists( 'mb_strlen' ) ? 'mb_strlen' : 'strlen';
@@ -1134,14 +1272,32 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
         $subject   = $needs_the ? 'The ' . $name : $name; // start of a sentence
         $object    = $needs_the ? 'the ' . $name : $name; // middle of a sentence
         $gpa     = gpa_college_gpa_txt( $post_id );
-        $acc     = (int) gpa_college_acc_pct( $post_id ); // e.g. 43, or 0 when missing / 100%
+        $acc_txt = gpa_college_acc_pct( $post_id ); // e.g. "43%" or "3.6%", or '' when missing / 100%
+        $acc     = (float) $acc_txt;
+        $fresh   = function_exists( 'gpa_college_fresh' ) ? gpa_college_fresh( $post_id ) : null;
+        $cds     = function_exists( 'gpa_college_cds_gpa' ) ? gpa_college_cds_gpa( $post_id ) : null;
         $sat     = gpa_college_range_txt( get_field( 'sat_range', $post_id ) );
         $act     = gpa_college_range_txt( get_field( 'act_range', $post_id ) );
         $test    = '' !== $sat ? $sat . ' on the SAT' : ( '' !== $act ? $act . ' on the ACT' : '' );
+        $tests   = array(); // pages with the federal import: what the middle 50% of entrants scored, most-used test first
+        if ( $fresh && '' !== $fresh['fall'] ) {
+            $erw  = isset( $fresh['sat']['Reading and Writing'] ) ? gpa_college_range( $fresh['sat']['Reading and Writing'] ) : '';
+            $math = isset( $fresh['sat']['Math'] ) ? gpa_college_range( $fresh['sat']['Math'] ) : '';
+            $comp = isset( $fresh['act']['Composite'] ) ? gpa_college_range( $fresh['act']['Composite'] ) : '';
+            if ( '' !== $erw && '' !== $math ) {
+                $tests['sat'] = 'Middle 50% SAT: ' . $erw . ' reading and writing, ' . $math . ' math.';
+            }
+            if ( '' !== $comp ) {
+                $tests['act'] = 'The middle 50% of first-year students scored ' . $comp . ' on the ACT.';
+            }
+            if ( (float) $fresh['act_submit'] > (float) $fresh['sat_submit'] ) {
+                $tests = array_reverse( $tests );
+            }
+            $test = $tests ? 'x' : ''; // counts as admissions data below
+        }
 
         // School facts
-        $own     = trim( (string) get_field( 'owning', $post_id ) );
-        $type    = preg_match( '/(Public|Private)\s*(\d)\s*Year/i', $own, $m ) ? strtolower( $m[1] ) . ' ' . $m[2] . '-year college' : 'college';
+        $type    = function_exists( 'gpa_college_type_phrase' ) ? gpa_college_type_phrase( $post_id ) : 'college';
         $article = in_array( $type[0], array( 'a', 'e', 'i', 'o', 'u' ), true ) ? 'an' : 'a';
         $loc     = trim( (string) get_field( 'location', $post_id ) );
         $loc     = ( '' !== $loc && 'n/a' !== strtolower( $loc ) ) ? $loc : '';
@@ -1150,31 +1306,74 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
 
         // Every description ends with a call to action. Reserve room for the shortest one, and
         // trim the least important detail first if the sentences would otherwise leave no room.
+        // Pages with a college-published GPA always keep the GPA call to action: most searches are about GPA.
+        $len            = function_exists( 'mb_strlen' ) ? 'mb_strlen' : 'strlen'; // ranges use en dashes
         $has_admissions = ( $acc > 0 || '' !== $gpa || '' !== $test );
-        $short_cta      = $has_admissions ? 'See the requirements.' : 'See admission requirements.';
-        $limit          = 160 - strlen( $short_cta ) - 1;
+        $short_cta      = $cds ? 'See its average GPA.' : ( $has_admissions ? 'See the requirements.' : 'See admission requirements.' );
+        $thin_ctas      = array();
+        if ( ! $cds && ! $has_admissions ) {
+            // Pages without admissions figures name only what they have: admission factors, credit policies, net
+            // price (all of it when it fits); pages still under review have none of those, and say so
+            $what = array();
+            if ( $fresh && $fresh['requirements'] ) {
+                $what[] = 'admission requirements';
+            }
+            if ( $fresh && ( in_array( $fresh['ap'], array( 'Yes', 'No' ), true ) || in_array( $fresh['life'], array( 'Yes', 'No' ), true ) ) ) {
+                $what[] = 'credit policies';
+            }
+            if ( $fresh && $fresh['net_price'] && '' !== $fresh['net_price_year'] ) {
+                $what[] = 'average net price';
+            }
+            if ( count( $what ) > 1 ) {
+                $thin_ctas[] = 'See its ' . implode( ', ', array_slice( $what, 0, -1 ) ) . ' and ' . end( $what ) . '.';
+                $thin_ctas[] = 'See its ' . $what[0] . ' and more.';
+            } elseif ( $what ) {
+                $thin_ctas[] = 'See its ' . $what[0] . '.';
+            } else {
+                $thin_ctas[] = $fresh ? 'See its admissions details.' : 'Its admissions figures are under review.';
+            }
+            $short_cta = end( $thin_ctas );
+        }
+        $limit          = 160 - $len( $short_cta ) - 1;
 
         $sentences = array();
 
         // How selective the school is
-        if ( $acc > 0 ) {
+        if ( $acc > 0 && $fresh && '' !== $fresh['fall'] ) {
+            $for = ' for ' . $fresh['fall'];
             if ( $acc < 10 ) {
-                $sentences[] = $subject . ' admits just ' . $acc . '% of applicants.';
+                $sentences[] = $subject . ' admitted just ' . $acc_txt . ' of applicants' . $for . '.';
             } elseif ( $acc < 25 ) {
-                $sentences[] = $subject . ' is highly selective, admitting ' . $acc . '% of applicants.';
+                $sentences[] = $subject . ' is highly selective: it admitted ' . $acc_txt . ' of applicants' . $for . '.';
             } elseif ( $acc < 50 ) {
-                $sentences[] = $subject . ' accepts ' . $acc . '% of applicants.';
+                $sentences[] = $subject . ' admitted ' . $acc_txt . ' of applicants' . $for . '.';
             } elseif ( $acc < 75 ) {
-                $sentences[] = $subject . ' accepts more than half of applicants (' . $acc . '%).';
+                $sentences[] = $subject . ' admitted more than half of applicants' . $for . ' (' . $acc_txt . ').';
             } else {
-                $sentences[] = $subject . ' accepts most applicants (' . $acc . '%).';
+                $sentences[] = $subject . ' admitted most applicants' . $for . ' (' . $acc_txt . ').';
             }
+        } elseif ( $acc > 0 ) {
+            if ( $acc < 10 ) {
+                $sentences[] = $subject . ' admits just ' . $acc_txt . ' of applicants.';
+            } elseif ( $acc < 25 ) {
+                $sentences[] = $subject . ' is highly selective, admitting ' . $acc_txt . ' of applicants.';
+            } elseif ( $acc < 50 ) {
+                $sentences[] = $subject . ' accepts ' . $acc_txt . ' of applicants.';
+            } elseif ( $acc < 75 ) {
+                $sentences[] = $subject . ' accepts more than half of applicants (' . $acc_txt . ').';
+            } else {
+                $sentences[] = $subject . ' accepts most applicants (' . $acc_txt . ').';
+            }
+        } elseif ( $fresh && $fresh['open'] ) {
+            $sentences[] = $subject . ' has an open admission policy.';
         }
 
         // What admitted students look like (drop the test-score clause if space is tight)
         $who    = $acc > 0 ? 'Admitted students' : 'Admitted students at ' . $object;
         $s2     = array();
-        if ( '' !== $gpa ) {
+        if ( $tests ) {
+            $s2 = array_values( $tests );
+        } elseif ( '' !== $gpa ) {
             if ( '' !== $test ) {
                 $s2[] = $who . ' average a ' . $gpa . ' GPA and typically score ' . $test . '.';
             }
@@ -1184,60 +1383,73 @@ if ( ! function_exists( 'gpa_college_seo_build_description' ) ) {
         }
         if ( $s2 ) {
             $head = implode( ' ', $sentences );
-            $pick = end( $s2 );
+            $pick = $tests ? '' : end( $s2 ); // the imported test sentences are left out when none fits
             foreach ( $s2 as $candidate ) {
-                if ( strlen( trim( $head . ' ' . $candidate ) ) <= $limit ) {
+                if ( $len( trim( $head . ' ' . $candidate ) ) <= $limit ) {
                     $pick = $candidate;
                     break;
                 }
             }
-            $sentences[] = $pick;
+            if ( '' !== $pick ) {
+                $sentences[] = $pick;
+            }
         }
 
         // Fill in with school facts when admissions data is thin. Try the fullest wording first and
         // drop the least important detail (net price, enrollment, location) until it fits.
         if ( count( $sentences ) < 2 ) {
+            $students   = $fresh ? ' undergraduates' : ' students'; // the federal import counts undergraduates
             $where      = $loc ? ' in ' . $loc : '';
             $candidates = array();
             if ( $sentences ) {
                 if ( $enr > 0 ) {
-                    $candidates[] = "It's " . $article . ' ' . $type . $where . ( $loc ? ', with ' : ' with ' ) . number_format( $enr ) . ' students.';
+                    $candidates[] = "It's " . $article . ' ' . $type . $where . ( $loc ? ', with ' : ' with ' ) . number_format( $enr ) . $students . '.';
                 }
                 $candidates[] = "It's " . $article . ' ' . $type . $where . '.';
                 $candidates[] = "It's " . $article . ' ' . $type . '.';
             } else {
                 $base = $subject . ' is ' . $article . ' ' . $type . $where;
                 if ( $enr > 0 && $price > 0 ) {
-                    $candidates[] = $base . ', with ' . number_format( $enr ) . ' students and an average net price of $' . number_format( $price ) . '.';
+                    $candidates[] = $base . ', with ' . number_format( $enr ) . $students . ' and an average net price of $' . number_format( $price ) . '.';
                 }
                 if ( $enr > 0 ) {
-                    $candidates[] = $base . ', with ' . number_format( $enr ) . ' students.';
+                    $candidates[] = $base . ', with ' . number_format( $enr ) . $students . '.';
                 } elseif ( $price > 0 ) {
                     $candidates[] = $base . ', with an average net price of $' . number_format( $price ) . '.';
                 }
                 $candidates[] = $base . '.';
+                if ( $where ) {
+                    $candidates[] = $subject . ' is ' . $article . ' ' . $type . '.';
+                }
             }
             $head = implode( ' ', $sentences );
-            $pick = end( $candidates );
+            $pick = ( $fresh && $sentences ) ? '' : end( $candidates ); // a second sentence only when it fits
             foreach ( $candidates as $candidate ) {
-                if ( strlen( trim( $head . ' ' . $candidate ) ) <= $limit ) {
+                if ( $len( trim( $head . ' ' . $candidate ) ) <= $limit ) {
                     $pick = $candidate;
                     break;
                 }
             }
-            $sentences[] = $pick;
+            if ( '' !== $pick ) {
+                $sentences[] = $pick;
+            }
         }
 
-        // Call to action: rotate the wording across pages, using the first version that fits
+        // Call to action: rotate the wording across pages, using the first version that fits (pages without
+        // admissions figures: the fullest list of what they have that fits)
         $ctas = $has_admissions
             ? array( 'See what it takes to get in.', 'See the full admission requirements.', "Here's what it takes to get in." )
-            : array( 'See admission requirements and credit options.', 'See its admission requirements and credit options.' );
-        $body = implode( ' ', $sentences );
-        $cta  = $short_cta;
-        $n    = count( $ctas );
+            : $thin_ctas;
+        if ( $cds ) {
+            $ctas = array( 'See its average GPA and what it takes to get in.', 'See its average GPA and full requirements.' );
+        }
+        $body  = implode( ' ', $sentences );
+        $cta   = $short_cta;
+        $n     = count( $ctas );
+        $start = $thin_ctas ? 0 : $post_id;
         for ( $i = 0; $i < $n; $i++ ) {
-            $option = $ctas[ ( $post_id + $i ) % $n ];
-            if ( strlen( $body . ' ' . $option ) <= 160 ) {
+            $option = $ctas[ ( $start + $i ) % $n ];
+            if ( $len( $body . ' ' . $option ) <= 160 ) {
                 $cta = $option;
                 break;
             }
@@ -1305,6 +1517,13 @@ if ( ! function_exists( 'gpa_render_breadcrumb' ) ) {
             $trail[] = array( get_the_title(), null );
         } elseif ( is_post_type_archive( 'colleges' ) ) {
             $trail[] = array( 'College Admissions', null );
+        } elseif ( is_singular() && ! is_front_page() ) {
+            // Same trail as the BreadcrumbList schema: Home > parent pages > this page.
+            $post_id = get_queried_object_id();
+            foreach ( gpa_breadcrumb_ancestors( $post_id ) as $ancestor_id ) {
+                $trail[] = array( gpa_breadcrumb_title( $ancestor_id ), get_permalink( $ancestor_id ) );
+            }
+            $trail[] = array( gpa_breadcrumb_title( $post_id ), null );
         } else {
             return;
         }
@@ -1323,6 +1542,39 @@ if ( ! function_exists( 'gpa_render_breadcrumb' ) ) {
         }
         echo '</ol></nav>';
     }
+}
+
+/** Published parent pages of a page, top level first. */
+function gpa_breadcrumb_ancestors( $post_id ) {
+    $ids = array();
+    foreach ( array_reverse( get_post_ancestors( $post_id ) ) as $ancestor_id ) {
+        if ( 'publish' === get_post_status( $ancestor_id ) ) {
+            $ids[] = $ancestor_id;
+        }
+    }
+    return $ids;
+}
+
+function gpa_breadcrumb_title( $post_id ) {
+    return wp_specialchars_decode( wp_strip_all_tags( get_the_title( $post_id ) ), ENT_QUOTES );
+}
+
+/**
+ * Design overhaul phase 4: the breadcrumb sits in the hero, above the H1, on
+ * calculator, content and blog post pages. College pages print their own.
+ */
+add_action( 'generate_before_page_title', 'gpa_hero_breadcrumb' );
+add_action( 'generate_before_entry_title', 'gpa_hero_breadcrumb' );
+function gpa_hero_breadcrumb() {
+    static $done = false;
+    if ( $done || ! is_singular( array( 'page', 'post' ) ) || is_front_page() || ! in_the_loop() || ! is_main_query() ) {
+        return;
+    }
+    if ( is_page() && ! gpa_is_content_hero_page() && ! ( function_exists( 'gpa_is_calculator_tool_page' ) && gpa_is_calculator_tool_page() ) ) {
+        return;
+    }
+    $done = true;
+    gpa_render_breadcrumb();
 }
 
 add_filter( 'rank_math/json_ld', 'gpa_breadcrumb_list_schema', 110, 2 );
@@ -1368,13 +1620,22 @@ function gpa_breadcrumb_list_schema( $data, $jsonld ) {
         );
         $page_url = $admission_url;
     } elseif ( is_singular() ) {
+        $post_id = get_queried_object_id();
+        foreach ( gpa_breadcrumb_ancestors( $post_id ) as $ancestor_id ) {
+            $items[] = array(
+                '@type'    => 'ListItem',
+                'position' => count( $items ) + 1,
+                'name'     => gpa_breadcrumb_title( $ancestor_id ),
+                'item'     => get_permalink( $ancestor_id ),
+            );
+        }
         $items[] = array(
             '@type'    => 'ListItem',
-            'position' => 2,
-            'name'     => get_the_title(),
-            'item'     => get_permalink(),
+            'position' => count( $items ) + 1,
+            'name'     => gpa_breadcrumb_title( $post_id ),
+            'item'     => get_permalink( $post_id ),
         );
-        $page_url = get_permalink();
+        $page_url = get_permalink( $post_id );
     } else {
         return $data;
     }
@@ -1819,11 +2080,12 @@ if ( ! function_exists( 'gpa_fmt_pct' ) ) {
 
 add_shortcode( 'gpa_college_archive', 'gpa_college_archive_shortcode' );
 function gpa_college_archive_shortcode() {
+    // The college finder from the /admissions/ hub; its styles are in admissions.css (section 7)
     wp_enqueue_style(
-        'database-page',
-        get_stylesheet_directory_uri() . '/database-page.css',
-        array( 'gpa-design-tokens' ),
-        gpa_asset_ver( 'database-page.css' )
+        'gpa-admissions',
+        get_stylesheet_directory_uri() . '/admissions.css',
+        array('gpa-components'),
+        gpa_asset_ver( 'admissions.css' )
     );
     wp_enqueue_script(
         'database-ajax',
@@ -1837,191 +2099,7 @@ function gpa_college_archive_shortcode() {
     return ob_get_clean();
 }
 
-if ( ! function_exists( 'gpa_render_college_card' ) ) {
-    function gpa_render_college_card( $post_id ) {
-        $college_name      = get_the_title( $post_id );
-        $permalink         = get_permalink( $post_id );
-        $location          = get_field( 'location', $post_id );
-        $owning            = get_field( 'owning', $post_id );
-        $acceptance_rate   = get_field( 'acceptance_rate', $post_id );
-        $average_gpa       = get_field( 'average_gpa', $post_id );
-        $admission_standards = get_field( 'admission_standards', $post_id );
-        $img_url           = get_field( 'img_url', $post_id );
-
-        $sat_range         = get_field( 'sat_range', $post_id );
-        $average_sat_score = get_field( 'average_sat_score', $post_id );
-        $sat_reading_25    = get_field( 'sat_reading_25', $post_id );
-        $sat_reading_75    = get_field( 'sat_reading_75', $post_id );
-        $sat_math_25       = get_field( 'sat_math_25', $post_id );
-        $sat_math_75       = get_field( 'sat_math_75', $post_id );
-        $sat_composite_25  = get_field( 'sat_composite_25', $post_id );
-        $sat_composite_75  = get_field( 'sat_composite_75', $post_id );
-
-        $act_range         = get_field( 'act_range', $post_id );
-        $average_act_score = get_field( 'average_act_score', $post_id );
-        $act_reading_25    = get_field( 'act_reading_25', $post_id );
-        $act_reading_75    = get_field( 'act_reading_75', $post_id );
-        $act_math_25       = get_field( 'act_math_25', $post_id );
-        $act_math_75       = get_field( 'act_math_75', $post_id );
-        $act_composite_25  = get_field( 'act_composite_25', $post_id );
-        $act_composite_75  = get_field( 'act_composite_75', $post_id );
-
-        $state_abbr = '';
-        if ( $location ) {
-            $parts = array_map( 'trim', explode( ',', $location ) );
-            if ( isset( $parts[1] ) ) {
-                $state_abbr = strtoupper( trim( $parts[1] ) );
-            }
-        }
-
-        $acceptance_num = floatval( str_replace( '%', '', $acceptance_rate ) );
-        if ( $acceptance_num > 0 && $acceptance_num < 20 ) {
-            $acceptance_badge_class = 'db-card-badge--red';
-        } elseif ( $acceptance_num < 50 ) {
-            $acceptance_badge_class = 'db-card-badge--orange';
-        } else {
-            $acceptance_badge_class = 'db-card-badge--green';
-        }
-
-        $owning_lower = strtolower( trim( $owning ) );
-        if ( strpos( $owning_lower, 'public' ) !== false ) {
-            $owning_badge_class = 'db-card-badge--purple';
-        } elseif ( strpos( $owning_lower, 'private' ) !== false ) {
-            $owning_badge_class = 'db-card-badge--blue';
-        } else {
-            $owning_badge_class = 'db-card-badge--gray';
-        }
-
-        $gpa_formatted = gpa_fmt_gpa( $average_gpa );
-        $gpa_display = $gpa_formatted !== '' ? $gpa_formatted : 'N/A';
-        $acceptance_display = $acceptance_rate ? esc_html( gpa_fmt_pct( $acceptance_rate ) ) : 'N/A';
-
-        ob_start();
-        ?>
-        <div class="db-college-card" data-post-id="<?php echo esc_attr( $post_id ); ?>">
-            <a class="db-college-card__image" href="<?php echo esc_url( $permalink ); ?>" aria-label="<?php echo esc_attr( $college_name ); ?>">
-                <?php if ( $img_url ) : ?>
-                    <img src="<?php echo esc_url( $img_url ); ?>" alt="<?php echo esc_attr( $college_name ); ?>" loading="lazy" decoding="async" />
-                <?php else : ?>
-                    <div class="db-college-card__image-placeholder" aria-hidden="true">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                        </svg>
-                    </div>
-                <?php endif; ?>
-            </a>
-            <div class="db-college-card__badges">
-                <?php if ( $state_abbr ) : ?>
-                    <span class="db-card-badge db-card-badge--state"><?php echo esc_html( $state_abbr ); ?></span>
-                <?php endif; ?>
-                <?php if ( $admission_standards ) : ?>
-                    <span class="db-card-badge db-card-badge--standards"><?php echo esc_html( $admission_standards ); ?></span>
-                <?php endif; ?>
-                <?php if ( $owning ) : ?>
-                    <span class="db-card-badge <?php echo esc_attr( $owning_badge_class ); ?>"><?php echo esc_html( $owning ); ?></span>
-                <?php endif; ?>
-            </div>
-
-            <h3 class="db-college-card__name">
-                <a href="<?php echo esc_url( $permalink ); ?>"><?php echo esc_html( $college_name ); ?></a>
-            </h3>
-
-            <?php if ( $location ) : ?>
-                <div class="db-college-card__location">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <span><?php echo esc_html( $location ); ?></span>
-                </div>
-            <?php endif; ?>
-
-            <div class="db-college-card__stats">
-                <div class="db-college-card__stat">
-                    <span class="db-college-card__stat-label">Acceptance Rate</span>
-                    <span class="db-college-card__stat-value <?php echo esc_attr( $acceptance_badge_class ); ?>"><?php echo $acceptance_display; ?></span>
-                </div>
-                <div class="db-college-card__stat">
-                    <span class="db-college-card__stat-label">Average GPA</span>
-                    <span class="db-college-card__stat-value"><?php echo esc_html( $gpa_display ); ?></span>
-                </div>
-            </div>
-
-            <div class="db-college-card__test-box db-college-card__test-box--sat">
-                <div class="db-college-card__test-header">
-                    <span class="db-college-card__test-title">SAT Scores</span>
-                    <?php if ( $sat_range ) : ?>
-                        <span class="db-college-card__test-range"><?php echo esc_html( $sat_range ); ?></span>
-                    <?php endif; ?>
-                </div>
-                <?php if ( $average_sat_score ) : ?>
-                    <div class="db-college-card__test-avg">
-                        <span class="db-college-card__test-avg-label">Average</span>
-                        <span class="db-college-card__test-avg-value"><?php echo esc_html( $average_sat_score ); ?></span>
-                    </div>
-                <?php endif; ?>
-                <div class="db-college-card__test-breakdown">
-                    <?php if ( $sat_reading_25 || $sat_reading_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Reading</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $sat_reading_25 ); ?> - <?php echo esc_html( $sat_reading_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $sat_math_25 || $sat_math_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Math</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $sat_math_25 ); ?> - <?php echo esc_html( $sat_math_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $sat_composite_25 || $sat_composite_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Composite</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $sat_composite_25 ); ?> - <?php echo esc_html( $sat_composite_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="db-college-card__test-box db-college-card__test-box--act">
-                <div class="db-college-card__test-header">
-                    <span class="db-college-card__test-title">ACT Scores</span>
-                    <?php if ( $act_range ) : ?>
-                        <span class="db-college-card__test-range"><?php echo esc_html( $act_range ); ?></span>
-                    <?php endif; ?>
-                </div>
-                <?php if ( $average_act_score ) : ?>
-                    <div class="db-college-card__test-avg">
-                        <span class="db-college-card__test-avg-label">Average</span>
-                        <span class="db-college-card__test-avg-value"><?php echo esc_html( $average_act_score ); ?></span>
-                    </div>
-                <?php endif; ?>
-                <div class="db-college-card__test-breakdown">
-                    <?php if ( $act_reading_25 || $act_reading_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Reading</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_reading_25 ); ?> - <?php echo esc_html( $act_reading_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $act_math_25 || $act_math_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Math</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_math_25 ); ?> - <?php echo esc_html( $act_math_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    <?php if ( $act_composite_25 || $act_composite_75 ) : ?>
-                        <div class="db-college-card__test-row">
-                            <span class="db-college-card__test-row-label">Composite</span>
-                            <span class="db-college-card__test-row-value"><?php echo esc_html( $act_composite_25 ); ?> - <?php echo esc_html( $act_composite_75 ); ?></span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-        <?php
-        return ob_get_clean();
-    }
-}
+// gpa_render_college_card(), one college in the hub list and its AJAX results: college-data.php
 
 add_action('wp_ajax_filter_colleges', 'gpa_ajax_filter_colleges');
 add_action('wp_ajax_nopriv_filter_colleges', 'gpa_ajax_filter_colleges');
@@ -2035,7 +2113,8 @@ function gpa_ajax_filter_colleges() {
     $acceptance_rate = isset($_POST['acceptance_rate']) ? sanitize_text_field( wp_unslash( $_POST['acceptance_rate'] ) ) : '';
     $gpa_filter      = isset($_POST['gpa']) ? sanitize_text_field( wp_unslash( $_POST['gpa'] ) ) : '';
     $sat_filter      = isset($_POST['sat']) ? sanitize_text_field( wp_unslash( $_POST['sat'] ) ) : '';
-    $sort            = isset($_POST['sort']) ? sanitize_text_field( wp_unslash( $_POST['sort'] ) ) : 'gpa_desc';
+    $state_filter    = isset($_POST['state']) ? strtoupper( sanitize_text_field( wp_unslash( $_POST['state'] ) ) ) : '';
+    $sort            = isset($_POST['sort']) ? sanitize_text_field( wp_unslash( $_POST['sort'] ) ) : 'name_asc';
     $paged           = isset($_POST['page']) ? max( 1, absint($_POST['page']) ) : 1;
     $per_page        = isset($_POST['per_page']) ? max( 1, min( 100, absint($_POST['per_page']) ) ) : 30;
 
@@ -2047,7 +2126,9 @@ function gpa_ajax_filter_colleges() {
     );
 
     if ( $search ) {
-        $args['s'] = $search;
+        // Every word must be in the college's name, its federal (IPEDS) name, a former name or its city and state
+        // (gpa_college_hub_search_sql() in college-data.php)
+        $args['gpa_hub_terms'] = array_slice( preg_split( '/[\s,]+/', $search, -1, PREG_SPLIT_NO_EMPTY ), 0, 6 );
     }
 
     $meta_query = array( 'relation' => 'AND' );
@@ -2066,21 +2147,38 @@ function gpa_ajax_filter_colleges() {
         );
     }
 
+    // "Under N%" skips colleges with no rate: an empty acceptance_rate (open admission, not reported, or emptied by
+    // the E import for want of a source) casts to 0 and would otherwise count as the most selective.
     switch ( $acceptance_rate ) {
         case 'under_10':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 10, 'compare' => '<', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => array( 0.01, 10 - 0.01 ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(5,2)' );
             break;
         case 'under_25':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 25, 'compare' => '<', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => array( 0.01, 25 - 0.01 ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(5,2)' );
             break;
         case 'under_50':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 50, 'compare' => '<', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => array( 0.01, 50 - 0.01 ), 'compare' => 'BETWEEN', 'type' => 'DECIMAL(5,2)' );
             break;
         case 'over_50':
-            $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 50, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' );
+            $meta_query[] = array(
+                'relation' => 'OR',
+                array( 'key' => 'acceptance_rate', 'value' => 50, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' ),
+                array( 'key' => 'adm_open_admission', 'value' => 'Yes' ), // open admission: no rate, admits everyone
+            );
             break;
     }
 
+    // ?state=MA: the colleges in one state (college pages' "See all colleges in {State}"; noindex like every filter)
+    if ( function_exists( 'gpa_college_state_names' ) && isset( gpa_college_state_names()[ $state_filter ] ) ) {
+        $meta_query[] = array( 'key' => 'college_state', 'value' => $state_filter );
+    }
+
+    // ?gpa=3.5: the GPA-band list's colleges (college-v2.php: a cited Common Data Set average in the list's window, tier
+    // A or B). Any other value, including the old 3.5_plus style links, lists every college instead of none.
+    if ( function_exists( 'gpa_college_band_meta_query' ) && ( $band_query = gpa_college_band_meta_query( $gpa_filter ) ) ) {
+        $meta_query[] = $band_query;
+    }
+    $gpa_filter = '';
     switch ( $gpa_filter ) {
         case '3.5_plus':
             $meta_query[] = array( 'key' => 'average_gpa', 'value' => 3.5, 'compare' => '>=', 'type' => 'DECIMAL(3,2)' );
@@ -2093,6 +2191,8 @@ function gpa_ajax_filter_colleges() {
             break;
     }
 
+    // "Under 1200" skips colleges with no SAT figure, as "Under N%" does above: an empty average_sat_score (not
+    // reported, or emptied by the E import for want of a source) casts to 0.
     switch ( $sat_filter ) {
         case '1400_plus':
             $meta_query[] = array( 'key' => 'average_sat_score', 'value' => 1400, 'compare' => '>=', 'type' => 'NUMERIC' );
@@ -2101,20 +2201,30 @@ function gpa_ajax_filter_colleges() {
             $meta_query[] = array( 'key' => 'average_sat_score', 'value' => array( 1200, 1400 ), 'compare' => 'BETWEEN', 'type' => 'NUMERIC' );
             break;
         case 'under_1200':
-            $meta_query[] = array( 'key' => 'average_sat_score', 'value' => 1200, 'compare' => '<', 'type' => 'NUMERIC' );
+            $meta_query[] = array( 'key' => 'average_sat_score', 'value' => array( 1, 1199 ), 'compare' => 'BETWEEN', 'type' => 'NUMERIC' );
             break;
     }
 
     if ( $quick_filter === 'high_acceptance' ) {
-        $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 70, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' );
-    } elseif ( $quick_filter === 'top_rated' ) {
-        $meta_query[] = array( 'key' => 'average_gpa', 'value' => 3.7, 'compare' => '>=', 'type' => 'DECIMAL(3,2)' );
-    } elseif ( $quick_filter === 'ivy_league' ) {
-        $ivy_slugs = array(
-            'harvard', 'yale-university', 'princeton-university', 'columbia-university',
-            'brown-university', 'dartmouth-college', 'university-of-pennsylvania', 'cornell-university',
+        $meta_query[] = array(
+            'relation' => 'OR',
+            array( 'key' => 'acceptance_rate', 'value' => 70, 'compare' => '>=', 'type' => 'DECIMAL(5,2)' ),
+            array( 'key' => 'adm_open_admission', 'value' => 'Yes' ),
         );
-        $args['post_name__in'] = $ivy_slugs;
+    } elseif ( $quick_filter === 'ivy_league' ) {
+        // By IPEDS unit ID: Brown, Columbia, Cornell, Dartmouth, Harvard, Penn, Princeton, Yale
+        $meta_query[] = array(
+            'key'     => 'ipeds_unitid',
+            'value'   => array( '217156', '190150', '190415', '182670', '166027', '215062', '186131', '130794' ),
+            'compare' => 'IN',
+        );
+    }
+
+    // Lowest-first sorts would list colleges with no figure (open admission, not reported) as if it were 0
+    if ( 'acceptance_asc' === $sort ) {
+        $meta_query[] = array( 'key' => 'acceptance_rate', 'value' => 0, 'compare' => '>', 'type' => 'DECIMAL(5,2)' );
+    } elseif ( 'sat_asc' === $sort ) {
+        $meta_query[] = array( 'key' => 'average_sat_score', 'value' => 0, 'compare' => '>', 'type' => 'NUMERIC' );
     }
 
     if ( count( $meta_query ) > 1 ) {
@@ -2131,12 +2241,15 @@ function gpa_ajax_filter_colleges() {
         'name_asc'        => array( 'orderby' => 'title', 'order' => 'ASC' ),
         'name_desc'       => array( 'orderby' => 'title', 'order' => 'DESC' ),
     );
-    $sort_cfg = isset( $sort_map[ $sort ] ) ? $sort_map[ $sort ] : $sort_map['gpa_desc'];
+    $sort_map['gpa_desc'] = $sort_map['gpa_asc'] = $sort_map['name_asc']; // no GPA to sort by (see above)
+    $sort_cfg = isset( $sort_map[ $sort ] ) ? $sort_map[ $sort ] : $sort_map['name_asc'];
     foreach ( $sort_cfg as $k => $v ) {
         $args[ $k ] = $v;
     }
 
+    add_filter( 'posts_search', 'gpa_college_hub_search_sql', 10, 2 );
     $query = new WP_Query( $args );
+    remove_filter( 'posts_search', 'gpa_college_hub_search_sql', 10 );
 
     $html = '';
     if ( $query->have_posts() ) {
@@ -2585,7 +2698,7 @@ function gpa_is_content_hero_page() {
 
 add_filter( 'body_class', 'gpa_content_hero_band_class', 30 );
 function gpa_content_hero_band_class( $classes ) {
-    if ( gpa_is_content_hero_page() ) {
+    if ( gpa_is_content_hero_page() || is_singular( 'post' ) ) {
         $classes[] = 'gpa-hero-band';
     }
     return $classes;
@@ -2820,7 +2933,28 @@ if ( ! function_exists( 'get_field' ) ) {
 	}
 }
 
-// 24/SEP/2026 — updated 27/SEP/2026: side rails V5 + jQuery UI removal on calculator pages
+// Side rails V6 (2026-10-02): tiered rails that match the Freestar siderail size mapping and the column tiers in style.css.
+
+/**
+ * Freestar placements for the side rails, per side and rail tier (rail width in px): the first id always, the second
+ * when the rail is tall enough for two 600px ads.
+ * Freestar sizeMapping (fsdata.json v158, checked 2026-10-02): siderail_left_1/2/3 use the target tiers
+ * (1260 = 160x600/120x600, 1350 = up to 300 wide, 1440 = up to 336 wide). siderail_right_1/2/3 still use
+ * 1000/1349/1439/1440: at 1260-1348 they would ask for 300-336px ads in a 160px rail, but from 1350 up they never
+ * ask for more than the rail holds. So the right rail keeps the established right_1 (+ right_3) from 1350 up and
+ * uses left_3 only in the 160 tier. When Freestar corrects right_1/right_2, set every 'right' tier to right_1, right_2.
+ */
+function gpa_rail_placements() {
+	// Digant 2026-10-03: left rail = left_1 + left_2, right rail = right_1 + right_2. At 1260-1349 (160px rails)
+	// right_1/2's mapping would ask for 300-336px ads, so until Freestar fixes it the right rail there uses left_3 twice:
+	// the second copy is the same placement under its own slot id ("--2"; the script requests placementName = id before "--").
+	$left = array( 'gpacalculator-net_siderail_left_1', 'gpacalculator-net_siderail_left_2' );
+	$right = array( 'gpacalculator-net_siderail_right_1', 'gpacalculator-net_siderail_right_2' );
+	return array(
+		'left'  => array( 160 => $left, 300 => $left, 336 => $left ),
+		'right' => array( 160 => array( 'gpacalculator-net_siderail_left_3', 'gpacalculator-net_siderail_left_3--2' ), 300 => $right, 336 => $right ),
+	);
+}
 
 add_action( 'wp_footer', 'gpa_freestar_siderails', 20 );
 function gpa_freestar_siderails() {
@@ -2834,49 +2968,55 @@ function gpa_freestar_siderails() {
 			. '<script data-cfasync="false" type="text/javascript">freestar.config.enabled_slots.push({ placementName: "' . esc_js( $id ) . '", slotId: "' . esc_js( $id ) . '" });</script>'
 			. '</div>';
 	};
-	// Side-rail containers only: the V5 script requests these ads when the rails are actually visible.
-	$rail = function ( $id, $size ) {
-		return '<div align="center" data-freestar-ad="' . esc_attr( $size ) . '" id="' . esc_attr( $id ) . '"></div>';
-	};
+	$placements = gpa_rail_placements();
 
-	echo "\n<!-- Freestar side rails (GPA_RAILS_V5) -->\n";
-	echo '<div class="gpa-rail gpa-rail--left"><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_2', '__300x600' )
-		. '</div></div></div>' . "\n";
-	echo '<div class="gpa-rail gpa-rail--right"><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_1', '__336x600' )
-		. '</div></div><div class="gpa-rail__seg"><div class="gpa-rail__sticky">'
-		. $rail( 'gpacalculator-net_siderail_right_3', '__300x600' )
-		. '</div></div></div>' . "\n";
+	echo "\n<!-- Freestar side rails (GPA_RAILS_V6) -->\n";
+	foreach ( array( 'left', 'right' ) as $side ) {
+		echo '<div class="gpa-rail gpa-rail--' . $side . '">';
+		foreach ( array_unique( call_user_func_array( 'array_merge', array_reverse( array_values( $placements[ $side ] ) ) ) ) as $id ) { // widest tier first: its order is the stacking order
+			echo '<div class="gpa-rail__seg" style="display:none"><div class="gpa-rail__sticky"><div align="center" data-freestar-ad="__300x600" id="' . esc_attr( $id ) . '"></div></div></div>';
+		}
+		echo "</div>\n";
+	}
 // echo "\n<!-- Tag ID: gpacalculator-net_kargo_spotlight -->\n" . $tag( 'gpacalculator-net_kargo_spotlight', '' ) . "\n";
 	?>
 <script data-cfasync="false">
 (function () {
-	var L = document.querySelector('.gpa-rail--left'), R = document.querySelector('.gpa-rail--right');
-	if (!L || !R) { return; }
-	var s1 = R.children[0], s2 = R.children[1], GAP = 20, EDGE = 8, body = document.body;
-	var mq = window.matchMedia('(min-width: 1024px)');
+	var PLACEMENTS = <?php echo wp_json_encode( $placements ); ?>; // edit in gpa_rail_placements() (functions.php)
+	// Same breakpoints as GPA_COLUMN_TIERS in style.css and the siderail size mapping.
+	var TIERS = [
+		{ w: 336, mq: window.matchMedia('(min-width: 1440px)') },
+		{ w: 300, mq: window.matchMedia('(min-width: 1350px)') },
+		{ w: 160, mq: window.matchMedia('(min-width: 1260px)') }
+	];
+	var GAP_MIN = 20, GAP_MAX = 56, EDGE = 8, SEG2_MIN = 1240, AD_H = 600; // two 600px ads + spacing
+	var rails = { left: document.querySelector('.gpa-rail--left'), right: document.querySelector('.gpa-rail--right') };
+	if (!rails.left || !rails.right) { return; }
+	var body = document.body;
 	var header = document.querySelector('.entry-header');
 	var siteHeader = document.querySelector('.site-header');
 	var footer = document.querySelector('.site-footer');
 	var heroes = ['.gpa-hero', '.db-hero', '.db-archive-hero'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
 	var cols = ['.db-container', '.entry-content', '#content'].map(function (s) { return document.querySelector(s); }).filter(Boolean);
-	var afterExtra = null, state = '', raf = 0, t = 0, adsRequested = false;
+	var afterExtra = null, state = '', raf = 0, t = 0, requested = {}, curTier = null, loadTier = null, tierSent = false;
 
-	// READ phase only — no style writes in here.
-	function measure() {
+	function tierNow() {
+		for (var i = 0; i < TIERS.length; i++) { if (TIERS[i].mq.matches) { return TIERS[i].w; } }
+		return 0;
+	}
+
+	// READ phase only.
+	function measure(w) {
 		var de = document.documentElement, vw = de.clientWidth, y = window.pageYOffset, c = null, r, i;
 		for (i = 0; i < cols.length; i++) {
 			r = cols[i].getBoundingClientRect();
 			if (r.width && r.width < vw - 100) { c = r; break; }
 		}
 		if (!c) { return null; }
-		var m = Math.min(c.left, vw - c.right);
-		if (m < 300 + GAP + EDGE) { return null; }
 		var b = 0;
 		if (header) {
 			r = header.getBoundingClientRect();
-			if (afterExtra === null) { // ::after geometry is static CSS — read it once
+			if (afterExtra === null) {
 				var cs = getComputedStyle(header, '::after');
 				afterExtra = cs.position === 'absolute' ? (parseFloat(cs.top) || 0) + (parseFloat(cs.height) || 0) : 0;
 			}
@@ -2885,45 +3025,85 @@ function gpa_freestar_siderails() {
 		for (i = 0; i < heroes.length; i++) {
 			r = heroes[i].getBoundingClientRect();
 			if (r.height) { b = Math.max(b, r.bottom + y); }
-	}
+		}
 		if (!b && siteHeader) { b = siteHeader.getBoundingClientRect().bottom + y; }
 		var top = b + 24;
-		var bottom = footer ? footer.getBoundingClientRect().top + y - 24 : de.scrollHeight - 24;
-		var h = Math.max(620, bottom - top), wide = m >= 336 + GAP + EDGE;
+		// Stop 24px above the bottom in-content ad (never beside it), else above the footer.
+		var stop = document.getElementById('gpacalculator-net_incontent_bottom') || footer;
+		var bottom = stop ? stop.getBoundingClientRect().top + y - 24 : de.scrollHeight - 24;
+		var h = bottom - top;
+		if (h < AD_H) { return null; }
+		// Space beside the column: the rail must fit at its tier width, with at least GAP_MIN to the column and EDGE to the screen edge.
+		// The column tiers leave exactly GAP_MIN beside a full-width rail, so allow 1px for subpixel layout (zoom, odd widths);
+		// a strict check hid one side at random.
+		var gl = Math.min(GAP_MAX, c.left - EDGE - w), gr = Math.min(GAP_MAX, vw - c.right - EDGE - w), ok = GAP_MIN - 1;
 		return {
-			top: Math.round(top), h: Math.round(h), wide: wide,
-			l: Math.round(window.pageXOffset + Math.min((c.left - 300) / 2, c.left - GAP - 300)),
-			r: Math.round(window.pageXOffset + Math.max(c.right + (vw - c.right - (wide ? 336 : 300)) / 2, c.right + GAP))
+			top: Math.round(top), h: Math.round(h), two: h >= SEG2_MIN,
+			left: gl >= ok ? Math.round(window.pageXOffset + c.left - gl - w) : null,
+			right: gr >= ok ? Math.round(window.pageXOffset + c.right + gr) : null
 		};
 	}
-	function requestAds(p) {
-		if (adsRequested || !window.freestar) { return; }
-		adsRequested = true;
-		var ids = ['gpacalculator-net_siderail_right_2'];
-		if (p.wide) { ids.push('gpacalculator-net_siderail_right_1'); }
-		if (!p.wide || p.h >= 1300) { ids.push('gpacalculator-net_siderail_right_3'); }
-		var slots = ids.map(function (id) { return { placementName: id, slotId: id }; });
-		freestar.queue.push(function () { freestar.newAdSlots(slots); });
+
+	function want(side, p, w) { // placement ids a rail should hold now
+		if (!p || p[side] === null || !PLACEMENTS[side][w]) { return []; }
+		return PLACEMENTS[side][w].slice(0, p.two ? 2 : 1);
+	}
+	// Request newly shown slots. Slots are deleted only on a tier change (reset): a rail hidden for a moment while the
+	// page loads keeps its ad, since deleting and re-requesting it left rails blank.
+	function sync(ids, reset) {
+		var add = ids.filter(function (id) { return !requested[id]; });
+		var del = reset ? Object.keys(requested) : [];
+		if (!window.freestar || (!add.length && !del.length)) { return; }
+		if (reset) { requested = {}; }
+		add.forEach(function (id) { requested[id] = 1; });
+		freestar.queue.push(function () {
+			if (del.length) { freestar.deleteAdSlots(del); }
+			if (add.length) { freestar.newAdSlots(add.map(function (id) { return { placementName: id.split('--')[0], slotId: id }; })); }
+		});
+	}
+	function sendTier(w) {
+		if (tierSent) { return; }
+		tierSent = true;
+		var tier = w ? String(w) : 'none';
+		if (window.gtag) { gtag('event', 'rail_tier', { tier: tier }); }
+		else { (window.dataLayer = window.dataLayer || []).push(['event', 'rail_tier', { tier: tier }]); }
 	}
 
-	// WRITE phase — only runs when something actually changed.
+	// WRITE phase.
 	function apply() {
 		raf = 0;
-		var p = mq.matches ? measure() : null;
-		var key = p ? [p.top, p.h, p.wide, p.l, p.r].join() : 'off';
+		var w = tierNow();
+		sendTier(w);
+		if (curTier !== null && w !== curTier) { sync([], true); } // tier changed: drop every slot, re-request for the new tier
+		curTier = w;
+		if (loadTier === null) { loadTier = w; }
+		// Freestar fixes a slot's sizes at page load (re-created slots keep the load-time size list), so after a resize
+		// only re-request when the new tier is at least as wide as the load tier; a narrower tier hides the rails until reload.
+		var p = w && loadTier && w >= loadTier ? measure(w) : null; // loaded with no rails: none until reload
+		var key = p ? [w, p.top, p.h, p.two, p.left, p.right].join() : 'off';
 		if (key === state) { return; }
 		state = key;
-		if (!p) { body.classList.remove('gpa-rails-on'); return; }
-		s1.style.display = p.wide ? '' : 'none';
-		s2.style.display = (!p.wide || p.h >= 1300) ? '' : 'none';
-		L.style.top = R.style.top = p.top + 'px';
-		L.style.height = R.style.height = p.h + 'px';
-		L.style.width = '300px';
-		R.style.width = (p.wide ? 336 : 300) + 'px';
-		L.style.left = p.l + 'px';
-		R.style.left = p.r + 'px';
-		body.classList.add('gpa-rails-on');
-		requestAds(p);
+		var ids = [];
+		['left', 'right'].forEach(function (side) {
+			var el = rails[side], show = !!(p && p[side] !== null);
+			el.style.display = show ? 'flex' : 'none';
+			if (!show) { return; }
+			el.style.setProperty('--gpa-rail-w', w + 'px');
+			el.style.top = p.top + 'px';
+			el.style.height = p.h + 'px';
+			el.style.left = p[side] + 'px';
+			var mine = want(side, p, w);
+			// show only this tier's slots (markup order = placement order; never move a slot, that reloads its ad) and tag each with the tier size
+			[].forEach.call(el.children, function (seg) {
+				var slot = seg.querySelector('[id^="gpacalculator-net_siderail"]');
+				var on = !!slot && mine.indexOf(slot.id) >= 0;
+				seg.style.display = on ? '' : 'none';
+				if (on) { slot.setAttribute('data-freestar-ad', '__' + w + 'x600'); }
+			});
+			ids = ids.concat(mine);
+		});
+		body.classList.toggle('gpa-rails-on', !!p && (p.left !== null || p.right !== null));
+		sync(ids);
 	}
 
 	function schedule() { if (!raf) { raf = requestAnimationFrame(apply); } }
@@ -2932,10 +3112,11 @@ function gpa_freestar_siderails() {
 	schedule();
 	window.addEventListener('resize', later, { passive: true });
 	window.addEventListener('load', schedule);
-	if (mq.addEventListener) { mq.addEventListener('change', schedule); }
+	TIERS.forEach(function (x) { if (x.mq.addEventListener) { x.mq.addEventListener('change', schedule); } });
 	if (window.ResizeObserver) {
 		var ro = new ResizeObserver(later);
-		cols.concat(heroes, header ? [header] : []).forEach(function (el) { ro.observe(el); });
+		cols.concat(heroes, header ? [header] : [], footer ? [footer] : []).forEach(function (el) { ro.observe(el); });
+		ro.observe(document.body);
 	}
 })();
 </script>
@@ -3382,3 +3563,151 @@ function gpa_scale_page_nav( $content ) {
 	$hub_link = sprintf( '<a class="gpa-scale-nav__hub" href="%s">All GPA scale pages</a>', esc_url( get_permalink( $hub ) ) );
 	return $content . '<nav class="gpa-scale-nav" aria-label="Other GPA values">' . $prev . $hub_link . $next . '</nav>';
 }
+
+/**
+ * 404 guessing: only redirect to a post whose slug matches exactly.
+ *
+ * WordPress's default guess redirects a missing address to any published post whose slug starts with the same
+ * text. After checkpoint C retired colleges with a 410 rule in Rank Math, which sets the status but lets the request
+ * run on, /admissions/remington-college/ was still sent to remington-college-baton-rouge-campus, and
+ * /admissions/auburn-university/ to auburn-university-at-montgomery. Exact matches keep working.
+ */
+add_filter( 'strict_redirect_guess_404_permalink', '__return_true' );
+
+/**
+ * Design overhaul phase 4: logo = "4.0" badge (inline SVG, colors from
+ * layout.css tokens) + live wordmark "GPA Calculator" with "GPA" in the
+ * primary blue. The site title text stays a real link for crawlers.
+ */
+function gpa_logo_badge_svg() {
+	return '<svg class="gpa-logo-badge" viewBox="0 0 36 36" width="36" height="36" aria-hidden="true" focusable="false">'
+		. '<defs><linearGradient id="gpa-logo-grad" x1="0" y1="0" x2="1" y2="1">'
+		. '<stop offset="0" class="gpa-logo-badge__from"/><stop offset="1" class="gpa-logo-badge__to"/>'
+		. '</linearGradient></defs>'
+		. '<rect width="36" height="36" rx="9" fill="url(#gpa-logo-grad)"/>'
+		. '<text x="18" y="23" text-anchor="middle" font-size="14">4.0</text>'
+		. '</svg>';
+}
+
+add_filter( 'generate_logo_output', 'gpa_logo_output', 20, 2 );
+function gpa_logo_output( $output, $logo_url ) {
+	return sprintf(
+		'<div class="site-logo"><a href="%1$s" rel="home" aria-label="%2$s">%3$s</a></div>',
+		esc_url( apply_filters( 'generate_logo_href', home_url( '/' ) ) ),
+		esc_attr( get_bloginfo( 'name', 'display' ) ),
+		gpa_logo_badge_svg()
+	);
+}
+
+add_filter( 'generate_site_title_output', 'gpa_site_title_wordmark', 20 );
+function gpa_site_title_wordmark( $output ) {
+	return preg_replace( '#(rel="home"[^>]*>)\s*GPA\b#', '$1<span class="gpa-wordmark-accent">GPA</span>', $output, 1 );
+}
+
+/**
+ * Design overhaul phase 4: Rank Math FAQ blocks become an accordion with the
+ * first question open. The answers stay in the HTML (and in the FAQ schema);
+ * without JavaScript every answer shows. Styles: components.css section 8.
+ */
+add_action( 'wp_footer', 'gpa_faq_accordion', 30 );
+function gpa_faq_accordion() {
+	if ( is_admin() || ! is_singular() ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	document.querySelectorAll('.entry-content .rank-math-block').forEach(function (block, b) {
+		var items = block.querySelectorAll('.rank-math-list-item');
+		if (!items.length) { return; }
+		items.forEach(function (item, i) {
+			var q = item.querySelector('.rank-math-question'), a = item.querySelector('.rank-math-answer');
+			if (!q || !a) { return; }
+			a.id = a.id || 'gpa-faq-' + b + '-' + i;
+			q.setAttribute('role', 'button');
+			q.setAttribute('tabindex', '0');
+			q.setAttribute('aria-controls', a.id);
+			function set(open) { item.classList.toggle('is-open', open); q.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+			set(i === 0);
+			q.addEventListener('click', function () { set(!item.classList.contains('is-open')); });
+			q.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); set(!item.classList.contains('is-open')); }
+			});
+		});
+		block.classList.add('gpa-faq-ready');
+	});
+})();
+</script>
+	<?php
+}
+
+/**
+ * Design overhaul: "On this page" table of contents under the calculator (or above the first numbered section on
+ * pages without one), listing exactly the H2s that layout.css section 10 numbers, so the numbers always match.
+ * Shown on pages with 4 or more numbered sections; pages that already have a Rank Math TOC block keep theirs.
+ * Built in the browser from the numbered headings, so no page content changes. Styles: layout.css section 11.
+ */
+add_action( 'wp_footer', 'gpa_toc_builder', 31 );
+function gpa_toc_builder() {
+	if ( is_admin() || ! is_singular() || is_front_page() ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	var c = document.querySelector('.entry-content');
+	if (!c || c.querySelector('.wp-block-rank-math-toc-block')) { return; }
+	var toc = document.createElement('div');
+	toc.className = 'wp-block-rank-math-toc-block gpa-toc';
+	toc.id = 'gpa-toc';
+	toc.hidden = true;
+	c.insertBefore(toc, c.firstChild);
+	var heads = [].filter.call(c.querySelectorAll('h2'), function (h) {
+		return /gpa-sec/.test(getComputedStyle(h, '::before').content || '');
+	});
+	if (heads.length < 4) { toc.remove(); return; }
+	var top = function (el) { while (el.parentElement && el.parentElement !== c) { el = el.parentElement; } return el; };
+	var root = c.querySelector('#root, .gpacalc-mount, .frm_forms');
+	var before = root ? top(root).nextElementSibling : top(heads[0]);
+	var used = {};
+	var title = document.createElement('p');
+	title.textContent = 'On this page';
+	var list = document.createElement('ul');
+	heads.forEach(function (h) {
+		if (!h.id) {
+			var base = (h.textContent || 'section').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'section', id = base, n = 2;
+			while (used[id] || document.getElementById(id)) { id = base + '-' + n++; }
+			h.id = id;
+		}
+		used[h.id] = 1;
+		var li = document.createElement('li'), a = document.createElement('a');
+		a.href = '#' + h.id;
+		a.textContent = (h.textContent || '').trim();
+		li.appendChild(a);
+		list.appendChild(li);
+	});
+	var nav = document.createElement('nav');
+	nav.setAttribute('aria-label', 'On this page');
+	nav.appendChild(list);
+	toc.appendChild(title);
+	toc.appendChild(nav);
+	c.insertBefore(toc, before || null);
+	toc.hidden = false;
+})();
+</script>
+	<?php
+}
+
+/**
+ * Sitemap pages: break ties on the modified time by ID.
+ *
+ * Rank Math pages each post-type sitemap with "ORDER BY p.post_modified DESC LIMIT n OFFSET m" and offers no filter
+ * for the order. Thousands of college posts share a modified time from the bulk imports, so MySQL could return them in
+ * a different order for each page: 2 colleges appeared twice and 2 never (October 2026). Only that statement changes.
+ */
+add_filter( 'query', function ( $sql ) {
+	if ( false !== strpos( $sql, 'ORDER BY p.post_modified DESC LIMIT' ) && false !== strpos( $sql, 'rank_math_robots' ) ) {
+		$sql = str_replace( 'ORDER BY p.post_modified DESC LIMIT', 'ORDER BY p.post_modified DESC, p.ID DESC LIMIT', $sql );
+	}
+	return $sql;
+} );

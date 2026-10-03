@@ -1,0 +1,10 @@
+# Live pages saved by admissions-snapshot.yml (scripts/design/snapshot.py) for Phase 3 previews. Edit to take a new snapshot.
+# taken for: the design thread's phone padding fix (layout.css and calculator-page.css, PR #10, live 01:05 UTC on
+# 2026-10-03): the hub and college pages at 390 and 768 wide
+https://gpacalculator.net/admissions/
+https://gpacalculator.net/admissions/harvard/
+https://gpacalculator.net/admissions/ucla/
+https://gpacalculator.net/admissions/lone-star-college-system/
+https://gpacalculator.net/admissions/fairfax-university-of-america/
+https://gpacalculator.net/admissions/calvin/
+https://gpacalculator.net/admissions/miami-university/

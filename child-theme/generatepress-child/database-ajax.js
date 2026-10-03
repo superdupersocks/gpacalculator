@@ -2,8 +2,9 @@
  * College Database AJAX - Filtering, Search, Pagination
  * Vanilla JS (no jQuery dependency)
  *
- * Expects: gpa_db_ajax.ajax_url, gpa_db_ajax.nonce, gpa_db_ajax.per_page,
- *          gpa_db_ajax.total_colleges, gpa_db_ajax.total_pages
+ * Expects: gpa_db_ajax.ajax_url, gpa_db_ajax.nonce, gpa_db_ajax.per_page, gpa_db_ajax.page (the hub page the list
+ *          starts on: /admissions/page/N/ lists that page's colleges), gpa_db_ajax.total_colleges,
+ *          gpa_db_ajax.total_pages
  */
 (function () {
     'use strict';
@@ -18,13 +19,15 @@
         acceptance_rate: '',
         gpa: '',
         sat: '',
-        sort: 'gpa_desc',
-        page: 1,
+        state: '',
+        sort: 'name_asc',
+        page: parseInt(gpa_db_ajax.page, 10) || 1,
         maxPages: parseInt(gpa_db_ajax.total_pages, 10) || 1,
         totalColleges: parseInt(gpa_db_ajax.total_colleges, 10) || 0,
         showingCount: 0,
         loading: false,
-        loadingMore: false
+        loadingMore: false,
+        queued: false
     };
 
     // ============================================
@@ -32,6 +35,8 @@
     // ============================================
     var searchInput       = document.getElementById('db-search-input');
     var searchSpinner     = document.getElementById('db-search-spinner');
+    var searchButton      = document.getElementById('db-search-btn');
+    var searchExamples    = document.getElementById('db-search-examples');
     var quickPills        = document.getElementById('db-quick-pills');
     var filtersToggle     = document.getElementById('db-filters-toggle');
     var filtersPanel      = document.getElementById('db-filters-panel');
@@ -82,6 +87,7 @@
         if (state.acceptance_rate) params.acceptance_rate = state.acceptance_rate;
         if (state.gpa) params.gpa = state.gpa;
         if (state.sat) params.sat = state.sat;
+        if (state.state) params.state = state.state;
         if (state.sort) params.sort = state.sort;
 
         return params;
@@ -112,10 +118,13 @@
         if (state.acceptance_rate) params.set('acceptance', state.acceptance_rate);
         if (state.gpa) params.set('gpa', state.gpa);
         if (state.sat) params.set('sat', state.sat);
-        if (state.sort && state.sort !== 'gpa_desc') params.set('sort', state.sort);
+        if (state.state) params.set('state', state.state);
+        if (state.sort && state.sort !== 'name_asc') params.set('sort', state.sort);
 
         var queryString = params.toString();
-        var newUrl = window.location.pathname + (queryString ? '?' + queryString : '');
+        // A search or filter starts the list over, so it belongs to the hub itself, not to /admissions/page/N/
+        var path = window.location.pathname.replace(/page\/\d+\/?$/, '');
+        var newUrl = path + (queryString ? '?' + queryString : '');
 
         window.history.replaceState(null, '', newUrl);
     }
@@ -146,6 +155,9 @@
         if (params.has('sat')) {
             state.sat = params.get('sat');
             if (satSelect) satSelect.value = state.sat;
+        }
+        if (params.has('state')) {
+            state.state = params.get('state');
         }
         if (params.has('sort')) {
             state.sort = params.get('sort');
@@ -233,7 +245,12 @@
     // AJAX Request: Filter/Search Colleges
     // ============================================
     function fetchColleges(append) {
-        if (state.loading) return;
+        if (state.loading) {
+            // A search or filter change made while a request is out runs when it returns, so the list always
+            // matches what was typed last
+            if (!append) state.queued = true;
+            return;
+        }
         state.loading = true;
 
         var params = buildParams();
@@ -319,6 +336,12 @@
             } else {
                 console.error('Database AJAX request failed:', xhr.status);
             }
+
+            if (state.queued) {
+                state.queued = false;
+                state.page = 1;
+                fetchColleges(false);
+            }
         };
 
         xhr.send(body);
@@ -362,8 +385,13 @@
         state.acceptance_rate = '';
         state.gpa = '';
         state.sat = '';
-        state.sort = 'gpa_desc';
+        state.state = '';
+        state.sort = 'name_asc';
         state.page = 1;
+        var band = document.getElementById('db-gpa-band');
+        if (band) band.hidden = true;
+        var stateNote = document.getElementById('db-state');
+        if (stateNote) stateNote.hidden = true;
 
         // Reset DOM elements
         if (searchInput) searchInput.value = '';
@@ -371,7 +399,7 @@
         if (acceptanceSelect) acceptanceSelect.value = '';
         if (gpaSelect) gpaSelect.value = '';
         if (satSelect) satSelect.value = '';
-        if (sortSelect) sortSelect.value = 'gpa_desc';
+        if (sortSelect) sortSelect.value = 'name_asc';
 
         setActivePill('all');
         updateURLParams();
@@ -385,6 +413,8 @@
     // --- Search input with debounce ---
     if (searchInput) {
         searchInput.addEventListener('input', debounce(function () {
+            // Already searched (Enter, the Search button or an example)
+            if (searchInput.value.trim() === state.search) return;
             state.search = searchInput.value.trim();
             triggerFilter();
         }, 300));
@@ -396,6 +426,30 @@
                 state.search = searchInput.value.trim();
                 triggerFilter();
             }
+        });
+    }
+
+    // --- Search button: searches now; with nothing typed, puts the cursor in the box ---
+    if (searchInput && searchButton) {
+        searchButton.addEventListener('click', function () {
+            var value = searchInput.value.trim();
+            if (!value && !state.search) {
+                searchInput.focus();
+                return;
+            }
+            state.search = value;
+            triggerFilter();
+        });
+    }
+
+    // --- Example searches under the bar ---
+    if (searchInput && searchExamples) {
+        searchExamples.addEventListener('click', function (e) {
+            var example = e.target.closest('[data-search]');
+            if (!example) return;
+            searchInput.value = example.getAttribute('data-search');
+            state.search = searchInput.value;
+            triggerFilter();
         });
     }
 
@@ -429,8 +483,9 @@
     if (filtersToggle && filtersPanel) {
         filtersToggle.addEventListener('click', function () {
             var isVisible = filtersPanel.style.display !== 'none';
-            filtersPanel.style.display = isVisible ? 'none' : 'block';
+            filtersPanel.style.display = isVisible ? 'none' : 'grid';
             filtersToggle.classList.toggle('db-archive-filters__toggle--active', !isVisible);
+            filtersToggle.setAttribute('aria-expanded', String(!isVisible));
         });
     }
 
@@ -491,9 +546,10 @@
         noResultsReset.addEventListener('click', resetAllFilters);
     }
 
-    // --- Load more button ---
+    // --- Load more: on the hub a link to its next page, loaded here in place ---
     if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', function () {
+        loadMoreBtn.addEventListener('click', function (e) {
+            e.preventDefault();
             if (state.loadingMore) return;
             if (state.page >= state.maxPages) return;
 
@@ -512,7 +568,7 @@
 
         // Only fire AJAX if a recognized filter/search param is present.
         // Unrelated params (cache-bust _cb, analytics utm_*, fbclid, etc.) must not wipe PHP-rendered cards.
-        var known = ['search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort'];
+        var known = ['search', 'filter', 'ownership', 'acceptance', 'gpa', 'sat', 'sort', 'state'];
         var params = new URLSearchParams(window.location.search);
         var hasKnownParam = false;
         for (var i = 0; i < known.length; i++) {

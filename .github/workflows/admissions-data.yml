@@ -1,0 +1,70 @@
+name: Admissions data
+
+# Downloads College Scorecard and IPEDS files, rebuilds data/admissions/ and commits the result to the branch
+# it ran on, so every refresh is a reviewable diff. Runs by hand (Actions > Admissions data > Run workflow)
+# and whenever the admissions scripts change on an admissions branch. Touches nothing on the live site.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ipeds_year:
+        description: IPEDS year (blank = newest published)
+        required: false
+      scorecard_zip_url:
+        description: Scorecard "Most Recent Institution-Level Data" zip URL (blank = read from collegescorecard.ed.gov/data/)
+        required: false
+  push:
+    branches: ['claude/admissions-**']
+    paths: ['scripts/admissions/**', 'data/admissions/scorecard/**', '.github/workflows/admissions-data.yml']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: admissions-data-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install openpyxl
+      - run: sudo apt-get install -y -qq mdbtools >/dev/null
+      - run: python tests/admissions_qa.py
+      - name: Download sources
+        env:
+          IPEDS_YEAR: ${{ inputs.ipeds_year }}
+          SCORECARD_ZIP_URL: ${{ inputs.scorecard_zip_url }}
+        run: python scripts/admissions/fetch.py
+      - run: python scripts/admissions/build.py
+      - run: python scripts/admissions/match.py
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          # Same data, new download time only: no commit (one on every push races the next push to this branch).
+          if [ "$(git diff --cached --name-only)" = "data/admissions/manifest.json" ] &&
+             ! git diff --cached -U0 data/admissions/manifest.json | grep '^[-+] ' | grep -qv '"fetched_at"'; then
+            echo "only the download time changed"; exit 0
+          fi
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/; the admissions tests ran above.
+          git commit -m "Refresh admissions data from College Scorecard and IPEDS [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push
+      - name: Keep the parsed dictionaries for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admissions-dictionaries
+          path: |
+            data/admissions/raw/ipeds/*_dict.json
+            data/admissions/manifest.json
+          if-no-files-found: ignore

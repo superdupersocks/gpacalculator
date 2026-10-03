@@ -1,0 +1,53 @@
+# Pages read by scripts/page_check.py (admissions-pages.yml). Edit the stage line to run the check again.
+# stage: after H (18:01 UTC: the 53 pages under review lost their old figures: Fairfax, Kaplan Davenport, Wichita
+# Area Technical, UT Brownsville below), R (17:52), B2's second list (17:44), S, M, P and N (17:30-17:37), the
+# old-address fix (17:14) and the design overhaul's theme deploy (17:38)
+/admissions/harvard/
+/admissions/abilene-christian-university/
+/admissions/clark-atlanta-university/
+/admissions/hardin-simmons-university/
+/admissions/westcliff-university/
+/admissions/a-t-still-university/
+/admissions/pitt/
+/admissions/unc/
+/admissions/alabama/
+/admissions/agnes-scott/
+/admissions/blue-cliff-college-metairie/
+/admissions/ivy-tech-community-college-kokomo/
+/admissions/stanford/
+/admissions/upenn/
+/admissions/csu-fullerton/
+/admissions/central-college/
+/admissions/chicago/
+/admissions/
+/high-school-gpa-calculator/
+/
+/admissions/baker-college/
+/admissions/university-of-phoenix/
+/admissions/ivy-tech-community-college/
+/admissions/fortis-institute/
+/admissions/pennsylvania-western-university/
+/admissions/connecticut-state-community-college/
+/admissions/purdue-university-global/
+/admissions/long-island-university/
+/admissions/clarion-university-of-pennsylvania/
+/admissions/kaplan-university-lincoln-campus/
+/admissions/georgia-military-college-augusta-campus/
+/admissions/university-of-phoenix-las-vegas-campus/
+/admissions/auburn-university/
+/admissions/pennsylvania-state-university-main-campus/
+/admissions/miami-university/
+/admissions/arizona-state-university/
+/admissions/lone-star-college-system/
+/admissions/umass-global/
+/admissions/devry-university-utah/
+/admissions/lincoln-college/
+/admissions/corcoran-college-of-art-and-design/
+/admissions/california-jazz-conservatory/
+/admissions/milligan-college/
+/admissions/fairfax-university-of-america/
+/admissions/kaplan-university-davenport-campus/
+/admissions/wichita-area-technical-college/
+/admissions/the-university-of-texas-at-brownsville/
+/admissions/bacone-college/
+sitemap /sitemap_index.xml colleges

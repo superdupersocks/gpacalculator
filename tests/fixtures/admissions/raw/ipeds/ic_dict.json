@@ -1,0 +1,58 @@
+{
+ "vars": {
+  "OPENADMP": {
+   "title": "Open admission policy",
+   "type": "N"
+  },
+  "RELAFFIL": {
+   "title": "Religious affiliation",
+   "type": "N"
+  },
+  "CREDITS1": {
+   "title": "Dual credit",
+   "type": "N"
+  },
+  "CREDITS2": {
+   "title": "Credit for life experiences",
+   "type": "N"
+  },
+  "CREDITS3": {
+   "title": "Advanced placement (AP) credits",
+   "type": "N"
+  },
+  "CREDITS4": {
+   "title": "None of the above",
+   "type": "N"
+  }
+ },
+ "codes": {
+  "OPENADMP": {
+   "1": "Yes",
+   "2": "No"
+  },
+  "RELAFFIL": {
+   "30": "Roman Catholic",
+   "-2": "Not applicable"
+  },
+  "CREDITS1": {
+   "0": "Implied no",
+   "1": "Yes",
+   "-2": "Not applicable"
+  },
+  "CREDITS2": {
+   "0": "Implied no",
+   "1": "Yes",
+   "-2": "Not applicable"
+  },
+  "CREDITS3": {
+   "0": "Implied no",
+   "1": "Yes",
+   "-2": "Not applicable"
+  },
+  "CREDITS4": {
+   "0": "Implied no",
+   "1": "Yes",
+   "-2": "Not applicable"
+  }
+ }
+}

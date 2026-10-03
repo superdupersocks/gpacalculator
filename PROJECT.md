@@ -179,6 +179,68 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | Starter template | — | Yes | Yes | `core_qa.py` |
 | College list on the 31 `/gpa-scale/` pages (was `[CollegeDB gpa="…"]`) | other | Removed from the pages; `[CollegeDB]` placeholder still registered | No | To rebuild from Scorecard/CDS data |
 
+## Admissions database (/admissions/)
+
+The `colleges` post type (`/admissions/<slug>/`, hub at `/admissions/`): 3,085 published college pages. Theme files
+owned by the admissions work: `single-colleges.php`, `archive-colleges.php`, `template-parts/college-db-archive.php`,
+`college-data.php`, `database-ajax.js`, `admissions.css` and the `gpa_college_*`, hub, AJAX, title and description
+code in `functions.php`; deploys run `scripts/admissions/deploy_phase3.sh`, which ships the commit set in it (a
+commit that has merged the latest design branch, so the design's live changes stay). Data in `data/admissions/` (IPEDS backbone, Scorecard, CDS values with citations, Phase 2 and 3
+audit lists, Search Console exports), scripts in `scripts/admissions/`. Data rules: GPA only with a verified
+college-published CDS citation, labeled "as reported by the college" with its year and basis; primary sources only;
+never estimate.
+
+Done: Phase 1 data, Phase 2 audit and pruning (516 pages removed: 368 answer 410, 148 a 301), Phase 3 hub and
+profile template, Phase 4 steps 1 and 2 (modified dates; hub pages and structured data, deployed by Digant
+2026-10-03 02:34 UTC). Runbooks: `docs/ADMISSIONS_PHASE2_RUNBOOK.md`, `docs/ADMISSIONS_PHASE3_RUNBOOK.md`,
+`docs/ADMISSIONS_PHASE4_RUNBOOK.md` (left: Digant resubmits the sitemap in Search Console; follow-up checks Oct 19,
+Nov 2, 16 and 30; the noindex for the 53 pages under review is left to the tiering).
+
+Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
+1. **Cleanup QA**: done 2026-10-03 02:26 UTC on Digant's go (`data/admissions/cleanup_qa/report.md`; the admissions
+   doc's "Step 1: cleanup QA" tab; log `admissions-cleanup-20261003-022611-log.tsv`). All 516 removed pages answered
+   as planned; 330 old addresses fixed (86 rules changed, 98 added), 42 leftover WordPress pages under /admissions/
+   set to draft, 302 renamed colleges moved to addresses with their current name. Live re-check of 3,188 addresses
+   (`cleanup_qa.py after` / `verify`, `data/admissions/cleanup_qa/after/verify.csv`): 3,171 answer as planned and no
+   link reaches a removed page; 14 old /admission/ addresses still answered the old way (rows skipped because their
+   rule covers other addresses, and addresses compared without decoding them the way Rank Math does).
+   `cleanup_fix_live.php` now matches like Rank Math and splits shared rules; the 14 (`followup.csv`) were fixed with
+   step 2's go at 03:41 UTC. Server steps: `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`.
+2. **Tiering**: done 2026-10-03 03:41 UTC on Digant's `go tiers` (`data/admissions/tiering/summary.md`, every page in
+   `tiers.csv`; the admissions doc's "Step 2: tiering" tab; log `admissions-tiers-20261003-034149-log.tsv`). A 253
+   (cited GPA, acceptance rate, SAT/ACT or test blind), B 1,355 (one or two of those), C 1,477 (open admission or
+   none); A and B stay in search, C comes out unless it had a click in 12 months or shows a cited GPA: 1,318 pages set
+   to noindex (Rank Math's per-page No Index; they stay published and on the hub), each page's tier stored as
+   `admissions_tier` for step 3. Checked from GitHub (indexing check 47068a0): the colleges sitemaps list exactly the
+   1,767 indexed pages and the hub. The same go ran step 1's 14-address follow-up (log
+   `admissions-cleanup-20261003-034126-log.tsv`). Server steps: `docs/ADMISSIONS_TIERING_RUNBOOK.md`.
+3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. Built, not live:
+   college template v2 (`college-v2.php`, `college-compare.js`; compare box with an open-admission version, data-driven
+   FAQs hidden below three, similar colleges + state link, official admissions link checked from GitHub for 2,701
+   colleges). Switch: option `gpa_admissions_v2_tiers` read against each page's `admissions_tier`
+   (`scripts/admissions/step3_switch.sh`); editors preview with `?gpa_v2=1`. Samples in
+   `/mnt/project-files/admissions/step3/` (Harvard, UCLA, Miami, Calvin, Lone Star). Digant's go for tier A came
+   2026-10-03 06:57 UTC (PR #12 merged; rollout on his Mac per the runbook). Tiers B and C wait until tier A has run
+   2–4 weeks and Digant has seen its Search Console results.
+   Server steps: `docs/ADMISSIONS_STEP3_RUNBOOK.md`. Previews on a fresh container: `scripts/admissions/preview/setup_local.sh`.
+4. **GPA-band lists** ("Colleges where a 3.5 GPA is typical"; plan approved 2026-10-03 06:57,
+   https://claude.ai/code/artifact/1ce947b3-ef22-4b08-9c59-ae0abdd57e5b). Shared data for the /gpa-scale/ pages, the
+   college pages' "Colleges where a [GPA] fits" button and the hub's `?gpa=` filter: **`data/admissions/gpa-bands.json`**,
+   built by `python3 scripts/admissions/gpa_bands.py` (re-run after any GPA or tier change).
+   - Source: each college's own Common Data Set C12 average as its page publishes it (`audit/phase2_b2_gpa.csv`:
+     `cds_gpa`, year, basis), tier A/B indexed pages only (`tiering/tiers.csv`): 258 colleges. Only the 15 averages
+     above 4.0 are known to be weighted; the rest don't state a basis (`basis` is ""), so pages use the neutral
+     `weighted_note` in the file, never "most colleges report weighted averages".
+   - Rule: lists for 3.0–4.0 (averages ≤ 4.0) and 4.1–4.3 (weighted averages > 4.0) take the colleges within 0.05 of
+     the GPA, widening to 0.10 under 10 (3.0 always 0.15); ordered tier A first, then larger undergraduate enrollment;
+     15 shown, `total` counted for "See all" (`see_all`: `/admissions/?gpa=3.5`). 4.4 and 4.5 (`mode: "highest"`)
+     show the five highest weighted averages under `intro`. A list under 3 colleges is left out.
+   - Each college: `name`, `url`, `gpa`, `basis`, `year`, `tier`, `state`, `enrollment`. Label the average "as
+     reported by the college" with year and basis; heading "Colleges where a {gpa} GPA is typical", never "colleges
+     you can get into".
+   - Live pieces (hub `?gpa=` filter, the college-page button) are built next and wait on Digant's go.
+5. **State hubs** (`/admissions/<state>/`, the "See all colleges in [State]" target): outline and one sample next.
+
 ## Open issues
 
 - Live theme = repo theme minus the unreleased 1.2 edits. Ship 1.2 (or drop it) via `scripts/deploy_theme.sh` so

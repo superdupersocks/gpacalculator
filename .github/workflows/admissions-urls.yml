@@ -1,0 +1,38 @@
+name: Admissions URL check
+# Requests the old /admission/ URLs listed in data/admissions/redirects/old_admission_urls.tsv on the live site
+# (read-only GETs, scripts/check_urls.py) and commits where each one lands to old_admission_urls_check.tsv. Runs on
+# GitHub because the cloud sessions can't reach the site. Changes nothing on the site.
+on:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/check_urls.py'
+      - 'data/admissions/redirects/old_admission_urls.tsv'
+      - '.github/workflows/admissions-urls.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-urls-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - run: python scripts/check_urls.py data/admissions/redirects/old_admission_urls.tsv data/admissions/redirects/old_admission_urls_check.tsv
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/admissions/redirects
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/.
+          git commit -m "Record where the old /admission/ URLs land [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

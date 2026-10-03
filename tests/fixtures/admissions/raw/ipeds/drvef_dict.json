@@ -1,0 +1,17 @@
+{
+ "vars": {
+  "ENRTOT": {
+   "title": "Total  enrollment",
+   "type": "N"
+  },
+  "EFUG": {
+   "title": "Undergraduate enrollment",
+   "type": "N"
+  },
+  "PCTENRW": {
+   "title": "Percent of undergraduate enrollment that are women",
+   "type": "N"
+  }
+ },
+ "codes": {}
+}

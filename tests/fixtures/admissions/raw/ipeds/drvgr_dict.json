@@ -1,0 +1,13 @@
+{
+ "vars": {
+  "GRRTTOT": {
+   "title": "Graduation rate, total cohort",
+   "type": "N"
+  },
+  "GBA6RTT": {
+   "title": "Graduation rate - Bachelor degree within 6 years, total",
+   "type": "N"
+  }
+ },
+ "codes": {}
+}

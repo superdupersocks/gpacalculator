@@ -1,0 +1,21 @@
+{
+ "vars": {
+  "CHG2AY2": {
+   "title": "Published in-state tuition and fees 2023-24",
+   "type": "N"
+  },
+  "CHG2AY3": {
+   "title": "Published in-state tuition and fees 2024-25",
+   "type": "N"
+  },
+  "CHG3AY3": {
+   "title": "Published out-of-state tuition and fees 2024-25",
+   "type": "N"
+  },
+  "CHG2AT3": {
+   "title": "Published in-state tuition 2024-25",
+   "type": "N"
+  }
+ },
+ "codes": {}
+}

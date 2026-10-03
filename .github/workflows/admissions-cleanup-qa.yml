@@ -1,0 +1,94 @@
+name: Admissions cleanup QA
+# Requests every removed or old /admission(s)/ address in data/admissions/cleanup_qa/urls.tsv on the live site, and
+# reads the pages in pages.txt for links into /admission(s)/ (read-only GETs, scripts/admissions/cleanup_qa_check.py),
+# then commits live_status.tsv and internal_links.tsv next to them. Once the fixes are live, the same check runs on
+# data/admissions/cleanup_qa/after/ instead (urls.tsv, pages.txt and sitemap_colleges.csv from `cleanup_qa.py after`)
+# and commits its results there. Runs on GitHub because the cloud sessions can't reach the site. Changes nothing on the
+# site.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/admissions-**']
+    paths:
+      - 'scripts/admissions/cleanup_qa_check.py'
+      - 'data/admissions/cleanup_qa/urls.tsv'
+      - 'data/admissions/cleanup_qa/pages.txt'
+      - 'data/admissions/cleanup_qa/after/urls.tsv'
+      - 'data/admissions/cleanup_qa/after/pages.txt'
+      - '.github/workflows/admissions-cleanup-qa.yml'
+permissions:
+  contents: write
+concurrency:
+  group: admissions-cleanup-qa-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Check the addresses
+        run: |
+          DIR=data/admissions/cleanup_qa
+          if [ -f $DIR/after/urls.tsv ]; then DIR=$DIR/after; fi
+          python scripts/admissions/cleanup_qa_check.py status $DIR/urls.tsv ${{ matrix.shard }} 4 status-${{ matrix.shard }}.tsv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ matrix.shard }}
+          path: status-${{ matrix.shard }}.tsv
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests beautifulsoup4
+      - name: Read the pages
+        run: |
+          DIR=data/admissions/cleanup_qa
+          LIVE=data/admissions/live_checks/sitemap_colleges.csv
+          if [ -f $DIR/after/urls.tsv ]; then DIR=$DIR/after; LIVE=$DIR/sitemap_colleges.csv; fi
+          python scripts/admissions/cleanup_qa_check.py links $DIR/pages.txt $LIVE links.tsv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: links
+          path: links.tsv
+  commit:
+    needs: [status, links]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: results
+          merge-multiple: true
+      - name: Merge the shards
+        run: |
+          out=data/admissions/cleanup_qa
+          if [ -f $out/after/urls.tsv ]; then out=$out/after; fi
+          head -n 1 results/status-0.tsv > $out/live_status.tsv
+          for f in results/status-*.tsv; do tail -n +2 "$f"; done | sort >> $out/live_status.tsv
+          cp results/links.tsv $out/internal_links.tsv
+          echo "OUT=$out" >> "$GITHUB_ENV"
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$OUT/live_status.tsv" "$OUT/internal_links.tsv"
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          msg="Record where the removed /admissions/ addresses land and the links to them"
+          case "$OUT" in */after) msg="Record what the old and renamed /admissions/ addresses answer after the cleanup";; esac
+          # [skip ci]: GitHub holds QA runs on this bot's commits for a maintainer's approval, and QA doesn't
+          # read data/admissions/.
+          git commit -m "$msg [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push

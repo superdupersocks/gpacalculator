@@ -4,3 +4,6 @@ tests/.artifacts/
 __pycache__/
 .DS_Store
 *.zip
+data/admissions/raw/
+.design-snapshot/
+data/admissions/preview/snapshot/.font-cache/

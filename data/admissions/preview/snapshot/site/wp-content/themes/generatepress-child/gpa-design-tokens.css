@@ -1,0 +1,551 @@
+/* ============================================================
+   GPA design tokens — GLOBAL
+   Loads on every page of the site.
+   ------------------------------------------------------------
+   2026-09-03: the calculator design system — ~34 KB of rules all scoped to
+   .page-template-template-calculator — was moved out of this file into
+   calculator-page.css, which only loads on calculator pages. Those rules
+   could never match anywhere else, so this file had been shipping 34 KB of
+   inert CSS to roughly 2,000 pages.
+   Keep this file for what is genuinely global: custom properties,
+   @font-face, resets and site-wide typography.
+   ============================================================ */
+
+/* ============================================
+   GPA Calculator - Global Design Tokens
+   Source of truth: gpa-homepage.css
+   ============================================
+   All 5 templates inherit typography, color, and
+   spacing from these variables. Change a value here
+   and it propagates site-wide.
+   ============================================ */
+
+/* Lexend is loaded as a <link> in <head> via gpa_fonts() in functions.php
+   (NOT @import here — @import is discovered late and widens the font-swap
+   window, causing CLS on the hero text). See T6.4. */
+
+/* ---- Font-swap CLS fallback (T6.4) ----
+   A metric-matched fallback face: while Lexend is downloading, the browser
+   renders Arial re-scaled to occupy the SAME box Lexend will, so the swap
+   from fallback → Lexend produces ~zero layout shift.
+   Overrides computed from Lexend vs Arial metrics, normalised on x-height
+   (size-adjust = Lexend xHeight-ratio / Arial xHeight-ratio). Regenerate with
+   fontaine / @capsizecss/metrics if the brand font ever changes. */
+@font-face {
+    font-family: "Lexend Fallback";
+    src: local("Arial");
+    size-adjust: 103.2%;
+    ascent-override: 96.9%;
+    descent-override: 24.2%;
+    line-gap-override: 0%;
+}
+
+/* ============================================================
+   COLOR TOKENS (design system overhaul, 2026-10-02)
+   Three layers. Only layer 1 holds raw colors; everything else in the
+   theme and the calculators reads layers 2 and 3. To re-color the whole
+   site, edit layer 1.
+   ============================================================ */
+:root {
+    /* 1. BRAND PALETTE — edit here to re-color everything */
+    --gpa-blue-50:   #EFF6FF;
+    --gpa-blue-100:  #DBEAFE;
+    --gpa-blue-200:  #BFDBFE;
+    --gpa-blue-300:  #93C5FD;
+    --gpa-blue-400:  #60A5FA;
+    --gpa-blue-500:  #3B82F6;
+    --gpa-blue-600:  #2563EB;
+    --gpa-blue-700:  #1D4ED8;
+    --gpa-blue-800:  #1E40AF;
+    --gpa-blue-900:  #1E3A8A;
+    --gpa-blue-950:  #172554;
+    --gpa-indigo-50:  #EEF2FF;
+    --gpa-indigo-100: #E0E7FF;
+    --gpa-indigo-200: #C7D2FE;
+    --gpa-indigo-500: #6366F1;
+    --gpa-indigo-700: #4338CA;
+    --gpa-indigo-800: #3730A3;
+    --gpa-indigo-900: #312E81;
+    --gpa-white:     #FFFFFF;
+    --gpa-black:     #000000;
+    --gpa-gray-25:   #F9FAFB;
+    --gpa-gray-50:   #F7F7FB;
+    --gpa-gray-100:  #F3F4F6;
+    --gpa-gray-200:  #E5E7EB;
+    --gpa-gray-300:  #D1D5DB;
+    --gpa-gray-400:  #9CA3AF;
+    --gpa-gray-500:  #6B7280;
+    --gpa-gray-600:  #475569;
+    --gpa-gray-700:  #374151;
+    --gpa-gray-800:  #1F2937;
+    --gpa-gray-900:  #111827;
+    --gpa-slate-400: #94A3B8;
+    --gpa-slate-500: #64748B;
+    --gpa-slate-700: #334155;
+    --gpa-green-50:  #F0FDF4;
+    --gpa-green-100: #DCFCE7;
+    --gpa-green-200: #BBF7D0;
+    --gpa-green-400: #4ADE80;
+    --gpa-green-500: #22C55E;
+    --gpa-green-600: #16A34A;
+    --gpa-green-700: #15803D;
+    --gpa-green-800: #166534;
+    --gpa-green-900: #14532D;
+    --gpa-teal-100:  #CCFBF1;
+    --gpa-teal-200:  #99F6E4;
+    --gpa-teal-600:  #0D9488;
+    --gpa-teal-700:  #0F766E;
+    --gpa-teal-800:  #115E59;
+    --gpa-pink-100:  #FCE7F3;
+    --gpa-pink-600:  #DB2777;
+    --gpa-pink-700:  #BE185D;
+    --gpa-pink-800:  #9D174D;
+    --gpa-rose-600:  #E11D48;
+    --gpa-amber-50:  #FFFBEB;
+    --gpa-amber-100: #FEF3C7;
+    --gpa-amber-200: #FDE68A;
+    --gpa-amber-400: #FBBF24;
+    --gpa-amber-500: #F59E0B;
+    --gpa-amber-600: #D97706;
+    --gpa-amber-700: #B45309;
+    --gpa-amber-800: #92400E;
+    --gpa-amber-900: #78350F;
+    --gpa-orange-50:  #FFF7ED;
+    --gpa-orange-100: #FFEDD5;
+    --gpa-orange-200: #FED7AA;
+    --gpa-orange-600: #EA580C;
+    --gpa-orange-700: #C2410C;
+    --gpa-orange-800: #9A3412;
+    --gpa-red-50:    #FEF2F2;
+    --gpa-red-100:   #FEE2E2;
+    --gpa-red-200:   #FECACA;
+    --gpa-red-500:   #EF4444;
+    --gpa-red-600:   #DC2626;
+    --gpa-red-700:   #B91C1C;
+    --gpa-red-800:   #991B1B;
+
+    /* 2. SITE ROLES */
+    --gpa-primary:        var(--gpa-blue-600);
+    --gpa-primary-hover:  var(--gpa-blue-700);
+    --gpa-accent:         var(--gpa-indigo-700);
+    --gpa-heading:        var(--gpa-blue-900);
+    --gpa-text-strong:    var(--gpa-gray-900);
+    --gpa-text:           var(--gpa-gray-700);
+    --gpa-text-secondary: var(--gpa-gray-600);
+    --gpa-text-muted:     var(--gpa-gray-500);
+    --gpa-border:         var(--gpa-gray-200);
+    --gpa-border-strong:  var(--gpa-gray-300);
+    --gpa-divider:        var(--gpa-gray-100);
+    --gpa-page-bg:        var(--gpa-gray-50);
+    --gpa-surface:        var(--gpa-white);
+    --gpa-surface-subtle: var(--gpa-gray-25);
+    --gpa-tint-blue:      var(--gpa-blue-50);
+    --gpa-tint-indigo:    var(--gpa-indigo-50);
+    --gpa-link:           var(--gpa-blue-700);
+    --gpa-link-underline: var(--gpa-blue-300);
+    --gpa-gradient-brand: linear-gradient(135deg, var(--gpa-blue-600) 0%, var(--gpa-indigo-700) 100%);
+    --gpa-hero-bg:
+        radial-gradient(900px 260px at 30% 0%, rgba(255,255,255,0.75), rgba(255,255,255,0) 70%),
+        radial-gradient(700px 300px at 85% 110%, rgba(59,130,246,0.20), rgba(59,130,246,0) 70%),
+        linear-gradient(160deg, #D6E6FF 0%, #DCE6FF 60%, #E0E5FF 100%);
+    --gpa-hero-title:     var(--gpa-heading);
+    --gpa-hero-text:      var(--gpa-slate-700);
+    --gpa-breadcrumb-sep: var(--gpa-slate-400);
+    --gpa-breadcrumb-current: var(--gpa-slate-500);
+    --gpa-footer-bg:      var(--gpa-blue-950);
+    --gpa-footer-text:    var(--gpa-white);
+    --gpa-footer-link:    var(--gpa-blue-200);
+    --gpa-footer-accent:  var(--gpa-blue-300);
+    --gpa-footer-line:    rgba(191,219,254,0.2);
+    --gpa-focus-ring:     var(--gpa-primary);
+
+    /* 3. CALCULATOR ROLES */
+    --gpa-calc-bg:           var(--gpa-surface);
+    --gpa-calc-border:       var(--gpa-indigo-200);
+    --gpa-calc-shadow:       0 2px 4px rgba(30,58,138,0.06), 0 16px 40px rgba(30,58,138,0.14);
+    --gpa-calc-input-border: var(--gpa-border);
+    --gpa-calc-focus:        var(--gpa-primary);
+    --gpa-calc-add-bg:       var(--gpa-tint-blue);
+    --gpa-calc-add-border:   var(--gpa-blue-300);
+    --gpa-calc-add-text:     var(--gpa-blue-700);
+    --gpa-calc-result-bg:    linear-gradient(135deg, var(--gpa-blue-50) 0%, var(--gpa-indigo-50) 100%);
+    --gpa-calc-result-line:  var(--gpa-indigo-200);
+    --gpa-calc-result-label: var(--gpa-accent);
+    --gpa-calc-result-value: var(--gpa-heading);
+    --gpa-calc-cta-bg:       var(--gpa-gradient-brand);
+
+    /* Status: calculator results and callouts only, never decoration */
+    --gpa-success: var(--gpa-green-700);
+    --gpa-warning: var(--gpa-amber-700);
+    --gpa-danger:  var(--gpa-red-700);
+
+    /* Grade bands (GPA scale table): text on a light tint */
+    --gpa-band-a: var(--gpa-green-700);   --gpa-band-a-bg: var(--gpa-green-50);
+    --gpa-band-b: var(--gpa-blue-700);    --gpa-band-b-bg: var(--gpa-blue-50);
+    --gpa-band-c: var(--gpa-amber-700);   --gpa-band-c-bg: var(--gpa-amber-50);
+    --gpa-band-d: var(--gpa-orange-700);  --gpa-band-d-bg: var(--gpa-orange-50);
+    --gpa-band-f: var(--gpa-red-700);     --gpa-band-f-bg: var(--gpa-red-50);
+
+    /* OLD NAMES — aliases so files not yet migrated keep working.
+       Remove each one once nothing references it. */
+    --gpa-primary-dark:  var(--gpa-primary-hover);
+    --gpa-primary-light: var(--gpa-blue-500);
+    --gpa-success-dark:  var(--gpa-green-700);
+    --gpa-warning-dark:  var(--gpa-amber-700);
+    --gpa-purple:        var(--gpa-accent);
+    --gpa-text-heading:  var(--gpa-text-strong);
+    --gpa-text-body:     var(--gpa-text);
+    --gpa-text-light:    var(--gpa-gray-400);
+    --gpa-bg-white:      var(--gpa-surface);
+    --gpa-bg-gray-50:    var(--gpa-surface-subtle);
+    --gpa-bg-gray-100:   var(--gpa-gray-100);
+    --gpa-bg-dark:       var(--gpa-gray-900);
+    --gpa-border-dark:   var(--gpa-border-strong);
+    --gpa-border-focus:  var(--gpa-focus-ring);
+    /* gpacalculator-manager plugin calculator names (theme 1.2, not live yet) */
+    --gpa-calc-brand-1:  var(--gpa-primary);
+    --gpa-calc-brand-2:  var(--gpa-accent);
+    --gpa-calc-tint:     var(--gpa-tint-indigo);
+    --gpa-calc-ink:      var(--gpa-heading);
+}
+
+:root {
+    /* ---- Font ---- */
+    /* "Lexend Fallback" sits between Lexend and the system stack so the
+       metric-matched face is used during font load (see @font-face above). */
+    --gpa-font: "Lexend", "Lexend Fallback", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --gpa-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* ---- Type scale (one scale for every template; phones redefine below) ---- */
+    --gpa-h1-size: 44px;
+    --gpa-h1-weight: 700;
+    --gpa-h1-line: 1.15;
+    --gpa-h1-tracking: -0.01em;
+    --gpa-h1-color: var(--gpa-hero-title);
+    --gpa-h2-size: 30px;
+    --gpa-h2-weight: 800;
+    --gpa-h2-line: 1.3;
+    --gpa-h2-tracking: -0.02em;
+    --gpa-h2-color: var(--gpa-heading);
+    --gpa-h3-size: 22px;
+    --gpa-h3-weight: 700;
+    --gpa-h3-line: 1.35;
+    --gpa-h3-color: var(--gpa-text-strong);
+    --gpa-h4-size: 18px;
+    --gpa-h4-weight: 700;
+    --gpa-h4-line: 1.4;
+    --gpa-h4-color: var(--gpa-text-strong);
+
+    /* Fixed phone values, for files that switch at their own breakpoint */
+    --gpa-h1-size-m: 32px;
+    --gpa-h2-size-m: 25px;
+    --gpa-h3-size-m: 20px;
+
+    /* ---- Body text ---- */
+    --gpa-body-size: 18px;           /* article text: p, li */
+    --gpa-body-lg-size: 18px;
+    --gpa-ui-size: 16px;             /* nav, forms, buttons, anything that isn't article text */
+    --gpa-small-size: 14px;          /* breadcrumb, table notes, sources meta */
+    --gpa-small-line: 1.5;
+    --gpa-body-weight: 400;
+    --gpa-body-line: 1.7;
+    --gpa-result-size: 40px;         /* GPA result number */
+
+    /* ---- Text block rhythm ---- */
+    --gpa-p-gap: 20px;
+    --gpa-li-gap: 10px;
+    --gpa-h3-above: 32px;
+    --gpa-h3-below: 12px;
+    --gpa-h4-above: 24px;
+    --gpa-h4-below: 8px;
+
+    /* ---- Section rhythm (layout.css) ---- */
+    --gpa-hdr-above: 64px;           /* hero and column bottom spacing */
+    --gpa-sec-gap: 48px;             /* above every section H2 */
+    --gpa-hdr-sub-gap: 12px;         /* H2 → subtitle */
+    --gpa-hdr-below: 32px;           /* header → first content */
+    --gpa-block-gap: 80px;           /* between major blocks */
+
+    /* ---- Hero (layout.css) ---- */
+    --gpa-hero-pad-top: 56px;
+    --gpa-hero-tail: 128px;          /* hero space below the subtitle on calculator pages */
+    --gpa-hero-overlap: 88px;        /* how far the calculator card rises into it */
+    --gpa-hero-tail-plain: 48px;     /* pages without a calculator */
+    --gpa-hero-sub-size: 18px;
+
+    /* ---- Spacing ---- */
+    --gpa-section-py: 80px;
+    --gpa-section-py-m: 50px;
+    --gpa-section-px: 16px;
+    --gpa-gap-sm: 12px;
+    --gpa-gap-md: 16px;
+    --gpa-gap-lg: 24px;
+    --gpa-gap-xl: 32px;
+
+    /* ---- Layout ---- */
+    --gpa-container-max: 1140px;     /* content area (all templates) */
+    --gpa-container-wide: 1280px;    /* header / footer (full bleed band) */
+    --gpa-content-max: 800px;        /* white content column: tables, calculator, images */
+    --gpa-text-max: 720px;           /* text blocks inside the column */
+    --gpa-column-radius: 16px;
+
+    /* ---- Radii ---- */
+    --gpa-radius-sm: 8px;
+    --gpa-radius-md: 12px;
+    --gpa-radius-lg: 16px;
+    --gpa-radius-pill: 9999px;
+
+    /* ---- Shadows ---- */
+    --gpa-shadow-sm: 0 4px 12px color-mix(in srgb, var(--gpa-black) 6%, transparent);
+    --gpa-shadow-md: 0 10px 25px color-mix(in srgb, var(--gpa-black) 5%, transparent);
+    --gpa-shadow-lg: 0 10px 25px color-mix(in srgb, var(--gpa-black) 8%, transparent);
+
+    /* ---- Inputs / buttons ---- */
+    --gpa-input-radius: 8px;
+    --gpa-input-border: 1px solid var(--gpa-border);
+    --gpa-input-padding: 12px 16px;
+    --gpa-input-font-size: 16px;
+    --gpa-btn-radius: 8px;
+    --gpa-btn-padding: 12px 24px;
+    --gpa-btn-font-size: 16px;
+    --gpa-btn-font-weight: 600;
+
+
+    /* ---- Calculators: shape (colors are in the calculator roles above) ---- */
+    --gpa-calc-font: var(--gpa-font);
+    --gpa-calc-radius-card: 16px;
+    --gpa-calc-shadow-pop: 0 12px 32px -8px rgba(30,58,138,0.3);
+}
+@media (max-width: 768px) {
+    :root {
+        --gpa-h1-size: var(--gpa-h1-size-m);
+        --gpa-h2-size: var(--gpa-h2-size-m);
+        --gpa-h3-size: var(--gpa-h3-size-m);
+        --gpa-body-size: 17px;
+        --gpa-small-size: 13px;
+        --gpa-result-size: 36px;
+        --gpa-hdr-above: 48px;
+        --gpa-sec-gap: 40px;
+        --gpa-hdr-below: 24px;
+        --gpa-block-gap: 56px;
+        --gpa-hero-pad-top: 18px;
+        --gpa-hero-tail: 76px;
+        --gpa-hero-overlap: 60px;
+        --gpa-hero-tail-plain: 32px;
+        --gpa-hero-sub-size: 15px;
+    }
+}
+@media (max-width: 480px) {
+    :root { --gpa-h1-size: 28px; }
+}
+
+/* ============================================
+   BASE: apply tokens to the whole site
+   Uses !important to override GeneratePress's
+   inline CSS (font-weight:300; font-size:17px),
+   which injects AFTER external stylesheets.
+   ============================================ */
+/* GPA_CALC_ISOLATION: #root (page calculators) and .gpacalc-mount (shortcode
+   calculators from the gpacalculator-manager plugin) keep their own font
+   sizing/weight; only the brand font family is inherited. */
+body,
+button:not(#root *, .gpacalc-mount *),
+input:not(#root *, .gpacalc-mount *),
+select:not(#root *, .gpacalc-mount *),
+textarea:not(#root *, .gpacalc-mount *) {
+    font-family: var(--gpa-font) !important;
+    font-weight: var(--gpa-body-weight) !important;
+    font-size: var(--gpa-ui-size) !important;
+    -webkit-font-smoothing: antialiased !important;
+}
+body {
+    line-height: var(--gpa-body-line) !important;
+    color: var(--gpa-text-body) !important;
+}
+
+/* "html hN" outranks the bare hN rules GeneratePress prints inline from the Customizer */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--gpa-font) !important;
+    color: var(--gpa-text-strong);
+}
+
+/* ============================================
+   Content container width: 1140px for ALL templates
+   (calculator, content, database, archive, default)
+   Header and footer remain at full width (1280).
+   ============================================ */
+body .site-content {
+    max-width: var(--gpa-container-max) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+html h1 {
+    font-size: var(--gpa-h1-size);
+    font-weight: var(--gpa-h1-weight);
+    line-height: var(--gpa-h1-line);
+    letter-spacing: var(--gpa-h1-tracking);
+    color: var(--gpa-h1-color);
+}
+html h2 {
+    font-size: var(--gpa-h2-size);
+    font-weight: var(--gpa-h2-weight);
+    line-height: var(--gpa-h2-line);
+    letter-spacing: var(--gpa-h2-tracking);
+    color: var(--gpa-h2-color);
+}
+html h3 {
+    font-size: var(--gpa-h3-size);
+    font-weight: var(--gpa-h3-weight);
+    line-height: var(--gpa-h3-line);
+    color: var(--gpa-h3-color);
+}
+html h4 {
+    font-size: var(--gpa-h4-size);
+    font-weight: var(--gpa-h4-weight);
+    line-height: var(--gpa-h4-line);
+    color: var(--gpa-h4-color);
+}
+small, figcaption, .wp-element-caption {
+    font-size: var(--gpa-small-size);
+    line-height: var(--gpa-small-line);
+    color: var(--gpa-text-muted);
+}
+
+/* ============================================
+   Standard form controls (inputs, selects, buttons)
+   Used for calculator input consistency across all
+   templates. Can be overridden per page.
+   ============================================ */
+.gpa-input,
+.entry-content input[type="number"],
+.entry-content input[type="text"],
+.entry-content select {
+    font-family: var(--gpa-font);
+    font-size: var(--gpa-input-font-size);
+    padding: var(--gpa-input-padding);
+    border: var(--gpa-input-border);
+    border-radius: var(--gpa-input-radius);
+    background: var(--gpa-bg-white);
+    color: var(--gpa-text-body);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.gpa-input:focus,
+.entry-content input[type="number"]:focus,
+.entry-content input[type="text"]:focus,
+.entry-content select:focus {
+    outline: none;
+    border-color: var(--gpa-border-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--gpa-blue-600) 15%, transparent);
+}
+
+.gpa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--gpa-font);
+    font-size: var(--gpa-btn-font-size);
+    font-weight: var(--gpa-btn-font-weight);
+    padding: var(--gpa-btn-padding);
+    border-radius: var(--gpa-btn-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.05s ease;
+}
+.gpa-btn-primary {
+    background: var(--gpa-primary);
+    color: var(--gpa-white);
+}
+.gpa-btn-primary:hover { background: var(--gpa-primary-dark); }
+.gpa-btn-primary:active { transform: translateY(1px); }
+
+/* ============================================
+   Ad-slot space reservation (T6.4)
+   Freestar ads (T10.1) load asynchronously and would shift the page
+   when they pop in. Wrap every ad container in .gpa-ad-slot + a size
+   modifier so the space is reserved up-front → no CLS once ads go live.
+   min-height matches the standard Freestar/IAB unit for that slot.
+   Markup example:  <div class="gpa-ad-slot gpa-ad-slot--rectangle">…</div>
+   ============================================ */
+.gpa-ad-slot {
+    display: block;
+    margin: var(--gpa-gap-lg) auto;
+    text-align: center;
+    overflow: hidden;
+}
+.gpa-ad-slot--leaderboard   { min-height: 90px; }   /* 728x90  desktop leaderboard */
+.gpa-ad-slot--rectangle     { min-height: 250px; }  /* 300x250 medium rectangle    */
+.gpa-ad-slot--mobile-banner { min-height: 50px; }   /* 320x50  mobile banner       */
+@media (max-width: 768px) {
+    /* Mobile leaderboards collapse to a 320x100 large mobile banner */
+    .gpa-ad-slot--leaderboard { min-height: 100px; }
+} 
+#root:empty {
+    display: grid;
+    place-items: center;
+    background: var(--gpa-bg-gray-50);
+    border-radius: var(--gpa-radius-lg);
+}
+#root:empty::after {
+    content: "";
+    width: 44px;
+    height: 44px;
+    border: 4px solid var(--gpa-border);
+    border-top-color: var(--gpa-primary);
+    border-radius: 50%;
+    animation: gpa-root-spin 0.8s linear infinite;
+}
+@keyframes gpa-root-spin {
+    to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #root:empty::after { animation: none; }
+}
+/* --- text colour ---------------------------------------------------------- */
+:where(#root) button:not([class*="hover:text-"]):hover,
+:where(#root) button:not([class*="hover:text-"]):focus { color: inherit; }
+ 
+:where(#root) button.text-white:not([class*="hover:text-"]):hover,
+:where(#root) button.text-white:not([class*="hover:text-"]):focus { color: var(--gpa-white); }
+ 
+:where(#root) button.text-gray-500:not([class*="hover:text-"]):hover,
+:where(#root) button.text-gray-500:not([class*="hover:text-"]):focus { color: var(--gpa-text-muted); }
+ 
+:where(#root) button.text-gray-600:not([class*="hover:text-"]):hover,
+:where(#root) button.text-gray-600:not([class*="hover:text-"]):focus { color: var(--gpa-text-secondary); }
+ 
+:where(#root) button.text-gray-700:not([class*="hover:text-"]):hover,
+:where(#root) button.text-gray-700:not([class*="hover:text-"]):focus { color: var(--gpa-text); }
+ 
+:where(#root) button.text-gray-900:not([class*="hover:text-"]):hover,
+:where(#root) button.text-gray-900:not([class*="hover:text-"]):focus { color: var(--gpa-text-strong); }
+ 
+:where(#root) button.text-blue-600:not([class*="hover:text-"]):hover,
+:where(#root) button.text-blue-600:not([class*="hover:text-"]):focus { color: var(--gpa-primary); }
+ 
+:where(#root) button.text-red-500:not([class*="hover:text-"]):hover,
+:where(#root) button.text-red-500:not([class*="hover:text-"]):focus { color: var(--gpa-red-500); }
+ 
+:where(#root) button.text-red-600:not([class*="hover:text-"]):hover,
+:where(#root) button.text-red-600:not([class*="hover:text-"]):focus { color: var(--gpa-red-600); }
+ 
+/* --- background colour ---------------------------------------------------- */
+:where(#root) button:not([class*="hover:bg-"]):hover,
+:where(#root) button:not([class*="hover:bg-"]):focus { background-color: transparent; }
+ 
+:where(#root) button.bg-white:not([class*="hover:bg-"]):hover,
+:where(#root) button.bg-white:not([class*="hover:bg-"]):focus { background-color: var(--gpa-surface); }
+ 
+:where(#root) button.bg-gray-100:not([class*="hover:bg-"]):hover,
+:where(#root) button.bg-gray-100:not([class*="hover:bg-"]):focus { background-color: var(--gpa-gray-100); }
+ 
+:where(#root) button.bg-gray-200:not([class*="hover:bg-"]):hover,
+:where(#root) button.bg-gray-200:not([class*="hover:bg-"]):focus { background-color: var(--gpa-gray-200); }
+ 
+:where(#root) button.bg-blue-600:not([class*="hover:bg-"]):hover,
+:where(#root) button.bg-blue-600:not([class*="hover:bg-"]):focus { background-color: var(--gpa-primary); }
+ 
+:where(#root) button.bg-red-500:not([class*="hover:bg-"]):hover,
+:where(#root) button.bg-red-500:not([class*="hover:bg-"]):focus { background-color: var(--gpa-red-500); }
+/* COLLEGE GPA CALCULATOR STYLE END */
+
+/* Breadcrumb and table of contents: layout.css */

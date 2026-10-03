@@ -1,0 +1,46 @@
+# Addresses scripts/admissions/indexing_check.py requests once each, without following redirects
+# (admissions-indexing.yml). Edit the "taken for" line to run the check again.
+# taken for: a check after step 3, template v2 on for tier A (Digant's go 2026-10-03 06:57 UTC, switch 07:29)
+/admissions/
+/admissions/page/2/
+/admissions/page/103/
+/admissions/page/104/
+/admissions/page/309/
+/admissions/page/400/
+/admissions/?search=harvard
+/admissions/?filter=ivy_league
+/admissions/feed/
+/admissions/harvard/
+/admissions/harvard
+/admissions/harvard/?utm_source=test
+/admissions/harvard/feed/
+/admissions/harvard/amp/
+http://gpacalculator.net/admissions/harvard/
+https://www.gpacalculator.net/admissions/harvard/
+/admissions/calvin/
+/admissions/lone-star-college-system/
+/admissions/fairfax-university-of-america/
+/admissions/bacone-college/
+/admissions/acupuncture-and-massage-college/
+/admissions/alabama-southern-community-college/
+/admissions/bryant-and-stratton-college-amherst/
+/admissions/maharishi-international-university/
+/admissions/maharishi-university-of-management/
+/admissions/dallas-college/
+/admissions/loma-linda-university/
+/admissions/university-of-st-augustine-for-health-sciences/
+/admissions/teachers-college-at-columbia-university/
+/admissions/idaho-state-university/
+/admissions/midwestern-university/
+/admission/el-centro-college/
+/admission/
+/admission/page/2/
+/admission/harvard-university/
+/admission/auburn-university/
+/colleges/
+/?post_type=colleges
+/sitemap.xml
+/colleges-sitemap.xml
+/wp-sitemap.xml
+/wp-sitemap-posts-colleges-1.xml
+/feed/

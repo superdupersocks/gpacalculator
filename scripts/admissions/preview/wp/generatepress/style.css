@@ -1,0 +1,7 @@
+/*
+Theme Name: GeneratePress
+Version: 3.6.1
+Description: Stand-in for the real GeneratePress, for admissions template previews only. It prints markers around
+the content and footer so scripts/admissions/preview/render.py can place the child theme's output inside a saved
+live page (the real header, footer and stylesheets). Never deployed.
+*/

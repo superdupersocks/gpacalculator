@@ -724,7 +724,7 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 #page .entry-content details.wp-block-details.gpa-toc {
     box-sizing: border-box;
     max-width: var(--gpa-text-max) !important;
-    margin: 24px auto 24px !important;   /* spec (Digant 20:23): 24px above the row and 24px below it */
+    margin: 24px auto 0 !important;
     padding: 0 !important;
     border-top: 1px solid var(--gpa-divider);
     border-bottom: 1px solid var(--gpa-divider);
@@ -736,6 +736,13 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 @media (min-width: 641px) and (max-width: 880px) {
     #page .entry-content > details.wp-block-details.gpa-toc { max-width: 100% !important; }
 }
+/* 24px above the row (margin above) and 24px between the closed row's bottom line and the first section
+   (spec rev 35, every page). A first section
+   that opens with a padded card (rx-card, 24px top padding) already gets its 24px from the card. */
+#page #primary #main .entry-content details.wp-block-details.gpa-toc { margin-bottom: 0 !important; }
+#page #primary #main .entry-content details.wp-block-details.gpa-toc + :not(#gpa-x) { margin-top: 24px !important; }
+#page #primary #main .entry-content details.wp-block-details.gpa-toc + :not(#gpa-x) > :is(h2, .wp-block-heading):first-child:not(#gpa-x) { margin-top: 0 !important; }
+#page #primary #main .entry-content details.wp-block-details.gpa-toc + .rx-sec:has(> .rx-card:first-child):not(#gpa-x) { margin-top: 0 !important; }
 #page .entry-content details.gpa-toc > summary {
     display: flex;
     align-items: center;
@@ -752,14 +759,16 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
 #page .entry-content details.gpa-toc > summary::-webkit-details-marker { display: none; }
 #page .entry-content details.gpa-toc > summary::marker { content: ""; }
 #page .entry-content details.gpa-toc > summary .gpa-toc__count { font-weight: 400; color: var(--gpa-text-muted); }
-/* Chevron: 16px, right after "On this page · N sections" (the summary's 8px gap), no circle or background, in the
-   accent colour; it turns when the list opens. The whole row stays the click/tap target (Digant 20:23). */
+/* 16px chevron in --gpa-link right after the text (summary gap 8px), no circle or background (spec rev 35);
+   the whole row stays the click/tap target. Masked so it takes the link colour token. */
 #page .entry-content details.gpa-toc > summary::after {
     content: "";
     flex: none;
     width: 16px;
     height: 16px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='%234338CA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
+    background-color: var(--gpa-link);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat;
     transition: transform .15s ease;
 }
 #page .entry-content details.gpa-toc[open] > summary::after { transform: rotate(180deg); }

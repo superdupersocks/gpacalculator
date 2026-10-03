@@ -1,4 +1,4 @@
-# Indexing check, 2026-10-03 03:19 UTC
+# Indexing check, 2026-10-03 03:43 UTC
 
 Read-only GETs by scripts/admissions/indexing_check.py; addresses from `data/admissions/live_checks/indexing_urls.txt`.
 
@@ -17,19 +17,17 @@ Disallow: /feed/
 
 ## Sitemap index
 
-- /sitemap_index.xml: status 200, 6 sitemaps; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+- /sitemap_index.xml: status 200, 4 sitemaps; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - post-sitemap.xml (index lastmod 2026-09-14T21:07:11+00:00): status 200, 28 addresses, 0 images, lastmod 2012-08-29 to 2026-09-14; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - page-sitemap.xml (index lastmod 2026-10-03T02:40:46+00:00): status 200, 352 addresses, 0 images, lastmod 2026-09-05 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - page-sitemap.xml (index lastmod 2026-10-03T03:29:53+00:00): status 200, 352 addresses, 0 images, lastmod 2026-09-05 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - colleges-sitemap1.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 945 addresses, 0 images, lastmod 2026-10-02 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - colleges-sitemap2.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 944 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - colleges-sitemap3.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 944 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - colleges-sitemap4.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 253 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - colleges-sitemap2.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 823 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
 
-- 3466 addresses in all, 3086 in the colleges sitemaps
+- 2148 addresses in all, 1768 in the colleges sitemaps
 
 Addresses by first path segment:
 
-- /admissions/: 3087
+- /admissions/: 1769
 - /grade-conversion/: 151
 - /college-gpa-calculator/: 91
 - /gpa-scale/: 33
@@ -40,11 +38,11 @@ Addresses by first path segment:
 - /college-advice/: 1
 - /: 1
 - /middle-school-gpa-calculator/: 1
+- /grade-calculator/: 1
 - /high-school-gpa-calculator/: 1
 - /semester-grade-calculator/: 1
 - /weighted-grade-calculator/: 1
 - /final-grade-calculator/: 1
-- /grade-calculator/: 1
 - /contact-us/: 1
 - /about-us/: 1
 - /pharmacy-school-gpa-calculator/: 1
@@ -177,19 +175,19 @@ Addresses by first path segment:
   - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
 - /admissions/lone-star-college-system/: status 200
   - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
-  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/lone-star-college-system/
+  - robots: follow, noindex; canonical: none
   - title: Lone Star College Admission Requirements & Open Admission
   - H1: Lone Star College Admission Requirements
   - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
 - /admissions/fairfax-university-of-america/: status 200
   - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
-  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/fairfax-university-of-america/
+  - robots: follow, noindex; canonical: none
   - title: Fairfax University of America Admissions
   - H1: Fairfax University of America Admissions
   - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, Organization, ImageObject, WebSite, BreadcrumbList
 - /admissions/bacone-college/: status 200
   - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
-  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/bacone-college/
+  - robots: follow, noindex; canonical: none
   - title: Bacone College Admissions
   - H1: Bacone College Admissions
   - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, Organization, ImageObject, WebSite, BreadcrumbList
@@ -209,10 +207,40 @@ Addresses by first path segment:
   - headers: content-type: text/html; charset=UTF-8, cache-control: no-cache, must-revalidate, max-age=0, no-store, private, cf-cache-status: BYPASS, x-redirect-by: Rank Math
 - /admissions/dallas-college/: status 200
   - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
-  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/dallas-college/
+  - robots: follow, noindex; canonical: none
   - title: Dallas College Admission Requirements & Open Admission
   - H1: Dallas College Admission Requirements
   - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
+- /admissions/loma-linda-university/: status 200
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - robots: follow, noindex; canonical: none
+  - title: Loma Linda University Admissions
+  - H1: Loma Linda University Admissions
+  - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
+- /admissions/university-of-st-augustine-for-health-sciences/: status 200
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/university-of-st-augustine-for-health-sciences/
+  - title: University of St. Augustine for Health Sciences Admissions
+  - H1: University of St. Augustine for Health Sciences Admissions
+  - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
+- /admissions/teachers-college-at-columbia-university/: status 200
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/teachers-college-at-columbia-university/
+  - title: Teachers College at Columbia University Admissions
+  - H1: Teachers College at Columbia University Admissions
+  - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
+- /admissions/idaho-state-university/: status 200
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/idaho-state-university/
+  - title: Idaho State University Average GPA & Admissions
+  - H1: Idaho State University Average GPA &amp; Admissions
+  - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, FAQPage, Organization, ImageObject, WebSite, BreadcrumbList
+- /admissions/midwestern-university/: status 200
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/midwestern-university/
+  - title: Midwestern University Admissions
+  - H1: Midwestern University Admissions
+  - JSON-LD: CollegeOrUniversity, PostalAddress, WebPage, Organization, ImageObject, WebSite, BreadcrumbList
 - /admission/el-centro-college/: status 301 -> https://gpacalculator.net/admissions/dallas-college/
   - headers: content-type: text/html; charset=UTF-8, cache-control: no-cache, must-revalidate, max-age=0, no-store, private, cf-cache-status: BYPASS, x-redirect-by: Rank Math
 - /admission/: status 301 -> https://gpacalculator.net/admissions/

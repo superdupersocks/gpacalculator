@@ -14,8 +14,8 @@ $post = get_post( $id );
 if ( ! $post ) { echo "no post $id\n"; return; }
 $old = $post->post_content;
 
-$re = '#<!-- wp:table \{[^}]*"className":"rx-table"[^}]*\} -->\s*<figure class="wp-block-table rx-table">.*?</figure>\s*<!-- /wp:table -->\s*'
-    . '<!-- wp:paragraph \{[^}]*"className":"rx-result"[^}]*\} -->\s*<p[^>]*rx-result[^>]*>(.*?)</p>\s*<!-- /wp:paragraph -->#s';
+$re = '#<!-- wp:table \{(?:(?!-->).)*?"className":"rx-table"(?:(?!-->).)*? -->\s*<figure class="wp-block-table rx-table">.*?</figure>\s*<!-- /wp:table -->\s*'
+    . '<!-- wp:paragraph \{(?:(?!-->).)*?"className":"rx-result"(?:(?!-->).)*? -->\s*<p[^>]*rx-result[^>]*>(.*?)</p>\s*<!-- /wp:paragraph -->#s';
 if ( ! preg_match( $re, $old, $m ) ) { echo "page $id: no rx-table + rx-result example found\n"; return; }
 
 $old_nums = array();

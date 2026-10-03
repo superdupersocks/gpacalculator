@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 44. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 52. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -43,7 +43,7 @@ The hero (breadcrumb, H1, subtitle) is rendered by the WordPress page template a
 | Card overlap into hero | 88px | 60px |
 | Side padding | as theme | 20px |
 
-No badges, chips or wave. Background, colors and the centered layout follow the site spec.
+No badges, chips or wave. Background, colors and the centered layout follow the site spec. College subtitle: "Semester and cumulative GPA on a 4.0 scale." (one line at 390px).
 
 ## Calculator card
 
@@ -77,6 +77,7 @@ Rows are a tight, scannable list: every row stays open on desktop (phones collap
 - Rows read as one list because each field has its own border; a wider gap only spreads the list out.
 - Long course names ("Introduction to Organic Chemistry") must stay readable at 375px. Lexend is wide, so truncate with an ellipsis, never wrap the input.
 - Enter moves to the next row; a new row is added when Enter is pressed on the last one.
+- Phones: a collapsed row shows the course name on the left and "grade · credits" at the right, then "Edit". Only the course name truncates (ellipsis); the grade and credits are never cut and always sit at the right edge. A not-counted grade collapses as "P · not counted" in place of the credits.
 
 ## Options
 
@@ -98,6 +99,16 @@ At 390×844 the first course field is on the first screen, with nothing between 
 
 On phones, Keep going lines up with the article text, 20px from the screen edge, not with the calculator card's 14px edge. It has 24px above it.
 
+## Semesters
+
+Removing a semester lives in a ⋯ menu on the semester header ("Remove Fall"), never as a bare button beside the name. Removing shows a toast with Undo for 8 seconds.
+
+## Not-counted grades
+
+- P, NP and W are on every college grade list, last, under a "Not counted in GPA" heading: a labelled group in the phone grade sheet, an optgroup in the desktop select.
+- They are left out of the GPA math and the credit total and need no credits. The row shows "Not counted: P (pass) isn’t counted in GPA." (likewise NP (no pass), W (withdrawn)), and the result note counts them ("3 courses not counted").
+- QA covers each one on every scale: GPA and credits unchanged, note shown, no error.
+
 ## Controls
 
 Every control is at least 44px tall, uses Lexend and takes colors only from calculator tokens.
@@ -110,8 +121,8 @@ Every control is at least 44px tall, uses Lexend and takes colors only from calc
 | Card header | One line: an "Options" link on the left, the My saves (folder) and Save icons on the right. No step bar on any calculator; the planner sits after the result and opens only from the result's planner button |
 | Add class (planned-course sections only) | `--gpa-calc-add-bg`, 1px dashed `--gpa-calc-add-border`, text `--gpa-calc-add-text` 600 |
 | Secondary (Add semester, Start over, Save, Share) | white, 1px `--gpa-border`, `--gpa-text`; text-style buttons allowed in the action row |
-| Primary CTA (Open planner, Plan my target GPA) | `--gpa-calc-cta-bg`, white 15px 600, 44px tall, radius 8px |
-| Action row | Below the last row, 16px above; one line on desktop, wraps on mobile |
+| Primary CTA ("Plan next semester’s grades") | `--gpa-calc-cta-bg`, white 15px 600, 44px tall, radius 8px |
+| Action row | Below the last row, 16px above; one line on desktop, wraps on mobile. "Start over" is hidden until something is entered (a course name, grade or previous GPA) and hides again when everything is cleared |
 
 UI text 15–16px at 400–600. Grade and credits text is centered in its field; other numbers are right-aligned. All numbers use `tabular-nums`.
 
@@ -132,6 +143,22 @@ The result appears under the action row as soon as there's enough data, opens wi
 | Empty state | Nothing shown and no space reserved until there's data |
 
 At-risk results (below 2.0, failing, near a target) switch the CTA to the rescue path with the target preset.
+
+**Result label.** "Semester GPA" while there is one semester with grades and no previous GPA; "Cumulative GPA" once there are 2+ semesters with grades or a previous GPA is entered.
+
+**Planner button.** "Plan next semester’s grades" (below good standing: "Plan getting back above 2.0"). It fits on one line at 375px.
+
+**"Is my GPA good?"** One tier per range, each saying what the number means for something students use it for:
+
+| GPA | Wording |
+| --- | --- |
+| 3.7 and up | "X is in the A range: high enough for Latin honors at many colleges and for competitive grad programs." |
+| 3.5 to 3.69 | "X is where Dean’s List and cum laude usually start, and above the 3.0 most grad schools ask for." |
+| 3.0 to 3.49 | "X is above 3.0, the usual minimum for grad school and many scholarships." |
+| 2.5 to 2.99 | "X is above good standing but under the 3.0 many grad schools and scholarships ask for." |
+| 2.0 to 2.49 | "X keeps you in good standing (2.0), but many scholarships and grad programs want 3.0." |
+| Below 2.0 | "X is below 2.0, the usual line for good academic standing. The planner shows the way back." |
+| Scales above 4.5 (e.g. 7-point) | "X out of N. Compare it with the cutoffs your school publishes." |
 
 ## Sticky result pill
 
@@ -200,24 +227,17 @@ A returning student finds their courses already filled in; nobody ever retypes a
 
 Not used on GPA calculators (Digant, Oct 3, 2026): no history chart. Goals stay as text status lines under the result, and the what-if slider stays in the planner.
 
-## Goal tracker
+## Goal line
 
-Students pin up to 3 goals; each shows as a one-line status under the result telling them exactly what they need next term.
+The planner's target GPA is the student's goal; there is no "+ Add a goal" button or goal menu. Once a target is set, one goal line shows under the result while the planner is closed. Tapping it opens the planner; × clears the goal.
 
-| Calculator | Goal presets (all values editable, since schools differ) |
-| --- | --- |
-| College GPA | Dean's List (semester, 3.5) · Cum laude 3.5 / Magna 3.7 / Summa 3.9 (cumulative) · Scholarship minimum (custom) · Good standing (2.0) · Custom target |
-| High school GPA | Honor roll (3.0) · High honor roll (3.5) · Scholarship minimum (custom) · A college's average GPA (from /admissions/) · Custom target |
-| Homepage GPA | Custom target · scholarship minimum |
+**Goal line wording** (one line under the result):
 
-**Status line per goal** (under the result, max 3 rows):
-
-- Met: "Dean's List — you're 0.08 above it" in `--gpa-success`.
-- Reachable: "Magna cum laude (3.70) — you need a 3.86 over your next 15 credits" in `--gpa-text-strong`; uses the planner math and the planner's credits value (default 15 college, 1 year high school).
-- Out of reach next term: "Summa (3.90) — highest possible next term is 3.81; reachable in 3 terms at 4.0" in `--gpa-warning`.
-- Below good standing: rescue wording in `--gpa-danger` and the CTA switches to the rescue path.
-- Add goal: a "+ Add a goal" text button opens a small menu of the presets; tapping a status line opens the planner preset to that goal.
-- Goals save with the draft and named saves; no goals are set by default.
+- Met: "Your goal: 3.00. You’re there, 0.34 above it." in `--gpa-success`.
+- Reachable: "Your goal: 3.50. You need a 3.83 over your next 15 credits." in `--gpa-text-strong`; uses the planner math and the planner's credits value (default 15 college, 1 year high school).
+- Out of reach next term: "Your goal: 3.90. The highest possible next term is 3.81; reachable in 3 terms at 4.0." in `--gpa-warning`.
+- Below good standing: rescue wording in `--gpa-danger`, and the planner button reads "Plan getting back above 2.0".
+- The goal saves with the draft and named saves; no goal is set by default.
 
 ## Home screen app (PWA)
 
@@ -242,7 +262,7 @@ The per-class and finals ideas live in the grade calculators, not inside the GPA
 
 | Calculator | Extra features | Hands off to |
 | --- | --- | --- |
-| College / High school / Homepage GPA | Goal tracker (text status lines); no history chart | Grade calculator per class ("Track this class" on a course row) |
+| College / High school / Homepage GPA | Goal line from the planner target; no history chart | Grade calculator per class ("Track this class" on a course row) |
 | Grade calculator | Assignment tracker per class (categories, weights, points or %), current letter grade, what-if for upcoming work; one save per class so students come back after each graded assignment | "Send to my GPA": puts the class's current letter into the GPA calculator's matching course row |
 | Final grade calculator | Finals planner: every class at once (current grade, final weight, target) → score needed on each final, plus the GPA that results | GPA calculator with the resulting grades filled in |
 | Semester grade calculator | Pulls the class's quarter or term grades from the grade calculator when saved | GPA calculator |
@@ -330,3 +350,4 @@ A calculator ships only when every box passes in the preview screenshots.
 - [ ] Math QA suite at 100% and flow test with zero console errors (per the build skill)
 - [ ] Labels read "Course (optional)", "Grade", "Credits"; grade placeholder "Grade"; grade and credits centered; phone row is name + ×, then grade \~110px and credits \~80px, left-aligned
 - [ ] 390×844: first course field on the first screen under the card header; one blank row that auto-adds; finished rows and earlier semesters collapse to one line; grade sheet and credit quick buttons work; no step bar or chart; Options closed by default; Keep going 20px from the edge; pill hidden whenever the result is on screen or above it
+- [ ] P, NP and W on every scale: GPA and credits unchanged, note shown, no error; collapsed rows cut only the name; "Start over" hidden until there is input; planner button on one line at 375px

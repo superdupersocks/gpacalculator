@@ -23,6 +23,14 @@ for line in (REPO / "content" / "gpa-scale-intros.md").read_text().splitlines():
     if m:
         old[m.group(1)] = (m.group(2).strip(), m.group(3).strip())
 
+# Letter wording that has to follow the rule too (audit 2026-10-03): 2.8 is B−; 2.5 and 1.5 are ties.
+EXTRA = {
+    "2-8-gpa": {"82%, the bottom of the B range": "82%, the top of the B- range", "It means B work": "It means B− work"},
+    "2-5-gpa": {"about 80%, a low B-": "about 80%, right on the line between a C+ and a B-", "It means B− work": "It means C+/B− work"},
+    "1-5-gpa": {"about 70%, the bottom of the C- range": "about 70%, right on the line between a D+ and a C-",
+                "C− work, about 70%": "D+/C− work, about 70%"},
+}
+
 config = {"gpa-scale": {}}
 for i, slug in enumerate(sorted(pages, key=lambda s: pages[s]["id"])):
     gs = f"{slug[0]}.{slug[2]}"
@@ -32,6 +40,7 @@ for i, slug in enumerate(sorted(pages, key=lambda s: pages[s]["id"])):
     new_pct = pct.lstrip("≈")
     if o_pct != new_pct:
         swaps[o_pct] = new_pct
+    swaps.update(EXTRA.get(slug, {}))
     config[slug] = {"home_anchor": ANCHORS[i % len(ANCHORS)], "swaps": swaps, "faqs": faqs[slug], "letter": letter, "pct": pct}
 
 php = (REPO / "scripts" / "wp" / "gpa_scale_view_pass.php").read_text()

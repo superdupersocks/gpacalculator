@@ -293,6 +293,28 @@ function gpa_content_styles() {
     }
 }
 
+// GPA scale styles (gpa-scale.css): the /gpa-scale/ hub, its GPA pages and any page that uses the scale chart
+// or a [gpa_scale_*] shortcode. Prints after components.css and content-styles.css.
+add_action('wp_enqueue_scripts', 'gpa_scale_styles', 20);
+function gpa_scale_styles() {
+    if ( ! is_singular() ) {
+        return;
+    }
+    $post   = get_post();
+    $parent = $post && $post->post_parent ? get_post( $post->post_parent ) : null;
+    $on     = $post && ( 'gpa-scale' === $post->post_name || ( $parent && 'gpa-scale' === $parent->post_name )
+        || false !== strpos( $post->post_content, 'gpa-scale-table' ) || false !== strpos( $post->post_content, '[gpa_scale_' ) );
+    if ( ! $on ) {
+        return;
+    }
+    wp_enqueue_style(
+        'gpa-scale',
+        get_stylesheet_directory_uri() . '/gpa-scale.css',
+        wp_style_is( 'gpa-content', 'enqueued' ) ? array( 'gpa-components', 'gpa-content' ) : array( 'gpa-components' ),
+        gpa_asset_ver( 'gpa-scale.css' )
+    );
+}
+
 add_action('wp_enqueue_scripts', 'gpa_database_page_styles');
 function gpa_database_page_styles() {
     if ( gpa_is_database_page() ) {

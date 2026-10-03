@@ -35,12 +35,34 @@ function vp_text( $html ) {
 	return preg_replace( '#\s+#u', '', html_entity_decode( wp_strip_all_tags( preg_replace( '#<!--.*?-->#s', ' ', $html ) ), ENT_QUOTES, 'UTF-8' ) );
 }
 
+// Site-wide chart (Digant 2026-10-03): D 63–66%, D− 60–62% (matches the calculators); table cells only.
+function vp_chart_cells( $c ) {
+	return str_replace( array( '>65–66%<', '>60–64%<' ), array( '>63–66%<', '>60–62%<' ), $c );
+}
+
+// The page's old figure -> the rule's figure, in the first two paragraphs that hold it (intro, "Is it good?" lead).
+function vp_swaps( $c, $swaps, &$log = null ) {
+	foreach ( $swaps as $from => $to ) {
+		$done = 0;
+		$c = preg_replace_callback( '#(<!-- wp:paragraph -->\s*<p>)(.*?)(</p>)#s', function ( $p ) use ( $from, $to, &$done ) {
+			if ( $done >= 2 || false === strpos( $p[2], $from ) ) { return $p[0]; }
+			$done++;
+			return $p[1] . str_replace( $from, $to, $p[2] ) . $p[3];
+		}, $c );
+		if ( is_array( $log ) ) { $log[] = "swap \"$from\"→\"$to\" x$done"; }
+	}
+	return $c;
+}
+
 function vp_hub( $c ) {
 	if ( false !== strpos( $c, '[gpa_scale_lookup]' ) ) { return array( null, 'already done' ); }
+	$c = vp_chart_cells( $c );
 	$tbl = strpos( $c, '<!-- wp:table -->' );
 	if ( false === $tbl || false === strpos( $c, '>Grade points</th>', $tbl ) ) { return array( null, 'letter-grade table not found' ); }
 	// "new converter only" (Digant 07:59): drop the old Custom HTML GPA Converter at the top of the hub
 	$c   = preg_replace( '#<!-- wp:html -->\s*<!-- GPA Converter .*?id="gpa-converter".*?<!-- /wp:html -->\s*#s', '', $c, 1, $dropped );
+	// the old converter is gone, so the bonus note points at the table and the GPA pages' estimator instead
+	$c   = str_replace( 'These are the example bonuses used by this page’s converter, not rules', 'These are the example bonuses used in the table below and in the weighted estimator on each GPA page, not rules', $c, $n_note );
 	$tbl = strpos( $c, '<!-- wp:table -->' );
 	$conv = vp_block( 'shortcode', '[gpa_scale_converter]' ) . "\n\n";
 	$c    = substr( $c, 0, $tbl ) . $conv . substr( $c, $tbl );
@@ -50,7 +72,7 @@ function vp_hub( $c ) {
 		. vp_block( 'paragraph', '<p>Pick a GPA to see its letter grade and percentage, whether it is good, what it means for college and how to raise it.</p>' ) . "\n\n"
 		. vp_block( 'paragraph', '<p class="gpa-lookup__note">Every GPA under 4.0 can be weighted or unweighted; each page shows both. A GPA above 4.0 is always weighted.</p>', array( 'className' => 'gpa-lookup__note' ) ) . "\n\n"
 		. vp_block( 'shortcode', '[gpa_scale_lookup]' );
-	return array( substr( $c, 0, $tend ) . $look . substr( $c, $tend ), ( $dropped ? 'old converter removed; ' : 'old converter NOT FOUND; ' ) . 'converter above the table + Look up a GPA below it' );
+	return array( substr( $c, 0, $tend ) . $look . substr( $c, $tend ), ( $dropped ? 'old converter removed; ' : 'old converter NOT FOUND; ' ) . ( $n_note ? 'bonus note reworded; ' : 'bonus note NOT FOUND; ' ) . 'converter above the table + Look up a GPA below it' );
 }
 
 function vp_page( $c, $slug, $cfg, &$log ) {
@@ -58,9 +80,13 @@ function vp_page( $c, $slug, $cfg, &$log ) {
 	$gs      = $slug[0] . '.' . $slug[2];
 	$removed = array();
 	$added   = array();
+	$n_cells = substr_count( $c, '>65–66%<' ) + substr_count( $c, '>60–64%<' );
+	$c       = vp_chart_cells( $c );
+	if ( $n_cells ) { $log[] = "chart cells x$n_cells"; }
 	// quick-facts quote -> view
 	$view = vp_block( 'shortcode', '[gpa_scale_view home_anchor="' . $cfg['home_anchor'] . '"]' );
-	if ( ! preg_match( '#<!-- wp:quote -->\s*<blockquote class="wp-block-quote">\s*<!-- wp:list -->.*?Letter grade:.*?<!-- /wp:quote -->#s', $c, $m ) ) { $log[] = 'NO QUICK FACTS'; return null; }
+	// (4.0 has an older quote: "A 4.0 GPA equals an A average…" / "93–95%")
+	if ( ! preg_match( '#<!-- wp:quote -->\s*<blockquote class="wp-block-quote">\s*<!-- wp:list -->(?:(?!<!-- /wp:quote -->).)*?(?:Letter grade:|GPA equals an A average).*?<!-- /wp:quote -->#s', $c, $m ) ) { $log[] = 'NO QUICK FACTS'; return null; }
 	$c = str_replace( $m[0], $view, $c ); $removed[] = $m[0]; $added[] = $view; $log[] = 'view';
 	// the page's own row inside the chart (only when it isn't a chart value)
 	if ( preg_match( '#<tr><td[^>]*>' . preg_quote( $gs, '#' ) . '</td><td[^>]*>[^<]*</td><td[^>]*>[^<]*</td></tr>#', $c, $m ) && ! in_array( $gs, array( '4.0', '3.7', '3.3', '3.0', '2.7', '2.3', '2.0', '1.7', '1.3', '1.0' ), true ) ) {
@@ -75,15 +101,7 @@ function vp_page( $c, $slug, $cfg, &$log ) {
 		$c = str_replace( $m[0], '', $c ); $removed[] = $m[0]; $log[] = 'old H3';
 	}
 	// figure swaps in the intro (first paragraph) and the "Is it good?" lead
-	foreach ( $cfg['swaps'] as $from => $to ) {
-		$done = 0;
-		$c = preg_replace_callback( '#(<!-- wp:paragraph -->\s*<p>)(.*?)(</p>)#s', function ( $p ) use ( $from, $to, &$done ) {
-			if ( $done >= 2 || false === strpos( $p[2], $from ) ) { return $p[0]; }
-			$done++;
-			return $p[1] . str_replace( $from, $to, $p[2] ) . $p[3];
-		}, $c );
-		$log[] = "swap \"$from\"→\"$to\" x$done";
-	}
+	$c = vp_swaps( $c, $cfg['swaps'], $log );
 	// older homepage links in the body: the view holds the page's one homepage link
 	$n = 0;
 	$c = preg_replace_callback( '#<a\s+href="https://gpacalculator\.net/?"[^>]*>(.*?)</a>#is', function ( $m ) use ( &$n ) { $n++; return $m[1]; }, $c );
@@ -119,10 +137,19 @@ foreach ( $config as $slug => $cfg ) {
 	// gate: apart from the removed / added blocks and the figure swaps, the text is unchanged
 	$a = $row->post_content; foreach ( $removed as $r ) { $a = str_replace( $r, '', $a ); }
 	$b = $new; foreach ( $added as $r ) { $b = str_replace( $r, '', $b ); }
-	foreach ( $cfg['swaps'] as $from => $to ) { $a = str_replace( $from, $to, $a ); }
+	$a = vp_swaps( vp_chart_cells( $a ), $cfg['swaps'] );
 	$ok = vp_text( $a ) === vp_text( $b );
 	echo "$slug: " . implode( '; ', $log ) . ( $ok ? '  OK' : '  TEXT DIFFERS' ) . "\n";
 	if ( $ok ) { $plan[ $slug ] = array( (int) $row->ID, $new ); }
+}
+if ( 'all' === $render ) {
+	global $wp_query, $post;
+	foreach ( $plan as $slug => list( $id, $content ) ) {
+		$post = get_post( $id ); setup_postdata( $post );
+		$wp_query->queried_object = $post; $wp_query->queried_object_id = $post->ID; $wp_query->is_singular = true; $wp_query->is_page = true;
+		echo "=====PAGE $slug=====\n" . apply_filters( 'the_content', $content ) . "\n";
+	}
+	return;
 }
 if ( $render ) {
 	global $wp_query, $post;

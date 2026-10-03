@@ -6,10 +6,11 @@
   // interpolated between the chart letters' range midpoints, chart values show their range.
   const POINTS = [[4.0, 'A', 94.5, '93–100%'], [3.7, 'A−', 91, '90–92%'], [3.3, 'B+', 88, '87–89%'],
     [3.0, 'B', 84.5, '83–86%'], [2.7, 'B−', 81, '80–82%'], [2.3, 'C+', 78, '77–79%'], [2.0, 'C', 74.5, '73–76%'],
-    [1.7, 'C−', 71, '70–72%'], [1.3, 'D+', 68, '67–69%'], [1.0, 'D', 65.5, '65–66%'], [0.7, 'D−', 62, '60–64%'],
+    [1.7, 'C−', 71, '70–72%'], [1.3, 'D+', 68, '67–69%'], [1.0, 'D', 64.5, '63–66%'], [0.7, 'D−', 61, '60–62%'],
     [0.0, 'F', 50, 'Below 60%']];
   const figures = (gpa) => {
     const g = Math.round(gpa * 100) / 100;
+    if (g > 4) return { letter: 'Weighted', pct: '' };
     const exact = POINTS.find((p) => Math.abs(p[0] - g) < 0.001);
     if (exact) return { letter: exact[1], pct: exact[3] };
     for (let i = 0; i < POINTS.length - 1; i++) {

@@ -57,7 +57,29 @@
 /* Grade and credits are centered in their fields (every calculator, Calculator Design Standard) */
 :is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade .calc-select, .gpa-f-cr .calc-input),
 #page .entry-content :is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade .calc-select, .gpa-f-cr .calc-input) { text-align: center; text-align-last: center; }
-:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade .calc-select { padding-left: 28px; }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade .calc-select:not(.gpa-grade-btn),
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade .calc-select:not(.gpa-grade-btn) { padding: 0 44px 0 12px; -webkit-appearance: none; appearance: none; background-image: none; }
+
+/* Grade select arrow: a tinted chevron button inside the field (same treatment as the GPA Scale converter) */
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade { position: relative; }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::before,
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--calc-control-h) / 2 - 14px);
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+}
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::before { border-radius: 8px; background: var(--gpa-indigo-100, var(--calc-surface-2, var(--calc-surface))); transition: background-color var(--calc-fast); }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::after {
+  background: var(--gpa-indigo-700, var(--calc-brand));
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
+}
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade:hover .calc-select { border-color: var(--gpa-indigo-200, var(--calc-input-line)); }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade:hover::before { background: var(--gpa-indigo-200, var(--calc-surface)); }
 
 /* Phone entry: grade and credit buttons open bottom sheets; finished rows and earlier semesters collapse.
  * Desktop keeps the select and the number field, and never collapses. */
@@ -120,6 +142,7 @@
 
   /* Grade: a button opening the letter grid; credits: a button opening 1-5 + Other (Other shows the field) */
   :is(#root, .gpacalc-mount) .gpa-f-grade .calc-select:not(.gpa-grade-btn) { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::before, :is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::after { display: none; }
   :is(#root, .gpacalc-mount) .gpa-grade-btn,
   #page .entry-content :is(#root, .gpacalc-mount) .gpa-grade-btn { display: block; width: 100%; text-align: center; text-align-last: center; padding: 0 28px; cursor: pointer; }
   :is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn):is(:hover, :focus, :active),

@@ -344,7 +344,7 @@ function gpa_scale_converter_shortcode() {
 		. '<select class="gpa-quickconv__select" aria-describedby="gpa-quickconv-out">' . $opts . '</select></label>'
 		. '<div class="gpa-quickconv__out" id="gpa-quickconv-out" aria-live="polite">'
 		. '<div class="gpa-quickconv__stat"><span class="gpa-quickconv__label">Grade points</span><strong data-out="points">' . esc_html( $pts ) . '</strong></div>'
-		. '<div class="gpa-quickconv__stat"><span class="gpa-quickconv__label">Percentage range</span><strong data-out="range">' . esc_html( $range ) . '</strong></div>'
+		. '<div class="gpa-quickconv__stat"><span class="gpa-quickconv__label">% range</span><strong data-out="range">' . esc_html( $range ) . '</strong></div>'
 		. '<a class="gpa-quickconv__link" data-out="link" href="' . esc_url( $url ) . '"' . ( $url ? '' : ' hidden' ) . '>What a <span data-out="gpa">' . esc_html( $pts ) . '</span> GPA means <span aria-hidden="true">&rarr;</span></a>'
 		. '</div></div>';
 }

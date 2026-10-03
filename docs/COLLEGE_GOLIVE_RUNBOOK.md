@@ -8,7 +8,8 @@ files by hand, log in docs/LIVE_CHANGELOG.md. No Cloudflare keys, no Cloudways b
    page 22 subtitle "Semester and cumulative GPA on a 4.0 scale." must be live. Check: the live child-theme
    components.css has gpa-ex / rx-relcard rules that also match `#root` / `.gpacalc-mount` (e3b337a). Don't deploy
    that CSS from here.
-1. `git fetch origin claude/calculator-unification-0oc2fc && git checkout origin/claude/calculator-unification-0oc2fc`.
+1. `git fetch origin claude/calculator-unification-0oc2fc && git checkout 9da0e5b` (the College build Digant approved).
+   Not the branch head: later commits add the "Add to home screen" hint, which ships only on its own go.
 2. Backup: tar the live `wp-content/plugins/gpacalculator-manager` to `~/backups/gpacalculator-manager-pre-v2-<ts>.tar.gz`
    (copy it to the Mac) and take a DB backup.
 3. Dry run: `rsync -nrci` repo `plugin/gpacalculator-manager/` against the live plugin dir (no `--delete`). Expected: the

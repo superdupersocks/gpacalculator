@@ -179,6 +179,31 @@ the plugin, byte-identical to live, and pass the mount smoke test.
 | Starter template | — | Yes | Yes | `core_qa.py` |
 | College list on the 31 `/gpa-scale/` pages (was `[CollegeDB gpa="…"]`) | other | Removed from the pages; `[CollegeDB]` placeholder still registered | No | To rebuild from Scorecard/CDS data |
 
+## Admissions database (/admissions/)
+
+The `colleges` post type (`/admissions/<slug>/`, hub at `/admissions/`): 3,085 published college pages. Theme files
+owned by the admissions work: `single-colleges.php`, `archive-colleges.php`, `template-parts/college-db-archive.php`,
+`college-data.php`, `database-ajax.js`, `admissions.css` and the `gpa_college_*`, hub, AJAX, title and description
+code in `functions.php`; deploys run `scripts/admissions/deploy_phase3.sh`, which ships the commit set in it (a
+commit that has merged the latest design branch, so the design's live changes stay). Data in `data/admissions/` (IPEDS backbone, Scorecard, CDS values with citations, Phase 2 and 3
+audit lists, Search Console exports), scripts in `scripts/admissions/`. Data rules: GPA only with a verified
+college-published CDS citation, labeled "as reported by the college" with its year and basis; primary sources only;
+never estimate.
+
+Done: Phase 1 data, Phase 2 audit and pruning (516 pages removed: 368 answer 410, 148 a 301), Phase 3 hub and
+profile template, Phase 4 step 1 (modified dates). Runbooks: `docs/ADMISSIONS_PHASE2_RUNBOOK.md`,
+`docs/ADMISSIONS_PHASE3_RUNBOOK.md`, `docs/ADMISSIONS_PHASE4_RUNBOOK.md` (step 2, the hub pages and structured data,
+waits on Digant's deploy; the noindex for the 53 pages under review is held for tiering).
+
+Digant's plan of 2026-10-03, each step stopping at a checkpoint for Digant's go:
+1. **Cleanup QA**: checkpoint ready (`data/admissions/cleanup_qa/report.md`). All 516 removed pages answer as planned;
+   proposed: 330 old addresses fixed (chains, dead ends, 404s, 410s with clicks), 42 leftover WordPress pages under
+   /admissions/ unpublished, 302 renamed colleges moved to addresses with their current name. Server steps:
+   `docs/ADMISSIONS_CLEANUP_RUNBOOK.md`.
+2. **Tiering**: A complete data, B partial, C open admission or no GPA, with 12 months of Search Console clicks and
+   impressions; index or noindex per page, traffic overrides. Not started.
+3. **New template** from the mockup behind a feature flag by tier; 5 sample pages, then tier A. Not started.
+
 ## Open issues
 
 - Live theme = repo theme minus the unreleased 1.2 edits. Ship 1.2 (or drop it) via `scripts/deploy_theme.sh` so

@@ -1,6 +1,6 @@
 # Addresses scripts/admissions/indexing_check.py requests once each, without following redirects
 # (admissions-indexing.yml). Edit the "taken for" line to run the check again.
-# taken for: a check of the college pages and the sitemap dates after Phase 4 step 1 and the rail-fix deploy (2026-10-03 00:42 UTC)
+# taken for: a check after the Phase 4 code deploy (Digant, 2026-10-03 ~02:35 UTC) and the cleanup QA fixes and renames (02:26 UTC)
 /admissions/
 /admissions/page/2/
 /admissions/page/103/
@@ -24,6 +24,10 @@ https://www.gpacalculator.net/admissions/harvard/
 /admissions/acupuncture-and-massage-college/
 /admissions/alabama-southern-community-college/
 /admissions/bryant-and-stratton-college-amherst/
+/admissions/maharishi-international-university/
+/admissions/maharishi-university-of-management/
+/admissions/dallas-college/
+/admission/el-centro-college/
 /admission/
 /admission/page/2/
 /admission/harvard-university/

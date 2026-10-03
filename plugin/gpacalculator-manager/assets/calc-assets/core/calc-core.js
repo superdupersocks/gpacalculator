@@ -455,12 +455,35 @@ const AD_FOOTER = '#fs-sticky-footer, .fs-sticky-footer, [id*="sticky_footer"], 
 
 /** Height of whatever is fixed to the bottom of the screen (the sticky ad), in px; 0 when none shows. */
 export function bottomObstruction() {
-  let max = 0;
-  for (const el of document.querySelectorAll(AD_FOOTER)) {
-    const r = el.getBoundingClientRect();
-    if (r.height > 0 && r.bottom >= window.innerHeight - 2) max = Math.max(max, window.innerHeight - r.top);
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+  const boxes = new Set();
+  for (const el of document.querySelectorAll(AD_FOOTER)) boxes.add(el);
+  // Other fixed boxes near the bottom edge (Freestar's floating video player, which sits on top of the
+  // sticky ad; consent bars): probe a few points and climb to the fixed ancestor. The calculator's own
+  // pill, toasts and sheet don't count.
+  if (document.elementsFromPoint) {
+    const seen = new Set();
+    for (const y of [vh - 6, vh - 60, vh - 120, vh - 180, vh - 240]) {
+      for (const x of [8, vw / 2, vw - 8]) {
+        for (let el of document.elementsFromPoint(x, y)) {
+          for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+            if (seen.has(el)) break;
+            seen.add(el);
+            if (el.closest('#root, .gpacalc-mount')) break;
+            const pos = getComputedStyle(el).position;
+            if (pos === 'fixed' || pos === 'sticky') { boxes.add(el); break; }
+          }
+        }
+      }
+    }
   }
-  return Math.max(0, Math.round(max));
+  // Stack them up from the bottom: a box counts when it touches the bottom edge or the box below it.
+  const rects = [...boxes].map((el) => el.getBoundingClientRect()).filter((r) => r.height > 0 && r.width > 0 && r.top < vh)
+    .sort((a, b) => b.bottom - a.bottom);
+  let max = 0;
+  for (const r of rects) if (r.bottom >= vh - max - 16) max = Math.max(max, vh - r.top);
+  return Math.max(0, Math.min(Math.round(max), Math.round(vh / 2)));
 }
 
 /**
@@ -584,6 +607,8 @@ export function createSheet(host) {
         if (!first) first = b;
         if (o.value === value) current = b;
       }
+      // Lift the panel above anything fixed to the bottom of the screen, so the ad never covers a choice.
+      panel.style.setProperty('--calc-sheet-lift', `${bottomObstruction()}px`);
       wrap.hidden = false;
       document.documentElement.classList.add('calc-sheet-open');
       (current || first || cancel).focus({ preventScroll: true });

@@ -678,8 +678,8 @@ def layout(s, shots):
             R.check(f"rows {name} {w}: grade control", rr["btn"], "BUTTON" if mobile else "SELECT")
             if mobile:
                 R.ok(f"rows {name} {w}: line 1 is the name + remove", abs(rr["n"][1] - rr["x"][1]) <= 2 and rr["x"][0] > rr["n"][0] + rr["n"][2] - 1, rr)
-                R.ok(f"rows {name} {w}: line 2 grade ~110 + credits ~80, left-aligned", rr["g"][1] > rr["n"][1] + 20 and abs(rr["g"][1] - rr["c"][1]) <= 2
-                     and abs(rr["g"][0] - rr["n"][0]) <= 1 and 100 <= rr["g"][2] <= 120 and 70 <= rr["c"][2] <= 90, rr)
+                R.ok(f"rows {name} {w}: line 2 grade ~120 + credits ~104, left-aligned", rr["g"][1] > rr["n"][1] + 20 and abs(rr["g"][1] - rr["c"][1]) <= 2
+                     and abs(rr["g"][0] - rr["n"][0]) <= 1 and 110 <= rr["g"][2] <= 130 and 94 <= rr["c"][2] <= 114, rr)
             else:
                 R.ok(f"rows {name} {w}: one line", abs(rr["n"][1] - rr["g"][1]) <= 2 and abs(rr["g"][1] - rr["c"][1]) <= 2, rr)
             long_name = p.locator(".gpa-row .gpa-f-name input:visible").last
@@ -714,6 +714,26 @@ def layout(s, shots):
     pick_grade(p, row, "B+")
     R.check("phone: grade picked from the sheet counts", text(p, ".calc-score"), "3.30")
     R.check("phone: next row added", p.locator(".gpa-row").count(), 2)
+    # Chevron buttons on the phone grade and credits buttons show they open a picker
+    R.check("phone: grade and credits show a chevron", p.evaluate("""(() => ['.gpa-f-grade', '.gpa-f-cr'].map((f) => getComputedStyle(document.querySelectorAll('.gpa-row')[1].querySelector(f), '::after').display))()"""), ["block", "block"])
+    # The first tap on the next row's Grade opens the sheet (the finished row collapses only after the tap lands)
+    gb = p.locator(".gpa-row").nth(1).locator(".gpa-grade-btn")
+    gb.scroll_into_view_if_needed()
+    bb = gb.bounding_box()
+    p.touchscreen.tap(bb["x"] + bb["width"] / 2, bb["y"] + bb["height"] / 2)
+    p.wait_for_timeout(300)
+    R.check("phone: first tap on the next row's Grade opens the sheet", p.locator(".calc-sheet-wrap:not([hidden])").count(), 1)
+    p.keyboard.press("Escape")
+    # The sheet sits above the sticky ad and the floating video player stacked on it
+    p.evaluate("""(() => { const a = document.createElement('div'); a.id = 'fs-sticky-footer'; a.style.cssText = 'position:fixed;left:0;right:0;bottom:0;height:60px;z-index:2147483647';
+        const v = document.createElement('div'); v.className = 'qa-video'; v.style.cssText = 'position:fixed;right:8px;bottom:68px;width:224px;height:126px;z-index:2147483647'; document.body.append(a, v); })()""")
+    gb.click()
+    lift = p.evaluate("(() => [document.querySelector('.calc-sheet-wrap:not([hidden]) .calc-sheet').getBoundingClientRect().bottom, document.querySelector('.qa-video').getBoundingClientRect().top])()")
+    R.ok("phone: grade sheet sits above the sticky ad and video", lift[0] <= lift[1] + 1, lift)
+    p.keyboard.press("Escape")
+    p.evaluate("document.querySelectorAll('#fs-sticky-footer, .qa-video').forEach((e) => e.remove())")
+    row.locator(".gpa-row-sum").click()  # back to editing the first course
+    p.wait_for_timeout(100)
     # A long course name truncates in the collapsed line; grade and credits always show at the right
     row.locator(".gpa-f-name input").fill("Introduction to Organic Chemistry Laboratory")
     p.locator(".gpa-row").nth(1).locator(".gpa-f-name input").focus()

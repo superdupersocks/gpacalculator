@@ -497,6 +497,9 @@ html.calc-has-pill { scroll-padding-bottom: 80px; }
   background: var(--calc-surface);
   border-radius: 16px 16px 0 0;
   box-shadow: var(--gpa-calc-shadow-pop);
+  margin-bottom: var(--calc-sheet-lift, 0px);
+  max-height: calc(100% - var(--calc-sheet-lift, 0px) - 16px);
+  overflow-y: auto;
   font-family: var(--gpa-calc-font);
   color: var(--calc-ink);
 }

@@ -504,9 +504,25 @@ export function mountGpa(root, profile, opts = {}) {
   }
 
   // The row being edited stays open; on phones the others collapse to their one-line summary.
+  // On a tap the browser focuses the button (mousedown) before it fires the click. Collapsing the other
+  // rows at that moment moves the button out from under the finger and the tap is lost, so a focus that
+  // comes from a tap or click waits until the click has landed (or 600ms, if no click follows).
+  let pressedAt = -1e9;
+  let pending = null;
+  termsEl.addEventListener('pointerdown', () => { pressedAt = performance.now(); }, true);
+  const flush = () => {
+    const id = pending;
+    pending = null;
+    if (id) activate(id);
+  };
+  window.addEventListener('click', () => { pressedAt = -1e9; if (pending) setTimeout(flush, 0); }, true);
   termsEl.addEventListener('focusin', (e) => {
     const rowEl = e.target.closest('.gpa-row');
-    if (rowEl) activate(rowEl.dataset.id);
+    if (!rowEl) return;
+    if (performance.now() - pressedAt < 1000) {
+      pending = rowEl.dataset.id;
+      setTimeout(flush, 600);
+    } else activate(rowEl.dataset.id);
   });
 
   // Enter moves to the next row; on the last row it adds one.

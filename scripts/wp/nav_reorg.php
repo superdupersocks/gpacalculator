@@ -243,8 +243,9 @@ switch ( $mode ) {
 						}
 					} else {
 						echo ( $r[1] ? '    ' : '  ' ) . "{$r[0][0]} -> {$res['url']}\n";
-						if ( ! empty( $res['id'] ) ) {
-							$linked[ $res['id'] ] = true;
+						$pid = ! empty( $res['id'] ) ? $res['id'] : url_to_postid( $res['url'] );
+						if ( $pid ) {
+							$linked[ $pid ] = true;
 						}
 					}
 				}

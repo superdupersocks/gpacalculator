@@ -36,21 +36,16 @@ STANDARD = [
 
 
 def page_rows():
-    page = {}
-    for line in (REPO / "content" / "gpa-scale-intros.md").read_text().splitlines():
-        m = re.match(r"\| /gpa-scale/([0-9])-([0-9])-gpa/[^|]*\| ([^|]+) \| ([^|]+) \|", line)
-        if m:
-            page[f"{m.group(1)}-{m.group(2)}-gpa"] = (f"{m.group(1)}.{m.group(2)}", m.group(4).strip().replace("-", "–"),
-                                                     m.group(3).strip().replace("-", "−"))
+    """slug -> (gpa, pct, letter, rows, marked letters). Figures follow the site-wide rule (scripts/lib/gpa_rule.py):
+    the chart is the standard 13 rows and the page's GPA marks its nearest letter's row (both on a tie)."""
+    from lib.gpa_rule import figures
     out = {}
-    for slug, (gpa, pct, letter) in page.items():
-        rows = list(STANDARD)
-        if gpa not in {g for g, _, _ in STANDARD}:
-            at = next(i for i, (g, _, _) in enumerate(rows) if float(g) < float(gpa))
-            rows.insert(at, (gpa, pct, letter))
-        out[slug] = (gpa, pct, letter, rows)
+    for slug in SIZES:
+        gpa = f"{slug[0]}.{slug[2]}"
+        letter, pct = figures(gpa)
+        marked = letter.split("/") + (["A+"] if gpa == "4.0" else [])
+        out[slug] = (gpa, pct, letter, list(STANDARD), marked)
     return out
-
 
 CSS = """
 *{box-sizing:border-box;margin:0;padding:0}
@@ -78,14 +73,17 @@ body{font-family:'Lexend',system-ui,sans-serif;background:linear-gradient(135deg
 """
 
 
-def html_for(slug, gpa, pct, letter, rows, w, h):
+def html_for(slug, gpa, pct, letter, rows, marked, w, h):
     cells = ['<div class="h">GPA</div><div class="h">Percentage</div><div class="h">Letter grade</div>']
+    pilled = False
     for g, p, l in rows:
         band = l[0].lower() if l[0].lower() in "abcdf" else ""
-        cur = " cur" if g == gpa else ""
-        pill = '<span class="pill">YOUR GPA</span>' if cur else ""
+        cur = " cur" if l in marked else ""
+        pill = f'<span class="pill">YOUR {gpa}</span>' if cur and not pilled else ""
+        pilled = pilled or bool(cur)
         cells.append(f'<div class="g {band}{cur}">{g}{pill}</div><div class="{band}{cur}">{p}</div><div class="l {band}{cur}">{l}</div>')
     grade = "a straight-A average" if gpa == "4.0" else f"{'an' if letter[0] in 'AF' else 'a'} <b>{letter}</b> average"
+    pct = pct.replace("≈", "about ")
     return f"""<!doctype html><html><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=block" rel="stylesheet">
 <style>{CSS % {'w': w, 'h': h}}</style></head><body><div class="card">
@@ -96,7 +94,7 @@ def html_for(slug, gpa, pct, letter, rows, w, h):
 
 
 def alt_for(gpa, pct, letter):
-    return f"GPA scale chart with a {gpa} GPA highlighted: {letter} letter grade, {pct}"
+    return f"GPA scale chart with a {gpa} GPA marked: {letter} letter grade, {pct.replace('≈', 'about ')}"
 
 
 def main():
@@ -107,12 +105,12 @@ def main():
     from playwright.sync_api import sync_playwright
     alts = {}
     with sync_playwright() as p:
-        browser = p.chromium.launch()
+        browser = p.chromium.launch(**({"executable_path": __import__("os").environ["CHROMIUM"]} if __import__("os").environ.get("CHROMIUM") else {}))
         for slug in slugs:
-            gpa, pct, letter, rows = data[slug]
+            gpa, pct, letter, rows, marked = data[slug]
             w, h = SIZES[slug]
             page = browser.new_page(viewport={"width": w, "height": h}, device_scale_factor=1)
-            page.set_content(html_for(slug, gpa, pct, letter, rows, w, h), wait_until="networkidle")
+            page.set_content(html_for(slug, gpa, pct, letter, rows, marked, w, h), wait_until="networkidle")
             page.evaluate("document.fonts.ready")
             page.screenshot(path=str(out / f"{gpa}-GPA.png"), clip={"x": 0, "y": 0, "width": w, "height": h})
             page.close()

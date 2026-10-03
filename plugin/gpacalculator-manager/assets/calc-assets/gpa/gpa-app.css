@@ -47,6 +47,11 @@
 :is(#root, .gpacalc-mount) .gpa-term.is-planned .gpa-add-row { border-style: dashed; }
 :is(#root, .gpacalc-mount) .gpa-rows:empty { display: none; }
 
+/* Grade and credits are centered in their fields (every calculator, Calculator Design Standard) */
+:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade .calc-select, .gpa-f-cr .calc-input),
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade .calc-select, .gpa-f-cr .calc-input) { text-align: center; text-align-last: center; }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade .calc-select { padding-left: 28px; }
+
 /* Action row: Add semester, Start over, Try a sample, "Saved on this device" */
 :is(#root, .gpacalc-mount) .gpa-sample.is-small { font-size: 14px; font-weight: 500; }
 :is(#root, .gpacalc-mount) .gpa-sample[hidden] { display: none; }
@@ -87,11 +92,13 @@
 :is(#root, .gpacalc-mount) .calc-goal-add[hidden] { display: none; }
 
 @media (max-width: 640px) {
-  /* Stacked rows: course name full width with remove beside it, then grade + credits (+ major), then type */
-  :is(#root, .gpacalc-mount) .gpa-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name rm' 'grade cr cr'; }
-  :is(#root, .gpacalc-mount) .gpa-row.has-major { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; grid-template-areas: 'name name rm' 'grade cr major'; }
-  :is(#root, .gpacalc-mount) .gpa-row.has-type { grid-template-areas: 'name name rm' 'grade cr cr' 'type type type'; }
-  :is(#root, .gpacalc-mount) .gpa-row.has-type.has-major { grid-template-areas: 'name name rm' 'grade cr major' 'type type type'; }
+  /* Stacked rows: course name + remove on line 1; grade (~110px) and credits (~80px) side by side on
+   * line 2, left-aligned (then major), type on a third line */
+  :is(#root, .gpacalc-mount) .gpa-row { grid-template-columns: 110px 80px minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name name rm' 'grade cr . .'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-major { grid-template-columns: 110px 80px minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name name rm' 'grade cr major .'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-type { grid-template-areas: 'name name name rm' 'grade cr . .' 'type type type type'; }
+  :is(#root, .gpacalc-mount) .gpa-row.has-type.has-major { grid-template-areas: 'name name name rm' 'grade cr major .' 'type type type type'; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-major { justify-self: start; }
   :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-name { grid-area: name; }
   :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-grade { grid-area: grade; }
   :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-cr { grid-area: cr; }

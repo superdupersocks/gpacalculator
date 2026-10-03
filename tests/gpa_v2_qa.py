@@ -547,6 +547,28 @@ def layout(s, shots):
             R.ok(f"layout {name} {w}: inside the column", box["x"] >= col[0] - 15 and box["x"] + box["width"] <= col[0] + col[1] + 15, f"{box} {col}")
             font = p.evaluate("getComputedStyle(document.querySelector('.calc')).fontFamily")
             R.ok(f"layout {name} {w}: Lexend", font.split(",")[0].strip("'\" ") == "Lexend", font)
+            # Course-row rules (Calculator Design Standard rev 24)
+            rr = p.evaluate("""(() => { const row = document.querySelector('.gpa-row');
+                const box = (sel) => row.querySelector(sel).getBoundingClientRect();
+                const n = box('.gpa-f-name'), g = box('.gpa-f-grade'), c = box('.gpa-f-cr'), x = box('.gpa-rm');
+                const sel = row.querySelector('.gpa-f-grade select'), cr = row.querySelector('.gpa-f-cr input');
+                const head = [...document.querySelectorAll('.calc-row-head span')].map((e) => e.textContent).filter(Boolean);
+                const st = document.querySelector('.calc-steps li:nth-child(2)');
+                const shown = (sel) => getComputedStyle(st.querySelector(sel)).display !== 'none';
+                return { n: [n.left, n.top, n.width], g: [g.left, g.top, g.width], c: [c.left, c.top, c.width], x: [x.left, x.top],
+                         align: [getComputedStyle(sel).textAlignLast, getComputedStyle(cr).textAlign], ph: sel.options[0].textContent,
+                         im: cr.inputMode, head, step: shown('.calc-step-short') && !shown('.calc-step-full') ? st.querySelector('.calc-step-short').textContent : st.querySelector('.calc-step-full').textContent }; })()""")
+            R.check(f"rows {name} {w}: grade and credits centered", rr["align"], ["center", "center"])
+            R.check(f"rows {name} {w}: grade placeholder", rr["ph"], "Grade")
+            R.check(f"rows {name} {w}: credits decimal keypad", rr["im"], "decimal")
+            R.check(f"rows {name} {w}: column labels", rr["head"], ["Course (optional)", "Grade", "Credits"] + (["Type"] if "ucla" in name else []) + (["Major"] if "college" in name else []))
+            R.check(f"rows {name} {w}: step 2 label", rr["step"], "Target" if mobile else "Target GPA")
+            if mobile:
+                R.ok(f"rows {name} {w}: line 1 is the name + remove", abs(rr["n"][1] - rr["x"][1]) <= 2 and rr["x"][0] > rr["n"][0] + rr["n"][2] - 1, rr)
+                R.ok(f"rows {name} {w}: line 2 grade ~110 + credits ~80, left-aligned", rr["g"][1] > rr["n"][1] + 20 and abs(rr["g"][1] - rr["c"][1]) <= 2
+                     and abs(rr["g"][0] - rr["n"][0]) <= 1 and 100 <= rr["g"][2] <= 120 and 70 <= rr["c"][2] <= 90, rr)
+            else:
+                R.ok(f"rows {name} {w}: one line", abs(rr["n"][1] - rr["g"][1]) <= 2 and abs(rr["g"][1] - rr["c"][1]) <= 2, rr)
             long_name = p.locator(".gpa-row .gpa-f-name input").first
             long_name.fill("Introduction to Organic Chemistry")
             ov = long_name.evaluate("e => [getComputedStyle(e).textOverflow, getComputedStyle(e).whiteSpace]")

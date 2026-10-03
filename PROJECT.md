@@ -190,9 +190,18 @@ so it carries PR #1's plugin 0.6.0 + core 1.3.0 and the live design tokens). Dig
 | 1 | One-page design note ([Claude Doc](https://claude.ai/code/artifact/94e4ec9f-935e-4109-8bd7-2e63bf2b4ab8)): core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Approved by Digant 2026-10-03 05:57 ("go step 2"). Where it differs, the Calculator Design Standard (`docs/calculator-design-standard.md`) wins |
 | 2 | Core + GPA engine; College GPA (generic profile) and UCLA (university profile); tests, QA, screenshots; College live behind the per-page switch | Built 2026-10-03, at checkpoint (waits on Digant's go). Core v2 + `engines/gpa-engine.js` + `gpa/gpa-app.js` + `profiles/college.js`, `profiles/from-gpcm.js`; per-page switch `includes/calc-switch.php` (Grade + GPA > New calculators, all off by default, `?calc=old` fallback, `?calc=new` editor preview). Tests: `node --test tests/js/gpa-engine.test.mjs`, `php tests/php/calc_switch_test.php`, `python3 tests/gpa_v2_qa.py --cases 60 --shots` (671/671), `tests/core_qa.py`. Previews: `python3 scripts/calc/build_preview.py OUTDIR` |
 
-College go-live needs, in order: Digant's typed go in the unification thread; the design deploy carrying 5ca342b
-(calculator tokens, `.gpacalc-mount` column width and 14px phone margin); a plugin upload from a Mac session;
-ticking College in Grade + GPA > New calculators; a cache purge; a `docs/LIVE_CHANGELOG.md` entry (undo = untick).
+College go-live needs, in order: Digant's typed go in the unification thread (after his 07:07 row fixes, built);
+deploy `components.css` and `calculator-page.css` from `claude/design-system-overhaul-xkzbf0` at 69e4381 with
+`--only components.css,calculator-page.css` (the hero spacing itself went live 07:12, 7846782); page 22 subtitle
+"Semester and cumulative GPA on a 4.0 scale."; a plugin upload from a Mac session; ticking College in Grade + GPA >
+New calculators; a cache purge; a `docs/LIVE_CHANGELOG.md` entry (undo = untick).
+
+After College is live and stable for about a week (Digant 07:07): move High School and Homepage onto the core, and
+promote High School v3.2's course catalog, nicknames and auto-level (never overriding a hand-set level, boost shown
+"AP · +1.0") into the core as opt-in: on for High School, Homepage high-school mode and Weighted GPA; Middle School
+gets its own list without AP/IB; College off. Grade engine: component suggestions + "Add typical categories", blank
+weights with "e.g. 20%" hints and a not-100% warning. Rules are in the standard's "Course features (opt-in)" and
+"Grade categories" sections (rev 24).
 
 Step 3 notes from Digant (05:57, not blocking step 2): inventory the ~50 Formidable / inline-script calculator pages
 with GA4 views and keep / merge / retire; give weighted-gpa, target-gpa, medical-school (AMCAS) and pharmacy-school

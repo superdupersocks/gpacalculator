@@ -513,13 +513,14 @@ html.calc-has-pill { scroll-padding-bottom: 80px; }
   text-decoration: underline;
 }
 
+:is(#root, .gpacalc-mount) .calc-step-short { display: none; }
 :is(#root, .gpacalc-mount) .calc-sr { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---------- Phones ---------- */
 @media (max-width: 640px) {
-  :is(#root, .gpacalc-mount) .calc-step-label { display: none; }
-  :is(#root, .gpacalc-mount) .calc-step[aria-current='step'] .calc-step-label { display: inline; }
-  :is(#root, .gpacalc-mount) .calc-step:not([aria-current='step']) { flex: none; }
+  /* Every step keeps its word on phones (never a bare number); long labels swap to their short form */
+  :is(#root, .gpacalc-mount) .calc-step-full { display: none; }
+  :is(#root, .gpacalc-mount) .calc-step-short { display: inline; }
   :is(#root, .gpacalc-mount) .calc-row-head { display: none; }
   :is(#root, .gpacalc-mount) .calc-row { grid-template-columns: var(--calc-cols-mobile, 1fr 1fr auto); gap: var(--calc-field-gap); margin: 0; padding: var(--calc-row-gap) 0; border-top: 1px solid var(--gpa-divider); }
   :is(#root, .gpacalc-mount) .calc-row:first-child { border-top: 0; padding-top: 0; }

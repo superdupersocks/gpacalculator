@@ -162,9 +162,10 @@ export function mountGpa(root, profile, opts = {}) {
   /* ----- top line: steps + My saves / Save ----- */
   const stepBtns = [];
   const stepsEl = P.planner ? h('ol', { class: 'calc-steps', 'aria-label': 'Steps' },
-    ['Your GPA', 'Plan your target'].map((label, i) => {
+    [['Your GPA', 'Your GPA'], ['Target GPA', 'Target']].map(([label, short], i) => {
       const b = h('button', { type: 'button', onclick: () => (i ? openPlanner() : goStep1()) },
-        h('span', { class: 'calc-step-dot' }, String(i + 1)), h('span', { class: 'calc-step-label' }, label));
+        h('span', { class: 'calc-step-dot' }, String(i + 1)),
+        h('span', { class: 'calc-step-label' }, h('span', { class: 'calc-step-full' }, label), h('span', { class: 'calc-step-short', 'aria-hidden': 'true' }, short)));
       stepBtns.push(b);
       return h('li', { class: 'calc-step' }, b);
     })) : null;
@@ -307,7 +308,7 @@ export function mountGpa(root, profile, opts = {}) {
     const ph = (P.coursePlaceholders && P.coursePlaceholders[i % P.coursePlaceholders.length]) || P.courseHint || 'Course name';
     const name = h('input', { class: 'calc-input', id: `${id}-n`, value: row.name, autocomplete: 'off', enterkeyhint: 'next', placeholder: ph, 'aria-label': `Course ${i + 1} name (optional)` });
     const grade = h('select', { class: 'calc-select', id: `${id}-g`, 'aria-label': `Course ${i + 1} grade` });
-    const cr = h('input', { class: 'calc-input is-num', id: `${id}-c`, value: row.credits, inputmode: 'decimal', autocomplete: 'off', enterkeyhint: 'next', placeholder: P.defaultCredits ? `${P.defaultCredits} ${P.creditWord}` : cap(P.creditWord), 'aria-label': `Course ${i + 1} ${P.creditWord}` });
+    const cr = h('input', { class: 'calc-input is-num', id: `${id}-c`, value: row.credits, inputmode: 'decimal', autocomplete: 'off', enterkeyhint: 'next', placeholder: cap(P.creditWord), 'aria-label': `Course ${i + 1} ${P.creditWord}` });
     const msg = h('p', { class: 'calc-hint calc-row-msg', id: `${id}-m` });
     cr.setAttribute('aria-describedby', msg.id);
     const rm = h('button', { type: 'button', class: 'calc-btn calc-btn-icon gpa-rm', 'aria-label': `Remove course ${i + 1}` }, '×');
@@ -364,7 +365,7 @@ export function mountGpa(root, profile, opts = {}) {
     const gpaChip = h('span', { class: 'gpa-term-gpa', 'data-term-gpa': term.id });
     const head = ti === 0 || (fixed && term.rows.length && !state.terms[0].rows.length)
       ? h('div', { class: `calc-row-head ${colsClass()}`, 'aria-hidden': 'true' },
-        h('span', null, 'Course (optional)'), h('span', null, 'Grade'), h('span', null, cap(P.creditWord)),
+        h('span', null, 'Course (optional)'), h('span', null, 'Grade'), h('span', null, 'Credits'),
         types ? h('span', null, 'Type') : null, P.major && state.showMajor ? h('span', null, 'Major') : null, h('span'))
       : null;
     const rowsWrap = h('div', { class: 'gpa-rows' });

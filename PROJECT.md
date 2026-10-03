@@ -276,6 +276,11 @@ letters' range midpoints with "≈", chart values show their range. 14 of 31 pag
   14 Rank Math metas, 31 chart images. Site-wide chart now A+ 97–100 / A 93–96 (4.0), D 63–66, D− 60–62 (matches the
   calculators). GPA scale styles are in gpa-scale.css (components.css section 12 + content-styles' scale table moved there;
   components.css on live still has the old "Your GPA" tag rule until components.css is next deployed — harmless duplicate).
+- v6 (Digant 16:17, go 18:43 for 3.7 only): static answer card at the top (Letter grade, Grade points, % range + one
+  line), weighted estimator as a collapsed <details> card "Is your X weighted?" after "Is a X GPA good?" (open on 4.1+),
+  no toggle. Live on 3.7 only (gpa_scale_v6() / filter gpa_scale_v6_pages); other pages run gpa_scale_view_legacy().
+  Held back (built, no go yet): hub converter letter-grade tile + tinted table header, GPA-page link line to the hub
+  converter, server-rendered "On this page" <details> (functions.php gpa_scale_page_toc, hook off; college template call removed).
 - Next: 4.1–4.5 pages (outline + 4.2 sample first), college lists from the admissions GPA bands, prev/next across 4.0→4.1.
 
 ## Open issues

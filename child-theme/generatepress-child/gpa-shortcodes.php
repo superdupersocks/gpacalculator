@@ -497,7 +497,8 @@ function gpa_scale_view_shortcode( $atts ) {
 		$tiles = $tile( 'Est. unweighted GPA', number_format( $uw, 2 ), true ) . $tile( 'Letter grade', $letter ) . $tile( '% range', $pct );
 	} else {
 		list( $letter, $pct ) = gpa_scale_figures( $g );
-		$tiles = $tile( 'Letter grade', $letter ) . $tile( 'Grade points', $gs ) . $tile( '% range', $pct );
+		// The % is an estimate either way (a GPA maps to a letter's range): "≈ 90–92%", "≈ 93%" (Digant 20:39)
+		$tiles = $tile( 'Letter grade', $letter ) . $tile( 'Grade points', $gs ) . $tile( '% range', '≈ ' . ltrim( $pct, '≈' ) );
 	}
 	// Tiles only, text centred (Digant 19:11: the line under the tiles is gone)
 	return '<div class="gpa-quickconv gpa-answer"><div class="gpa-quickconv__out">' . $tiles . '</div></div>';

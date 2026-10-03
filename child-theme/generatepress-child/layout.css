@@ -751,7 +751,7 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
     padding: 0 !important;
     list-style: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;               /* label 15px 600, count muted (Digant 20:39) */
     font-weight: 600;
     line-height: 1.3;
     color: var(--gpa-text-strong);
@@ -772,6 +772,9 @@ body.single-post .entry-content:has(.wp-block-rank-math-toc-block) > h2:not(.gpa
     transition: transform .15s ease;
 }
 #page .entry-content details.gpa-toc[open] > summary::after { transform: rotate(180deg); }
+/* The whole row is the tap target: on hover the label, count and chevron turn link blue (Digant 20:39) */
+#page .entry-content details.gpa-toc > summary:hover,
+#page .entry-content details.gpa-toc > summary:hover .gpa-toc__count { color: var(--gpa-link); }
 #page .entry-content details.gpa-toc > summary:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; border-radius: 4px; }
 @media (prefers-reduced-motion: reduce) { #page .entry-content details.gpa-toc > summary::after { transition: none; } }
 /* The Rank Math list inside: no box, no second title, numbers in the same tinted badge as the H2s; only the heading text is the link */

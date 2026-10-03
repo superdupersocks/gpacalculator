@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """Check that a page's "On this page" list, its H2s and Rank Math's SiteNavigationElement schema agree.
 
-    python3 scripts/qa/check_toc_schema.py [URL ...]      (no URL: every line of scripts/qa/toc-pages.txt)
+    python3 scripts/qa/check_toc_schema.py [URL ...]
+
+With no URL it checks every published page whose saved content contains the collapsed list (class gpa-toc),
+found live over SSH with WP-CLI, so the list can't drift between branches; plus any extra URLs in
+scripts/qa/toc-pages.txt (pages whose list comes from a template, not saved content). If the server can't be
+reached it falls back to toc-pages.txt alone and says so.
 
 For each page, from the live HTML (cache-busted):
   - every TOC link (.wp-block-rank-math-toc-block a[href^="#"]) points to an element with that id, and that
@@ -10,9 +15,25 @@ For each page, from the live HTML (cache-busted):
   - the TOC links are in the HTML (3 or more: the list only shows on pages with 3+ sections) and the page has exactly one FAQPage when it has any.
 Exit code 1 if any page fails. deploy_theme.sh runs it after every deploy.
 """
-import html, json, os, re, sys, time, urllib.request
+import html, json, os, re, subprocess, sys, time, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+SSH = ["ssh", "-i", os.path.expanduser("~/.ssh/gpacalculator_cloudways"), "-o", "IdentitiesOnly=yes",
+       "-o", "ConnectTimeout=15", "master_rfzfmbbwze@67.205.161.226"]
+LIVE_PAGES = ("cd applications/xwnzegvpyy/public_html && wp eval 'global $wpdb; foreach ($wpdb->get_col("
+              "\"SELECT ID FROM {$wpdb->posts} WHERE post_status = \\\"publish\\\" "
+              "AND post_content LIKE \\\"%gpa-toc%\\\"\") as $id) echo get_permalink($id), PHP_EOL;'")
+
+
+def live_pages():
+    """Published pages whose saved content carries the collapsed "On this page" list."""
+    try:
+        out = subprocess.run(SSH + [LIVE_PAGES], capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if out.returncode != 0:
+        return None
+    return [l.strip() for l in out.stdout.splitlines() if l.strip().startswith("http")]
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36"
 
 
@@ -82,7 +103,12 @@ def main():
     urls = sys.argv[1:]
     if not urls:
         with open(os.path.join(HERE, "toc-pages.txt")) as f:
-            urls = [l.split("#")[0].strip() for l in f if l.split("#")[0].strip()]
+            extra = [l.split("#")[0].strip() for l in f if l.split("#")[0].strip()]
+        found = live_pages()
+        if found is None:
+            print("(server not reachable: checking scripts/qa/toc-pages.txt only)")
+            found = []
+        urls = list(dict.fromkeys(found + extra))
     ok = all([check(u) for u in urls])
     sys.exit(0 if ok else 1)
 

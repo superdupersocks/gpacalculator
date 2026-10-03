@@ -388,6 +388,7 @@ def flow(s):
     p.click(".gpa-sample")
     R.check("flow: sample result", text(p, ".calc-score"), "3.34")
     R.check("flow: 2 semesters read Cumulative GPA", text(p, ".calc-result .calc-kicker"), "Cumulative GPA")
+    R.check("flow: credit stat label (P courses earn credits but aren't in the GPA)", text(p, ".calc-stat:nth-child(1) .calc-stat-k"), "GPA credits")
     R.check("flow: Is my GPA good?", p.locator(".calc-insight").first.inner_text().split("\n"),
             ["Is my GPA good?", "3.34 is above 3.0, the usual minimum for grad school and many scholarships."])
     R.check("flow: sample banner", (text(p, ".calc-banner") or "").startswith("Viewing a sample"), True)

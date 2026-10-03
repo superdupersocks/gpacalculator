@@ -6,7 +6,7 @@
 import {
   h, setText, createStore, readHash, shareUrl, clearHash, copyText, downloadCSV, createTracker,
   createLivePill, createMenu, createActionToast, createSheet, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
-  reducedMotion,
+  reducedMotion, watchErrors,
 } from '../core/calc-core.js';
 import * as E from '../engines/gpa-engine.js';
 
@@ -139,6 +139,7 @@ export function mountGpa(root, profile, opts = {}) {
   root.append(app);
   const toast = createActionToast(app);
   trackCalculatorUsed(root);
+  watchErrors(P.prefix);
 
   let state = blankState(P);
   let mode = 'own'; // own | sample | shared
@@ -203,7 +204,7 @@ export function mountGpa(root, profile, opts = {}) {
     const kEl = h('div', { class: 'calc-stat-k' }, k);
     return { el: h('div', { class: 'calc-stat' }, kEl, v), v, k: kEl };
   };
-  const sCredits = stat(`Total ${P.creditWord}`);
+  const sCredits = stat(`GPA ${P.creditWord}`);
   const sPoints = stat('Quality points');
   const sMajor = stat('Major GPA');
   const sProj = stat('With planned courses');
@@ -727,7 +728,7 @@ export function mountGpa(root, profile, opts = {}) {
     const tile = (label, value, cls) => h('div', { class: `gpa-ex__tile${cls ? ` ${cls}` : ''}` }, h('span', { class: 'gpa-ex__label' }, label), ' ', h('span', { class: 'gpa-ex__value' }, value));
     const strip = h('div', { class: 'gpa-ex__result' },
       tile('Total quality points', E.fmtNum(res.current.points, 2)), h('span', { class: 'gpa-ex__rop', 'aria-hidden': 'true' }, '÷'),
-      tile(`Total ${P.creditWord}`, E.fmtNum(res.current.credits), 'gpa-ex__tile--div'), h('span', { class: 'gpa-ex__rop', 'aria-hidden': 'true' }, '='),
+      tile(`GPA ${P.creditWord}`, E.fmtNum(res.current.credits), 'gpa-ex__tile--div'), h('span', { class: 'gpa-ex__rop', 'aria-hidden': 'true' }, '='),
       tile('GPA', fmt(res.current.gpa), 'gpa-ex__tile--gpa'));
     const table = h('table', { class: 'gpa-ex__table' },
       h('caption', { class: 'screen-reader-text calc-sr' }, `How your ${fmt(res.current.gpa)} GPA is calculated`),
@@ -1038,7 +1039,7 @@ export function mountGpa(root, profile, opts = {}) {
       }
     }
     if (res.prior.used) out.push(['Before', 'Current GPA', '', res.prior.credits, res.prior.gpa, E.roundHalf(res.prior.points, 2), 'yes']);
-    out.push([], ['Cumulative GPA', fmt(res.current.gpa)], [`Total ${P.creditWord}`, res.current.credits]);
+    out.push([], ['Cumulative GPA', fmt(res.current.gpa)], [`GPA ${P.creditWord}`, res.current.credits]);
     return out;
   }
   const SHARE = [

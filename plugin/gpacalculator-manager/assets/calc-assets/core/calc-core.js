@@ -920,6 +920,25 @@ export function sendEvent(name, params) {
 }
 
 /**
+ * Report script errors from the calculator files as GA4 'calc_error' events (at most 3 a page), so a
+ * broken calculator shows up in GA4. Errors from ads, the theme or other plugins are ignored.
+ */
+let errorsWatched = false;
+export function watchErrors(calc) {
+  if (errorsWatched || typeof window === 'undefined') return;
+  errorsWatched = true;
+  let sent = 0;
+  const ours = (src) => /\/calc-assets\//.test(String(src || ''));
+  const report = (msg, src) => {
+    if (sent >= 3 || !ours(src)) return;
+    sent += 1;
+    sendEvent('calc_error', { calc, error_message: String(msg || 'error').slice(0, 100) });
+  };
+  window.addEventListener('error', (e) => report(e.message, e.filename || (e.error && e.error.stack)));
+  window.addEventListener('unhandledrejection', (e) => report(e.reason && e.reason.message, e.reason && e.reason.stack));
+}
+
+/**
  * Copy saves from a legacy calculator once (flag kept in the store). The legacy keys are only read,
  * never changed or deleted, so the old calculator and any other calculator sharing them keep working.
  * convert(rawDraft, rawSaves) -> { draft?, saves?: [{ name, state }] }

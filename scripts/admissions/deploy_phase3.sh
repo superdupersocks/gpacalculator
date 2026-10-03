@@ -13,7 +13,7 @@
 # sitemap cache, which a theme deploy doesn't, so the sitemaps rebuild with the new code.
 set -euo pipefail
 
-COMMIT="f09ff9a"
+COMMIT="4a54d92"
 FILES="admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js,college-v2.php,college-compare.js,gpa-bands.json"
 HOST="master_rfzfmbbwze@67.205.161.226"
 KEY="$HOME/.ssh/gpacalculator_cloudways"

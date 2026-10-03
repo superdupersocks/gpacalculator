@@ -187,7 +187,7 @@ so it carries PR #1's plugin 0.6.0 + core 1.3.0 and the live design tokens). Dig
 | Step | What | State |
 | --- | --- | --- |
 | 0 | Setup: skill in the repo, inventory of existing core / merge work | Done 2026-10-03; skill corrected to 800px column, 14px phone margin. Live-vs-repo comparison done 05:23 by the design thread's Mac: nothing live is newer; only the plugin main file and README differ (repo ahead) |
-| 1 | One-page design note: core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Not started |
+| 1 | One-page design note ([Claude Doc](https://claude.ai/code/artifact/94e4ec9f-935e-4109-8bd7-2e63bf2b4ab8)): core, GPA / grade / conversion engines, page profiles, flexibility hooks, save migration, per-page switch | Drafted 2026-10-03, awaiting Digant's OK |
 | 2 | Core + GPA engine; College GPA (generic profile) and UCLA (university profile); tests, QA, screenshots; College live behind the per-page switch | Not started |
 
 Starting point found in step 0 (2026-10-03):

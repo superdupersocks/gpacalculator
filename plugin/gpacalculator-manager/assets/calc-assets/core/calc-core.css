@@ -484,6 +484,43 @@ html.calc-has-pill { scroll-padding-bottom: 80px; }
 :is(#root, .gpacalc-mount) .calc-pill [hidden] { display: none; }
 
 /* ---------- Toast (with an optional Undo button) ---------- */
+/* Bottom sheet (phones): grade letters, credit quick buttons */
+:is(#root, .gpacalc-mount) .calc-sheet-wrap { position: fixed; inset: 0; z-index: 2147483000; display: flex; align-items: flex-end; justify-content: center; }
+:is(#root, .gpacalc-mount) .calc-sheet-wrap[hidden] { display: none; }
+:is(#root, .gpacalc-mount) .calc-sheet-backdrop { position: absolute; inset: 0; background: color-mix(in srgb, var(--gpa-text-strong) 45%, transparent); }
+:is(#root, .gpacalc-mount) .calc-sheet {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 520px;
+  padding: 20px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  background: var(--calc-surface);
+  border-radius: 16px 16px 0 0;
+  box-shadow: var(--gpa-calc-shadow-pop);
+  font-family: var(--gpa-calc-font);
+  color: var(--calc-ink);
+}
+:is(#root, .gpacalc-mount) .calc-sheet-title,
+#page .entry-content :is(#root, .gpacalc-mount) .calc-sheet-title { margin: 0 0 12px !important; font-size: 16px; font-weight: 600; color: var(--calc-ink); }
+:is(#root, .gpacalc-mount) .calc-sheet-grid { display: grid; grid-template-columns: repeat(var(--calc-sheet-cols, 4), minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+:is(#root, .gpacalc-mount) .calc-sheet-opt,
+#page .entry-content :is(#root, .gpacalc-mount) .calc-sheet-opt {
+  min-height: 48px;
+  margin: 0;
+  padding: 0 4px;
+  border: 1px solid var(--calc-input-line);
+  border-radius: var(--calc-radius);
+  background: var(--calc-surface);
+  color: var(--calc-ink);
+  font: 600 17px/1 var(--gpa-calc-font);
+  cursor: pointer;
+}
+:is(#root, .gpacalc-mount) .calc-sheet-opt.is-wide { grid-column: span 2; font-size: 15px; }
+:is(#root, .gpacalc-mount) .calc-sheet-opt.is-on,
+#page .entry-content :is(#root, .gpacalc-mount) .calc-sheet-opt.is-on { border-color: var(--calc-focus); background: var(--calc-tint); color: var(--calc-accent); }
+:is(#root, .gpacalc-mount) .calc-sheet-opt:focus-visible { outline: 2px solid var(--calc-focus); outline-offset: 2px; }
+:is(#root, .gpacalc-mount) .calc-sheet-cancel { width: 100%; }
+
 :is(#root, .gpacalc-mount) .calc-toast {
   position: fixed;
   left: 50%;

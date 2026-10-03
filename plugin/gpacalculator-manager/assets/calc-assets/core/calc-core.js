@@ -484,7 +484,7 @@ export function createLivePill(host, target, { label = 'Live grade', onOpen } = 
   let typing = false;
   const place = () => pill.style.setProperty('--calc-pill-offset', `${bottomObstruction() + 12}px`);
   const sync = () => {
-    const on = enabled && away && !typing;
+    const on = enabled && away && !typing && !document.documentElement.classList.contains('calc-sheet-open');
     if (on) place();
     pill.classList.toggle('is-on', on);
     pill.setAttribute('aria-hidden', on ? 'false' : 'true');
@@ -494,12 +494,16 @@ export function createLivePill(host, target, { label = 'Live grade', onOpen } = 
     target.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
     if (onOpen) onOpen();
   });
+  // Shows only while the result is still below the screen (the student is entering courses above it):
+  // hidden once any part of the result is on screen, and once they scroll past it, so it never sits
+  // over the result, Keep going or the article below.
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => {
-      away = !e.isIntersecting;
+      away = !e.isIntersecting && e.boundingClientRect.top > 0;
       sync();
     }).observe(target);
   }
+  new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   const isText = (t) => t instanceof HTMLInputElement && !['checkbox', 'radio', 'range', 'button'].includes(t.type) && t.inputMode !== 'decimal';
   host.addEventListener('focusin', (e) => { typing = isText(e.target); sync(); });
   host.addEventListener('focusout', () => { typing = false; sync(); });
@@ -523,6 +527,69 @@ export function createLivePill(host, target, { label = 'Live grade', onOpen } = 
       sync();
     },
     el: pill,
+  };
+}
+
+/**
+ * Bottom sheet of choice buttons (phones): the grade picker's letter grid, credit quick buttons.
+ * open({ title, options: [{ value, label }], value, cols }) resolves to the chosen value, or null when
+ * closed (Escape, backdrop, Cancel). Focus returns to the element that opened it.
+ */
+export function createSheet(host) {
+  const title = h('p', { class: 'calc-sheet-title', id: `calc-sheet-${Math.random().toString(36).slice(2, 8)}` });
+  const grid = h('div', { class: 'calc-sheet-grid' });
+  const cancel = h('button', { type: 'button', class: 'calc-btn calc-btn-ghost calc-sheet-cancel' }, 'Cancel');
+  const panel = h('div', { class: 'calc-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': title.id }, title, grid, cancel);
+  const wrap = h('div', { class: 'calc-sheet-wrap', hidden: true }, h('div', { class: 'calc-sheet-backdrop' }), panel);
+  // On <body>, outside the page's stacking contexts, so it covers the site header; the wrappers keep the
+  // calculator's scoped styles and tokens.
+  const portal = h('div', { class: 'gpacalc-mount gpacalc-portal' }, h('div', { class: `calc ${host.className.replace(/\bcalc\b/, '')}`.trim() }, wrap));
+  document.body.append(portal);
+  let done = null;
+  let opener = null;
+  const close = (v) => {
+    if (wrap.hidden) return;
+    wrap.hidden = true;
+    document.documentElement.classList.remove('calc-sheet-open');
+    if (opener && opener.isConnected) opener.focus({ preventScroll: true });
+    const d = done;
+    done = null;
+    if (d) d(v);
+  };
+  wrap.addEventListener('click', (e) => { if (e.target.classList.contains('calc-sheet-backdrop')) close(null); });
+  cancel.addEventListener('click', () => close(null));
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); close(null); }
+    if (e.key === 'Tab') {
+      const f = [...panel.querySelectorAll('button')];
+      const i = f.indexOf(document.activeElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
+  });
+  return {
+    open({ title: t, options, value, cols = 4 }) {
+      if (done) close(null);
+      opener = document.activeElement;
+      setText(title, t);
+      grid.textContent = '';
+      grid.style.setProperty('--calc-sheet-cols', String(cols));
+      let first = null;
+      let current = null;
+      for (const o of options) {
+        const b = h('button', { type: 'button', class: `calc-sheet-opt${o.value === value ? ' is-on' : ''}${o.wide ? ' is-wide' : ''}`, 'aria-pressed': String(o.value === value), onclick: () => close(o.value) }, o.label);
+        grid.append(b);
+        if (!first) first = b;
+        if (o.value === value) current = b;
+      }
+      wrap.hidden = false;
+      document.documentElement.classList.add('calc-sheet-open');
+      (current || first || cancel).focus({ preventScroll: true });
+      return new Promise((r) => { done = r; });
+    },
+    close: () => close(null),
+    get isOpen() { return !wrap.hidden; },
+    el: wrap,
   };
 }
 

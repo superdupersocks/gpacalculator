@@ -1,11 +1,11 @@
-/* gpacalculator.net GPA calculator screen v1.1.0 (gpacalculator-manager plugin)
+/* gpacalculator.net GPA calculator screen v1.2.0 (gpacalculator-manager plugin)
  * One screen for every GPA-engine calculator; each page passes its profile (profiles/*.js).
- * Layout, spacing, result pill, saves, sample, history chart and goals follow the Calculator Design
+ * Layout, spacing, result pill, saves, sample, options, phone entry and goals follow the Calculator Design
  * Standard (docs/calculator-design-standard.md). Look: core/calc-core.css + gpa/gpa-app.css (tokens only).
  * Math: engines/gpa-engine.js. Services from core/calc-core.js: storage, share, GA4, menus, toast, pill. */
 import {
   h, setText, createStore, readHash, shareUrl, clearHash, copyText, downloadCSV, createTracker,
-  createLivePill, createMenu, createActionToast, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
+  createLivePill, createMenu, createActionToast, createSheet, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
   reducedMotion,
 } from '../core/calc-core.js';
 import * as E from '../engines/gpa-engine.js';
@@ -23,8 +23,8 @@ function blankRow(profile, i = 0) {
 
 function blankState(profile) {
   const terms = profile.fixedTerms
-    ? profile.fixedTerms.map((t) => ({ id: t.id, name: t.name, planned: !!t.planned, rows: t.planned ? [] : rowsOf(profile, profile.rowsPerTerm) }))
-    : [{ id: newId('t'), name: termName(profile, 0), rows: rowsOf(profile, profile.rowsPerTerm) }];
+    ? profile.fixedTerms.map((t) => ({ id: t.id, name: t.name, planned: !!t.planned, rows: t.planned ? [] : rowsOf(profile, 1) }))
+    : [{ id: newId('t'), name: termName(profile, 0), rows: rowsOf(profile, 1) }];
   return { v: 1, scale: profile.defaultScale, prior: { gpa: '', credits: '' }, priorOpen: false, showMajor: false, terms, target: { gpa: '', credits: '' }, goals: [] };
 }
 
@@ -83,7 +83,7 @@ function pack(state) {
     v: 1, scale: state.scale, prior: state.prior, priorOpen: state.priorOpen || undefined, showMajor: state.showMajor || undefined,
     terms: state.terms.map((t) => ({
       id: t.id, name: t.name, planned: t.planned || undefined,
-      rows: t.rows.filter((r) => r.name || r.grade || (r.credits && r.credits !== '')).map((r) => ({
+      rows: t.rows.filter((r) => r.name || r.grade).map((r) => ({
         name: r.name || undefined, grade: r.grade || undefined, credits: r.credits || undefined, major: r.major || undefined, type: r.type,
       })),
     })),
@@ -154,36 +154,27 @@ export function mountGpa(root, profile, opts = {}) {
   let ownBefore = null; // the student's own state while a sample or shared calculation is shown
   let currentSave = null;
   let dirty = false;
-  let step = 0;
   let res = null;
   let lastTerm = null; // the semester the student last edited ("This term" in the pill)
-  let projection = null; // next-term cumulative from the planner or what-if, drawn on the chart
 
-  /* ----- top line: steps + My saves / Save ----- */
-  const stepBtns = [];
-  const stepsEl = P.planner ? h('ol', { class: 'calc-steps', 'aria-label': 'Steps' },
-    [['Your GPA', 'Your GPA'], ['Target GPA', 'Target']].map(([label, short], i) => {
-      const b = h('button', { type: 'button', onclick: () => (i ? openPlanner() : goStep1()) },
-        h('span', { class: 'calc-step-dot' }, String(i + 1)),
-        h('span', { class: 'calc-step-label' }, h('span', { class: 'calc-step-full' }, label), h('span', { class: 'calc-step-short', 'aria-hidden': 'true' }, short)));
-      stepBtns.push(b);
-      return h('li', { class: 'calc-step' }, b);
-    })) : null;
+  /* ----- card header: Options on the left, My saves + Save on the right (no step bar) ----- */
+  const optionsBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-options-btn', 'aria-expanded': 'false', 'aria-controls': `${P.id}-options` }, 'Options');
   const saveName = h('span', { class: 'calc-save-name' });
   const folderBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-tool', 'aria-label': 'My saves', title: 'My saves' }, svgIcon('folder'));
   const savesMenu = h('ul', { class: 'calc-menu', role: 'menu', 'aria-label': 'My saves' });
   const saveBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-tool', 'aria-label': 'Save', title: 'Save', onclick: () => saveNow() }, svgIcon('save'));
-  const toolbar = h('div', { class: 'calc-toolbar gpa-top' }, stepsEl || h('span'),
+  const hasOptions = P.scales.length > 1 || !!P.prior || !!P.major;
+  const toolbar = h('div', { class: 'calc-toolbar gpa-top' }, hasOptions ? optionsBtn : h('span'),
     h('div', { class: 'calc-toolbar-group' }, saveName, h('div', { class: 'calc-menu-wrap' }, folderBtn, savesMenu), saveBtn));
 
   const bannerText = h('span');
   const bannerActions = h('span', { class: 'calc-banner-actions' });
   const banner = h('div', { class: 'calc-banner', role: 'status', hidden: true }, bannerText, bannerActions);
 
-  /* ----- settings line: grading scale, current GPA, major GPA ----- */
+  /* ----- Options (closed by default): grading scale, previous GPA, major GPA ----- */
   const scaleSel = h('select', { class: 'calc-select', id: `${P.id}-scale`, 'aria-label': 'Grading scale' });
   for (const s of P.scales) scaleSel.append(h('option', { value: s.id }, s.label));
-  const priorToggle = h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-prior-toggle', 'aria-expanded': 'false' }, 'Add your current GPA');
+  const priorToggle = h('button', { type: 'button', class: 'calc-btn calc-btn-text gpa-prior-toggle', 'aria-expanded': 'false' }, 'Add previous GPA');
   const majorToggle = P.major ? h('input', { type: 'checkbox', id: `${P.id}-major-on` }) : null;
   const settings = h('div', { class: 'gpa-settings' },
     P.scales.length > 1 ? h('div', { class: 'gpa-scale-field' }, scaleSel) : null,
@@ -199,6 +190,8 @@ export function mountGpa(root, profile, opts = {}) {
   const priorBox = h('div', { class: 'gpa-prior', hidden: true },
     h('div', { class: 'calc-field' }, h('label', { class: 'calc-label', for: priorGpa.id }, 'Current cumulative GPA'), priorGpa, priorGpaMsg),
     h('div', { class: 'calc-field' }, h('label', { class: 'calc-label', for: priorCr.id }, `${cap(P.creditWord)} completed`), priorCr, priorCrMsg));
+  const optionsPanel = h('div', { class: 'gpa-options', id: `${P.id}-options`, hidden: true }, settings, P.prior ? priorBox : null);
+  let optionsOpen = false;
 
   /* ----- rows + action row ----- */
   const termsEl = h('div', { class: 'gpa-terms' });
@@ -241,20 +234,13 @@ export function mountGpa(root, profile, opts = {}) {
   const result = h('section', { class: 'calc-result', hidden: true, tabindex: '-1', 'aria-label': 'Your result' }, live,
     (P.blocks || ['verdict', 'stats', 'next', 'how']).flatMap((b) => (b === 'stats' ? [BLOCKS.stats, BLOCKS.note] : [BLOCKS[b]])).filter(Boolean));
 
-  /* ----- history chart + goals (under the result, above the planner) ----- */
-  const chartHost = h('div', { class: 'gpa-chart-host' });
-  const chartTable = h('table', { class: 'calc-sr' });
-  const chartHint = h('p', { class: 'calc-hint gpa-chart-hint', hidden: true }, `Add another ${(P.termWord || 'semester').toLowerCase()} to see your trend`);
-  const legend = h('div', { class: 'calc-legend' }, h('span', { class: 'ck-s2' }, h('i'), `${P.termWord || 'Semester'} GPA`), h('span', { class: 'ck-s1' }, h('i'), 'Cumulative GPA'));
-  const trendEl = h('div', { class: 'calc-chart gpa-trend', hidden: true },
-    h('p', { class: 'calc-chart-title' }, 'Your GPA over time'), chartHost, legend, chartTable);
+  /* ----- goals (under the result, above the planner; no history chart) ----- */
   const goalList = h('ul', { class: 'gpa-goals' });
   const goalAddBtn = h('button', { type: 'button', class: 'calc-btn calc-btn-text calc-goal-add' }, '+ Add a goal');
   const goalMenu = h('ul', { class: 'calc-menu', role: 'menu', 'aria-label': 'Add a goal' });
   const goalsEl = P.goals ? h('div', { class: 'gpa-goals-wrap', hidden: true }, goalList, h('div', { class: 'calc-menu-wrap is-left' }, goalAddBtn, goalMenu)) : null;
-  const historyEl = P.charts || P.goals ? h('div', { class: 'gpa-history', hidden: true }, P.charts ? chartHint : null, P.charts ? trendEl : null, goalsEl) : null;
 
-  /* ----- planner (step 2) ----- */
+  /* ----- planner: only after the result, opened by its button ----- */
   const tGpa = h('input', { class: 'calc-input is-num', id: `${P.id}-t-gpa`, inputmode: 'decimal', autocomplete: 'off', placeholder: 'e.g. 3.50' });
   const tCr = h('input', { class: 'calc-input is-num', id: `${P.id}-t-cr`, inputmode: 'decimal', autocomplete: 'off', placeholder: 'e.g. 15' });
   const planBig = h('div', { class: 'calc-plan-big' });
@@ -273,26 +259,33 @@ export function mountGpa(root, profile, opts = {}) {
     planOut, whatIf) : null;
 
   const insights = h('div', { class: 'calc-insights', 'aria-label': 'Insights' });
-  const card = h('div', { class: 'calc-card' }, toolbar, banner, settings, P.prior ? priorBox : null, termsEl, actions, result, historyEl, planner, insights);
+  const card = h('div', { class: 'calc-card' }, toolbar, banner, hasOptions ? optionsPanel : null, termsEl, actions, result, goalsEl, planner, insights);
   const keep = h('div', { class: 'calc-keep', hidden: !(P.keepGoing && P.keepGoing.length) },
     h('h3', null, 'Keep going'), h('div', { class: 'calc-keep-grid' }));
   app.append(card, keep);
   const pill = createLivePill(app, result, { label: P.copy.pill || 'GPA', onOpen: () => track('pill', null, true) });
+  const sheet = createSheet(app);
+  const phone = window.matchMedia('(max-width: 640px)');
 
   /* ----- rows and terms ----- */
   const types = P.courseTypes && P.courseTypes.length > 1 ? P.courseTypes : null;
   const colsClass = () => ['gpa-cols', types ? 'has-type' : '', P.major && state.showMajor ? 'has-major' : ''].join(' ');
+  const crAbbr = P.creditAbbr || (P.creditWord === 'credits' ? 'cr' : P.creditWord);
+  const gradeLabel = (g) => g.replace('-', '−');
+
+  function gradesFor(row) {
+    const t = types && types.find((x) => x.name === row.type);
+    return t && t.allowed ? t.allowed : E.gradeList(E.scaleOf(P, state));
+  }
 
   function gradeOptions(sel, row) {
-    const sc = E.scaleOf(P, state);
-    const t = types && types.find((x) => x.name === row.type);
-    const list = t && t.allowed ? t.allowed : E.gradeList(sc);
+    const list = gradesFor(row);
     const want = [''].concat(list);
     const have = [...sel.options].map((o) => o.value);
     if (want.join('|') !== have.join('|')) {
       sel.textContent = '';
       sel.append(h('option', { value: '' }, 'Grade'));
-      for (const g of list) sel.append(h('option', { value: g }, g.replace('-', '−')));
+      for (const g of list) sel.append(h('option', { value: g }, gradeLabel(g)));
     }
     sel.value = list.includes(row.grade) ? row.grade : '';
     if (row.grade && !list.includes(row.grade)) {
@@ -302,13 +295,22 @@ export function mountGpa(root, profile, opts = {}) {
   }
 
   const rowEls = new Map();
+  let activeRow = null; // the row being edited; on phones every other finished row collapses to one line
+  const openTerms = new Set(); // earlier semesters a phone user expanded
+
+  const filled = (r) => !!r.grade;
+  const rowSummary = (r, i) => `${r.name.trim() || `Course ${i + 1}`} · ${gradeLabel(r.grade)} · ${r.credits || '?'} ${crAbbr}`;
 
   function rowView(term, row, i) {
     const id = row.id;
     const ph = (P.coursePlaceholders && P.coursePlaceholders[i % P.coursePlaceholders.length]) || P.courseHint || 'Course name';
     const name = h('input', { class: 'calc-input', id: `${id}-n`, value: row.name, autocomplete: 'off', enterkeyhint: 'next', placeholder: ph, 'aria-label': `Course ${i + 1} name (optional)` });
     const grade = h('select', { class: 'calc-select', id: `${id}-g`, 'aria-label': `Course ${i + 1} grade` });
+    // Phones: the grade opens a letter grid in a bottom sheet; credits are quick buttons 1-5 + Other.
+    const gradeBtn = h('button', { type: 'button', class: 'calc-select gpa-grade-btn', 'aria-haspopup': 'dialog', 'aria-label': `Course ${i + 1} grade` });
     const cr = h('input', { class: 'calc-input is-num', id: `${id}-c`, value: row.credits, inputmode: 'decimal', autocomplete: 'off', enterkeyhint: 'next', placeholder: cap(P.creditWord), 'aria-label': `Course ${i + 1} ${P.creditWord}` });
+    const crBtn = h('button', { type: 'button', class: 'calc-input gpa-cr-btn', 'aria-haspopup': 'dialog', 'aria-label': `Course ${i + 1} ${P.creditWord}` });
+    const sum = h('button', { type: 'button', class: 'gpa-row-sum', 'aria-label': `Edit course ${i + 1}` });
     const msg = h('p', { class: 'calc-hint calc-row-msg', id: `${id}-m` });
     cr.setAttribute('aria-describedby', msg.id);
     const rm = h('button', { type: 'button', class: 'calc-btn calc-btn-icon gpa-rm', 'aria-label': `Remove course ${i + 1}` }, '×');
@@ -325,29 +327,105 @@ export function mountGpa(root, profile, opts = {}) {
     }
     gradeOptions(grade, row);
     const el = h('div', { class: `calc-row gpa-row ${colsClass()}`, 'data-id': id },
+      sum,
       h('div', { class: 'calc-field gpa-f-name' }, name),
-      h('div', { class: 'calc-field gpa-f-grade' }, grade),
-      h('div', { class: 'calc-field gpa-f-cr' }, cr),
+      h('div', { class: 'calc-field gpa-f-grade' }, grade, gradeBtn),
+      h('div', { class: 'calc-field gpa-f-cr' }, cr, crBtn),
       typeSel ? h('div', { class: 'calc-field gpa-f-type' }, typeSel) : null,
       major, rm, msg);
+    const v = { el, msg, cr, crBtn, grade, gradeBtn, name, typeSel, sum, row, term, i };
+    const syncBtns = () => {
+      setText(gradeBtn, row.grade ? gradeLabel(row.grade) : 'Grade');
+      gradeBtn.classList.toggle('is-empty', !row.grade);
+      setText(crBtn, row.credits ? `${row.credits} ${crAbbr}` : cap(P.creditWord));
+      sum.replaceChildren(h('span', { class: 'gpa-row-sum-t' }, row.grade ? rowSummary(row, i) : ''), h('span', { class: 'gpa-row-sum-e', 'aria-hidden': 'true' }, 'Edit'));
+    };
+    v.syncBtns = syncBtns;
+    syncBtns();
     const edit = () => { lastTerm = term.id; changed(); };
-    name.addEventListener('input', () => { row.name = name.value; lastTerm = term.id; changed(false); });
-    grade.addEventListener('change', () => { row.grade = grade.value; edit(); });
-    cr.addEventListener('input', () => { row.credits = cr.value; edit(); });
+    const setGrade = (g) => {
+      row.grade = g;
+      grade.value = g;
+      syncBtns();
+      edit();
+      autoAdd(term, row);
+    };
+    name.addEventListener('input', () => { row.name = name.value; lastTerm = term.id; syncBtns(); changed(false); });
+    grade.addEventListener('change', () => setGrade(grade.value));
+    cr.addEventListener('input', () => { row.credits = cr.value; syncBtns(); edit(); });
+    gradeBtn.addEventListener('click', async () => {
+      activate(row.id);
+      const list = gradesFor(row);
+      const g = await sheet.open({ title: `Grade${row.name.trim() ? ` for ${row.name.trim()}` : ''}`, options: list.map((x) => ({ value: x, label: gradeLabel(x) })), value: row.grade, cols: 4 });
+      if (g != null) setGrade(g);
+    });
+    crBtn.addEventListener('click', async () => {
+      activate(row.id);
+      const quick = ['1', '2', '3', '4', '5'];
+      const c = await sheet.open({ title: cap(P.creditWord), options: quick.map((x) => ({ value: x, label: x })).concat({ value: 'other', label: 'Other', wide: false }), value: quick.includes(row.credits) ? row.credits : (row.credits ? 'other' : ''), cols: 3 });
+      if (c == null) return;
+      if (c === 'other') {
+        el.classList.add('is-cr-other');
+        cr.focus();
+        cr.select();
+        return;
+      }
+      row.credits = c;
+      cr.value = c;
+      syncBtns();
+      edit();
+    });
+    sum.addEventListener('click', () => { activate(row.id); name.focus({ preventScroll: true }); });
     if (typeSel) typeSel.addEventListener('change', () => { row.type = typeSel.value; gradeOptions(grade, row); edit(); });
     if (major) major.querySelector('input').addEventListener('change', (e) => { row.major = e.target.checked; edit(); });
     rm.addEventListener('click', () => {
       const idx = term.rows.indexOf(row);
       term.rows.splice(idx, 1);
-      if (!term.rows.length && !term.planned) term.rows.push(blankRow(P));
+      ensureTrailing(term);
       renderTerms();
       changed();
       const rows = termsEl.querySelectorAll(`[data-term="${term.id}"] .gpa-row`);
       const next = rows[Math.min(idx, rows.length - 1)];
-      if (next) next.querySelector('input').focus();
+      if (next) { activate(next.dataset.id); next.querySelector('input').focus(); }
     });
-    rowEls.set(id, { el, msg, cr, grade, name, typeSel });
+    if (row.credits && !['1', '2', '3', '4', '5'].includes(row.credits)) el.classList.add('is-cr-other');
+    rowEls.set(id, v);
     return el;
+  }
+
+  /** Every semester ends with one blank row; filling the last row adds the next (no "Add class" button). */
+  function ensureTrailing(term) {
+    if (term.planned) return false;
+    const last = term.rows[term.rows.length - 1];
+    if (last && !filled(last) && !last.name) return false;
+    term.rows.push(blankRow(P, term.rows.length));
+    return true;
+  }
+
+  function autoAdd(term, row) {
+    if (term.rows[term.rows.length - 1] !== row || !filled(row) || term.planned) return;
+    const r = blankRow(P, term.rows.length);
+    term.rows.push(r);
+    const wrap = termsEl.querySelector(`[data-term="${term.id}"] .gpa-rows`);
+    if (wrap) wrap.append(rowView(term, r, term.rows.length - 1));
+    syncCollapse();
+  }
+
+  function activate(id) {
+    if (activeRow === id) return;
+    activeRow = id;
+    syncCollapse();
+  }
+
+  function syncCollapse() {
+    for (const [, v] of rowEls) v.el.classList.toggle('is-collapsed', filled(v.row) && v.row.id !== activeRow && !v.el.querySelector('[aria-invalid="true"]'));
+    const last = state.terms.length - 1;
+    state.terms.forEach((t, ti) => {
+      const sec = termsEl.querySelector(`[data-term="${t.id}"]`);
+      if (!sec) return;
+      const holdsActive = t.rows.some((r) => r.id === activeRow);
+      sec.classList.toggle('is-collapsed', ti < last && !openTerms.has(t.id) && !holdsActive && t.rows.some(filled));
+    });
   }
 
   function addRow(term, focus = true) {
@@ -356,12 +434,21 @@ export function mountGpa(root, profile, opts = {}) {
     changed(false);
     if (focus) {
       const rows = termsEl.querySelectorAll(`[data-term="${term.id}"] .gpa-row`);
-      rows[rows.length - 1].querySelector('input').focus();
+      const last = rows[rows.length - 1];
+      activate(last.dataset.id);
+      last.querySelector('input').focus();
     }
+  }
+
+  function termSummary(term) {
+    const n = term.rows.filter(filled).length;
+    const t = res && res.terms.find((x) => x.id === term.id);
+    return `${term.name || P.termWord || 'Semester'} · ${n} class${n === 1 ? '' : 'es'}${t && t.gpa != null ? ` · GPA ${fmt(t.gpa)}` : ''}`;
   }
 
   function termView(term, ti) {
     const fixed = !!P.fixedTerms;
+    const many = fixed || state.terms.length > 1;
     const gpaChip = h('span', { class: 'gpa-term-gpa', 'data-term-gpa': term.id });
     const head = ti === 0 || (fixed && term.rows.length && !state.terms[0].rows.length)
       ? h('div', { class: `calc-row-head ${colsClass()}`, 'aria-hidden': 'true' },
@@ -370,7 +457,7 @@ export function mountGpa(root, profile, opts = {}) {
       : null;
     const rowsWrap = h('div', { class: 'gpa-rows' });
     term.rows.forEach((r, i) => rowsWrap.append(rowView(term, r, i)));
-    const add = h('button', { type: 'button', class: 'calc-btn calc-btn-add gpa-add-row', onclick: () => addRow(term) }, 'Add class');
+    const add = term.planned ? h('button', { type: 'button', class: 'calc-btn calc-btn-add gpa-add-row', onclick: () => addRow(term) }, 'Add class') : null;
     let title;
     if (fixed) {
       title = h('h3', { class: 'gpa-term-title' }, term.name, term.planned ? h('em', null, ' (optional)') : null);
@@ -388,15 +475,25 @@ export function mountGpa(root, profile, opts = {}) {
         toast.show(`Removed ${term.name || 'semester'}`, { action: 'Undo', ms: 6000, onAction: () => { load(JSON.parse(before), { keepMode: true }); changed(); } });
       });
     }
+    const sum = h('button', { type: 'button', class: 'gpa-term-sum', 'data-term-sum': term.id, 'aria-label': `Show ${term.name || 'semester'}` }, termSummary(term));
+    sum.addEventListener('click', () => { openTerms.add(term.id); syncCollapse(); });
+    // One semester: no semester header, so the first course field sits right under the card header.
     return h('section', { class: `gpa-term${term.planned ? ' is-planned' : ''}`, 'data-term': term.id },
-      h('div', { class: 'gpa-term-head' }, title, gpaChip, del), head, rowsWrap, add);
+      many ? sum : null, many ? h('div', { class: 'gpa-term-head' }, title, gpaChip, del) : null, head, rowsWrap, add);
   }
 
   function renderTerms() {
     rowEls.clear();
     termsEl.textContent = '';
     state.terms.forEach((t, i) => termsEl.append(termView(t, i)));
+    syncCollapse();
   }
+
+  // The row being edited stays open; on phones the others collapse to their one-line summary.
+  termsEl.addEventListener('focusin', (e) => {
+    const rowEl = e.target.closest('.gpa-row');
+    if (rowEl) activate(rowEl.dataset.id);
+  });
 
   // Enter moves to the next row; on the last row it adds one.
   termsEl.addEventListener('keydown', (e) => {
@@ -405,14 +502,16 @@ export function mountGpa(root, profile, opts = {}) {
     if (!rowEl) { if (e.target.classList.contains('gpa-term-name')) { e.preventDefault(); e.target.blur(); } return; }
     e.preventDefault();
     const next = rowEl.nextElementSibling;
-    if (next) { next.querySelector('input').focus(); return; }
+    if (next) { activate(next.dataset.id); next.querySelector('input').focus(); return; }
     const term = state.terms.find((t) => t.id === rowEl.closest('.gpa-term').dataset.term);
-    if (term) addRow(term);
+    const v = rowEls.get(rowEl.dataset.id);
+    if (term && v && (filled(v.row) || v.row.name)) addRow(term);
   });
 
   /* ----- updates ----- */
 
   function changed(recompute = true) {
+    syncOptions();
     if (mode === 'own') {
       dirty = !!currentSave;
       store.saveDraft({ state: pack(state), save: currentSave, dirty });
@@ -453,6 +552,11 @@ export function mountGpa(root, profile, opts = {}) {
       const chip = termsEl.querySelector(`[data-term-gpa="${t.id}"]`);
       if (chip) setText(chip, t.gpa == null ? '' : `${t.planned ? 'Planned' : 'GPA'} ${fmt(t.gpa)}`);
     }
+    for (const t of state.terms) {
+      const sum = termsEl.querySelector(`[data-term-sum="${t.id}"]`);
+      if (sum) setText(sum, termSummary(t));
+    }
+    syncCollapse();
     setText(priorGpaMsg, res.prior.gpaError && (state.prior.gpa || state.prior.credits) ? res.prior.gpaError : '');
     setText(priorCrMsg, res.prior.creditsError && (state.prior.gpa || state.prior.credits) ? res.prior.creditsError : '');
     priorGpa.setAttribute('aria-invalid', priorGpaMsg.textContent ? 'true' : 'false');
@@ -461,7 +565,6 @@ export function mountGpa(root, profile, opts = {}) {
     const ready = res.ready && (P.hasOfficialGpa !== false);
     result.hidden = !ready;
     pill.enable(ready);
-    if (historyEl) historyEl.hidden = !ready;
     if (ready) {
       const g = res.current.gpa;
       const v = verdictFor(g);
@@ -494,7 +597,7 @@ export function mountGpa(root, profile, opts = {}) {
       insights.textContent = '';
     }
     if (planner && !planner.hidden) updatePlan();
-    else renderHistory();
+    else renderGoals();
     renderKeep();
     saveLabel();
   }
@@ -543,51 +646,9 @@ export function mountGpa(root, profile, opts = {}) {
     }
   }
 
-  /* ----- GPA history chart + goal tracker ----- */
+  /* ----- goal tracker ----- */
   let kitP = null;
   const loadKit = () => (kitP ||= import('../core/chart-kit.js'));
-
-  async function renderHistory() {
-    if (!historyEl || !res || !res.ready) return;
-    const pts = E.trend(res);
-    if (P.charts) {
-      const show = pts.length >= 2;
-      trendEl.hidden = !show;
-      chartHint.hidden = show || !!P.fixedTerms;
-      if (show) {
-        const kit = await loadKit();
-        if (!res || !res.ready) return;
-        const goals = (state.goals || []).map((g) => ({ y: g.value, label: `${shortGoal(g)} ${E.fmtGpa(g.value, 2)}` }));
-        const ys = pts.flatMap((p) => [p.term, p.cumulative]).concat(goals.map((g) => g.y), projection != null ? [projection] : []);
-        const lo = Math.min(...ys) >= 2 ? 2 : 0;
-        const hi = res.max;
-        const first = pts[0].cumulative;
-        const last = pts[pts.length - 1].cumulative;
-        const dir = Math.abs(last - first) < 0.005 ? `Steady at ${E.fmtGpa(last, 2)}` : `${last > first ? 'Up' : 'Down'} from ${E.fmtGpa(first, 2)} to ${E.fmtGpa(last, 2)}`;
-        chartW = chartHost.clientWidth;
-        kit.lineChart(chartHost, [
-          { name: `${P.termWord || 'Semester'} GPA`, cls: 'ck-s2', points: pts.map((p) => ({ label: p.name, y: p.term })) },
-          { name: 'Cumulative GPA', cls: 'ck-s1 ck-thick', points: pts.map((p) => ({ label: p.name, y: p.cumulative })) },
-        ], {
-          yMin: lo, yMax: hi, ticks: lo === 2 ? [2, 3, Math.min(4, hi)].concat(hi > 4 ? [hi] : []) : [0, 1, 2, 3, 4].filter((t) => t <= hi),
-          format: (y) => E.fmtGpa(y, 2), height: window.matchMedia('(max-width: 640px)').matches ? 180 : 200,
-          title: `${dir} over ${pts.length} ${(P.termWord || 'semester').toLowerCase()}s`,
-          goals, projection: projection != null ? { label: 'Next term', y: projection, from: 1 } : null,
-        });
-        chartTable.replaceChildren(
-          h('caption', null, 'Your GPA by semester'),
-          h('tr', null, h('th', null, P.termWord || 'Semester'), h('th', null, `${P.termWord || 'Semester'} GPA`), h('th', null, 'Cumulative GPA')),
-          ...pts.map((p) => h('tr', null, h('td', null, p.name), h('td', null, E.fmtGpa(p.term, 2)), h('td', null, E.fmtGpa(p.cumulative, 2)))));
-      }
-    }
-    renderGoals();
-  }
-
-  let chartW = 0;
-  window.addEventListener('resize', () => {
-    const w = chartHost.clientWidth;
-    if (Math.abs(w - chartW) > 8 && !trendEl.hidden) renderHistory();
-  }, { passive: true });
 
   function shortGoal(g) {
     return g.label.replace(/ cum laude$/, '').replace(/ minimum$/, '');
@@ -703,8 +764,6 @@ export function mountGpa(root, profile, opts = {}) {
       return;
     }
     planner.hidden = false;
-    step = 1;
-    setStep();
     const g = res.current.gpa;
     if (!state.target.credits) state.target.credits = String(P.upcomingDefault || 15);
     if (!state.target.gpa) {
@@ -724,34 +783,17 @@ export function mountGpa(root, profile, opts = {}) {
     changed(false);
   }
 
-  function goStep1() {
-    step = 0;
-    setStep();
-    card.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
-  }
-
-  function setStep() {
-    stepBtns.forEach((b, i) => {
-      const li = b.parentElement;
-      li.classList.toggle('is-done', i < step || (i === 0 && res && res.ready));
-      if (i === step) li.setAttribute('aria-current', 'step');
-      else li.removeAttribute('aria-current');
-      setText(b.firstChild, (i < step || (i === 0 && step === 1)) ? '✓' : String(i + 1));
-    });
-  }
-
   function updatePlan() {
     if (!res || !res.ready) return;
     const sc = E.scaleOf(P, state);
     const p = E.plan({ credits: res.current.credits, points: res.current.points }, state.target.gpa, state.target.credits, sc);
     whatIf.hidden = true;
-    projection = null;
     const cw = P.creditWord;
     if (p.status === 'incomplete' || p.status === 'invalid') {
       setText(planBig, '');
       setText(planLine, p.error || `Enter a target GPA and your upcoming ${cw}.`);
       setText(planLine2, '');
-      renderHistory();
+      renderGoals();
       return;
     }
     const T = fmt(p.target);
@@ -764,16 +806,14 @@ export function mountGpa(root, profile, opts = {}) {
       setText(planBig, fmt(p.needed));
       setText(planLine, `You need about ${articleFor(p.letter)} ${p.letter.replace('-', '−')} average (${fmt(p.needed)}) in your next ${E.fmtNum(p.upcoming)} ${cw} to reach ${T}.`);
       setText(planLine2, `Straight ${top}s would take you to ${fmt(p.highest)}.`);
-      projection = p.target;
     } else {
       setText(planBig, 'Out of reach this term');
       setText(planLine, `Even straight ${top}s in ${E.fmtNum(p.upcoming)} ${cw} would bring you to ${fmt(p.highest)}, short of ${T}.`);
       setText(planLine2, p.creditsForTarget ? `Reaching ${T} would take about ${E.fmtNum(p.creditsForTarget)} ${cw} of straight ${top}s.` : '');
-      projection = p.highest;
     }
     track('plan', { target: p.target });
-    renderHistory();
-    if (P.charts) {
+    renderGoals();
+    if (P.whatIf !== false) {
       whatIf.hidden = false;
       loadKit().then((kit) => {
         const max = E.scaleMax(sc);
@@ -783,10 +823,6 @@ export function mountGpa(root, profile, opts = {}) {
         if (!slider || slider.max !== max) {
           slider = kit.whatIfSlider(whatIfHost, { min: 0, max, step: 0.1, value: start, label: 'Average GPA next term', onInput: fn });
           slider.max = max;
-          slider.input.addEventListener('input', () => {
-            projection = after(Number(slider.input.value));
-            renderHistory();
-          });
         }
       });
     }
@@ -815,16 +851,28 @@ export function mountGpa(root, profile, opts = {}) {
       changed();
     });
   }
+  optionsBtn.addEventListener('click', () => {
+    optionsOpen = !optionsOpen;
+    syncOptions();
+    if (optionsOpen) (P.scales.length > 1 ? scaleSel : priorToggle).focus({ preventScroll: true });
+    track('options', { open: optionsOpen ? 1 : 0 }, true);
+  });
+  function syncOptions() {
+    optionsPanel.hidden = !optionsOpen;
+    optionsBtn.setAttribute('aria-expanded', String(optionsOpen));
+    const on = [state.scale !== P.defaultScale, !!(state.prior.gpa || state.prior.credits), !!state.showMajor].filter(Boolean).length;
+    optionsBtn.replaceChildren('Options', on ? h('span', { class: 'gpa-options-n', 'aria-label': `${on} on` }, ` · ${on} on`) : '', h('span', { class: 'gpa-options-caret', 'aria-hidden': 'true' }, optionsOpen ? ' ▴' : ' ▾'));
+  }
   function syncPrior() {
     priorBox.hidden = !state.priorOpen;
     priorToggle.setAttribute('aria-expanded', String(!!state.priorOpen));
-    setText(priorToggle, state.priorOpen ? 'Hide current GPA' : 'Add your current GPA');
+    setText(priorToggle, state.priorOpen ? 'Hide previous GPA' : 'Add previous GPA');
   }
   priorGpa.addEventListener('input', () => { state.prior.gpa = priorGpa.value; changed(); });
   priorCr.addEventListener('input', () => { state.prior.credits = priorCr.value; changed(); });
   if (addTermBtn) {
     addTermBtn.addEventListener('click', () => {
-      state.terms.push({ id: newId('t'), name: termName(P, state.terms.length), rows: rowsOf(P, P.rowsPerTerm) });
+      state.terms.push({ id: newId('t'), name: termName(P, state.terms.length), rows: rowsOf(P, 1) });
       renderTerms();
       changed();
       const first = termsEl.querySelector('.gpa-term:last-of-type .gpa-row input');
@@ -836,9 +884,11 @@ export function mountGpa(root, profile, opts = {}) {
   /* ----- load / modes ----- */
   function load(s, { keepMode = false } = {}) {
     state = normalize(P, s);
+    for (const t of state.terms) ensureTrailing(t);
     if (!keepMode) slider = null;
     lastTerm = null;
-    projection = null;
+    activeRow = null;
+    openTerms.clear();
     scaleSel.value = state.scale;
     priorGpa.value = state.prior.gpa;
     priorCr.value = state.prior.credits;
@@ -846,6 +896,7 @@ export function mountGpa(root, profile, opts = {}) {
     tCr.value = state.target.credits;
     if (majorToggle) majorToggle.checked = !!state.showMajor;
     syncPrior();
+    syncOptions();
     renderTerms();
     update();
   }
@@ -905,8 +956,6 @@ export function mountGpa(root, profile, opts = {}) {
     dirty = false;
     load(null);
     if (planner) planner.hidden = true;
-    step = 0;
-    setStep();
     store.saveDraft(null);
     savedNote.hidden = true;
     syncSampleLink();
@@ -1084,7 +1133,6 @@ export function mountGpa(root, profile, opts = {}) {
   }
   syncSampleLink();
   store.markSeen();
-  setStep();
   return { get state() { return state; }, get result() { return res; }, openPlanner, reset, load };
 }
 

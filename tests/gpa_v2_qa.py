@@ -94,6 +94,35 @@ def text(p, sel):
     return loc.first.inner_text().strip() if loc.count() and loc.first.is_visible() else None
 
 
+def opts(p):
+    """Open Options (scale, previous GPA, Major GPA): closed by default."""
+    if not p.locator(".gpa-options").is_visible():
+        p.click(".gpa-options-btn")
+
+
+def pick_grade(p, row, g):
+    """Desktop: the grade select. Phones: the grade button opens the letter grid in a bottom sheet."""
+    if row.locator(".gpa-f-grade select").is_visible():
+        row.locator(".gpa-f-grade select").select_option(g)
+        return
+    row.locator(".gpa-grade-btn").click()
+    label = g.replace("-", "−")
+    p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt").filter(has_text=re.compile(f"^{re.escape(label)}$")).click()
+
+
+def set_credits(p, row, v):
+    """Desktop: the credits field. Phones: quick buttons 1-5, or Other for the field."""
+    field = row.locator(".gpa-f-cr input")
+    if field.is_visible():
+        field.fill(v)
+        return
+    row.locator(".gpa-cr-btn").click()
+    quick = v in ("1", "2", "3", "4", "5")
+    p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt").filter(has_text=re.compile(f"^{v if quick else 'Other'}$")).click()
+    if not quick:
+        field.fill(v)
+
+
 # ---------- 1. Math ----------
 
 def college_case(rng):
@@ -138,33 +167,36 @@ def college_expect(case):
 
 def fill_college(p, case):
     if case["scale"] != "standard":
+        opts(p)
         p.select_option("#college-scale", case["scale"])
     if case["prior"]:
+        opts(p)
         p.click(".gpa-prior-toggle")
         p.fill("#college-prior-gpa", case["prior"][0])
         p.fill("#college-prior-cr", case["prior"][1])
     if any(r["major"] for rows in case["terms"] for r in rows):
+        opts(p)
         p.check("#college-major-on")
     for ti, rows in enumerate(case["terms"]):
         if ti:
             p.click(".gpa-add-term")
         term = p.locator(".gpa-term").nth(ti)
         for i, r in enumerate(rows):
-            if i >= term.locator(".gpa-row").count():
-                term.locator(".gpa-add-row").click()
+            # one blank row to start; grading the last row adds the next (no "Add class" button)
+            R.check(f"auto-add: row {i + 1} ready", term.locator(".gpa-row").count(), i + 1) if ti == 0 and i < 3 else None
             row = term.locator(".gpa-row").nth(i)
             row.locator(".gpa-f-grade select").select_option(r["grade"])
             row.locator(".gpa-f-cr input").fill(r["credits"])
             if r["major"]:
                 row.locator(".gpa-major input").check()
-        # leftover starter rows keep their default credits and no grade: they must not count
+        # the trailing blank row keeps its default credits and no grade: it must not count
     p.wait_for_timeout(30)
 
 
 def check_college(p, case, label):
     e = college_expect(case)
     R.check(f"{label} cumulative", text(p, ".calc-score"), fmt(e["gpa"]))
-    for i, g in enumerate(e["terms"]):
+    for i, g in enumerate(e["terms"] if len(e["terms"]) > 1 else []):  # one semester: no semester header
         R.check(f"{label} term {i + 1}", text(p, f".gpa-term:nth-child({i + 1}) .gpa-term-gpa"), f"GPA {fmt(g)}")
     R.check(f"{label} credits", p.locator(".calc-stat").nth(0).locator(".calc-stat-v").inner_text(), fmt_num(e["credits"]))
     R.check(f"{label} quality points", p.locator(".calc-stat").nth(1).locator(".calc-stat-v").inner_text(), fmt_num(e["points"]))
@@ -210,6 +242,7 @@ def ucla_expect(case):
 
 def fill_ucla(p, case):
     if case["prior"]:
+        opts(p)
         p.click(".gpa-prior-toggle")
         p.fill("#ucla-prior-gpa", case["prior"][0])
         p.fill("#ucla-prior-cr", case["prior"][1])
@@ -217,7 +250,7 @@ def fill_ucla(p, case):
         term = p.locator(".gpa-term").nth(ti)
         for i, r in enumerate(case[key]):
             if i >= term.locator(".gpa-row").count():
-                term.locator(".gpa-add-row").click()
+                term.locator(".gpa-add-row").click()  # planned courses: still added by hand
             row = term.locator(".gpa-row").nth(i)
             row.locator(".gpa-f-grade select").select_option(r["grade"])
             row.locator(".gpa-f-cr input").fill(r["units"])
@@ -273,6 +306,7 @@ def math(s):
     row.locator(".gpa-f-grade select").select_option("A-")
     row.locator(".gpa-f-cr input").fill("1,5")
     R.check("edge decimal comma counts", text(p, ".calc-stat:nth-child(1) .calc-stat-v"), "1.5")
+    opts(p)
     p.click(".gpa-prior-toggle")
     p.fill("#college-prior-gpa", "4.5")
     p.fill("#college-prior-cr", "30")
@@ -330,10 +364,11 @@ def flow(s):
     p.wait_for_timeout(100)
     R.check("flow: worked example rows", p.locator(".calc-how .gpa-ex tbody tr").count(), 8)
     R.check("flow: worked example total", p.locator(".gpa-ex__tile--gpa .gpa-ex__value").inner_text(), "3.34")
-    R.check("flow: trend chart drawn", p.locator(".gpa-trend svg polyline").count(), 2)
-    R.ok("flow: chart summary for screen readers", (p.locator(".gpa-trend svg").get_attribute("aria-label") or "").startswith("Down from 3.41 to 3.34 over 2 semesters"),
-         p.locator(".gpa-trend svg").get_attribute("aria-label"))
-    R.check("flow: chart floor at 2.0", p.locator(".gpa-trend svg .ck-axis").first.text_content(), "2.00")
+    R.check("flow: no GPA chart", p.locator(".calc svg polyline, .gpa-trend").count(), 0)
+    R.check("flow: no step bar", p.locator(".calc-steps").count(), 0)
+    R.check("flow: planner closed until its button", p.locator(".calc-plan").is_visible(), False)
+    R.check("flow: Options closed by default", p.locator(".gpa-options").is_visible(), False)
+    R.check("flow: Options shows what's on (Major GPA in the sample)", p.locator(".gpa-options-btn").inner_text().replace("\n", " ").split(" ▾")[0], "Options · 1 on")
     # goals: Magna cum laude (3.70) at 15 upcoming credits
     DIALOG["text"] = None
     p.click(".calc-goal-add")
@@ -345,18 +380,16 @@ def flow(s):
     p.click(".calc-goal-add")
     p.click(".gpa-goals-wrap .calc-menu >> text=Good standing")
     R.check("flow: goal met", p.locator(".gpa-goal").nth(1).text_content(), f"Good standing — you're {fmt(86.8 / 26 - 2)} above it")
-    R.check("flow: goal lines on chart", p.locator(".gpa-trend svg .ck-goal").count(), 2)
     p.locator(".gpa-goal-rm").nth(1).click()
     p.locator(".calc-next .calc-btn-primary").click()
     R.check("flow: planner open", p.locator(".calc-plan").is_visible(), True)
-    R.check("flow: step 2 current", p.locator(".calc-step").nth(1).get_attribute("aria-current"), "step")
+    R.ok("flow: planner sits after the result", p.evaluate("document.querySelector('.calc-result').compareDocumentPosition(document.querySelector('.calc-plan')) & 4") > 0)
     R.check("flow: default target", p.input_value("#college-t-gpa"), "3.50")
     R.check("flow: planner needed", text(p, ".calc-plan-big"), fmt((3.5 * 41 - 86.8) / 15))
     R.check("flow: what-if slider", p.locator(".calc-whatif input[type=range]").count(), 1)
     p.locator(".calc-whatif input[type=range]").fill("4")
     R.check("flow: what-if readout", text(p, ".calc-whatif output"), f"A 4.0 average next term → {fmt((86.8 + 60) / 41)} cumulative")
 
-    R.check("flow: projection point on chart", p.locator(".gpa-trend svg .ck-dot-proj").count(), 1)
     DIALOG["text"] = "Sample can't save"
     p.click("[aria-label='My saves']")
     p.click(".calc-menu >> text=Save as…")
@@ -365,6 +398,7 @@ def flow(s):
     p.click(".calc-banner >> text=Clear")
     R.check("flow: sample cleared", p.locator(".calc-result").is_visible(), False)
     row = p.locator(".gpa-row")
+    R.check("flow: one blank row to start", row.count(), 1)
     row.nth(0).locator(".gpa-f-grade select").select_option("A")
     row.nth(0).locator(".gpa-f-cr input").fill("4")
     row.nth(1).locator(".gpa-f-grade select").select_option("B-")
@@ -494,42 +528,66 @@ def pill_state(p):
 
 def layout(s, shots):
     SHOTS.mkdir(parents=True, exist_ok=True)
-    print("  above the fold (card top / 4 rows + result visible with data):")
+    print("  above the fold (card top / first course field / result visible with 4 courses):")
     for name in ("college-gpa-calculator", "ucla-gpa-calculator"):
         for w, hgt, mobile in SIZES:
             c = ctx_for(s, w, hgt, mobile=mobile)
             p = open_page(s, c, name)
             host = p.locator("#root, .gpcm-host").first
             top = p.evaluate("Math.round(document.querySelector('.calc-card').getBoundingClientRect().top + scrollY)")
+            first = p.locator(".gpa-row .gpa-f-name input").first.bounding_box()
+            if name.startswith("college") and mobile:
+                # Nothing between the card header and the first course field; it is on the first screen.
+                between = p.evaluate("""(() => { const card = document.querySelector('.calc-card');
+                    const head = card.querySelector('.gpa-top').getBoundingClientRect();
+                    const f = card.querySelector('.gpa-row .gpa-f-name input').getBoundingClientRect();
+                    return [...card.querySelectorAll('*')].filter((e) => { const r = e.getBoundingClientRect();
+                      return r.height > 0 && r.top >= head.bottom - 0.5 && r.bottom <= f.top + 0.5 && !e.closest('.gpa-row') && getComputedStyle(e).visibility !== 'hidden'; })
+                      .map((e) => e.className || e.tagName); })()""")
+                R.check(f"first screen {name} {w}: nothing between the card header and the first course field", between, [])
+                R.ok(f"first screen {name} {w}: first course field on the first screen", first["y"] + first["height"] <= hgt, first)
+                R.check(f"first screen {name} {w}: one blank row", p.locator(".gpa-row").count(), 1)
+                R.check(f"first screen {name} {w}: Options closed", p.locator(".gpa-options").is_visible(), False)
             if shots:
                 host.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-1-empty.png"))
-            # mid-typing: own grades in the first rows, scrolled so the result is below the screen
-            rows = p.locator(".gpa-row")
+            # mid-typing: own grades, scrolled so the result is below the screen
+            rows = p.locator(".gpa-term").last.locator(".gpa-row")
             for i, (g, cr) in enumerate((("A", "4"), ("B+", "3"), ("A-", "3"), ("B", "4"))):
                 if i >= rows.count():
                     p.locator(".gpa-add-row").first.click()
-                rows.nth(i).locator(".gpa-f-grade select").select_option(g)
-                rows.nth(i).locator(".gpa-f-cr input").fill(cr)
+                pick_grade(p, rows.nth(i), g)
+                set_credits(p, rows.nth(i), cr)
+                if mobile:
+                    rows.nth(i + 1).locator(".gpa-f-name input").focus() if i + 1 < rows.count() else None
+            if mobile and name.startswith("college"):
+                R.check(f"rows {name} {w}: finished rows collapse to one line", p.locator(".gpa-row.is-collapsed .gpa-row-sum-t").first.inner_text(), "Course 1 · A · 4 cr")
+                p.locator(".gpa-row.is-collapsed .gpa-row-sum").first.click()
+                R.check(f"rows {name} {w}: tap opens it again", p.locator(".gpa-row").first.locator(".gpa-f-name input").is_visible(), True)
+                rows.last.locator(".gpa-f-name input").focus()
             p.evaluate("scrollTo(0, 0)")
             p.wait_for_timeout(250)
             visible = p.evaluate("(() => { const r = document.querySelector('.calc-result').getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; })()")
+            below = p.evaluate("document.querySelector('.calc-result').getBoundingClientRect().top >= innerHeight")
+            p.evaluate("document.activeElement && document.activeElement.blur()")
+            p.wait_for_timeout(150)
             on, txt, gap = pill_state(p)
-            R.ok(f"pill {name} {w}: shows exactly when the result is off-screen", on != visible, f"pill {on}, result visible {visible}")
-            print(f"    {name} {w}x{hgt}: card top {top}px; result on first screen with 4 rows: {visible}; pill: {txt if on else 'hidden'}")
+            R.ok(f"pill {name} {w}: shows only while the result is below the screen", on == below, f"pill {on}, result below {below}")
+            print(f"    {name} {w}x{hgt}: card top {top}px; first field {round(first['y'])}px; result on first screen with 4 courses: {visible}; pill: {txt if on else 'hidden'}")
             if on:
                 R.ok(f"pill {name} {w}: text", txt.startswith("GPA ") and "Details" in txt, txt)
                 R.ok(f"pill {name} {w}: 12px above the screen bottom (no ad here)", abs(gap - 12) <= 1, f"gap {gap}")
-                rows.nth(0).locator(".gpa-f-name input").focus()
+                rows.last.locator(".gpa-f-name input").focus()
                 p.wait_for_timeout(200)
                 R.check(f"pill {name} {w}: hides while typing a course name", pill_state(p)[0], False)
-                rows.nth(0).locator(".gpa-f-grade select").focus()
-                p.wait_for_timeout(200)
-                R.check(f"pill {name} {w}: back on a grade select", pill_state(p)[0], True)
+                p.evaluate("document.activeElement.blur()")
                 if shots:
                     p.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-2-typing-pill.png"))
                 p.click(".calc-pill")
                 p.wait_for_timeout(400)
-                R.check(f"pill {name} {w}: tap scrolls to the result", pill_state(p)[0], False)
+                R.check(f"pill {name} {w}: tap scrolls to the result and hides", pill_state(p)[0], False)
+                p.evaluate("window.scrollBy(0, document.querySelector('.calc-result').getBoundingClientRect().bottom + 400)")
+                p.wait_for_timeout(250)
+                R.check(f"pill {name} {w}: stays hidden once scrolled past the result", pill_state(p)[0], False)
             # full result: the sample
             p.evaluate("localStorage.clear()")
             p.reload()
@@ -542,44 +600,76 @@ def layout(s, shots):
             col = p.evaluate("(() => { const r = document.querySelector('.entry-content').getBoundingClientRect(); return [r.left, r.width]; })()")
             if mobile:
                 R.ok(f"layout {name} {w}: 14px from the screen edge", abs(box["x"] - 14) <= 1, f"x {box['x']}")
+                if name.startswith("college"):
+                    kg = p.locator(".calc-keep").bounding_box()
+                    R.ok(f"layout {name} {w}: Keep going 20px from the screen edge, like the text", abs(kg["x"] - 20) <= 1 and abs(w - kg["x"] - kg["width"] - 20) <= 1, kg)
+                    R.check(f"layout {name} {w}: earlier semester collapses", p.locator(".gpa-term.is-collapsed .gpa-term-sum").first.inner_text(), "Fall · 4 classes · GPA 3.41")
+                    R.check(f"layout {name} {w}: sample rows collapse", p.locator(".gpa-term").last.locator(".gpa-row.is-collapsed").count(), 4)
             elif w >= 1260:
                 R.ok(f"layout {name} {w}: as wide as the column (677-800)", 677 <= box["width"] <= 800, f"width {box['width']}")
+            if not mobile:
+                R.check(f"layout {name} {w}: rows never collapse on desktop", p.locator(".gpa-row.is-collapsed .gpa-f-name input:visible").count() == p.locator(".gpa-row.is-collapsed").count(), True)
             R.ok(f"layout {name} {w}: inside the column", box["x"] >= col[0] - 15 and box["x"] + box["width"] <= col[0] + col[1] + 15, f"{box} {col}")
             font = p.evaluate("getComputedStyle(document.querySelector('.calc')).fontFamily")
             R.ok(f"layout {name} {w}: Lexend", font.split(",")[0].strip("'\" ") == "Lexend", font)
-            # Course-row rules (Calculator Design Standard rev 24)
-            rr = p.evaluate("""(() => { const row = document.querySelector('.gpa-row');
-                const box = (sel) => row.querySelector(sel).getBoundingClientRect();
-                const n = box('.gpa-f-name'), g = box('.gpa-f-grade'), c = box('.gpa-f-cr'), x = box('.gpa-rm');
+            # Course-row rules (Calculator Design Standard), on the last open row (opening one if all are collapsed)
+            if not p.locator(".gpa-row:not(.is-collapsed) .gpa-f-name input:visible").count():
+                p.locator(".gpa-row-sum:visible").last.click()
+            rr = p.evaluate("""(() => { const row = [...document.querySelectorAll('.gpa-row:not(.is-collapsed)')].filter((r) => r.getBoundingClientRect().height > 0).pop();
+                const vis = (e) => e && getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().height > 0;
+                const pick = (sel) => [...row.querySelectorAll(sel)].find(vis);
+                const box = (e) => e.getBoundingClientRect();
+                const n = box(pick('.gpa-f-name')), g = box(pick('.gpa-f-grade')), c = box(pick('.gpa-f-cr')), x = box(pick('.gpa-rm'));
+                const gc = pick('.gpa-f-grade :is(select, .gpa-grade-btn)'), cc = pick('.gpa-f-cr :is(input, .gpa-cr-btn)');
                 const sel = row.querySelector('.gpa-f-grade select'), cr = row.querySelector('.gpa-f-cr input');
                 const head = [...document.querySelectorAll('.calc-row-head span')].map((e) => e.textContent).filter(Boolean);
-                const st = document.querySelector('.calc-steps li:nth-child(2)');
-                const shown = (sel) => getComputedStyle(st.querySelector(sel)).display !== 'none';
                 return { n: [n.left, n.top, n.width], g: [g.left, g.top, g.width], c: [c.left, c.top, c.width], x: [x.left, x.top],
-                         align: [getComputedStyle(sel).textAlignLast, getComputedStyle(cr).textAlign], ph: sel.options[0].textContent,
-                         im: cr.inputMode, head, step: shown('.calc-step-short') && !shown('.calc-step-full') ? st.querySelector('.calc-step-short').textContent : st.querySelector('.calc-step-full').textContent }; })()""")
+                         align: [getComputedStyle(gc).textAlign, getComputedStyle(cc).textAlign], ph: sel.options[0].textContent,
+                         btn: gc.tagName, im: cr.inputMode, head }; })()""")
             R.check(f"rows {name} {w}: grade and credits centered", rr["align"], ["center", "center"])
             R.check(f"rows {name} {w}: grade placeholder", rr["ph"], "Grade")
             R.check(f"rows {name} {w}: credits decimal keypad", rr["im"], "decimal")
             R.check(f"rows {name} {w}: column labels", rr["head"], ["Course (optional)", "Grade", "Credits"] + (["Type"] if "ucla" in name else []) + (["Major"] if "college" in name else []))
-            R.check(f"rows {name} {w}: step 2 label", rr["step"], "Target" if mobile else "Target GPA")
+            R.check(f"rows {name} {w}: grade control", rr["btn"], "BUTTON" if mobile else "SELECT")
             if mobile:
                 R.ok(f"rows {name} {w}: line 1 is the name + remove", abs(rr["n"][1] - rr["x"][1]) <= 2 and rr["x"][0] > rr["n"][0] + rr["n"][2] - 1, rr)
                 R.ok(f"rows {name} {w}: line 2 grade ~110 + credits ~80, left-aligned", rr["g"][1] > rr["n"][1] + 20 and abs(rr["g"][1] - rr["c"][1]) <= 2
                      and abs(rr["g"][0] - rr["n"][0]) <= 1 and 100 <= rr["g"][2] <= 120 and 70 <= rr["c"][2] <= 90, rr)
             else:
                 R.ok(f"rows {name} {w}: one line", abs(rr["n"][1] - rr["g"][1]) <= 2 and abs(rr["g"][1] - rr["c"][1]) <= 2, rr)
-            long_name = p.locator(".gpa-row .gpa-f-name input").first
+            long_name = p.locator(".gpa-row .gpa-f-name input:visible").last
             long_name.fill("Introduction to Organic Chemistry")
             ov = long_name.evaluate("e => [getComputedStyle(e).textOverflow, getComputedStyle(e).whiteSpace]")
             R.check(f"layout {name} {w}: long course names truncate with an ellipsis", ov[0], "ellipsis")
+            long_name.fill("")
             if shots:
+                host.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-3-sample.png"))
                 if name.startswith("college"):
                     p.locator(".calc-next .calc-btn-primary").click()
                     p.wait_for_timeout(300)
-                host.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-3-result.png"))
+                host.screenshot(path=str(SHOTS / f"{name}-{w}x{hgt}-4-result.png"))
             p.close()
             c.close()
+
+    # Phone entry: the letter grid and the credit quick buttons
+    c = ctx_for(s, 390, 844, mobile=True)
+    p = open_page(s, c, "college-gpa-calculator")
+    row = p.locator(".gpa-row").first
+    row.locator(".gpa-grade-btn").click()
+    R.check("phone: grade sheet letters", p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt").all_inner_texts(),
+            ["A+", "A", "A\u2212", "B+", "B", "B\u2212", "C+", "C", "C\u2212", "D+", "D", "D\u2212", "F"])
+    p.keyboard.press("Escape")
+    R.check("phone: Escape closes the sheet", p.locator(".calc-sheet-wrap").is_visible(), False)
+    row.locator(".gpa-cr-btn").click()
+    R.check("phone: credit quick buttons", p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt").all_inner_texts(), ["1", "2", "3", "4", "5", "Other"])
+    p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt", has_text="Other").click()
+    R.check("phone: Other opens the credits field", row.locator(".gpa-f-cr input").is_visible(), True)
+    row.locator(".gpa-f-cr input").fill("3.5")
+    pick_grade(p, row, "B+")
+    R.check("phone: grade picked from the sheet counts", text(p, ".calc-score"), "3.30")
+    R.check("phone: next row added", p.locator(".gpa-row").count(), 2)
+    p.close()
+    c.close()
 
 
 # ---------- 4. Re-color ----------
@@ -590,15 +680,13 @@ def recolor(s):
     p.click(".gpa-sample")
     probe = """() => {
       const cta = getComputedStyle(document.querySelector('.calc-next .calc-btn-primary')).backgroundImage;
-      const dot = getComputedStyle(document.querySelector('.calc-step[aria-current] .calc-step-dot')).backgroundImage;
       const link = getComputedStyle(document.querySelector('.calc-btn-text')).color;
-      return [cta, dot, link];
+      return [cta, link];
     }"""
     before = p.evaluate(probe)
     p.add_style_tag(content=":root{--gpa-blue-600: rgb(15, 118, 110) !important;}")
     after = p.evaluate(probe)
     R.ok("re-color: CTA follows the palette", "rgb(15, 118, 110)" in after[0] and after[0] != before[0], f"{before[0]} -> {after[0]}")
-    R.ok("re-color: step dot follows the palette", after[1] != before[1], f"{before[1]} -> {after[1]}")
     p.close()
     c.close()
 

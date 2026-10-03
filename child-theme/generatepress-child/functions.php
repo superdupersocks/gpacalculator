@@ -2175,6 +2175,7 @@ function gpa_ajax_filter_colleges() {
 
     // ?gpa=3.5: the GPA-band list's colleges (college-v2.php: a cited Common Data Set average in the list's window, tier
     // A or B). Any other value, including the old 3.5_plus style links, lists every college instead of none.
+    $band_query = null;
     if ( function_exists( 'gpa_college_band_meta_query' ) && ( $band_query = gpa_college_band_meta_query( $gpa_filter ) ) ) {
         $meta_query[] = $band_query;
     }
@@ -2245,6 +2246,25 @@ function gpa_ajax_filter_colleges() {
     $sort_cfg = isset( $sort_map[ $sort ] ) ? $sort_map[ $sort ] : $sort_map['name_asc'];
     foreach ( $sort_cfg as $k => $v ) {
         $args[ $k ] = $v;
+    }
+
+    // ?gpa=3.5 in its default order: as on the GPA-band lists (gpa_bands.py; Digant, 2026-10-03 06:57), tier A first,
+    // then larger undergraduate enrollment, then name. A band holds a few dozen colleges, so they're ordered here.
+    if ( ! empty( $band_query ) && 'name_asc' === $sort ) {
+        add_filter( 'posts_search', 'gpa_college_hub_search_sql', 10, 2 );
+        $ids = get_posts( array_merge( $args, array( 'posts_per_page' => -1, 'paged' => 1, 'fields' => 'ids', 'no_found_rows' => true, 'suppress_filters' => false ) ) );
+        remove_filter( 'posts_search', 'gpa_college_hub_search_sql', 10 );
+        update_meta_cache( 'post', $ids );
+        $key = function ( $id ) {
+            $n = str_replace( ',', '', (string) get_post_meta( $id, 'enrollment', true ) );
+            return array( 'A' === get_post_meta( $id, 'admissions_tier', true ) ? 0 : 1, -( is_numeric( $n ) ? (float) $n : 0 ), get_the_title( $id ) );
+        };
+        usort( $ids, function ( $a, $b ) use ( $key ) {
+            return $key( $a ) <=> $key( $b );
+        } );
+        $args['post__in'] = $ids ? $ids : array( 0 );
+        $args['orderby']  = 'post__in';
+        unset( $args['order'] );
     }
 
     add_filter( 'posts_search', 'gpa_college_hub_search_sql', 10, 2 );

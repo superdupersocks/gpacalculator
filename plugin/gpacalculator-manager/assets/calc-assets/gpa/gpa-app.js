@@ -6,7 +6,7 @@
 import {
   h, setText, createStore, readHash, shareUrl, clearHash, copyText, downloadCSV, createTracker,
   createLivePill, createMenu, createActionToast, createSheet, trackCalculatorUsed, sendEvent, importLegacyOnce, printPage,
-  reducedMotion, watchErrors, createHomeScreenHint,
+  reducedMotion, watchErrors, createHomeScreenHint, createSuggest,
 } from '../core/calc-core.js';
 import * as E from '../engines/gpa-engine.js';
 
@@ -17,7 +17,7 @@ const newId = (p = 'r') => `${p}${Date.now().toString(36)}${(uid++).toString(36)
 
 function blankRow(profile, i = 0) {
   const types = profile.courseTypes;
-  return { id: newId(), name: '', grade: '', credits: profile.defaultCredits || '', major: false, type: types ? types[0].name : undefined, _ph: i };
+  return { id: newId(), name: '', grade: '', credits: profile.defaultCredits || '', major: false, type: types ? types[0].name : undefined, level: profile.levels ? 'reg' : undefined, levelSet: false, _ph: i };
 }
 
 function blankState(profile) {
@@ -43,9 +43,15 @@ function normalize(profile, s) {
   const scale = (profile.scales.find((x) => x.id === s.scale) || profile.scales[0]).id;
   const str = (v) => (v == null ? '' : String(v)).slice(0, 80);
   const typeNames = (profile.courseTypes || []).map((t) => t.name);
+  const levelOf = (r) => {
+    if (!profile.levels) return undefined;
+    if (r.level && Object.prototype.hasOwnProperty.call(profile.levels, r.level)) return r.level;
+    return (profile.courses && profile.courses.guessLevel(r.name)) || 'reg';
+  };
   const row = (r, i) => ({
     id: newId(), name: str(r.name), grade: str(r.grade), credits: str(r.credits), major: !!r.major,
-    type: typeNames.length ? (typeNames.includes(r.type) ? r.type : typeNames[0]) : undefined, _ph: i,
+    type: typeNames.length ? (typeNames.includes(r.type) ? r.type : typeNames[0]) : undefined,
+    level: levelOf(r), levelSet: !!(profile.levels && r.levelSet), _ph: i,
   });
   let terms = s.terms.slice(0, 24).map((t, i) => ({
     id: profile.fixedTerms ? (t.id || newId('t')) : newId('t'),
@@ -77,6 +83,7 @@ function pack(state) {
       id: t.id, name: t.name, planned: t.planned || undefined,
       rows: t.rows.filter((r) => r.name || r.grade).map((r) => ({
         name: r.name || undefined, grade: r.grade || undefined, credits: r.credits || undefined, major: r.major || undefined, type: r.type,
+        level: r.level && r.level !== 'reg' ? r.level : undefined, levelSet: r.levelSet || undefined,
       })),
     })),
     target: state.target.gpa || state.target.credits ? state.target : undefined,
@@ -102,6 +109,25 @@ export function fromBolt(o, mode = 'college') {
   }));
   if (!terms.some((t) => t.rows.length)) return null;
   return { v: 1, scale: 'standard', prior: { gpa: '', credits: '' }, showMajor: !!o.showMajor, terms };
+}
+
+/** The Bolt homepage's High School mode: { calculatorMode: 'highschool', useEqualCredits, showCredits,
+ * semesters: [{ name, courses: [{ name, grade, credits, courseType: Regular|Honors|AP|IB, typeManuallySet }] }] }. */
+export function fromBoltHS(o) {
+  if (!o || !Array.isArray(o.semesters) || !o.semesters.length) return null;
+  const hs = o.calculatorMode === 'highschool' || (!o.calculatorMode && o.semesters.some((s) => (s.courses || []).some((c) => 'courseType' in c)));
+  if (!hs) return null;
+  const LV = { Regular: 'reg', Honors: 'hon', AP: 'ap', IB: 'ib' };
+  const equal = o.useEqualCredits !== false && !o.showCredits;
+  const terms = o.semesters.map((s, i) => ({
+    name: s.name || `Year ${i + 1}`,
+    rows: (s.courses || []).filter((c) => c && (c.grade || c.name)).map((c) => ({
+      name: c.name || '', grade: c.grade || '', credits: equal || c.credits == null ? '1' : String(c.credits),
+      level: LV[c.courseType] || undefined, levelSet: !!(c.typeManuallySet && LV[c.courseType]),
+    })),
+  }));
+  if (!terms.some((t) => t.rows.length)) return null;
+  return { v: 1, scale: 'standard', prior: { gpa: '', credits: '' }, terms };
 }
 
 /* ---------- Icons ---------- */
@@ -204,6 +230,8 @@ export function mountGpa(root, profile, opts = {}) {
     const kEl = h('div', { class: 'calc-stat-k' }, k);
     return { el: h('div', { class: 'calc-stat' }, kEl, v), v, k: kEl };
   };
+  const sAlt = stat('Unweighted GPA'); // levels: the other GPA (unweighted under a weighted headline)
+  sAlt.el.hidden = true;
   const sCredits = stat(`GPA ${P.creditWord}`);
   const sPoints = stat('Quality points');
   const sMajor = stat('Major GPA');
@@ -217,7 +245,7 @@ export function mountGpa(root, profile, opts = {}) {
   how.addEventListener('toggle', () => { if (how.open) renderHow(); });
   const BLOCKS = {
     verdict: h('div', { class: 'calc-result-top' }, h('div', null, kicker, score, verdict), badge),
-    stats: h('div', { class: 'calc-stats' }, sCredits.el, sPoints.el, sMajor.el, sProj.el),
+    stats: h('div', { class: 'calc-stats' }, P.levels && P.levelList ? sAlt.el : null, sCredits.el, sPoints.el, sMajor.el, sProj.el),
     note,
     next: nextEl,
     how,
@@ -244,7 +272,7 @@ export function mountGpa(root, profile, opts = {}) {
     h('h3', null, 'Plan your target GPA'),
     h('p', { class: 'calc-sub' }, `See the average you need in your next ${P.creditWord} to reach your goal.`),
     h('div', { class: 'calc-plan-grid' },
-      h('div', { class: 'calc-field' }, h('label', { class: 'calc-label', for: tGpa.id }, 'Target cumulative GPA'), tGpa),
+      h('div', { class: 'calc-field' }, h('label', { class: 'calc-label', for: tGpa.id }, P.levels ? 'Target unweighted GPA' : 'Target cumulative GPA'), tGpa),
       h('div', { class: 'calc-field' }, h('label', { class: 'calc-label', for: tCr.id }, `Upcoming ${P.creditWord}`), tCr)),
     planOut, whatIf) : null;
 
@@ -263,7 +291,11 @@ export function mountGpa(root, profile, opts = {}) {
 
   /* ----- rows and terms ----- */
   const types = P.courseTypes && P.courseTypes.length > 1 ? P.courseTypes : null;
-  const colsClass = () => ['gpa-cols', types ? 'has-type' : '', P.major && state.showMajor ? 'has-major' : ''].join(' ');
+  const levels = P.levels && P.levelList ? P.levelList : null; // Regular / Honors / AP / IB …: the weighted GPA's boost
+  const levelOf = (id) => (levels && levels.find((l) => l.id === id)) || null;
+  const boostOf = (id) => (P.levels && P.levels[id]) || 0;
+  const boostText = (b) => `+${E.fmtNum(b, 1).includes('.') ? E.fmtNum(b, 1) : `${E.fmtNum(b)}.0`}`;
+  const colsClass = () => ['gpa-cols', types ? 'has-type' : '', levels ? 'has-level' : '', P.major && state.showMajor ? 'has-major' : ''].join(' ');
   const crAbbr = P.creditAbbr || (P.creditWord === 'credits' ? 'cr' : P.creditWord);
   const gradeLabel = (g) => g.replace('-', '−');
 
@@ -300,7 +332,12 @@ export function mountGpa(root, profile, opts = {}) {
 
   const filled = (r) => !!r.grade;
   const rowName = (r, i) => r.name.trim() || `Course ${i + 1}`;
-  const rowMeta = (r) => (notCounted(r.grade) ? `${gradeLabel(r.grade)} · not counted` : `${gradeLabel(r.grade)} · ${r.credits || '?'} ${crAbbr}`);
+  const levelMeta = (r) => {
+    const l = levels && levelOf(r.level);
+    return l && boostOf(r.level) ? ` · ${l.short} ${boostText(boostOf(r.level))}` : '';
+  };
+  const rowMeta = (r) => (notCounted(r.grade) ? `${gradeLabel(r.grade)} · not counted` : `${gradeLabel(r.grade)}${levelMeta(r)} · ${r.credits || '?'} ${crAbbr}`);
+  const creditChoices = P.creditChoices || ['1', '2', '3', '4', '5'];
 
   function rowView(term, row, i) {
     const id = row.id;
@@ -321,6 +358,14 @@ export function mountGpa(root, profile, opts = {}) {
       for (const t of types) typeSel.append(h('option', { value: t.name }, t.name));
       typeSel.value = row.type;
     }
+    let levelSel = null;
+    let levelBtn = null;
+    if (levels) {
+      levelSel = h('select', { class: 'calc-select gpa-level', id: `${id}-l`, 'aria-label': `Course ${i + 1} level` });
+      for (const l of levels) levelSel.append(h('option', { value: l.id }, boostOf(l.id) ? `${l.label} (${boostText(boostOf(l.id))})` : l.label));
+      levelSel.value = row.level || 'reg';
+      levelBtn = h('button', { type: 'button', class: 'calc-select gpa-level-btn', 'aria-haspopup': 'dialog', 'aria-label': `Course ${i + 1} level` });
+    }
     let major = null;
     if (P.major && state.showMajor) {
       major = h('input', { type: 'checkbox', id: `${id}-mj`, checked: !!row.major, 'aria-label': `Course ${i + 1} counts toward your major` });
@@ -333,12 +378,18 @@ export function mountGpa(root, profile, opts = {}) {
       h('div', { class: 'calc-field gpa-f-grade' }, grade, gradeBtn),
       h('div', { class: 'calc-field gpa-f-cr' }, cr, crBtn),
       typeSel ? h('div', { class: 'calc-field gpa-f-type' }, typeSel) : null,
+      levelSel ? h('div', { class: 'calc-field gpa-f-level' }, levelSel, levelBtn) : null,
       major, rm, msg);
-    const v = { el, msg, cr, crBtn, grade, gradeBtn, name, typeSel, sum, row, term, i };
+    const v = { el, msg, cr, crBtn, grade, gradeBtn, name, typeSel, levelSel, sum, row, term, i };
     const syncBtns = () => {
       setText(gradeBtn, row.grade ? gradeLabel(row.grade) : 'Grade');
       gradeBtn.classList.toggle('is-empty', !row.grade);
       setText(crBtn, row.credits ? `${row.credits} ${crAbbr}` : cap(P.creditWord));
+      if (levelBtn) {
+        const l = levelOf(row.level) || levels[0];
+        setText(levelBtn, boostOf(l.id) ? `${l.short} ${boostText(boostOf(l.id))}` : l.label);
+        levelSel.value = l.id;
+      }
       // The course name truncates; grade and credits never do (they sit at the right, then Edit).
       sum.replaceChildren(h('span', { class: 'gpa-row-sum-t' }, row.grade ? rowName(row, i) : ''), h('span', { class: 'gpa-row-sum-m' }, row.grade ? rowMeta(row) : ''),
         h('span', { class: 'gpa-row-sum-e', 'aria-hidden': 'true' }, 'Edit'));
@@ -354,7 +405,32 @@ export function mountGpa(root, profile, opts = {}) {
       edit();
       autoAdd(term, row);
     };
-    name.addEventListener('input', () => { row.name = name.value; lastTerm = term.id; syncBtns(); changed(false); });
+    // The level follows the course name ("AP Biology" → AP) until the student picks one by hand.
+    const setLevel = (id2, byHand) => {
+      if (!levels || !levelOf(id2)) return;
+      if (byHand) row.levelSet = true;
+      if (row.level === id2) { syncBtns(); return; }
+      row.level = id2;
+      syncBtns();
+      edit();
+    };
+    const autoLevel = () => { if (levels && P.courses && !row.levelSet) setLevel(P.courses.guessLevel(row.name) || 'reg', false); };
+    name.addEventListener('input', () => { row.name = name.value; lastTerm = term.id; syncBtns(); changed(false); autoLevel(); });
+    if (P.courses && P.courses.suggest) {
+      createSuggest(name, {
+        source: (q) => P.courses.suggest(q, phone.matches ? 4 : 6).map((c) => ({ label: c.name, hint: boostOf(c.level) ? levelOf(c.level).short : '', course: c })),
+        onPick: (it) => { name.value = it.course.name; row.name = it.course.name; lastTerm = term.id; syncBtns(); changed(false); autoLevel(); track('course_pick', null, true); },
+      });
+    }
+    if (levelSel) {
+      levelSel.addEventListener('change', () => setLevel(levelSel.value, true));
+      levelBtn.addEventListener('click', async () => {
+        activate(row.id);
+        const pickL = await sheet.open({ title: `Level${row.name.trim() ? ` for ${row.name.trim()}` : ''}`,
+          options: levels.map((l) => ({ value: l.id, label: boostOf(l.id) ? `${l.label} ${boostText(boostOf(l.id))}` : l.label, wide: true })), value: row.level, cols: 2 });
+        if (pickL != null) setLevel(pickL, true);
+      });
+    }
     grade.addEventListener('change', () => setGrade(grade.value));
     cr.addEventListener('input', () => { row.credits = cr.value; syncBtns(); edit(); });
     gradeBtn.addEventListener('click', async () => {
@@ -368,7 +444,7 @@ export function mountGpa(root, profile, opts = {}) {
     });
     crBtn.addEventListener('click', async () => {
       activate(row.id);
-      const quick = ['1', '2', '3', '4', '5'];
+      const quick = creditChoices;
       const c = await sheet.open({ title: cap(P.creditWord), options: quick.map((x) => ({ value: x, label: x })).concat({ value: 'other', label: 'Other', wide: false }), value: quick.includes(row.credits) ? row.credits : (row.credits ? 'other' : ''), cols: 3 });
       if (c == null) return;
       if (c === 'other') {
@@ -395,7 +471,7 @@ export function mountGpa(root, profile, opts = {}) {
       const next = rows[Math.min(idx, rows.length - 1)];
       if (next) { activate(next.dataset.id); next.querySelector('input').focus(); }
     });
-    if (row.credits && !['1', '2', '3', '4', '5'].includes(row.credits)) el.classList.add('is-cr-other');
+    if (row.credits && !creditChoices.includes(row.credits)) el.classList.add('is-cr-other');
     rowEls.set(id, v);
     return el;
   }
@@ -450,7 +526,8 @@ export function mountGpa(root, profile, opts = {}) {
   function termSummary(term) {
     const n = term.rows.filter(filled).length;
     const t = res && res.terms.find((x) => x.id === term.id);
-    return `${term.name || P.termWord || 'Semester'} · ${n} class${n === 1 ? '' : 'es'}${t && t.gpa != null ? ` · GPA ${fmt(t.gpa)}` : ''}`;
+    const g = t && t.gpa != null ? (weightedOn() ? ` · Weighted ${fmt(t.wgpa)}` : ` · GPA ${fmt(t.gpa)}`) : '';
+    return `${term.name || P.termWord || 'Semester'} · ${n} class${n === 1 ? '' : 'es'}${g}`;
   }
 
   function termView(term, ti) {
@@ -460,7 +537,7 @@ export function mountGpa(root, profile, opts = {}) {
     const head = ti === 0 || (fixed && term.rows.length && !state.terms[0].rows.length)
       ? h('div', { class: `calc-row-head ${colsClass()}`, 'aria-hidden': 'true' },
         h('span', null, 'Course (optional)'), h('span', null, 'Grade'), h('span', null, 'Credits'),
-        types ? h('span', null, 'Type') : null, P.major && state.showMajor ? h('span', null, 'Major') : null, h('span'))
+        types ? h('span', null, 'Type') : null, levels ? h('span', null, 'Level') : null, P.major && state.showMajor ? h('span', null, 'Major') : null, h('span'))
       : null;
     const rowsWrap = h('div', { class: 'gpa-rows' });
     term.rows.forEach((r, i) => rowsWrap.append(rowView(term, r, i)));
@@ -581,7 +658,7 @@ export function mountGpa(root, profile, opts = {}) {
     }
     for (const t of res.terms) {
       const chip = termsEl.querySelector(`[data-term-gpa="${t.id}"]`);
-      if (chip) setText(chip, t.gpa == null ? '' : `${t.planned ? 'Planned' : 'GPA'} ${fmt(t.gpa)}`);
+      if (chip) setText(chip, t.gpa == null ? '' : weightedOn() && !t.planned ? `Weighted ${fmt(t.wgpa)}` : `${t.planned ? 'Planned' : 'GPA'} ${fmt(t.gpa)}`);
     }
     for (const t of state.terms) {
       const sum = termsEl.querySelector(`[data-term-sum="${t.id}"]`);
@@ -599,15 +676,24 @@ export function mountGpa(root, profile, opts = {}) {
     if (ready) {
       const g = res.current.gpa;
       const v = verdictFor(g);
-      setText(score, fmt(g));
+      // Levels: with any Honors / AP / IB course the headline is the weighted GPA, the unweighted one beside it.
+      const weighted = weightedOn();
+      const shown = weighted ? res.current.wgpa : g;
+      setText(score, fmt(shown));
       setText(badge, v.letter.replace('-', '−'));
       badge.className = `calc-badge gpa-letter is-band-${v.band}`;
-      verdict.replaceChildren(...verdictText(g, v.letter));
+      verdict.replaceChildren(...(weighted ? weightedText(shown, g, v.letter) : verdictText(g, v.letter)));
       // "Semester GPA" until there are 2+ semesters or a previous GPA; then "Cumulative GPA".
       const doneTerms = res.terms.filter((t) => !t.planned && t.credits > 0).length;
-      const kick = P.copy.termResultKicker && doneTerms <= 1 && !res.prior.used ? P.copy.termResultKicker : P.copy.resultKicker;
+      const base = P.copy.termResultKicker && doneTerms <= 1 && !res.prior.used ? P.copy.termResultKicker : P.copy.resultKicker;
+      const kick = !weighted ? base : base === 'GPA' ? 'Weighted GPA' : `Weighted ${base.charAt(0).toLowerCase()}${base.slice(1)}`;
       setText(kicker, kick);
-      setText(live, `${kick}: ${fmt(g)}`);
+      setText(live, `${kick}: ${fmt(shown)}${weighted ? `, unweighted ${fmt(g)}` : ''}`);
+      sAlt.el.hidden = !levels;
+      if (levels) {
+        setText(sAlt.k, weighted ? 'Unweighted GPA' : 'Weighted GPA');
+        setText(sAlt.v, weighted ? fmt(g) : fmt(res.current.wgpa));
+      }
       updatePill(g);
       setText(sCredits.v, E.fmtNum(res.current.credits));
       setText(sPoints.v, E.fmtNum(res.current.points, 2));
@@ -638,7 +724,21 @@ export function mountGpa(root, profile, opts = {}) {
     saveLabel();
   }
 
+  /** Levels: the weighted GPA leads once any counted course has a boost (Honors, AP, IB …). */
+  function weightedOn() {
+    return !!(levels && res && res.ready && Object.values(res.rows).some((r) => r.status === 'counted' && !r.planned && boostOf(r.src.level) > 0));
+  }
+
+  function weightedText(w, g, letter) {
+    const L = letter.replace('-', '−');
+    return [`You have a ${fmt(w)} weighted GPA and a ${fmt(g)} unweighted — ${g >= 3.7 ? 'an excellent' : g >= 3.0 ? 'a solid' : articleFor(letter)} ${L} average.`];
+  }
+
   function updatePill(g) {
+    if (weightedOn()) {
+      pill.set({ label: 'Weighted', value: fmt(res.current.wgpa), label2: 'Unweighted', value2: fmt(g), aria: `Your weighted GPA ${fmt(res.current.wgpa)}, unweighted ${fmt(g)}, go to result` });
+      return;
+    }
     const done = res.terms.filter((t) => !t.planned && t.credits > 0);
     const several = done.length > 1 || (done.length && res.prior.used);
     if (several && !P.fixedTerms) {
@@ -680,6 +780,7 @@ export function mountGpa(root, profile, opts = {}) {
   /** "Is my GPA good?": what the number means for the things students use it for. */
   function goodText(g) {
     const x = fmt(g);
+    if (P.goodText) return P.goodText(weightedOn() ? `${x} unweighted` : x, g);
     const max = res ? res.max : 4;
     if (max > 4.5) return `${x} out of ${E.fmtNum(max)}. Compare it with the cutoffs your school publishes.`;
     if (g >= 3.7) return `${x} is in the A range: high enough for Latin honors at many colleges and for competitive grad programs.`;
@@ -759,6 +860,10 @@ export function mountGpa(root, profile, opts = {}) {
     howBody.append(h('figure', { class: 'gpa-ex' },
       h('div', { class: 'gpa-ex__mhead', 'aria-hidden': 'true' }, h('span', null, `Grade points × ${P.creditWord}`), h('span', null, 'Quality points')), table),
       h('p', { class: 'calc-how-note' }, `Each grade's points × its ${P.creditWord} gives quality points. Add them up and divide by the total ${P.creditWord}.${res.excluded.length ? ' Courses that don’t count are left out.' : ''}`));
+    if (weightedOn()) {
+      const boosts = levels.filter((l) => boostOf(l.id)).map((l) => `${l.label} ${boostText(boostOf(l.id))}`).join(', ');
+      howBody.append(h('p', { class: 'calc-how-note gpa-how-weighted' }, `Weighted GPA: each passing grade gets its level’s boost (${boosts}). ${E.fmtNum(res.current.weighted, 2)} weighted quality points ÷ ${E.fmtNum(res.current.credits)} ${P.creditWord} = ${fmt(res.current.wgpa)}.`));
+    }
     if (P.help && P.help.note) howBody.append(h('p', { class: 'calc-how-note' }, P.help.note));
     if (P.sources && P.sources.length) {
       howBody.append(h('p', { class: 'calc-how-note' }, 'Rules from ', ...P.sources.slice(0, 3).flatMap((s, i) => [i ? ', ' : '', h('a', { href: s.url, target: '_blank', rel: 'noopener' }, s.label)]), '.'));
@@ -1052,20 +1157,21 @@ export function mountGpa(root, profile, opts = {}) {
     const lines = [`My ${P.title}: ${fmt(res.current.gpa)} (${E.fmtNum(res.current.credits)} ${P.creditWord})`];
     for (const t of res.terms) if (t.credits) lines.push(`${t.name || 'Semester'}: ${fmt(t.gpa)} over ${E.fmtNum(t.credits)} ${P.creditWord}`);
     if (res.major && state.showMajor) lines.push(`Major GPA: ${fmt(res.major.gpa)}`);
+    if (weightedOn()) lines.splice(1, 0, `Weighted GPA: ${fmt(res.current.wgpa)}`);
     lines.push(`Calculated with ${P.copy.summaryUrl}`);
     return lines.join('\n');
   }
   function csvRows() {
-    const out = [[P.termWord || 'Term', 'Course', 'Grade', cap(P.creditWord), 'Grade points', 'Quality points', 'Counted']];
+    const out = [[P.termWord || 'Term', 'Course', 'Grade', ...(levels ? ['Level'] : []), cap(P.creditWord), 'Grade points', 'Quality points', 'Counted']];
     for (const t of state.terms) {
       for (const r of t.rows) {
         const c = res.rows[r.id];
         if (!c || c.status === 'empty') continue;
-        out.push([t.name, r.name, r.grade, r.credits, c.status === 'counted' ? c.points : '', c.status === 'counted' ? E.roundHalf(c.points * c.credits, 2) : '', c.status === 'counted' ? 'yes' : c.why || c.error || 'no']);
+        out.push([t.name, r.name, r.grade, ...(levels ? [(levelOf(r.level) || levels[0]).label] : []), r.credits, c.status === 'counted' ? c.points : '', c.status === 'counted' ? E.roundHalf(c.points * c.credits, 2) : '', c.status === 'counted' ? 'yes' : c.why || c.error || 'no']);
       }
     }
-    if (res.prior.used) out.push(['Before', 'Current GPA', '', res.prior.credits, res.prior.gpa, E.roundHalf(res.prior.points, 2), 'yes']);
-    out.push([], ['Cumulative GPA', fmt(res.current.gpa)], [`GPA ${P.creditWord}`, res.current.credits]);
+    if (res.prior.used) out.push(['Before', 'Current GPA', '', ...(levels ? [''] : []), res.prior.credits, res.prior.gpa, E.roundHalf(res.prior.points, 2), 'yes']);
+    out.push([], [levels ? 'Unweighted GPA' : 'Cumulative GPA', fmt(res.current.gpa)], ...(levels ? [['Weighted GPA', fmt(res.current.wgpa)]] : []), [`GPA ${P.creditWord}`, res.current.credits]);
     return out;
   }
   const SHARE = [

@@ -47,6 +47,7 @@
 :is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 1fr) 128px 104px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols: minmax(0, 1fr) 128px 104px 56px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols: minmax(0, 1.3fr) 120px 96px minmax(0, 1fr) var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-level { --calc-cols: minmax(0, 1fr) 120px 88px 168px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols: minmax(0, 1.3fr) 120px 96px minmax(0, 1fr) 56px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-row .calc-field { min-width: 0; }
 :is(#root, .gpacalc-mount) .gpa-major { justify-content: center; }
@@ -59,12 +60,17 @@
 #page .entry-content :is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade .calc-select, .gpa-f-cr .calc-input) { text-align: center; text-align-last: center; }
 :is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade .calc-select:not(.gpa-grade-btn),
 #page .entry-content :is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade .calc-select:not(.gpa-grade-btn) { padding: 0 44px 0 12px; -webkit-appearance: none; appearance: none; background-image: none; }
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-level .calc-select,
+#page .entry-content :is(#root, .gpacalc-mount) .gpa-row .gpa-f-level .calc-select { padding: 0 44px 0 12px; -webkit-appearance: none; appearance: none; background-image: none; }
+:is(#root, .gpacalc-mount) .gpa-level-btn { display: none; }
 
 /* Grade select arrow: a tinted chevron button inside the field (same treatment as the GPA Scale converter).
  * Phones put the same chevron on the grade and credits buttons, which open the pickers. */
-:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr) { position: relative; }
+:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr, .gpa-f-level, .gpa-f-name) { position: relative; }
 :is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::before,
 :is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade::after,
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-level::before,
+:is(#root, .gpacalc-mount) .gpa-row .gpa-f-level::after,
 :is(#root, .gpacalc-mount) .gpa-row .gpa-f-cr::before,
 :is(#root, .gpacalc-mount) .gpa-row .gpa-f-cr::after {
   content: "";
@@ -76,14 +82,14 @@
   z-index: 1;
   pointer-events: none;
 }
-:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr)::before { border-radius: 8px; background: var(--gpa-indigo-100, var(--calc-surface-2, var(--calc-surface))); transition: background-color var(--calc-fast); }
-:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr)::after {
+:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr, .gpa-f-level)::before { border-radius: 8px; background: var(--gpa-indigo-100, var(--calc-surface-2, var(--calc-surface))); transition: background-color var(--calc-fast); }
+:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr, .gpa-f-level)::after {
   background: var(--gpa-indigo-700, var(--calc-brand));
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / 18px 18px no-repeat;
 }
-:is(#root, .gpacalc-mount) .gpa-row .gpa-f-grade:hover .calc-select { border-color: var(--gpa-indigo-200, var(--calc-input-line)); }
-:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr):hover::before { background: var(--gpa-indigo-200, var(--calc-surface)); }
+:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-level):hover .calc-select { border-color: var(--gpa-indigo-200, var(--calc-input-line)); }
+:is(#root, .gpacalc-mount) .gpa-row :is(.gpa-f-grade, .gpa-f-cr, .gpa-f-level):hover::before { background: var(--gpa-indigo-200, var(--calc-surface)); }
 :is(#root, .gpacalc-mount) .gpa-row .gpa-f-cr::before,
 :is(#root, .gpacalc-mount) .gpa-row .gpa-f-cr::after { display: none; }
 
@@ -131,6 +137,12 @@
   :is(#root, .gpacalc-mount) .gpa-row.has-major { grid-template-columns: 120px 104px minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name name rm' 'grade cr major .'; }
   :is(#root, .gpacalc-mount) .gpa-row.has-type { grid-template-areas: 'name name name rm' 'grade cr . .' 'type type type type'; }
   :is(#root, .gpacalc-mount) .gpa-row.has-type.has-major { grid-template-areas: 'name name name rm' 'grade cr major .' 'type type type type'; }
+  /* Levels (high school): grade, credits and level share line 2 */
+  :is(#root, .gpacalc-mount) .gpa-row.has-level { grid-template-columns: 104px 88px minmax(0, 1fr) var(--calc-control-h); grid-template-areas: 'name name name rm' 'grade cr level level'; }
+  :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-level { grid-area: level; }
+  :is(#root, .gpacalc-mount) .gpa-f-level .calc-select:not(.gpa-level-btn) { display: none; }
+  :is(#root, .gpacalc-mount) .gpa-level-btn,
+  #page .entry-content :is(#root, .gpacalc-mount) .gpa-level-btn { display: block; width: 100%; text-align: center; text-align-last: center; padding: 0 40px 0 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   :is(#root, .gpacalc-mount) .gpa-row > .gpa-major { justify-self: start; }
   :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-name { grid-area: name; }
   :is(#root, .gpacalc-mount) .gpa-row > .gpa-f-grade { grid-area: grade; }
@@ -150,8 +162,8 @@
   :is(#root, .gpacalc-mount) .gpa-f-grade .calc-select:not(.gpa-grade-btn) { display: none; }
   :is(#root, .gpacalc-mount) .gpa-grade-btn,
   #page .entry-content :is(#root, .gpacalc-mount) .gpa-grade-btn { display: block; width: 100%; text-align: center; text-align-last: center; padding: 0 28px; cursor: pointer; }
-  :is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn):is(:hover, :focus, :active),
-  #page .entry-content :is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn):is(:hover, :focus, :active) { background-color: var(--calc-surface); color: var(--calc-ink); }
+  :is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn, .gpa-level-btn):is(:hover, :focus, :active),
+  #page .entry-content :is(#root, .gpacalc-mount) :is(.gpa-grade-btn, .gpa-cr-btn, .gpa-level-btn):is(:hover, :focus, :active) { background-color: var(--calc-surface); color: var(--calc-ink); }
   :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-f-cr .calc-input:not(.gpa-cr-btn) { display: none; }
   :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-cr-btn,
   #page .entry-content :is(#root, .gpacalc-mount) .gpa-row:not(.is-cr-other) .gpa-cr-btn { display: block; width: 100%; text-align: center; cursor: pointer; }

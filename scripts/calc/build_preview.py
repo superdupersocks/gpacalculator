@@ -3,7 +3,7 @@
 
     python3 scripts/calc/build_preview.py OUTDIR [--modules]
 
-Writes OUTDIR/college-gpa-calculator.html and OUTDIR/ucla-gpa-calculator.html:
+Writes OUTDIR/college-gpa-calculator.html, OUTDIR/ucla-gpa-calculator.html and OUTDIR/gpa-calculator.html (homepage):
   - the live page's markup as a logged-out visitor gets it (data/admissions/preview/snapshot), with the
     theme's stylesheets inlined from the design branch at THEME_REF (the snapshot predates the phone
     spacing and component library deploys);
@@ -174,6 +174,12 @@ def build(out, modules):
     u = u[:e] + '<div class="entry-content">\n' + intro + host + "\n</div>" + u[balanced_div(u, e):]
     css, js = calc_tags("gpa/uni-gpa.js", modules)
     pages["ucla-gpa-calculator.html"] = u.replace("</head>", css + "\n</head>", 1).replace("</body>", js + "\n</body>", 1)
+
+    # Homepage: the same shell with [gpa-calculator]'s #root (College | High School switch). The real
+    # homepage's hero and content differ; this preview shows the calculator only.
+    hp = html.replace("College GPA Calculator", "GPA Calculator").replace(NEW_SUBTITLE, "College and high school GPA, weighted and unweighted.", 1)
+    css, js = calc_tags("gpa/home-gpa.js", modules)
+    pages["gpa-calculator.html"] = hp.replace("</head>", css + "\n</head>", 1).replace("</body>", js + "\n</body>", 1)
 
     out.mkdir(parents=True, exist_ok=True)
     for name, body in pages.items():

@@ -35,6 +35,7 @@ function wp_register_style( $h, $s, $d, $v ) { wp_styles()->registered[ $h ] = n
 function wp_enqueue_script( $h ) { if ( ! wp_script_is( $h ) ) wp_scripts()->queue[] = $h; }
 function wp_enqueue_style( $h ) { if ( ! wp_style_is( $h ) ) wp_styles()->queue[] = $h; }
 function is_page( $ids ) { return in_array( $GLOBALS['page']['id'], (array) $ids, true ); }
+function is_front_page() { return ! empty( $GLOBALS['page']['front'] ); }
 function is_singular() { return $GLOBALS['page']['id'] > 0; }
 function get_post() { return (object) array( 'post_content' => $GLOBALS['page']['content'] ); }
 function has_shortcode( $c, $t ) { return false !== strpos( $c, '[' . $t ); }

@@ -36,6 +36,14 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 					'old_styles'  => array( 'main-css-college-gpa-calculator' ),
 					'homescreen'  => true, // web app manifest for "Add to home screen" (Calculator Design Standard)
 				),
+				'home'     => array(
+					'label'       => 'Homepage GPA calculator (College + High School)',
+					'url'         => '/',
+					'front'       => true, // the site's front page ([gpa-calculator])
+					'entry'       => 'gpa/home-gpa.js',
+					'old_scripts' => array( 'main-js-gpa-calculator' ),
+					'old_styles'  => array( 'main-css-gpa-calculator' ),
+				),
 				'uni-ucla' => array(
 					'label' => 'UCLA GPA calculator',
 					'url'   => '/ucla-gpa-calculator/',
@@ -153,7 +161,7 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 		public static function enqueue() {
 			self::$swapped = array();
 			foreach ( self::all() as $id => $s ) {
-				if ( empty( $s['pages'] ) || ! is_page( $s['pages'] ) || ! self::is_new( $id ) ) {
+				if ( ! self::on_page( $s ) || ! self::is_new( $id ) ) {
 					continue;
 				}
 				self::drop_old( $s );
@@ -164,6 +172,14 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 					add_action( 'wp_head', array( __CLASS__, 'manifest_link' ), 5 );
 				}
 			}
+		}
+
+		/** Whether this request is a page the calculator lives on (listed page slugs, or the front page). */
+		private static function on_page( array $s ) {
+			if ( ! empty( $s['front'] ) ) {
+				return is_front_page();
+			}
+			return ! empty( $s['pages'] ) && is_page( $s['pages'] );
 		}
 
 		/** Enqueue the shared CSS and the calculator's entry module. */

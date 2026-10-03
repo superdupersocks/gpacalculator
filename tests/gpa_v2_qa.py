@@ -780,7 +780,8 @@ def recolor(s):
 # ---------- 5. Color literals + sizes ----------
 
 NEW_FILES = ["core/calc-core.css", "core/calc-core.js", "core/chart-kit.js", "engines/gpa-engine.js", "gpa/gpa-app.js",
-             "gpa/gpa-app.css", "gpa/college-gpa.js", "gpa/uni-gpa.js", "profiles/college.js", "profiles/from-gpcm.js"]
+             "gpa/gpa-app.css", "gpa/college-gpa.js", "gpa/uni-gpa.js", "gpa/home-gpa.js", "profiles/college.js", "profiles/from-gpcm.js",
+             "profiles/high-school.js", "profiles/hs-courses.js"]
 NAMED = r"\b(white|black|red|green|blue|gray|grey|silver|navy|purple|orange|yellow|pink|teal)\b"
 
 
@@ -942,6 +943,136 @@ def a2hs(s, shots):
     p.close(); c.close()
 
 
+# ---------- 7. Homepage: School level switch (College | High School), levels, weighted GPA ----------
+
+HS_PTS = {"A+": 4, "A": 4, "A-": 3.7, "B+": 3.3, "B": 3, "B-": 2.7, "C+": 2.3, "C": 2, "C-": 1.7, "D+": 1.3, "D": 1, "D-": 0.7, "F": 0}
+HS_BOOST = {"reg": 0, "hon": 0.5, "ap": 1, "ib": 1, "de": 1}
+HS_DRAFT = {"calculatorMode": "highschool", "gpaScale": 4, "isWeighted": True, "useEqualCredits": True, "showCredits": False,
+            "semesters": [{"id": 1, "name": "Fall 2025", "courses": [
+                {"id": 1, "name": "AP Biology", "grade": "A-", "credits": 1, "courseType": "AP"},
+                {"id": 2, "name": "English 10", "grade": "B+", "credits": 1, "courseType": "Regular"},
+                {"id": 3, "name": "Chemistry", "grade": "A", "credits": 1, "courseType": "Honors", "typeManuallySet": True}]}],
+            "currentSemesterId": 1}
+COL_DRAFT = {"calculatorMode": "college", "semesters": [{"id": 1, "name": "Fall 2025", "courses": [
+    {"id": 1, "name": "BIO 110", "grade": "B", "credits": 4}, {"id": 2, "name": "ENG 101", "grade": "A", "credits": 3}]}]}
+
+
+def hs_expect(rows):
+    c = sum(r[2] for r in rows)
+    u = sum(HS_PTS[r[0]] * r[2] for r in rows)
+    w = sum((HS_PTS[r[0]] + (HS_BOOST[r[1]] if HS_PTS[r[0]] > 0 else 0)) * r[2] for r in rows)
+    return fmt(u / c), fmt(w / c), any(HS_BOOST[r[1]] and HS_PTS[r[0]] > 0 for r in rows)
+
+
+def home_pane(p):
+    return p.locator(".gpa-home-pane:not([hidden])")
+
+
+def home_reset(p, mode=None, draft=None):
+    """Clear storage (twice: leaving the page flushes the pending autosave), then seed it and reload."""
+    for _ in range(2):
+        p.evaluate("localStorage.clear()")
+        p.reload()
+        p.wait_for_selector(".gpa-home-switch")
+    p.evaluate("""([m, d]) => { localStorage.clear(); if (m) localStorage.setItem('gpac:home:mode', m); if (d) localStorage.setItem('gpa_calc_draft_v1', JSON.stringify(d)); }""", [mode, draft])
+    p.goto(p.url)
+    p.wait_for_selector(".gpa-home-switch")
+    return home_pane(p)
+
+
+def home(s, shots):
+    c = ctx_for(s)
+    p = open_page(s, c, "gpa-calculator")
+    fresh(p)
+    R.check("home: opens on College", p.locator(".calc-seg-btn[aria-checked='true']").inner_text(), "College")
+    R.check("home: one visible screen", p.locator(".gpa-home-pane:not([hidden]) .calc-card").count(), 1)
+    R.check("home: College has no Level column", home_pane(p).locator(".gpa-f-level").count(), 0)
+    p.locator(".calc-seg-btn", has_text="High School").click()
+    pane = home_pane(p)
+    R.check("home: High School has a Level column", pane.locator(".calc-row-head").inner_text().split("\n")[-1].strip() if pane.locator(".calc-row-head").count() else None, "Level")
+    R.check("home: level remembered", p.evaluate("localStorage.getItem('gpac:home:mode')"), "hs")
+    p.reload(); p.wait_for_selector(".gpa-home-switch")
+    R.check("home: reload opens High School", p.locator(".calc-seg-btn[aria-checked='true']").inner_text(), "High School")
+
+    # Math: weighted and unweighted against an independent calculation
+    rng = random.Random(7)
+    grades = list(HS_PTS)
+    for case in range(12):
+        pane = home_reset(p, "hs")
+        rows = [(rng.choice(grades), rng.choice(list(HS_BOOST)), rng.choice([1, 1, 1, 0.5])) for _ in range(rng.randint(1, 6))]
+        for i, (g, lv, cr) in enumerate(rows):
+            row = pane.locator(".gpa-row").nth(i)
+            row.locator(".gpa-f-level select").select_option(lv)
+            row.locator(".gpa-f-cr input").fill(str(cr))
+            row.locator(".gpa-f-grade select").select_option(g)
+        u, w, boosted = hs_expect(rows)
+        got = (pane.locator(".calc-kicker").inner_text(), pane.locator(".calc-score").inner_text(), pane.locator(".calc-stat").first.inner_text().split("\n"))
+        want = ("Weighted GPA", w, ["Unweighted GPA", u]) if boosted else ("GPA", u, ["Weighted GPA", w])
+        R.check(f"home hs math case {case}", got, want)
+
+    # Auto level from the course name, never over a level picked by hand
+    pane = home_reset(p, "hs")
+    row = pane.locator(".gpa-row").first
+    row.locator(".gpa-f-name input").fill("AP Biology")
+    R.check("home: AP course name sets AP", row.locator(".gpa-f-level select").input_value(), "ap")
+    row.locator(".gpa-f-name input").fill("Honors Chemistry")
+    R.check("home: Honors course name sets Honors", row.locator(".gpa-f-level select").input_value(), "hon")
+    row.locator(".gpa-f-level select").select_option("ib")
+    row.locator(".gpa-f-name input").fill("AP Chemistry")
+    R.check("home: a level picked by hand stays", row.locator(".gpa-f-level select").input_value(), "ib")
+    row.locator(".gpa-f-grade select").select_option("A")
+    p.wait_for_timeout(700)
+    p.reload(); p.wait_for_selector(".gpa-home-switch")
+    R.check("home: hand-picked level kept after reload", home_pane(p).locator(".gpa-row").first.locator(".gpa-f-level select").input_value(), "ib")
+
+    # Suggestions with nicknames
+    pane = home_pane(p)
+    row = pane.locator(".gpa-row").nth(1)
+    inp = row.locator(".gpa-f-name input")
+    inp.click()
+    inp.press_sequentially("apush")
+    R.check("home: 'apush' suggests AP United States History", pane.locator(".calc-suggest:not([hidden]) li").first.inner_text().split("\n")[0] if pane.locator(".calc-suggest:not([hidden]) li").count() else None, "AP United States History")
+    inp.press("ArrowDown"); inp.press("Enter")
+    R.check("home: picking a suggestion fills the name", inp.input_value(), "AP United States History")
+    R.check("home: picked course sets its level", row.locator(".gpa-f-level select").input_value(), "ap")
+    R.check("home: list closes after a pick", pane.locator(".calc-suggest:not([hidden])").count(), 0)
+    R.check("home: Enter on a pick stays on the row", p.evaluate("document.activeElement.value"), "AP United States History")
+
+    # Old homepage saves: a High School draft opens in High School with its levels; the old keys are untouched
+    pane = home_reset(p, None, HS_DRAFT)
+    R.check("home legacy: High School draft opens High School", p.locator(".calc-seg-btn[aria-checked='true']").inner_text(), "High School")
+    R.check("home legacy: levels restored", [pane.locator(".gpa-row").nth(i).locator(".gpa-f-level select").input_value() for i in range(3)], ["ap", "reg", "hon"])
+    u, w, _ = hs_expect([("A-", "ap", 1), ("B+", "reg", 1), ("A", "hon", 1)])
+    R.check("home legacy: weighted GPA", (pane.locator(".calc-score").inner_text(), pane.locator(".calc-stat").first.inner_text().split("\n")[1]), (w, u))
+    R.check("home legacy: old draft unchanged", json.loads(p.evaluate("localStorage.getItem('gpa_calc_draft_v1')")), HS_DRAFT)
+    pane = home_reset(p, None, COL_DRAFT)
+    R.check("home legacy: College draft opens College", p.locator(".calc-seg-btn[aria-checked='true']").inner_text(), "College")
+    R.check("home legacy: College GPA", pane.locator(".calc-score").inner_text(), fmt((3 * 4 + 4 * 3) / 7))
+    p.close(); c.close()
+
+    # Phone: the level button opens a picker; the collapsed row shows the boost
+    c = ctx_for(s, 390, 844, mobile=True)
+    p = open_page(s, c, "gpa-calculator")
+    pane = home_reset(p, "hs")
+    row = pane.locator(".gpa-row").first
+    R.check("home phone: grade, credits and level share line 2", p.evaluate("""(() => { const r = document.querySelector('.gpa-home-pane:not([hidden]) .gpa-row');
+        const y = (s) => Math.round(r.querySelector(s).getBoundingClientRect().top); return [y('.gpa-grade-btn') === y('.gpa-cr-btn'), y('.gpa-cr-btn') === y('.gpa-level-btn')]; })()"""), [True, True])
+    row.locator(".gpa-f-name input").fill("Chemistry")
+    row.locator(".gpa-level-btn").click()
+    R.check("home phone: level picker", p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt").all_inner_texts(), ["Regular", "Honors +0.5", "AP +1.0", "IB +1.0", "Dual Enrollment +1.0"])
+    p.locator(".calc-sheet-wrap:not([hidden]) .calc-sheet-opt", has_text="Honors").click()
+    R.check("home phone: level button shows the boost", row.locator(".gpa-level-btn").inner_text(), "Hon +0.5")
+    pick_grade(p, row, "B")
+    pane.locator(".gpa-row").nth(1).locator(".gpa-f-name input").focus()
+    p.wait_for_timeout(100)
+    R.check("home phone: collapsed row shows level", row.locator(".gpa-row-sum-m").inner_text(), "B · Hon +0.5 · 1 cr")
+    R.check("home phone: weighted headline", (pane.locator(".calc-kicker").inner_text(), pane.locator(".calc-score").inner_text()), ("Weighted GPA", "3.50"))
+    if shots:
+        p.locator(".gpa-home-switch").scroll_into_view_if_needed()
+        p.screenshot(path=str(SHOTS / "home-hs-390x844.png"))
+    p.close(); c.close()
+
+
 if __name__ == "__main__":
     subprocess.run([sys.executable, str(REPO / "scripts/calc/build_preview.py"), str(OUT), "--modules"], check=True, capture_output=True)
     literals()
@@ -952,5 +1083,6 @@ if __name__ == "__main__":
         layout(s, "--shots" in args)
         recolor(s)
         a2hs(s, "--shots" in args)
+        home(s, "--shots" in args)
         R.check("zero console errors", s.errors, [])
     sys.exit(0 if R.report() else 1)

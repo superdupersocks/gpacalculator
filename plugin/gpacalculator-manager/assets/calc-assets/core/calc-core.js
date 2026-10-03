@@ -620,6 +620,75 @@ export function createSheet(host) {
   };
 }
 
+/**
+ * Name suggestions under a text input (combobox + listbox). source(text) returns up to ~6 items
+ * { label, hint }; onPick(item) runs when one is chosen (tap, or Arrow keys + Enter). The list closes on
+ * Escape, blur and after a pick. Enter with no highlighted item is left to the page (next row).
+ */
+export function createSuggest(input, { source, onPick }) {
+  const id = `${input.id || `calc-in-${Math.random().toString(36).slice(2, 8)}`}-sug`;
+  const list = h('ul', { class: 'calc-suggest', id, role: 'listbox', hidden: true });
+  input.after(list);
+  input.setAttribute('role', 'combobox');
+  input.setAttribute('aria-autocomplete', 'list');
+  input.setAttribute('aria-expanded', 'false');
+  input.setAttribute('aria-controls', id);
+  let items = [];
+  let active = -1;
+  const close = () => {
+    list.hidden = true;
+    items = [];
+    active = -1;
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+  };
+  const mark = () => {
+    [...list.children].forEach((li, i) => li.setAttribute('aria-selected', String(i === active)));
+    if (active >= 0) input.setAttribute('aria-activedescendant', `${id}-${active}`);
+    else input.removeAttribute('aria-activedescendant');
+  };
+  const pick = (i) => {
+    const it = items[i];
+    close();
+    if (it) onPick(it);
+  };
+  const open = () => {
+    items = input.value.trim() ? source(input.value) || [] : [];
+    list.textContent = '';
+    active = -1;
+    if (!items.length) { close(); return; }
+    items.forEach((it, i) => {
+      const li = h('li', { id: `${id}-${i}`, role: 'option', 'aria-selected': 'false' }, h('span', null, it.label), it.hint ? h('span', { class: 'calc-suggest-hint' }, it.hint) : null);
+      // Keep focus in the input: a tap on an option must not blur it first.
+      li.addEventListener('pointerdown', (e) => e.preventDefault());
+      li.addEventListener('mousedown', (e) => e.preventDefault());
+      li.addEventListener('click', () => pick(i));
+      list.append(li);
+    });
+    list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  };
+  input.addEventListener('input', open);
+  input.addEventListener('blur', () => setTimeout(close, 0));
+  input.addEventListener('keydown', (e) => {
+    if (list.hidden) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const n = items.length;
+      active = e.key === 'ArrowDown' ? (active + 1) % n : (active - 1 + n) % n;
+      mark();
+    } else if (e.key === 'Enter' && active >= 0) {
+      e.preventDefault();
+      e.stopPropagation();
+      pick(active);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+    }
+  });
+  return { close, el: list };
+}
+
 /** Menu with a trigger button: closes on Escape and outside click. */
 export function createMenu(trigger, menu, onOpen) {
   const close = () => {

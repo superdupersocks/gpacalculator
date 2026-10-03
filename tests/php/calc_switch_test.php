@@ -54,7 +54,7 @@ function college_page( $get = array(), $on = array() ) {
 }
 
 check( 'switch hooked', in_array( array( 'GPACalc_Switch', 'enqueue' ), $GLOBALS['hooks']['wp_enqueue_scripts'], true ), true );
-check( 'switches', array_keys( GPACalc_Switch::all() ), array( 'college', 'uni-ucla' ) );
+check( 'switches', array_keys( GPACalc_Switch::all() ), array( 'college', 'home', 'uni-ucla' ) );
 
 // College: off by default (uploading the plugin changes nothing).
 list( $js, $css ) = college_page();
@@ -115,6 +115,28 @@ $_GET = array(); $GLOBALS['options'][ GPACalc_Switch::OPTION ] = array( 'college
 $GLOBALS['page'] = array( 'id' => 'high-school-gpa-calculator', 'content' => '' );
 reset_queue(); GPACalc_Switch::enqueue();
 check( 'other page untouched', wp_scripts()->queue, array( 'main-js-college-gpa-calculator' ) );
+
+// Homepage: the front page ([gpa-calculator]), off by default; only the front page is touched.
+function home_page( $get = array(), $on = array(), $front = true ) {
+	$_GET = $get; $GLOBALS['options'][ GPACalc_Switch::OPTION ] = $on;
+	$GLOBALS['page'] = array( 'id' => 'home', 'front' => $front, 'content' => '<div id="root"></div>' );
+	$GLOBALS['wps'] = new Deps(); $GLOBALS['wpst'] = new Deps();
+	wp_register_script( 'main-js-gpa-calculator', 'old.js', array(), 1 ); wp_enqueue_script( 'main-js-gpa-calculator' );
+	wp_register_style( 'main-css-gpa-calculator', 'old.css', array(), 1 ); wp_enqueue_style( 'main-css-gpa-calculator' );
+	GPACalc_Switch::enqueue();
+	return array( wp_scripts()->queue, wp_styles()->queue );
+}
+list( $js ) = home_page();
+check( 'home off: old homepage calculator', $js, array( 'main-js-gpa-calculator' ) );
+list( $js, $css ) = home_page( array(), array( 'home' ) );
+check( 'home on: new module only', $js, array( 'gpacalc-v2-home' ) );
+check( 'home on: old style gone', in_array( 'main-css-gpa-calculator', $css, true ), false );
+list( $js ) = home_page( array( 'calc' => 'old' ), array( 'home' ) );
+check( 'home ?calc=old: old version', $js, array( 'main-js-gpa-calculator' ) );
+list( $js ) = home_page( array(), array( 'home' ), false );
+check( 'home on: other pages untouched', $js, array( 'main-js-gpa-calculator' ) );
+list( $js ) = home_page( array(), array( 'college' ) );
+check( 'college on: homepage untouched', $js, array( 'main-js-gpa-calculator' ) );
 
 // Module tag.
 check( 'module tag', GPACalc_Switch::module_tag( "<script type='text/javascript' src='x.js' id='gpacalc-v2-college-js'></script>", 'gpacalc-v2-college' ), "<script type=\"module\" src='x.js' id='gpacalc-v2-college-js'></script>" );

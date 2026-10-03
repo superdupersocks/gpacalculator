@@ -20,7 +20,8 @@ admissions-indexing.yml) and the Phase 4 tab of the admissions doc. What it foun
   net price, and there's no WebPage, WebSite or Organization node. The hub has two CollectionPage nodes.
 - The 53 pages under review (checkpoint H) are indexable and in the sitemap with no figures.
 
-The steps are numbered as in the doc: 1 runs right after the go, 2 waits for the design thread's ad-rail fix.
+The steps are numbered as in the doc: 1 runs right after the go, 2 after the design thread's ad-rail fixes are live,
+3 is Digant's, and 5 (each college's own website) has its own go.
 
 ## 1. Modified dates and the sitemap cache
 
@@ -54,9 +55,9 @@ What changes:
   title ends "– Page N", and "Show more colleges" is a link to the next page that the script still loads in place;
   pages after 103 are 404s. A search or filter from page N goes back to /admissions/?search=....
 - College pages: one page node (WebPage, and FAQPage when the page has questions, as on the calculator pages) about
-  the college, with its breadcrumb and dates; the CollegeOrUniversity without our page as its url, with the former
-  name as alternateName (Calvin College); the site's WebSite and Organization (logo) nodes; no
-  EducationalOccupationalProgram.
+  the college, with its breadcrumb and dates; the CollegeOrUniversity without our page as its url (its url is the
+  college's own website once section 5 has run), with the former name as alternateName (Calvin College); the site's
+  WebSite and Organization (logo) nodes; no EducationalOccupationalProgram.
 - The hub: Rank Math's CollectionPage alone, with the description and the page's ItemList (numberOfItems 3,085).
 - Pages under review: noindex, follow, and left out of the colleges sitemap until their figures are verified.
 
@@ -65,7 +66,8 @@ desktop and phone):
 - /admissions/: as before; "Show more colleges" adds 30 cards and the address stays /admissions/.
 - /admissions/page/2/: Allan Hancock College first, title "... – Page 2", canonical itself; /admissions/page/103/: 25
   colleges, no "Show more"; /admissions/page/104/: 404.
-- /admissions/harvard/: JSON-LD has CollegeOrUniversity (no url), WebPage + FAQPage with six questions, Organization,
+- /admissions/harvard/: JSON-LD has CollegeOrUniversity (its url http://www.harvard.edu/ once section 5 has run, never
+  our page), WebPage + FAQPage with six questions, Organization,
   WebSite, BreadcrumbList, and nothing else; /admissions/calvin/: alternateName "Calvin College".
 - /admissions/fairfax-university-of-america/: robots "follow, noindex".
 - The colleges sitemaps: 3,033 addresses (3,032 colleges and the hub), none under review. If the 53 are still listed,
@@ -84,3 +86,19 @@ Search Console checks against the September baseline (`search-console-findings-2
 and 8 weeks after the refresh, are scheduled for 19 October, 2, 16 and 30 November 2026 and report in the admissions
 thread: clicks, impressions, position and CTR for /admissions/ and the old /admission/ addresses together, and the
 pages that dropped.
+
+## 5. Each college's own website (its own go)
+
+`scripts/admissions/phase4_websites_live.sh` puts the college's own website, as IPEDS lists it (HD2024 WEBADDR;
+`data/admissions/audit/phase4_websites.csv` from `scripts/admissions/phase4_websites.py`), on each published college
+page with an IPEDS ID as `college_website`. The code from section 2 gives it as the CollegeOrUniversity's url
+(Harvard: http://www.harvard.edu/), so the node names the college's site and our page is the WebPage about it. Only
+that field changes; no page's text, title or modified date does. It can run before or after section 2.
+
+1. Database backup as in section 1, named `...-pre-websites.sql.gz`.
+2. `bash scripts/admissions/phase4_websites_live.sh plan`: about 3,031 pages to write (on the local copy: 3,085
+   published, 53 with no IPEDS ID, 1 whose IPEDS entry isn't a web address).
+3. `bash scripts/admissions/phase4_websites_live.sh apply` (note the log name it prints).
+4. Once section 2 is live: /admissions/harvard/'s CollegeOrUniversity has url http://www.harvard.edu/; Fairfax's has
+   none.
+5. Changelog row with the undo `bash scripts/admissions/phase4_websites_live.sh revert <log>`.

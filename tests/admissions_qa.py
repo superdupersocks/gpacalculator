@@ -30,6 +30,7 @@ import phase2_r_review  # noqa: E402
 import phase2_s_pages  # noqa: E402
 import phase3_gpa_bands  # noqa: E402
 import phase3_names  # noqa: E402
+import phase4_websites  # noqa: E402
 import review_sources  # noqa: E402
 
 FIX = ROOT / "tests" / "fixtures" / "admissions"
@@ -1154,6 +1155,21 @@ eq("GPA spread (the committed lists): every page's ranges fit its average and ad
              float(_cdsv[r["unitid"]]["gpa_avg"]))],
     sorted({r["slug"] for r in _bands} & {r["slug"] for r in _bpend})),
    (192, 75, 27, [], [], []))
+
+eq("Websites: IPEDS's address made absolute (http where IPEDS gives no scheme), fragments and stray dots dropped, "
+   "and entries that aren't one web address left out",
+   [phase4_websites.website(w)[0] for w in (
+       "www.harvard.edu/", "https://www.uab.edu/", "www.southuniversity.edu/austin#location=Austin, TX",
+       "charlesstuartschool.com./", "WWW.Example.EDU", "https://kad007@marietta.edu/",
+       "https://www.sfiec.edu/ and https://paulmitchell.edu/sanfrancisco", "https://imbeautyschool@gmail.com/",
+       "www.alamo.edu/sac", "")],
+   ["http://www.harvard.edu/", "https://www.uab.edu/", "http://www.southuniversity.edu/austin",
+    "http://charlesstuartschool.com/", "http://www.example.edu/", None, None, None, "http://www.alamo.edu/sac", None])
+_web = list(csv.DictReader(open(_audit / "phase4_websites.csv", encoding="utf-8")))
+eq("Websites (the committed list): one row per IPEDS ID, each an absolute http(s) address",
+   (len(_web), len({r["ipeds_unitid"] for r in _web}),
+    [r["ipeds_unitid"] for r in _web if not phase4_websites.website(r["college_website"])[0] == r["college_website"]]),
+   (6459, 6459, []))
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

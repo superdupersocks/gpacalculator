@@ -1063,6 +1063,22 @@ if ( ! function_exists( 'gpa_college_hub_per_page' ) ) {
     add_action( 'pre_get_posts', 'gpa_college_hub_main_query' );
 }
 
+if ( ! function_exists( 'gpa_college_website' ) ) {
+    // The college's own website as IPEDS lists it (college_website, set by scripts/admissions/phase4_websites_live.sh),
+    // as an absolute address, or '' when the page has none. The structured data gives it as the college's url.
+    function gpa_college_website( $post_id ) {
+        $url = trim( (string) get_post_meta( $post_id, 'college_website', true ) );
+        if ( '' === $url || false !== strpos( $url, '@' ) ) {
+            return '';
+        }
+        if ( ! preg_match( '#^https?://#i', $url ) ) {
+            $url = 'http://' . $url;
+        }
+        $host = wp_parse_url( $url, PHP_URL_HOST );
+        return ( $host && false !== strpos( trim( $host, '.' ), '.' ) ) ? esc_url_raw( $url ) : '';
+    }
+}
+
 if ( ! function_exists( 'gpa_college_under_review' ) ) {
     // A page that says "Figures under review": no verified federal figures yet (Phase 2, checkpoint H).
     function gpa_college_under_review( $post_id ) {

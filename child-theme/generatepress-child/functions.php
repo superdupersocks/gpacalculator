@@ -3694,61 +3694,6 @@ function gpa_faq_accordion() {
  * Shown on pages with 4 or more numbered sections; pages that already have a Rank Math TOC block keep theirs.
  * Built in the browser from the numbered headings, so no page content changes. Styles: layout.css section 11.
  */
-/**
- * Server-rendered "On this page" for the /gpa-scale/<x-y>-gpa/ pages and the college template (Digant 2026-10-03 16:16):
- * a <details>/<summary> toggle, collapsed by default on every screen size, with the links in the HTML (no JS needed).
- * It carries the Rank Math TOC block class, so gpa_toc_builder() below leaves these pages alone and layout.css
- * section 11 styles it. $items: [ [ id, text ], ... ]; like the JS builder, it is only shown for 4+ sections.
- */
-function gpa_toc_details( $items ) {
-	if ( count( $items ) < 4 ) {
-		return '';
-	}
-	$links = '';
-	foreach ( $items as $item ) {
-		$links .= '<li><a href="#' . esc_attr( $item[0] ) . '">' . esc_html( $item[1] ) . '</a></li>';
-	}
-	return '<details class="wp-block-rank-math-toc-block gpa-toc gpa-toc--details"><summary>On this page</summary>'
-		. '<nav aria-label="On this page"><ul>' . $links . '</ul></nav></details>';
-}
-
-// GPA pages: list the numbered H2s (not .gpa-no-number), give any without an id one, and put the toggle before the first.
-// Off until Digant's go (2026-10-03 18:43: v6 ships without the toggle): add_filter( 'the_content', 'gpa_scale_page_toc', 30 );
-function gpa_scale_page_toc( $content ) {
-	if ( is_admin() || ! is_singular( 'page' ) || ! in_the_loop() || ! is_main_query() ) {
-		return $content;
-	}
-	$post   = get_post();
-	$parent = $post && $post->post_parent ? get_post( $post->post_parent ) : null;
-	if ( ! $parent || 'gpa-scale' !== $parent->post_name || ! preg_match( '/^[0-9]-[0-9]-gpa$/', $post->post_name ) ) {
-		return $content;
-	}
-	if ( false !== strpos( $content, 'gpa-toc--details' ) ) {
-		return $content;
-	}
-	$items = array();
-	$used  = array();
-	$out   = preg_replace_callback( '#<h2\b([^>]*)>(.*?)</h2>#s', function ( $h ) use ( &$items, &$used ) {
-		$text = trim( html_entity_decode( wp_strip_all_tags( $h[2] ), ENT_QUOTES, 'UTF-8' ) );
-		if ( '' === $text || preg_match( '/class="[^"]*\bgpa-no-number\b/', $h[1] ) ) {
-			return $h[0];
-		}
-		$attrs = $h[1];
-		if ( preg_match( '/\bid="([^"]+)"/', $attrs, $idm ) ) {
-			$id = $idm[1];
-		} else {
-			$base = sanitize_title( $text );
-			$id   = $base;
-			for ( $n = 2; in_array( $id, $used, true ); $n++ ) { $id = $base . '-' . $n; }
-			$attrs .= ' id="' . esc_attr( $id ) . '"';
-		}
-		$used[]  = $id;
-		$items[] = array( $id, $text );
-		return ( 1 === count( $items ) ? '<!--gpa-toc-here-->' : '' ) . '<h2' . $attrs . '>' . $h[2] . '</h2>';
-	}, $content );
-	return str_replace( '<!--gpa-toc-here-->', gpa_toc_details( $items ), $out );
-}
-
 add_action( 'wp_footer', 'gpa_toc_builder', 31 );
 function gpa_toc_builder() {
 	if ( is_admin() || ! is_singular() || is_front_page() ) {

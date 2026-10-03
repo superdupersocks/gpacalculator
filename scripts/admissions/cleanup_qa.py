@@ -7,6 +7,11 @@ answers today, the redirect chains and 404s around it, its Search Console clicks
     python scripts/admissions/cleanup_qa.py report    read the live check's results and write removed_urls.csv,
                                                       other_addresses.csv, fixes.csv, leftover_pages.csv and
                                                       internal_link_fixes.csv (report.md sums them up)
+    python scripts/admissions/cleanup_qa.py after     once the fixes are live: write after/urls.tsv (every address
+                                                      above plus the renamed colleges' old and new ones, each with the
+                                                      answer it should give now), after/pages.txt and
+                                                      after/sitemap_colleges.csv for the same live check
+    python scripts/admissions/cleanup_qa.py verify    read that check's results and write after/verify.csv
 
 `urls` lists each address to check on the live site: both forms (/admissions/<slug>/ and the old /admission/<slug>/)
 of the 516 college pages published in the pre-cleanup export (data/colleges/, 2026-10-01) that the colleges sitemap
@@ -27,7 +32,7 @@ import re
 import sys
 import unicodedata
 from collections import Counter, defaultdict
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SITE = "https://gpacalculator.net"
@@ -620,6 +625,153 @@ def cmd_report():
           Counter(r["answer"].split(" > ")[0] for r in page_rows).most_common())
 
 
+# After the fixes ---------------------------------------------------------------------------------------------------
+AFTER = os.path.join(OUT, "after")
+AFTER_COLS = ["url", "slug", "form", "source", "expected", "before"]
+VERIFY_COLS = ["url", "source", "expected", "before", "after", "result"]
+
+
+def renamed():
+    """old slug -> new slug of the renames the go ran (group renamed)."""
+    return {r["slug"]: r["proposed_slug"] for r in read_csv(os.path.join(OUT, "renames.csv")) if r["group"] == "renamed"}
+
+
+def moved(url, moves):
+    """url with a renamed college's old /admissions/ address replaced by its new one."""
+    slug = slug_of(url)
+    if slug in moves and norm(url) == norm(address("admissions", slug)):
+        return address("admissions", moves[slug])
+    return url
+
+
+def moved_chain(chain, moves):
+    """A chain ("301 Rank Math > /admissions/x/ | 200") with renamed colleges' old addresses replaced by new ones."""
+    return re.sub(r"/admissions/([^/?#\s|]+)/", lambda m: f"/admissions/{moves.get(m.group(1), m.group(1))}/", chain)
+
+
+def chain_key(chain):
+    """A chain without who sent each redirect: a rule that replaces WordPress's guess gives the same answer."""
+    return re.sub(r"(\d{3}) [^>|]*>", r"\1 >", chain or "").strip()
+
+
+def exact(url):
+    """An address compared with its query: /admissions/?search=St.%20Thomas and ?search=St. Thomas are the same."""
+    return unquote(url or "").replace("+", " ").rstrip("/").lower().replace("/?", "?")
+
+
+def answers(expected, res):
+    """Whether a live check result gives the expected answer: "410", "404", "200", "301 <address>" (one redirect
+    straight to it, which answers 200), "same <chain>" (the same hops as before, whoever sends them), "no WordPress
+    guess" (any answer but WordPress's redirect to a page with the slug) or "-" (nothing expected)."""
+    if not res or res.get("error"):
+        return False
+    first, chain = res["status"], res["chain"]
+    if expected in ("410", "404", "200"):
+        return first == expected
+    if expected.startswith("301 "):
+        return (first in ("301", "308") and int(res["hops"] or 0) == 1 and res["final_status"] == "200"
+                and exact(res["final_url"]) == exact(expected[4:]))
+    if expected.startswith("same "):
+        return chain_key(chain) == chain_key(expected[5:])
+    if expected == "no WordPress guess":
+        return not chain.startswith("301 WordPress")
+    return expected == "-"
+
+
+def cmd_after():
+    urls = {r["url"]: r for r in read_tsv(os.path.join(OUT, "urls.tsv"))}
+    before = {r["url"]: r for r in read_tsv(os.path.join(OUT, "live_status.tsv"))}
+    fixes = {r["address"]: r for r in read_csv(os.path.join(OUT, "fixes.csv"))}
+    moves, live = renamed(), live_slugs()
+    rows = {}
+
+    def add(url, source, expected=None):
+        if url in rows:
+            return
+        res = before.get(url)
+        chain = (res or {}).get("chain", "") if not (res or {}).get("error") else ""
+        if expected is None:
+            fx = fixes.get(path_of(url))
+            if fx:
+                expected = "410" if fx["code"] == "410" else f"301 {moved(fx['target'], moves)}"
+            elif not chain:
+                expected = "-"
+            elif chain.startswith("301 WordPress") and slug_of(res["location"]) not in live:
+                # WordPress sent it to a leftover page with the slug; unpublished, the rule or a 404 answers
+                expected = "no WordPress guess"
+            else:
+                expected = f"same {moved_chain(chain, moves)}"
+        rows[url] = {"url": url, "slug": slug_of(url), "form": "admissions" if "/admissions/" in url else "admission",
+                     "source": source, "expected": expected, "before": chain}
+
+    # The renames first: a new address that an old rule sent to the college's old one now serves the page itself
+    for old, new in sorted(moves.items()):
+        add(address("admissions", old), "renamed: old address", f"301 {address('admissions', new)}")
+        add(address("admission", old), "renamed: old /admission/ form", f"301 {address('admissions', new)}")
+        add(address("admissions", new), "renamed: new address", "200")
+    for url, u in urls.items():
+        add(url, u["source"].split(";")[0].split(" (")[0])
+    for r in read_csv(os.path.join(OUT, "leftover_pages.csv")):
+        slug = slug_of(r["url"])
+        here = slug in live and slug not in moves
+        add(address("admissions", slug), "leftover page", "200" if here else None)
+        add(address("admission", slug), "leftover page, old form", f"301 {address('admissions', slug)}" if here else None)
+    add(f"{SITE}/admissions/", "hub", "200")
+    add(f"{SITE}/admissions/harvard/", "live college", "200")
+
+    os.makedirs(AFTER, exist_ok=True)
+    with open(os.path.join(AFTER, "urls.tsv"), "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, AFTER_COLS, delimiter="\t")
+        w.writeheader()
+        w.writerows(rows[u] for u in sorted(rows))
+    leftover = {norm(r["url"]) for r in read_csv(os.path.join(OUT, "leftover_pages.csv"))}
+    with open(os.path.join(OUT, "pages.txt"), encoding="utf-8") as f:
+        pages = [line.strip() for line in f if line.strip() and not line.startswith("#")]
+    pages = [moved(p, moves) for p in pages if norm(p) not in leftover]
+    with open(os.path.join(AFTER, "pages.txt"), "w", encoding="utf-8") as f:
+        f.write("# Pages whose links into /admission(s)/ the check after the cleanup reads (cleanup_qa.py after)\n")
+        f.write("\n".join(dict.fromkeys(pages)) + "\n")
+    sitemap = read_csv(LIVE_CSV)
+    with open(os.path.join(AFTER, "sitemap_colleges.csv"), "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, list(sitemap[0].keys()))
+        w.writeheader()
+        w.writerows({**r, "url": moved(r["url"], moves)} for r in sitemap)
+    print(f"{len(rows)} addresses to check after the cleanup: "
+          f"{Counter(r['source'] for r in rows.values()).most_common()}; "
+          f"expected {Counter(r['expected'].split(' ')[0] for r in rows.values()).most_common()}; "
+          f"{len(set(pages))} pages to read for links")
+
+
+def cmd_verify():
+    rows = read_tsv(os.path.join(AFTER, "urls.tsv"))
+    status = {r["url"]: r for r in read_tsv(os.path.join(AFTER, "live_status.tsv"))}
+    out = []
+    for r in rows:
+        res = status.get(r["url"])
+        got = (res or {}).get("error") or (res or {}).get("chain") or "not checked"
+        out.append({"url": r["url"], "source": r["source"], "expected": r["expected"], "before": r["before"],
+                    "after": got, "result": "ok" if answers(r["expected"], res) else "differs"})
+    links = []
+    links_path = os.path.join(AFTER, "internal_links.tsv")
+    if os.path.exists(links_path):
+        for r in read_tsv(links_path):
+            if r.get("error") and not r.get("url"):
+                links.append(f"{r['page']}: {r['error']}")
+            elif r.get("url") and r.get("target") != "live" and not (r.get("status") == "200"):
+                links.append(f"{r['page']} links to {r['url']}: {r.get('chain') or r.get('error')}")
+    with open(os.path.join(AFTER, "verify.csv"), "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, VERIFY_COLS)
+        w.writeheader()
+        w.writerows(out)
+    print(f"{len(out)} addresses, {sum(1 for r in out if r['after'] != 'not checked')} checked")
+    print("by source:", sorted(Counter((r["source"], r["result"]) for r in out).items()))
+    for r in [r for r in out if r["result"] != "ok"][:60]:
+        print(f"  differs: {r['url'][len(SITE):]}  expected {r['expected'][:90]}  got {r['after'][:120]}")
+    print(f"links that don't reach a page directly: {len(links)}")
+    for line in links[:30]:
+        print("  " + line)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "urls":
@@ -628,5 +780,9 @@ if __name__ == "__main__":
         cmd_renames()
     elif cmd == "report":
         cmd_report()
+    elif cmd == "after":
+        cmd_after()
+    elif cmd == "verify":
+        cmd_verify()
     else:
         sys.exit(__doc__)

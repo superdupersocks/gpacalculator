@@ -23,6 +23,7 @@ import audit  # noqa: E402
 import build  # noqa: E402
 import cds  # noqa: E402
 import cds_pages  # noqa: E402
+import cleanup_qa  # noqa: E402
 import fetch  # noqa: E402
 import match  # noqa: E402
 import phase2_e_import  # noqa: E402
@@ -1170,6 +1171,38 @@ eq("Websites (the committed list): one row per IPEDS ID, each an absolute http(s
    (len(_web), len({r["ipeds_unitid"] for r in _web}),
     [r["ipeds_unitid"] for r in _web if not phase4_websites.website(r["college_website"])[0] == r["college_website"]]),
    (6459, 6459, []))
+
+
+def _res(first, chain, final_url="", final_status="", hops=0):
+    return {"status": first, "chain": chain, "final_url": final_url, "final_status": final_status, "hops": hops,
+            "error": ""}
+
+
+_moves = {"adams-state-college": "adams-state-university"}
+eq("Cleanup check after the fixes: one 301 straight to its target (a hub search matches with or without encoding), "
+   "410 as the first answer, the same hops whoever sends them, no WordPress guess, renamed addresses moved",
+   [cleanup_qa.answers("301 https://gpacalculator.net/admissions/?search=St.%20Thomas",
+                       _res("301", "301 Rank Math > /admissions/?search=St. Thomas | 200",
+                            "https://gpacalculator.net/admissions/?search=St. Thomas", "200", 1)),
+    cleanup_qa.answers("301 https://gpacalculator.net/admissions/long-island-university/",
+                       _res("301", "301 Rank Math > /admissions/liu-post/ | 301 Rank Math > /admissions/long-island-university/"
+                            " | 200", "https://gpacalculator.net/admissions/long-island-university/", "200", 2)),
+    cleanup_qa.answers("410", _res("410", "410")),
+    cleanup_qa.answers("410", _res("301", "301 WordPress > /admissions/bethany-university/ | 410",
+                                   "https://gpacalculator.net/admissions/bethany-university/", "410", 1)),
+    cleanup_qa.answers("same 301 WordPress > /admissions/harvard/ | 200",
+                       _res("301", "301 Rank Math > /admissions/harvard/ | 200",
+                            "https://gpacalculator.net/admissions/harvard/", "200", 1)),
+    cleanup_qa.answers("no WordPress guess", _res("410", "410")),
+    cleanup_qa.answers("no WordPress guess", _res("301", "301 WordPress > /admissions/ellis-university/ | 404", "", "404", 1)),
+    cleanup_qa.answers("200", {"error": "timed out"}),
+    cleanup_qa.moved_chain("301 Rank Math > /admissions/adams-state-college/ | 200", _moves),
+    cleanup_qa.moved("https://gpacalculator.net/admissions/adams-state-college/", _moves),
+    cleanup_qa.moved("https://gpacalculator.net/admissions/?search=Adams", _moves)],
+   [True, False, True, False, True, True, False, False,
+    "301 Rank Math > /admissions/adams-state-university/ | 200",
+    "https://gpacalculator.net/admissions/adams-state-university/",
+    "https://gpacalculator.net/admissions/?search=Adams"])
 
 print("\nALL PASSED" if not fails else f"\nFAILED: {len(fails)}")
 sys.exit(1 if fails else 0)

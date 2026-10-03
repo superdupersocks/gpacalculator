@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)"
      https://claude.ai/code/artifact/1d396bba-2925-4cd3-95b4-7c5ce1bf894d
-     Synced 2026-10-03 from doc revision 29. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 32. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand.
      Check: everything below this comment is byte-identical to the export. -->
 # gpacalculator.net — Design System & CSS Overhaul Spec (for Claude Code)
@@ -272,26 +272,22 @@ Sections are numbered (01, 02, 03) with CSS counters, the TOC uses the same numb
 - The number is never part of the heading text in the HTML, so headings, snippets and "Jump to" links stay clean.
 - Remove the pill paragraphs (`p.rx-eyebrow`, \~9 per calculator page) from post content with a scripted search-and-replace after a DB export, then delete their CSS. Don't hide them with `display: none`.
 
-**In-page navigation: jump-link chips (all templates, replaces the boxed TOC)**
+**In-page navigation: "On this page" list (all templates)**
 
-- One row of chips under the hero facts or calculator, above the first content section: a "Jump to" label (14px `--gpa-text-muted`) followed by one chip per numbered H2.
-- Chip: 36px tall (44px tap area on mobile), radius 999px, 1px `--gpa-border`, white, label 14px 500 `--gpa-link`; hover border `--gpa-primary`. Short labels (2–3 words), set per section; no numbers in the chips.
-- Desktop: chips wrap onto two lines at most. Mobile: one row that scrolls sideways, no visible scrollbar, 20px fade on the right edge.
-- Always visible: never collapsed behind "On this page" and never built by JavaScript. Chips are server-rendered `<a href="#section-id">` links to descriptive section IDs (`#average-gpa`, not `#section-2`) so Google can show "Jump to" links.
-- Rank Math TOC block: keep it as the source (it already outputs server-side links), set its title tag to `div`/`p`, and restyle it as the chip row in `components.css`. College pages render the same markup from their template.
-- Exclude the FAQ, "Keep planning", Similar colleges and Sources headings (Rank Math "exclude headings" or an exclusion class), so chips match the numbered H2s.
-- Show the chip row on pages with 4 or more numbered sections; skip it on shorter pages.
+- One rule: **each link's text is the H2's text, word for word.** Google can take jump-link labels from either the H2 or the contents link, so they must agree; no shortened chip labels.
+- **All screen sizes: collapsed by default, one column.** A `<details>` row, 52px tall: summary "On this page · 8 sections" (16px 600 `--gpa-text-strong`, count in `--gpa-text-muted`) with a chevron in `--gpa-link`; 1px `--gpa-divider` above and below, no box, aligned to the text column. Opening shows the links in one column, 16px `--gpa-link`, a section number before each in `--gpa-accent`, 44px tap rows on mobile.
+- The links are in the HTML while collapsed, so Google reads them exactly as if the list were open.
+- Placement: under the calculator (calculator pages) or the key-facts box (college and GPA scale pages), above the first content section.
+- Server-rendered `<a href="#section-id">` links, never built by JavaScript. Rank Math TOC block stays the source on content pages (title tag `div`/`p`); generated templates output the same markup.
+- Exclude FAQ, "Keep planning", Similar colleges and Sources headings so the list matches the numbered H2s. Show it on pages with 4+ numbered sections.
 - Section headings get `scroll-margin-top: 80px` so the sticky header never covers them.
 
-**Chip labels and jump-link SEO (rule for every page)**
+**Headings and IDs (rule for every page)**
 
-- Three layers, three jobs: **H2 = the search query**, **ID = a stable generic slug**, **chip = what the student wants, in 2–4 words that keep the key term**.
-- H2s: for data sections on entity pages, lead with the subject's short name plus the searched term ("Harvard SAT and ACT scores", "Does Harvard accept AP credit?", "Is a 3.7 GPA good?"). The H1 keeps the full name.
-- IDs: descriptive slugs, identical across pages of the same template (`#average-gpa`, `#sat-act-scores`, `#ap-credit`), never numbers and never the entity name. Never change an ID on a live page; if a rename is needed, keep the old ID as a second hidden anchor (`<span id="credit"></span>`) so existing links and Google jump links still land.
-- Chips: 2–4 words that keep the section's key term ("GPA formula", not "Formula"; "How to calculate GPA", not "How to calculate"), because Google can use chip text as its jump-link labels; never vague ("Overview", "More"). Drop a long subject name the page is already about (no "Harvard" in chips on Harvard's page); short subjects like a GPA number may stay ("Is 3.7 good?"). Skip the chip for the section directly below the chip row.
-- Changing an H2's wording on a live page is allowed only to add the searched term or subject name; never remove keywords from it. On pages that already rank, change one page first and compare 28 days of Search Console clicks, CTR and positions before rolling the change to other pages.
-- Set chip text in the Rank Math TOC block's item text where it allows; otherwise a per-page label map. Generated templates (GPA scale, college pages) define H2, ID and chip per section in the template.
-- QA on every change: view-source shows each chip `href` matching an H2 ID, every previously live ID still resolves, and H2s match the template.
+- **H2 = the search query.** Entity pages lead with the short name plus the searched term ("Harvard SAT and ACT scores", "Is a 3.7 GPA good?"); calculator pages phrase vague headings as the question or term people search ("What is a good college GPA?"). The H1 keeps the full name.
+- **ID = a stable descriptive slug**, the same across pages of one template (`#average-gpa`), never numbers or entity names. Never change an ID on a live page; lock it in the block's HTML anchor field before editing any heading text (Rank Math can regenerate it). If a rename is unavoidable, keep the old ID as a hidden second anchor.
+- On live pages an H2 may change only to add the searched term or subject name, never to remove keywords. On pages that already rank, change one page first and compare 28 days of Search Console clicks, CTR and positions before rolling out.
+- QA: view-source shows each contents link matching an H2 ID with identical text, and every previously live ID still resolves.
 
 **Breadcrumb (Rank Math breadcrumbs, with schema)**
 
@@ -337,7 +333,7 @@ Anything that collapses (FAQ answers, mobile footer columns, "How it's calculate
 - Build it as `<details>`/`<summary>`, or a button controlling content with `hidden="until-found"` that opens on the `beforematch` event. Never `display:none` content that's injected or fetched on open.
 - FAQ: first item open, the rest collapsed; FAQPage schema text matches the visible text exactly.
 - Find-in-page and text-fragment links (`#:~:text=`) open the matching item automatically; browsers without `until-found` simply show the closed item.
-- QA: "view source" shows every answer and every chip link; Rich Results Test passes; tapping a chip or a fragment link lands on the right section below the sticky header.
+- QA: "view source" shows every answer and every contents link; Rich Results Test passes; tapping a contents link or a fragment link lands on the right section below the sticky header.
 
 **Sources block (end of page, above the footer)**
 

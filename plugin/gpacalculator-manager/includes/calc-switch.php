@@ -48,6 +48,8 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 			add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ), 1000 );
 			add_filter( 'script_loader_tag', array( __CLASS__, 'module_tag' ), 20, 2 );
 			add_action( 'admin_menu', array( __CLASS__, 'menu' ), 20 );
+			add_action( 'wp_footer', array( __CLASS__, 'drop_late' ), 1 );
+			add_action( 'wp_print_footer_scripts', array( __CLASS__, 'drop_late' ), 1 );
 		}
 
 		/** Is the new version showing for this switch on this request? */
@@ -72,18 +74,38 @@ if ( ! class_exists( 'GPACalc_Switch' ) ) {
 			return '';
 		}
 
+		/** Page calculators switched to the new version on this request (their old handles stay out). */
+		private static $swapped = array();
+
+		private static function drop_old( array $s ) {
+			foreach ( (array) $s['old_scripts'] as $h ) {
+				wp_dequeue_script( $h );
+			}
+			foreach ( (array) $s['old_styles'] as $h ) {
+				wp_dequeue_style( $h );
+			}
+		}
+
+		/**
+		 * The old shortcode ([college-gpa-calculator], from the Calculators plugin or the engine) enqueues its
+		 * script and style while the content renders, after wp_enqueue_scripts. Drop them again just before
+		 * the footer prints them, or the old calculator takes over the page (live check, Oct 3 16:58).
+		 */
+		public static function drop_late() {
+			foreach ( self::$swapped as $s ) {
+				self::drop_old( $s );
+			}
+		}
+
 		/** Page calculators: swap the old handles for the new module where the switch is on. */
 		public static function enqueue() {
+			self::$swapped = array();
 			foreach ( self::all() as $id => $s ) {
 				if ( empty( $s['pages'] ) || ! is_page( $s['pages'] ) || ! self::is_new( $id ) ) {
 					continue;
 				}
-				foreach ( (array) $s['old_scripts'] as $h ) {
-					wp_dequeue_script( $h );
-				}
-				foreach ( (array) $s['old_styles'] as $h ) {
-					wp_dequeue_style( $h );
-				}
+				self::drop_old( $s );
+				self::$swapped[ $id ] = $s;
 				self::load( $id, $s );
 			}
 		}

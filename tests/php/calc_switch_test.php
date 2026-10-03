@@ -69,6 +69,27 @@ check( 'college on: entry file', substr( wp_scripts()->registered['gpacalc-v2-co
 check( 'college on: entry exists', is_readable( GPACalc_Calculator_Assets::path( 'gpa/college-gpa.js' ) ), true );
 check( 'college on: versioned by file time', ctype_digit( (string) wp_scripts()->registered['gpacalc-v2-college']->ver ), true );
 
+// The old shortcode enqueues its files while the content renders (after wp_enqueue_scripts): they are
+// dropped again before the footer prints them (live check, Oct 3 16:58).
+function old_shortcode_runs() {
+	wp_register_script( 'main-js-college-gpa-calculator', 'old.js', array(), 1 ); wp_enqueue_script( 'main-js-college-gpa-calculator' );
+	wp_register_style( 'main-css-college-gpa-calculator', 'old.css', array(), 1 ); wp_enqueue_style( 'main-css-college-gpa-calculator' );
+}
+check( 'late drop hooked before the footer prints', in_array( array( 'GPACalc_Switch', 'drop_late' ), $GLOBALS['hooks']['wp_print_footer_scripts'] ?? array(), true ) && in_array( array( 'GPACalc_Switch', 'drop_late' ), $GLOBALS['hooks']['wp_footer'] ?? array(), true ), true );
+college_page( array(), array( 'college' ) );
+old_shortcode_runs();
+GPACalc_Switch::drop_late();
+check( 'college on: old script enqueued late is dropped', wp_scripts()->queue, array( 'gpacalc-v2-college' ) );
+check( 'college on: old style enqueued late is dropped', in_array( 'main-css-college-gpa-calculator', wp_styles()->queue, true ), false );
+college_page();
+old_shortcode_runs();
+GPACalc_Switch::drop_late();
+check( 'college off: late drop leaves the old calculator', wp_scripts()->queue, array( 'main-js-college-gpa-calculator' ) );
+college_page( array( 'calc' => 'old' ), array( 'college' ) );
+old_shortcode_runs();
+GPACalc_Switch::drop_late();
+check( 'college ?calc=old: late drop leaves the old calculator', wp_scripts()->queue, array( 'main-js-college-gpa-calculator' ) );
+
 // Fallback and preview.
 list( $js ) = college_page( array( 'calc' => 'old' ), array( 'college' ) );
 check( 'college ?calc=old: old version', $js, array( 'main-js-college-gpa-calculator' ) );

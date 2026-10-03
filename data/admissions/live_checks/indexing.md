@@ -1,10 +1,10 @@
-# Indexing check, 2026-10-03 02:35 UTC
+# Indexing check, 2026-10-03 03:19 UTC
 
 Read-only GETs by scripts/admissions/indexing_check.py; addresses from `data/admissions/live_checks/indexing_urls.txt`.
 
 ## robots.txt
 
-- status 200; content-type: text/plain; charset=utf-8, cache-control: max-age=2592000, cf-cache-status: MISS
+- status 200; content-type: text/plain; charset=utf-8, cache-control: max-age=2592000, cf-cache-status: HIT
 
 ```
 User-agent: *
@@ -19,7 +19,7 @@ Disallow: /feed/
 
 - /sitemap_index.xml: status 200, 6 sitemaps; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - post-sitemap.xml (index lastmod 2026-09-14T21:07:11+00:00): status 200, 28 addresses, 0 images, lastmod 2012-08-29 to 2026-09-14; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - page-sitemap.xml (index lastmod 2026-10-02T19:48:25+00:00): status 200, 352 addresses, 0 images, lastmod 2026-09-05 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - page-sitemap.xml (index lastmod 2026-10-03T02:40:46+00:00): status 200, 352 addresses, 0 images, lastmod 2026-09-05 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - colleges-sitemap1.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 945 addresses, 0 images, lastmod 2026-10-02 to 2026-10-03; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - colleges-sitemap2.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 944 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - colleges-sitemap3.xml (index lastmod 2026-10-03T02:26:35+00:00): status 200, 944 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
@@ -105,7 +105,7 @@ Addresses by first path segment:
 ## Addresses, redirects not followed
 
 - /admissions/: status 200
-  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index; canonical: https://gpacalculator.net/admissions/; next: https://gpacalculator.net/admissions/page/2/
   - title: College Admissions Database: Acceptance Rates, SAT & ACT
   - H1: US College Admissions Database
@@ -200,7 +200,7 @@ Addresses by first path segment:
 - /admissions/bryant-and-stratton-college-amherst/: status 301 -> https://gpacalculator.net/admissions/bryant-and-stratton-college-buffalo/
   - headers: content-type: text/html; charset=UTF-8, cache-control: no-cache, must-revalidate, max-age=0, no-store, private, cf-cache-status: BYPASS, x-redirect-by: Rank Math
 - /admissions/maharishi-international-university/: status 200
-  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/maharishi-international-university/
   - title: Maharishi International University Acceptance Rate: 96%
   - H1: Maharishi International University Acceptance Rate &amp; Admissions

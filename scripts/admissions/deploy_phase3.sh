@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 # Ship the admissions templates (the /admissions/ hub and the college pages: Phase 3, and Phase 4's hub pages and
-# structured data) without undoing a later theme deploy.
+# structured data; step 3's template v2, which shows only on the tiers step3_switch.sh switches on) without undoing a
+# later theme deploy.
 #
 #   bash scripts/admissions/deploy_phase3.sh [--dry-run]
 #
-# Runs `scripts/deploy_theme.sh 86d20f1 --only <the seven files below>` only while every one of those files on the
-# live site is a version 86d20f1 already contains (any earlier commit of that file on this branch, which merges the
-# design branch) or isn't there yet (admissions.css). A live file this branch has never had, e.g. a newer
+# Runs `scripts/deploy_theme.sh <COMMIT> --only <the files below>` only while every one of those files on the live
+# site is a version COMMIT already contains (any earlier commit of that file on this branch, which merges the design
+# branch) or isn't there yet (step 3's college-v2.php and college-compare.js). A live file this branch has never had, e.g. a newer
 # functions.php from a later design deploy, stops it without changing the site: deploying over it would undo that
 # deploy. The other theme files (the design overhaul's CSS) stay as they are live. After a deploy it clears Rank Math's
 # sitemap cache, which a theme deploy doesn't, so the sitemaps rebuild with the new code.
 set -euo pipefail
 
-COMMIT="86d20f1"
-FILES="admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js"
+COMMIT="42e4a46"
+FILES="admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js,college-v2.php,college-compare.js"
 HOST="master_rfzfmbbwze@67.205.161.226"
 KEY="$HOME/.ssh/gpacalculator_cloudways"
 THEME="applications/xwnzegvpyy/public_html/wp-content/themes/generatepress-child"

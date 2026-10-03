@@ -397,36 +397,39 @@ function gpa_scale_view_shortcode( $atts ) {
 		return '<label class="gpa-view__field"><span class="gpa-view__label">' . $label . '</span>'
 			. '<input type="number" inputmode="numeric" min="0" max="80" step="1" value="' . (int) $value . '" data-in="' . $name . '"></label>';
 	};
+	$art = function ( $letter ) { return 0 === strpos( $letter, 'A' ) ? 'an' : 'a'; };
+	$about = function ( $pct ) { return str_replace( '≈', '', $pct ); };
+
+	// Weighted tab (Digant 15:58): a headline at the typical load first, then the tiles, then the inputs under
+	// "Customize for your classes" (open on desktop, collapsed on phone by gpa-scale-tools.js). Typical load:
+	// 24 classes with ¼ AP/IB (+1.0); 4.1+ pages need more AP to reach the GPA.
 	$weighted_tab = '<div class="gpa-view__panel" data-view="weighted"' . ( $weighted ? '' : ' hidden' ) . '>'
-		. '<p class="gpa-view__note">A ' . esc_html( $gs ) . ' weighted GPA includes extra points for Honors, AP or IB classes, so the unweighted GPA behind it is lower. Enter your classes to estimate it:</p>'
-		. '<div class="gpa-view__conv">'
-		. $num( 'total', 'Total classes', $ex_total ) . $num( 'ap', 'AP / IB classes (+1.0)', $ex_ap ) . $num( 'honors', 'Honors classes (+0.5)', 0 )
-		. '</div>'
-		. '<dl class="gpa-view__tiles gpa-view__result" aria-live="polite">'
+		. '<p class="gpa-view__lead" aria-live="polite">A ' . esc_html( $gs ) . ' weighted GPA is about a <strong data-out="uw">' . esc_html( number_format( $ex_g, 2 ) ) . '</strong> unweighted, '
+		. '<span data-out="art">' . $art( $ex_letter ) . '</span> <strong data-out="letter">' . esc_html( $ex_letter ) . '</strong> (<span data-out="pct">' . esc_html( $ex_pct ) . '</span>).</p>'
+		. '<dl class="gpa-view__tiles gpa-view__result">'
 		. '<div class="gpa-view__tile is-headline"><dt>Est. unweighted GPA</dt><dd data-out="uw">' . esc_html( number_format( $ex_g, 2 ) ) . '</dd></div>'
 		. '<div class="gpa-view__tile"><dt>Letter grade</dt><dd data-out="letter">' . esc_html( $ex_letter ) . '</dd></div>'
 		. '<div class="gpa-view__tile"><dt>Percentage</dt><dd data-out="pct">' . esc_html( $ex_pct ) . '</dd></div>'
 		. '</dl>'
+		. '<details class="gpa-view__custom" open data-collapse-phone><summary>Customize for your classes</summary>'
+		. '<p class="gpa-view__note">Set to ' . ( $weighted ? '' : 'a typical load: ' ) . (int) $ex_total . ' classes, ' . (int) $ex_ap . ' of them AP/IB. Change them and the estimate above updates.</p>'
+		. '<div class="gpa-view__conv">'
+		. $num( 'total', 'Total classes', $ex_total ) . $num( 'ap', 'AP / IB classes (+1.0)', $ex_ap ) . $num( 'honors', 'Honors classes (+0.5)', 0 )
+		. '</div></details>'
 		. '<p class="gpa-view__note gpa-view__fine">Uses +1.0 for AP/IB and +0.5 for Honors, the most common boosts; your school may differ. '
 		. 'Our <a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html( $atts['home_anchor'] ) . '</a> works from your own classes and grades, and the '
 		. '<a href="' . esc_url( home_url( '/weighted-gpa-calculator/' ) ) . '">Weighted GPA calculator</a> shows both numbers.</p>'
 		. '</div>';
 
-	// Unweighted tab: static summary of this page's GPA (no calculator).
+	// Unweighted tab: this GPA on the unweighted scale, as a sentence and two tiles (no calculator).
 	$unweighted_tab = '';
 	if ( ! $weighted ) {
 		list( $letter, $pct ) = gpa_scale_figures( $g );
-		$rows    = gpa_scale_letter_rows();
-		$ranges  = array();
-		foreach ( explode( '/', $letter ) as $l ) {
-			if ( isset( $rows[ $l ] ) ) { $ranges[] = $l . ' = ' . $rows[ $l ][1]; }
-		}
-		$typical = number_format( $g + 0.25, 2 );
 		$unweighted_tab = '<div class="gpa-view__panel" data-view="unweighted">'
-			. '<dl class="gpa-view__tiles">'
+			. '<p class="gpa-view__lead">A ' . esc_html( $gs ) . ' unweighted GPA is ' . $art( $letter ) . ' <strong>' . esc_html( $letter ) . '</strong>, about <strong>' . esc_html( $about( $pct ) ) . '</strong>.</p>'
+			. '<dl class="gpa-view__tiles is-two">'
 			. '<div class="gpa-view__tile"><dt>Letter grade</dt><dd>' . esc_html( $letter ) . '</dd></div>'
-			. '<div class="gpa-view__tile"><dt>Percentage</dt><dd>' . esc_html( $pct ) . '<small>' . esc_html( implode( ' · ', $ranges ) ) . '</small></dd></div>'
-			. '<div class="gpa-view__tile"><dt>Typical weighted GPA</dt><dd>≈' . esc_html( $typical ) . '<small>¼ of classes AP/IB</small></dd></div>'
+			. '<div class="gpa-view__tile"><dt>Percentage</dt><dd>' . esc_html( $pct ) . '</dd></div>'
 			. '</dl>'
 			. '</div>';
 	}

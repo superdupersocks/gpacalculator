@@ -542,3 +542,54 @@ body.gpa-hero-band .entry-header .gpa-updated {
 #page #main .entry-content .gpa-scale-table tr.is-current-gpa.is-band-d td { background: var(--gpa-band-d-bg) !important; }
 #page #main .entry-content .gpa-scale-table tr.is-current-gpa.is-band-f td { background: var(--gpa-band-f-bg) !important; }
 #page #main .entry-content .gpa-scale-table tr.is-current-gpa td:first-child { box-shadow: inset 3px 0 0 var(--gpa-primary) !important; }
+
+/* GPA page view v5 (Digant 2026-10-03 15:58): each tab leads with its own scale as a sentence; Unweighted has two
+   tiles; Weighted puts its inputs under the tiles in "Customize for your classes" (open on desktop, collapsed on phone) */
+#page #main .entry-content p.gpa-view__lead:not(#root *) {
+    margin: 0 0 14px !important;
+    font-size: 17px !important;
+    line-height: 1.5 !important;
+    color: var(--gpa-heading) !important;
+}
+#page #main .entry-content p.gpa-view__lead strong { font-weight: 700; color: inherit !important; }
+#page #main .entry-content dl.gpa-view__tiles.is-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#page .entry-content details.gpa-view__custom {
+    margin: 0 0 14px !important;
+    padding: 0 16px !important;
+    background: var(--gpa-surface);
+    border: 1px solid var(--gpa-border);
+    border-radius: 12px;
+}
+#page .entry-content details.gpa-view__custom[open] { padding-bottom: 16px !important; }
+#page .entry-content details.gpa-view__custom > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gpa-heading);
+    list-style: none;
+    cursor: pointer;
+}
+#page .entry-content details.gpa-view__custom > summary::-webkit-details-marker { display: none; }
+#page .entry-content details.gpa-view__custom > summary::after {
+    content: "";
+    width: 28px;
+    height: 28px;
+    flex: none;
+    border-radius: 8px;
+    background: var(--gpa-indigo-100) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234338ca' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat center;
+    transition: transform .15s;
+}
+#page .entry-content details.gpa-view__custom[open] > summary::after { transform: rotate(180deg); }
+#page .entry-content details.gpa-view__custom > summary:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; border-radius: 12px; }
+#page #main .entry-content details.gpa-view__custom > p.gpa-view__note:not(#root *) { margin-top: 0 !important; font-size: 14px !important; color: var(--gpa-gray-600) !important; }
+#page .entry-content details.gpa-view__custom > .gpa-view__conv { margin: 10px 0 0 !important; }
+@media (max-width: 640px) {
+    #page #main .entry-content dl.gpa-view__tiles.is-two { grid-template-columns: 1fr; }
+    #page #main .entry-content p.gpa-view__lead:not(#root *) { font-size: 16px !important; }
+}
+#page .entry-content details.gpa-view__custom .gpa-view__field { min-width: 0; }
+#page .entry-content details.gpa-view__custom .gpa-view__field input { box-sizing: border-box; max-width: 100%; }

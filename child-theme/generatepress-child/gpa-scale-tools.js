@@ -48,7 +48,11 @@
     const table = document.querySelector('.gpa-scale-table');
     const rows = table ? [...table.querySelectorAll('tbody tr[data-letter]')] : [];
     const inputs = Object.fromEntries([...view.querySelectorAll('[data-in]')].map((i) => [i.dataset.in, i]));
-    const out = (name) => view.querySelector(`[data-out="${name}"]`);
+    // Every element showing an output: the weighted headline sentence and the tiles share the same names.
+    const put = (name, text) => view.querySelectorAll(`[data-out="${name}"]`).forEach((el) => { el.textContent = text; });
+    // "Customize for your classes": open on desktop, collapsed on phone.
+    const custom = view.querySelector('details[data-collapse-phone]');
+    if (custom && window.matchMedia('(max-width: 640px)').matches) custom.open = false;
 
     const mark = (value, label) => {
       const { letter, pct } = figures(value);
@@ -68,9 +72,10 @@
       const boost = total ? (Math.min(n('ap'), total) * 1 + Math.min(n('honors'), total) * 0.5) / total : 0;
       const uw = Math.min(4, Math.max(0, gpa - boost));
       const f = figures(uw);
-      out('uw').textContent = uw.toFixed(2);
-      out('letter').textContent = f.letter;
-      out('pct').textContent = f.pct;
+      put('uw', uw.toFixed(2));
+      put('letter', f.letter);
+      put('art', f.letter.charAt(0) === 'A' ? 'an' : 'a');
+      put('pct', f.pct);
       return uw;
     };
     const show = (which) => {

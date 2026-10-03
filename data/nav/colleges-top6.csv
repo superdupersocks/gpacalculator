@@ -1,0 +1,9 @@
+rank,slug,short_name,tier,impressions_12m,clicks_12m
+1,university-of-south-carolina-columbia,University of South Carolina,A,9051,78
+2,university-of-arkansas,University of Arkansas,A,4819,4
+3,california-state-university-chico,Chico State,A,4602,9
+4,george-mason-university,George Mason,A,3336,1
+5,university-of-missouri-kansas-city,UMKC,A,3259,4
+6,kennesaw-state-university,Kennesaw State University,A,3210,11
+# Search Console via Windsor.ai, 2025-10-02 to 2026-10-01, /admission/ and /admissions/ plus pre-rename slugs combined.
+# Next: UNM 2658, Oklahoma State 2428, Montclair State University 2257, University of Houston 2230.

@@ -1,6 +1,6 @@
 <!-- Repo copy of the Claude Doc "gpacalculator.net — Calculator Design Standard"
      https://claude.ai/code/artifact/83831044-ed02-48d1-9c61-bece13bdee41
-     Synced 2026-10-03 from doc revision 52. The doc is the source of truth: when it changes, re-export it
+     Synced 2026-10-03 from doc revision 53. The doc is the source of truth: when it changes, re-export it
      (Claude Docs export, markdown) over this file and update the revision here. Don't edit this copy by hand. -->
 
 # gpacalculator.net — Calculator Design Standard
@@ -141,6 +141,7 @@ The result appears under the action row as soon as there's enough data, opens wi
 | Next step | One primary CTA + two in-text links, numbers passed forward in the URL |
 | Planner box | `--gpa-tint-indigo` bg, 1px `--gpa-calc-result-line`, primary CTA; directly under the result |
 | Empty state | Nothing shown and no space reserved until there's data |
+| Credits label | "GPA credits", never "Total credits": P courses earn credits but aren't counted in the GPA |
 
 At-risk results (below 2.0, failing, near a target) switch the CTA to the rescue path with the target preset.
 

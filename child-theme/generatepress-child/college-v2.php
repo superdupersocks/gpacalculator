@@ -339,7 +339,7 @@ if ( ! function_exists( 'gpa_college_faqs_v2' ) ) {
             $above = (float) $pivot >= (float) $v['cds']['value'];
             $faqs[] = array(
                 'question' => $q,
-                'answer'   => $name . '\'s first-year students averaged a ' . esc_html( $v['cds']['basis'] ) . ' GPA of ' . esc_html( $v['cds']['value'] ) . ', as reported by the college for ' . esc_html( $v['cds']['year'] ) . ', so on the same ' . esc_html( $v['cds']['basis'] ) . ' scale a ' . $pivot . ' is ' . ( $above ? 'at or above' : 'below' ) . ' that average'
+                'answer'   => $name . '\'s first-year students averaged ' . ( 'unweighted' === $v['cds']['basis'] ? 'an ' : 'a ' ) . esc_html( $v['cds']['basis'] ) . ' GPA of ' . esc_html( $v['cds']['value'] ) . ', as reported by the college for ' . esc_html( $v['cds']['year'] ) . ', so on the same ' . esc_html( $v['cds']['basis'] ) . ' scale a ' . $pivot . ' is ' . ( $above ? 'at or above' : 'below' ) . ' that average'
                     . ( $v['rate'] ? ' at a college that admitted ' . esc_html( $v['rate'] ) . ' of applicants' . $fall : '' ) . '. An average isn\'t a cutoff: your courses, test scores and the rest of your application count too.',
             );
         } elseif ( $v['rate'] && in_array( $gpa_req, array( 'Required', 'Recommended', 'Considered if submitted' ), true ) ) {

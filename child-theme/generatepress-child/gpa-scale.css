@@ -194,45 +194,20 @@ body.gpa-hero-band .entry-header .gpa-updated {
     background: var(--gpa-tint-indigo, var(--gpa-surface-subtle)) !important;
 }
 #page .entry-content .gpa-quickconv__out { display: contents; }
-#page .entry-content .gpa-quickconv { scroll-margin-top: 96px; }   /* GPA pages link to #gpa-scale-converter */
 #page .entry-content .gpa-quickconv__label {
     margin-bottom: 4px;
     font-size: 13px;
     letter-spacing: 0;
     text-transform: none;
 }
-/* Letter grade is a tile too (Digant 15:36, "unevenness"): same box, padding, label and value size as the two
-   figure tiles, so the tops, labels, values and bottoms of all three line up */
-#page .entry-content .gpa-quickconv__field,
+#page .entry-content .gpa-quickconv__field { padding-top: 13px; }   /* label level with the tiles' labels */
+#page .entry-content .gpa-quickconv__select { min-height: 46px; }   /* bottom level with the tiles */
 #page .entry-content .gpa-quickconv__stat {
-    display: block;
-    margin: 0;
     padding: 12px 16px;
     background: var(--gpa-surface);
     border: 1px solid var(--gpa-border);
     border-radius: 12px;
 }
-#page .entry-content .gpa-quickconv__field { position: relative; cursor: pointer; }
-#page .entry-content .gpa-quickconv__field:focus-within { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; }
-#page .entry-content .gpa-quickconv__select {
-    display: block;
-    width: 100%;
-    min-height: 0 !important;
-    height: 1.25em !important;                 /* a select ignores line-height: same box as the 1.25 line of the figures */
-    margin: 0;
-    padding: 0 28px 0 0 !important;
-    font-size: 26px !important;
-    line-height: 1.25 !important;
-    font-weight: 700 !important;
-    color: var(--gpa-heading);
-    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 2px center;
-    border: 0 !important;
-    border-radius: 0;
-    -webkit-appearance: none;
-    appearance: none;
-    cursor: pointer;
-}
-#page .entry-content .gpa-quickconv__select:focus-visible { outline: none; }
 #page .entry-content .gpa-quickconv__stat strong { font-size: 26px; line-height: 1.25; }
 #page .entry-content .gpa-quickconv__link {
     grid-column: 1 / -1;
@@ -244,32 +219,8 @@ body.gpa-hero-band .entry-header .gpa-updated {
 }
 @media (max-width: 640px) {
     #page .entry-content .gpa-quickconv { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    #page .entry-content .gpa-quickconv__field { grid-column: 1 / -1; }
-    #page .entry-content .gpa-quickconv__select { font-size: 22px !important; }
+    #page .entry-content .gpa-quickconv__field { grid-column: 1 / -1; padding-top: 0; }
     #page .entry-content .gpa-quickconv__stat strong { font-size: 22px; }
-}
-
-/* Hub converter + table, round 3 (Digant 15:40): the table header gets a background, and the letter grade reads as
-   a dropdown: indigo border, a chevron button on the right, hover tint, the whole tile clickable */
-#page #main .entry-content .gpa-quickconv + figure.wp-block-table thead,
-#page #main .entry-content .gpa-quickconv + figure.wp-block-table thead th {
-    background: var(--gpa-indigo-100) !important;
-    color: var(--gpa-heading) !important;
-}
-#page .entry-content .gpa-quickconv__field { border-color: var(--gpa-indigo-200); transition: background-color .15s, border-color .15s; }
-#page .entry-content .gpa-quickconv__field:hover { background: var(--gpa-indigo-50); border-color: var(--gpa-accent); }
-#page .entry-content .gpa-quickconv__select { background-image: none !important; padding-right: 44px !important; }
-#page .entry-content .gpa-quickconv__field::after {
-    content: "";
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    width: 32px;
-    height: 32px;
-    margin-top: -16px;
-    border-radius: 8px;
-    background: var(--gpa-indigo-100) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%234338ca' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat center;
-    pointer-events: none;
 }
 
 #page .entry-content .gpa-lookup__group {

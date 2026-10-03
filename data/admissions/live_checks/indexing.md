@@ -1,4 +1,4 @@
-# Indexing check, 2026-10-02 22:57 UTC
+# Indexing check, 2026-10-03 00:39 UTC
 
 Read-only GETs by scripts/admissions/indexing_check.py; addresses from `data/admissions/live_checks/indexing_urls.txt`.
 
@@ -19,11 +19,11 @@ Disallow: /feed/
 
 - /sitemap_index.xml: status 200, 6 sitemaps; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
   - post-sitemap.xml (index lastmod 2026-09-14T21:07:11+00:00): status 200, 28 addresses, 0 images, lastmod 2012-08-29 to 2026-09-14; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - page-sitemap.xml (index lastmod 2026-10-02T19:10:45+00:00): status 200, 394 addresses, 0 images, lastmod 2026-07-15 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - colleges-sitemap1.xml (index lastmod 2026-10-02T17:36:51+00:00): status 200, 945 addresses, 0 images, lastmod 2026-04-19 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - colleges-sitemap2.xml (index lastmod 2026-10-02T17:36:51+00:00): status 200, 944 addresses, 0 images, lastmod 2026-04-19 to 2026-04-19; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - colleges-sitemap3.xml (index lastmod 2026-10-02T17:36:51+00:00): status 200, 944 addresses, 0 images, lastmod 2026-04-19 to 2026-04-19; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
-  - colleges-sitemap4.xml (index lastmod 2026-10-02T17:36:51+00:00): status 200, 253 addresses, 0 images, lastmod 2026-04-19 to 2026-04-19; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - page-sitemap.xml (index lastmod 2026-10-02T19:48:25+00:00): status 200, 394 addresses, 0 images, lastmod 2026-07-15 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - colleges-sitemap1.xml (index lastmod 2026-10-02T22:39:28+00:00): status 200, 945 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - colleges-sitemap2.xml (index lastmod 2026-10-02T22:39:28+00:00): status 200, 944 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - colleges-sitemap3.xml (index lastmod 2026-10-02T22:39:28+00:00): status 200, 944 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
+  - colleges-sitemap4.xml (index lastmod 2026-10-02T22:39:28+00:00): status 200, 253 addresses, 0 images, lastmod 2026-10-02 to 2026-10-02; content-type: text/xml; charset=UTF-8, x-robots-tag: noindex, cache-control: no-store, no-cache, must-revalidate, max-age=0, cf-cache-status: DYNAMIC
 
 - 3508 addresses in all, 3086 in the colleges sitemaps
 
@@ -105,7 +105,7 @@ Addresses by first path segment:
 ## Addresses, redirects not followed
 
 - /admissions/: status 200
-  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index; canonical: https://gpacalculator.net/admissions/; next: https://gpacalculator.net/admissions/page/2/
   - title: College Admissions Database: Acceptance Rates, SAT & ACT
   - H1: US College Admissions Database
@@ -180,25 +180,25 @@ Addresses by first path segment:
 - https://www.gpacalculator.net/admissions/harvard/: status 301 -> https://gpacalculator.net/admissions/harvard/
   - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS, x-redirect-by: WordPress
 - /admissions/calvin/: status 200
-  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/calvin/
   - title: Calvin University Acceptance Rate (71%) & SAT/ACT Scores
   - H1: Calvin University Acceptance Rate &amp; Test Scores
   - JSON-LD: CollegeOrUniversity x2, PostalAddress, EducationalOccupationalProgram, MonetaryAmount, FAQPage, BreadcrumbList
 - /admissions/lone-star-college-system/: status 200
-  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/lone-star-college-system/
   - title: Lone Star College Admission Requirements & Open Admission
   - H1: Lone Star College Admission Requirements
   - JSON-LD: CollegeOrUniversity x2, PostalAddress, EducationalOccupationalProgram, MonetaryAmount, FAQPage, BreadcrumbList
 - /admissions/fairfax-university-of-america/: status 200
-  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/fairfax-university-of-america/
   - title: Fairfax University of America Admissions
   - H1: Fairfax University of America Admissions
   - JSON-LD: CollegeOrUniversity x2, PostalAddress, EducationalOccupationalProgram, BreadcrumbList
 - /admissions/bacone-college/: status 200
-  - headers: content-type: text/html; charset=utf-8, cache-control: max-age=0, cf-cache-status: BYPASS
+  - headers: content-type: text/html; charset=UTF-8, cache-control: max-age=0, cf-cache-status: BYPASS
   - robots: follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large; canonical: https://gpacalculator.net/admissions/bacone-college/
   - title: Bacone College Admissions
   - H1: Bacone College Admissions

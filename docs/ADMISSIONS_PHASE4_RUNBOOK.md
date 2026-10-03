@@ -25,6 +25,9 @@ The steps are numbered as in the doc: 1 runs right after the go, 2 after the des
 
 ## 1. Modified dates and the sitemap cache
 
+Done 2026-10-03 00:33 UTC (2,668 dates moved; changelog). The GitHub check at 00:39 read lastmod 2026-10-02 for all
+3,086 colleges-sitemap addresses.
+
 `scripts/admissions/phase4_dates_live.sh` moves each published college post's modified date to 22:32 UTC on
 2 October 2026 (the Phase 3 template deploy, which changed every page) unless it is later already, logging the old
 dates, then clears Rank Math's sitemap cache. Only post_modified and post_modified_gmt change.
@@ -59,7 +62,9 @@ What changes:
   college's own website once section 5 has run), with the former name as alternateName (Calvin College); the site's
   WebSite and Organization (logo) nodes; no EducationalOccupationalProgram.
 - The hub: Rank Math's CollectionPage alone, with the description and the page's ItemList (numberOfItems 3,085).
-- Pages under review: noindex, follow, and left out of the colleges sitemap until their figures are verified.
+- Pages under review: unchanged for now. Keeping them out of search and the sitemap is built
+  (`gpa_college_under_review_robots`, `gpa_college_under_review_sitemap` in college-data.php) but not hooked: Digant's
+  tiering step (2026-10-03) decides index or noindex for each page with its Search Console traffic.
 
 Checks after "deployed" (the GitHub indexing check, `data/admissions/live_checks/indexing_urls.txt`, plus a look on
 desktop and phone):
@@ -69,9 +74,8 @@ desktop and phone):
 - /admissions/harvard/: JSON-LD has CollegeOrUniversity (its url http://www.harvard.edu/ once section 5 has run, never
   our page), WebPage + FAQPage with six questions, Organization,
   WebSite, BreadcrumbList, and nothing else; /admissions/calvin/: alternateName "Calvin College".
-- /admissions/fairfax-university-of-america/: robots "follow, noindex".
-- The colleges sitemaps: 3,033 addresses (3,032 colleges and the hub), none under review. If the 53 are still listed,
-  the cache wasn't cleared: run `bash scripts/admissions/phase4_dates_live.sh clear` and check again.
+- /admissions/fairfax-university-of-america/: robots still "follow, index" (the noindex is held).
+- The colleges sitemaps: 3,086 addresses (3,085 colleges and the hub), each once, all dated 2026-10-02.
 - Changelog row; undo `bash scripts/deploy_theme.sh --revert <backup>`, then
   `bash scripts/admissions/phase4_dates_live.sh clear`.
 

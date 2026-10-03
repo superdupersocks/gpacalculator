@@ -236,9 +236,18 @@ letters' range midpoints with "≈", chart values show their range. 14 of 31 pag
   the Weighted tab with no toggle. Previews `content/gpa-scale-previews/box-*`.
 - View v3 (07:45): one flowing page, no panels: the view sits in the content column with no box, the summary and
   results are plain label/value rows with hairline dividers, and the page's scale chart uses the same full width.
+  (Superseded by v4: Digant meant body text width, not full width.)
+- View v4 (07:59): the card, the "Here is where…" lead-in and the chart all use body text width
+  (`min(var(--gpa-text-max), calc(100% - 80px))`, auto margins, the paragraphs' left edge). One tinted card (1px
+  border, 16px radius, 24px padding, 16px on phone) holds the toggle and figures; the chart stays outside it.
+  Desktop: tiles in one row (label small on top, value below). Weighted = 3 inputs, then 3 result tiles with the
+  estimated unweighted GPA largest; Unweighted = letter, percentage, typical weighted (5.0-scale row dropped).
+  Phone: label/value rows. Chart "your GPA" row keeps its band colour + 3px blue left bar + bold + badge.
+  Hub: one 2.0–4.5 grid with Weighted tags; the old Custom HTML "GPA Converter" is removed (new converter only).
+  Previews `content/gpa-scale-previews/v4-*`.
 - Content script `scripts/wp/gpa_scale_view_pass.php` (built by `scripts/build_gpa_scale_view_pass.py`).
 - The converter is standalone JS until the shared core (calculator-unification thread) is live.
-- State: preview of the hub and 3.9 sent (`content/gpa-scale-previews/wv-*`), awaiting Digant's OK before the rest.
+- State: v4 previews of 3.9 (both tabs, 1366 + 390) sent, awaiting Digant's go before anything goes live.
 - Still to do on rollout: the other 29 GPA pages, Rank Math titles/descriptions with the new figures, chart images
   without the inserted row, the college GPA page chart (has A 93–100%, no A+ row), 4.1–4.5 pages, prev/next across 4.0→4.1.
 

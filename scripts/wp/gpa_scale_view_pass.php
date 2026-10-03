@@ -39,6 +39,9 @@ function vp_hub( $c ) {
 	if ( false !== strpos( $c, '[gpa_scale_lookup]' ) ) { return array( null, 'already done' ); }
 	$tbl = strpos( $c, '<!-- wp:table -->' );
 	if ( false === $tbl || false === strpos( $c, '>Grade points</th>', $tbl ) ) { return array( null, 'letter-grade table not found' ); }
+	// "new converter only" (Digant 07:59): drop the old Custom HTML GPA Converter at the top of the hub
+	$c   = preg_replace( '#<!-- wp:html -->\s*<!-- GPA Converter .*?id="gpa-converter".*?<!-- /wp:html -->\s*#s', '', $c, 1, $dropped );
+	$tbl = strpos( $c, '<!-- wp:table -->' );
 	$conv = vp_block( 'shortcode', '[gpa_scale_converter]' ) . "\n\n";
 	$c    = substr( $c, 0, $tbl ) . $conv . substr( $c, $tbl );
 	$tend = strpos( $c, '<!-- /wp:table -->', $tbl + strlen( $conv ) ) + strlen( '<!-- /wp:table -->' );
@@ -47,7 +50,7 @@ function vp_hub( $c ) {
 		. vp_block( 'paragraph', '<p>Pick a GPA to see its letter grade and percentage, whether it is good, what it means for college and how to raise it.</p>' ) . "\n\n"
 		. vp_block( 'paragraph', '<p class="gpa-lookup__note">Every GPA under 4.0 can be weighted or unweighted; each page shows both. A GPA above 4.0 is always weighted.</p>', array( 'className' => 'gpa-lookup__note' ) ) . "\n\n"
 		. vp_block( 'shortcode', '[gpa_scale_lookup]' );
-	return array( substr( $c, 0, $tend ) . $look . substr( $c, $tend ), 'converter above the table + Look up a GPA below it' );
+	return array( substr( $c, 0, $tend ) . $look . substr( $c, $tend ), ( $dropped ? 'old converter removed; ' : 'old converter NOT FOUND; ' ) . 'converter above the table + Look up a GPA below it' );
 }
 
 function vp_page( $c, $slug, $cfg, &$log ) {

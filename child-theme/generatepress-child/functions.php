@@ -3750,3 +3750,11 @@ add_filter( 'query', function ( $sql ) {
 	}
 	return $sql;
 } );
+
+// Rank Math only reads its schema blocks (TOC → SiteNavigationElement, FAQ, HowTo) at the top level or inside groups and
+// columns. The collapsed "On this page" list wraps the Rank Math TOC block in a core Details block (layout.css 11b), so
+// let Rank Math look inside Details blocks too; otherwise the TOC's SiteNavigationElement schema disappears.
+add_filter( 'rank_math/schema/nested_blocks', function ( $blocks ) {
+	$blocks[] = 'core/details';
+	return $blocks;
+} );

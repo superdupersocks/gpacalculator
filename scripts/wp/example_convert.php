@@ -47,7 +47,7 @@ if ( $res && preg_match( '#^\s*<!-- wp:paragraph (?:(?!-->).)*?"rx-result"(?:(?!
 	$end      += strlen( $rm[0] );
 }
 
-preg_match_all( '#\d+(?:\.\d+)?#', html_entity_decode( wp_strip_all_tags( $old_part ) ), $nm );
+preg_match_all( '#\d+(?:\.\d+)?#', html_entity_decode( preg_replace( '#<[^>]+>#', ' ', $old_part ) ), $nm ); // a space per tag, so adjacent cells don't merge
 $old_nums = array_map( 'floatval', $nm[0] );
 $html = do_shortcode( $sc );
 if ( false === strpos( $html, 'gpa-ex' ) ) { echo "page $id: the shortcode rendered nothing (check rows)\n"; return; }
@@ -65,6 +65,9 @@ if ( $missing ) { echo 'SKIP: not in the old example: ' . implode( ' ', $missing
 echo "numbers check: same\n";
 $new = substr( $old, 0, $start ) . "<!-- wp:shortcode -->\n" . $sc . "\n<!-- /wp:shortcode -->" . substr( $old, $end );
 if ( $save ) {
+	// Keep the page's own template valid for this save (some theme templates aren't listed in WP-CLI context).
+	$tpl = get_page_template_slug( $id );
+	if ( $tpl ) { add_filter( 'theme_page_templates', function ( $t ) use ( $tpl ) { $t[ $tpl ] = $tpl; return $t; } ); }
 	$r = wp_update_post( array( 'ID' => $id, 'post_content' => wp_slash( $new ) ), true );
 	echo is_wp_error( $r ) ? 'SAVE FAILED: ' . $r->get_error_message() . "\n" : "saved (revision kept)\n";
 } else {

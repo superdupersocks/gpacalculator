@@ -52,9 +52,24 @@ def site_file(url):
     return SITE / path
 
 
+def ensure_theme_ref():
+    """THEME_REF lives on the design branch; a shallow CI checkout doesn't have it, so fetch just that commit."""
+    if subprocess.run(["git", "cat-file", "-e", f"{THEME_REF}^{{commit}}"], cwd=REPO, capture_output=True).returncode == 0:
+        return
+    full = subprocess.run(["git", "ls-remote", "origin", "refs/heads/*"], cwd=REPO, capture_output=True, text=True).stdout
+    shas = [l.split()[0] for l in full.splitlines()]
+    want = next((sh for sh in shas if sh.startswith(THEME_REF)), None)
+    for ref in ([want] if want else []) + ["claude/design-system-overhaul-xkzbf0"]:
+        subprocess.run(["git", "fetch", "-q", "--depth=50", "origin", ref], cwd=REPO, capture_output=True)
+        if subprocess.run(["git", "cat-file", "-e", f"{THEME_REF}^{{commit}}"], cwd=REPO, capture_output=True).returncode == 0:
+            return
+    sys.exit(f"build_preview: theme commit {THEME_REF} is not available (fetch the design branch)")
+
+
 def theme_css(name):
     """A child-theme stylesheet as of THEME_REF (what is live plus the library-in-calculators change),
     or None when that commit doesn't have it (then the snapshot's copy is used)."""
+    ensure_theme_ref()
     out = subprocess.run(["git", "show", f"{THEME_REF}:child-theme/generatepress-child/{name}"],
                          cwd=REPO, capture_output=True, text=True)
     return out.stdout if out.returncode == 0 else None

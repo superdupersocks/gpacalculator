@@ -71,7 +71,7 @@ $ad_at    = count( $sections ) > 1 ? (int) floor( count( $sections ) / 2 ) : cou
 					// "On this page" (Design spec rev 32, "In-page navigation", Digant 2026-10-03 18:29): a <details> row,
 					// collapsed on every screen size, under the key-facts box and above the first numbered section. Each
 					// link's text is its H2's text word for word; the links are in the HTML while collapsed. Lists the
-					// numbered H2s only (no FAQ, Similar colleges, Keep planning or Sources), on pages with 4 or more.
+					// numbered H2s only (no FAQ, Similar colleges, Keep planning or Sources), on pages with 3 or more (spec rev 33).
 					// Markup = Design's shared component (Core Details block around the Rank Math TOC block; layout.css 11b,
 					// design f183e95). The list comes from gpa_college_toc() (college-v2.php), which also names it in the
 					// schema; college-v2.php keeps the theme's browser-built TOC (gpa_toc_builder) off college pages.

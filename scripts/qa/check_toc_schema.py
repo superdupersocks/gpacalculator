@@ -7,7 +7,7 @@ For each page, from the live HTML (cache-busted):
   - every TOC link (.wp-block-rank-math-toc-block a[href^="#"]) points to an element with that id, and that
     element is an H2 whose text equals the link text, word for word;
   - the SiteNavigationElement names in the JSON-LD equal the TOC link texts, same count and order;
-  - the TOC links are in the HTML (count > 0) and the page has exactly one FAQPage when it has any.
+  - the TOC links are in the HTML (3 or more: the list only shows on pages with 3+ sections) and the page has exactly one FAQPage when it has any.
 Exit code 1 if any page fails. deploy_theme.sh runs it after every deploy.
 """
 import html, json, os, re, sys, time, urllib.request
@@ -46,6 +46,8 @@ def check(url):
     links = re.findall(r'<a[^>]*href="#([^"]+)"[^>]*>(.*?)</a>', toc.group(1), re.S) if toc else []
     if not links:
         problems.append("no TOC links in the HTML")
+    elif len(links) < 3:
+        problems.append(f"only {len(links)} TOC links: the list is shown on pages with 3+ sections only")
     for target, label in links:
         label = text(label)
         el = re.search(r'<(h[1-6])\b[^>]*\bid="%s"[^>]*>(.*?)</\1>' % re.escape(target), page, re.S)

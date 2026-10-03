@@ -762,7 +762,8 @@ add_action( 'wp', function () {
 if ( ! function_exists( 'gpa_college_toc' ) ) {
     /**
      * The "On this page" list for a college page: section id => H2 text, word for word, in page order (the compare box,
-     * then the numbered sections). Empty under 4 sections. single-colleges.php prints it and gpa_college_toc_schema() names
+     * then the numbered sections). Empty under 3 sections (spec rev 33: 3+ numbered sections, site-wide).
+     * single-colleges.php prints it and gpa_college_toc_schema() names
      * the same entries in the schema, so the links, the H2s and the schema names stay identical (Digant 2026-10-03 18:29).
      */
     function gpa_college_toc( $post_id, $v = null, $sections = null, $compare = null ) {
@@ -775,7 +776,7 @@ if ( ! function_exists( 'gpa_college_toc' ) ) {
         foreach ( $sections as $section ) {
             $toc[ $section['id'] ] = $section['title'];
         }
-        return count( $toc ) >= 4 ? $toc : array();
+        return count( $toc ) >= 3 ? $toc : array();
     }
 }
 

@@ -1,6 +1,6 @@
 # Addresses scripts/admissions/indexing_check.py requests once each, without following redirects
 # (admissions-indexing.yml). Edit the "taken for" line to run the check again.
-# taken for: a check after the Phase 4 code deploy (Digant, 2026-10-03 ~02:35 UTC) and the cleanup QA fixes and renames (02:26 UTC)
+# taken for: a check after step 2, tiering (Digant's go 2026-10-03 03:38 UTC): 1,318 tier C pages set to noindex and out of the sitemap
 /admissions/
 /admissions/page/2/
 /admissions/page/103/
@@ -27,6 +27,11 @@ https://www.gpacalculator.net/admissions/harvard/
 /admissions/maharishi-international-university/
 /admissions/maharishi-university-of-management/
 /admissions/dallas-college/
+/admissions/loma-linda-university/
+/admissions/university-of-st-augustine-for-health-sciences/
+/admissions/teachers-college-at-columbia-university/
+/admissions/idaho-state-university/
+/admissions/midwestern-university/
 /admission/el-centro-college/
 /admission/
 /admission/page/2/

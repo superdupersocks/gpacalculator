@@ -492,14 +492,12 @@ function gpa_scale_view_shortcode( $atts ) {
 		list( , , $uw ) = gpa_scale_typical_load( $g );
 		list( $letter, $pct ) = gpa_scale_figures( $uw );
 		$tiles = $tile( 'Est. unweighted GPA', number_format( $uw, 2 ), true ) . $tile( 'Letter grade', $letter ) . $tile( '% range', $pct );
-		$line  = 'A ' . $gs . ' weighted GPA is about a ' . number_format( $uw, 2 ) . ' unweighted, ' . gpa_scale_article( $letter ) . ' ' . $letter . '.';
 	} else {
 		list( $letter, $pct ) = gpa_scale_figures( $g );
 		$tiles = $tile( 'Letter grade', $letter ) . $tile( 'Grade points', $gs ) . $tile( '% range', $pct );
-		$line  = 'A ' . $gs . ' GPA is ' . gpa_scale_article( $letter ) . ' ' . $letter . ' on the 4.0 scale.';
 	}
-	return '<div class="gpa-quickconv gpa-answer"><div class="gpa-quickconv__out">' . $tiles . '</div>'
-		. '<p class="gpa-answer__line">' . esc_html( $line ) . '</p></div>';
+	// Tiles only, text centred (Digant 19:11: the line under the tiles is gone)
+	return '<div class="gpa-quickconv gpa-answer"><div class="gpa-quickconv__out">' . $tiles . '</div></div>';
 }
 
 /**

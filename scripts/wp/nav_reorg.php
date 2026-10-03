@@ -62,9 +62,9 @@ $MENUS = array(
 		'items' => array(
 			array( 'GPA Calculators', 'url:#', $GPA ),
 			array( 'Grade Calculators', 'url:#', $GRADE ),
-			array( 'Colleges', 'url:/admissions/' ),
 			array( 'GPA Scale', 'page:gpa-scale' ),
 			array( 'Grade Conversion', 'page:grade-conversion' ),
+			array( 'Colleges', 'url:/admissions/' ),   // last (Digant 16:41)
 		),
 	),
 	'footer-1' => array( 'name' => NR_PREFIX . 'Footer GPA Calculators', 'title' => 'GPA Calculators', 'items' => $GPA ),

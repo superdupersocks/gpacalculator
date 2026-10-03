@@ -3,7 +3,7 @@
  * Site header and footer navigation (Digant's reorganization, 2026-10-03).
  *
  * The links themselves are WordPress menus (Appearance > Menus), set by scripts/wp/nav_reorg.php:
- *   primary            header: GPA Calculators ▾, Grade Calculators ▾, Colleges, GPA Scale, Grade Conversion
+ *   primary            header: GPA Calculators ▾, Grade Calculators ▾, GPA Scale, Grade Conversion, Colleges
  *   footer-1 … footer-5  one Navigation Menu widget per column
  *   gpa-footer-legal   bottom bar: About · Contact · Privacy · Terms · Data sources
  *

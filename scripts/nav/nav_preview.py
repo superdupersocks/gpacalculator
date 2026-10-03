@@ -48,7 +48,7 @@ def header_ul(old_ul):
         sub = "".join(li(l, u, (n := n + 1)) for l, u in kids)
         out.append(f'<li id="menu-item-8{n:03d}" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children">'
                    f'<a href="#" aria-haspopup="true" aria-expanded="false" role="button">{title}{arrow}</a><ul class="sub-menu">{sub}</ul></li>')
-    for l, u in (("Colleges", "/admissions/"), ("GPA Scale", "/gpa-scale/"), ("Grade Conversion", "/grade-conversion/")):
+    for l, u in (("GPA Scale", "/gpa-scale/"), ("Grade Conversion", "/grade-conversion/"), ("Colleges", "/admissions/")):
         out.append(li(l, u, (n := n + 1)))
     return '<ul id="menu-top-nav" class=" menu sf-menu">' + "".join(out) + "</ul>"
 

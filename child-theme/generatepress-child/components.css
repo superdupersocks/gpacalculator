@@ -1374,7 +1374,7 @@ body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { fon
     color: var(--gpa-text-muted);
     white-space: nowrap;
 }
-#page .entry-content ul.gpa-jump__list {
+#page #main .entry-content ul.gpa-jump__list {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -1383,12 +1383,12 @@ body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { fon
     padding: 0 !important;
     list-style: none !important;
 }
-#page .entry-content ul.gpa-jump__list > li {
+#page #main .entry-content ul.gpa-jump__list > li {
     margin: 0 !important;
     padding: 0 !important;
 }
-#page .entry-content ul.gpa-jump__list > li::before,
-#page .entry-content ul.gpa-jump__list > li::marker { content: none !important; display: none !important; }
+#page #main .entry-content ul.gpa-jump__list > li::before,
+#page #main .entry-content ul.gpa-jump__list > li::marker { content: none !important; display: none !important; }
 #page .entry-content a.gpa-jump__chip {
     display: inline-flex;
     align-items: center;
@@ -1410,7 +1410,7 @@ body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { fon
 #page .entry-content a.gpa-jump__chip:focus-visible { outline: 2px solid var(--gpa-focus-ring); outline-offset: 2px; }
 @media (max-width: 640px) {
     #page .entry-content .gpa-jump { gap: 8px; }
-    #page .entry-content ul.gpa-jump__list {
+    #page #main .entry-content ul.gpa-jump__list {
         flex-wrap: nowrap;
         overflow-x: auto;
         scrollbar-width: none;
@@ -1419,7 +1419,7 @@ body #page #root, body #page #root *:not(code, pre, kbd, samp, svg, svg *) { fon
         -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent);
         mask-image: linear-gradient(to right, #000 calc(100% - 20px), transparent);
     }
-    #page .entry-content ul.gpa-jump__list::-webkit-scrollbar { display: none; }
+    #page #main .entry-content ul.gpa-jump__list::-webkit-scrollbar { display: none; }
     #page .entry-content a.gpa-jump__chip { position: relative; }
     #page .entry-content a.gpa-jump__chip::after { content: ""; position: absolute; inset: -4px 0; }   /* 44px tap area */
 }

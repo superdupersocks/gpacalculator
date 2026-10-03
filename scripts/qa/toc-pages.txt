@@ -1,0 +1,5 @@
+# Pages whose "On this page" list, H2s and Rank Math SiteNavigationElement schema must agree.
+# check_toc_schema.py reads this; deploy_theme.sh runs it after every deploy. Add each page as it moves to the
+# collapsed list (one page at a time, spec: In-page navigation).
+https://gpacalculator.net/college-gpa-calculator/
+https://gpacalculator.net/gpa-scale/3-7-gpa/

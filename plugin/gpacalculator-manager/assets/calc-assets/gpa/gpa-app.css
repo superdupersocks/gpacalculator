@@ -43,10 +43,11 @@
 :is(#root, .gpacalc-mount) .gpa-term-more { font-size: 20px; line-height: 1; color: var(--calc-muted); }
 
 /* Rows: one line on desktop (course · grade · credits · [type] · [major] · remove) */
-:is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) 56px var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols: minmax(0, 1.9fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) var(--calc-control-h); }
-:is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols: minmax(0, 1.9fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) 56px var(--calc-control-h); }
+/* Grade and credits get fixed widths so the select arrow sits next to the grade, not far across a wide field */
+:is(#root, .gpacalc-mount) .gpa-cols { --calc-cols: minmax(0, 1fr) 128px 104px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-major { --calc-cols: minmax(0, 1fr) 128px 104px 56px var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-type { --calc-cols: minmax(0, 1.3fr) 120px 96px minmax(0, 1fr) var(--calc-control-h); }
+:is(#root, .gpacalc-mount) .gpa-cols.has-type.has-major { --calc-cols: minmax(0, 1.3fr) 120px 96px minmax(0, 1fr) 56px var(--calc-control-h); }
 :is(#root, .gpacalc-mount) .gpa-row .calc-field { min-width: 0; }
 :is(#root, .gpacalc-mount) .gpa-major { justify-content: center; }
 :is(#root, .gpacalc-mount) .gpa-major span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

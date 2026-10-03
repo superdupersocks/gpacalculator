@@ -47,17 +47,16 @@ $GRADE = array(
 	array( 'Semester Planner', 'page:semester-planner' ),
 );
 
-/* Top 6 tier A/B college pages by Search Console clicks, 2025-10-02 … 2026-10-01 (impressions break ties), both
-   address forms and pre-rename slugs combined (data/admissions/tiering/tiers.csv, clicks_12m). Tier C pages are
-   noindexed and skipped. Digant 2026-10-03 19:49: "most high traffic colleges". */
+/* Top 6 indexed (tier A/B) college pages by GA4 page views, 2025-10-02 … 2026-10-02, /admission/ and /admissions/
+   paths with renamed slugs mapped (data/nav/colleges-top6.csv). Digant 2026-10-03 19:49: "most high traffic colleges". */
 $COLLEGES = array(
 	array( 'Browse all colleges', 'url:/admissions/' ),
-	array( 'University of South Carolina', 'college:university-of-south-carolina-columbia' ),
-	array( 'Western New England', 'college:western-new-england-university' ),
-	array( 'Auburn', 'college:auburn' ),
-	array( 'Kennesaw State', 'college:kennesaw-state-university' ),
-	array( 'Chico State', 'college:california-state-university-chico' ),
-	array( 'Stony Brook', 'college:stony-brook' ),
+	array( 'University of San Diego', 'college:san-diego' ),
+	array( 'University of Redlands', 'college:university-of-redlands' ),
+	array( 'University of Idaho', 'college:university-of-idaho' ),
+	array( 'Soka University of America', 'college:soka-university-of-america' ),
+	array( 'Alfred University', 'college:alfred-university' ),
+	array( 'Princeton', 'college:princeton' ),
 );
 
 $MENUS = array(

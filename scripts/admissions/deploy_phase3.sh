@@ -14,10 +14,10 @@
 # sitemap cache, which a theme deploy doesn't, so the sitemaps rebuild with the new code.
 set -euo pipefail
 
-# 1591876: the "Jump to" chips (Digant 16:46), shipped with ONLY=single-colleges.php,admissions.css,college-v2.php after
+# 8c8ce61: chip text = the H2 when 3 words or fewer (spec rev 25), ONLY=single-colleges.php. 1591876 (the chips, live 16:58) was shipped with ONLY=single-colleges.php,admissions.css,college-v2.php after
 # components.css and layout.css from Design's 2fdf051 (deploy_theme.sh 2fdf051 --only components.css,layout.css). The FAQ (688b2e2) is live since
 # 16:49. The small fixes and the new titles (functions.php and others) still wait on Digant's go.
-COMMIT="1591876"
+COMMIT="8c8ce61"
 FILES="${ONLY:-admissions.css,archive-colleges.php,template-parts/college-db-archive.php,single-colleges.php,college-data.php,functions.php,database-ajax.js,college-v2.php,college-compare.js,gpa-bands.json}"
 HOST="master_rfzfmbbwze@67.205.161.226"
 KEY="$HOME/.ssh/gpacalculator_cloudways"
